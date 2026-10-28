@@ -9,7 +9,7 @@ export interface NavItem {
 
 export const nav: NavItem[] = [
   { id: "content", label: "Content marketing", ready: true },
-  { id: "brand", label: "Brand manual", ready: false },
+  { id: "brand", label: "Brand manual", ready: true },
   { id: "tasks", label: "Task tracker", ready: false },
 ];
 
@@ -207,4 +207,39 @@ export const headerBar = {
   tryExample: "Try an example",
   ready: "Ready to download",
   loadedExample: "Example loaded.",
+};
+
+export const brandManual = {
+  title: "Brand manual",
+  intro: "Õhtuleht colours and logos. Click a colour to copy it. Download logos in the size you need.",
+  tabColours: "Colours",
+  tabLogos: "Logos",
+  formatLabel: "Copy colours as",
+  formatHint: "Your choice is remembered.",
+  exportCss: "Download CSS",
+  exportTailwind: "Download Tailwind",
+  exportJson: "Download JSON",
+  base: "Base",
+  whiteText: "White",
+  blackText: "Black",
+  copied: (v: string) => `Copied ${v}`,
+  copySwatch: (scale: string, step: string, v: string) => `Copy ${scale} ${step}: ${v}`,
+  contrastNote: "On each colour: the better of white or black text, the contrast ratio, and its WCAG level (AAA 7 or more, AA 4.5 or more).",
+  safeZone: "Include the safe zone",
+  safeZoneHint: (r: number) => `Clear space around the logo (${Math.round(r * 100)}% of its height). Shown as a dashed line.`,
+  pngSize: "PNG width",
+  pngSizeHint: "SVG stays sharp at any size. PNG is made at the width you choose; the height follows.",
+  customWidth: "Other width",
+  pngBackground: "PNG background",
+  bgTransparent: "Transparent",
+  bgWhite: "White",
+  bgBlack: "Black",
+  downloadAll: "Download everything (zip)",
+  downloadAllHint: "Every logo as SVG and PNG, with and without the safe zone.",
+  building: "Building...",
+  wordmarks: "Wordmark (the name)",
+  logomarks: "Logomark (the symbol)",
+  sizeInfo: (w: number, h: number) => `Artwork ${w} × ${h}`,
+  safeZonePad: (p: number) => `safe zone ${p} on each side`,
+  pngFailed: "Could not create the picture.",
 };

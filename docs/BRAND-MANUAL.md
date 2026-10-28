@@ -9,8 +9,8 @@ Colours and fonts come from the Figma file **Õhtuleht - Brand hub** (frame `212
 | Scale | Steps (50 to 950) | Base |
 |---|---|---|
 | Primary Red | `#FFF5F5 #FFEBEB #FFD6D6 #FFB8B8 #FF8F8F #FF6161 #F50000 #C70000 #A00303 #860909 #520000` | 600 `#F50000`: logos, CTAs, links, active states |
-| Secondary Yellow | `#FFF9D6 #FFEFA8 #FFDF42 #FAC500 #E0A600 #D68800 #C26800 #A74A02 #8D3B07 #70300A #471900` | 300 `#FAC500`: highlights and warnings |
-| Ink Gray | `#F7F7F8 #EFEFF1 #DFDFE2 #C9CACF #AFB1B6 #9799A0 #7D7E87 #67686F #545459 #464649 #2A2A2D` | 950 `#2A2A2D`: text and dark surfaces |
+| Secondary Yellow | `#FFF9D6 #FFEFA8 #FFDF42 #FAC500 #E0A600 #D68800 #C26800 #A74A02 #8D3B07 #70300A #471900` | Highlights, promos, premium content (no base step named in the hub) |
+| Ink Gray | `#F7F7F8 #EFEFF1 #DFDFE2 #C9CACF #AFB1B6 #9799A0 #7D7E87 #67686F #545459 #464649 #2A2A2D` | Text, borders, surfaces, backgrounds (no base step named in the hub) |
 
 | Role | Font | Weights |
 |---|---|---|
@@ -59,6 +59,30 @@ Fonts, weights, sizes and where each is used (desktop or mobile), with copyable 
 ## Ad formats reference
 
 Table of standard formats (1250x400, 600x500, 300x250...) with size, weight limit and notes.
+
+## Where it lives and what it does today
+
+- Data: `packages/brand/brand.json` (colours, logos, clear space, fonts) and `packages/brand/logos/*.svg`.
+- Page: **Brand manual** in the generator menu, with two tabs.
+- **Colours**: all three scales, 33 swatches. Click copies the colour as HEX, RGB, HSL, CSS variable or Tailwind class (choice remembered). Each swatch shows the better text colour (white or black), its contrast ratio and WCAG level. Buttons download `ohtuleht-colors.css`, a Tailwind `@theme` file and a JSON file.
+- **Logos**: six variants (wordmark red, white, black; logomark square, round, rounded square). Toggle **safe zone**; download each as SVG or PNG at 128 to 2048 px or any width from 16 to 8192; PNG background transparent, white or black; one zip with everything, with and without the safe zone.
+
+### Logo rules (from the hub)
+
+| Variant | Use |
+|---|---|
+| Wordmark, red | Primary. On pure white and light backgrounds (50 to 300), or pure black and dark (950) |
+| Wordmark, white | Any other contrasted background |
+| Wordmark, black | Single colour: print, embossing, single-ink |
+| Logomark (square, round, rounded square) | Favicon, app icon, social profile picture |
+
+**Safe zone (clear space).** The hub says: clear space is defined by the cap-height, about 8 px on a 32 px logo. The tool uses 25% of the logo's height on all four sides (`clearSpace.ratio` in `brand.json`). The hub's diagram draws the clear space as one full logo height, so this needs confirming with the brand owner; changing the ratio is one number.
+
+### Adding or changing a logo
+
+1. Export the SVG from Figma.
+2. `yarn workspace @ohtuleht/brand optimize-logo <input.svg> <name.svg>` (SVGO; keeps the viewBox, drops fixed sizes).
+3. Add the file to `brand.json` under `logos`.
 
 ## Data format (`brand.json`, draft)
 

@@ -8,7 +8,7 @@ A modular set of internal tools for the Õhtuleht newsroom and ad sales: banner 
 |---|---|---|
 | Banner generator | Build content-marketing banner zips (articles slider, static ad, image slider) without Swiper | Planned, Phase 1 |
 | Header bar | The 100% wide, 46 px bar for theme pages (iframe), html + css zip with embed code | Built ([docs](docs/HEADER-BAR.md)) |
-| Brand manual | Copy colours (HEX, RGB, HSL...), download logos (SVG, PNG, black, white) | Planned, Phase 0b |
+| Brand manual | Copy colours (HEX, RGB, HSL...), download logos (SVG, PNG, safe zone, sizes) | Colours and logos built ([docs](docs/BRAND-MANUAL.md)); typography and ad formats planned |
 | Article bookmarklet | Copy an article as a snippet from the live site | Exists (legacy), v2 planned |
 | Article API (Cloudflare Worker) | Fetch article title/image from a URL | Planned, Phase 2 |
 | Hosted banners + login | Banners served by URL, Microsoft login | Planned, Phase 3 |

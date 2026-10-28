@@ -1,0 +1,126 @@
+{
+  "v": 1,
+  "source": "Õhtuleht - Brand hub (Figma file Rj3ouvoH1d3YsRLTn0crxA, frame 212:333)",
+  "colors": [
+    {
+      "id": "red",
+      "name": "Primary Red",
+      "role": "The core brand red. Used for logos, CTAs, links, breaking indicators and active states.",
+      "base": 600,
+      "steps": {
+        "50": "#FFF5F5",
+        "100": "#FFEBEB",
+        "200": "#FFD6D6",
+        "300": "#FFB8B8",
+        "400": "#FF8F8F",
+        "500": "#FF6161",
+        "600": "#F50000",
+        "700": "#C70000",
+        "800": "#A00303",
+        "900": "#860909",
+        "950": "#520000"
+      }
+    },
+    {
+      "id": "yellow",
+      "name": "Secondary Yellow",
+      "role": "The highlight yellow for feature accents, highlights, subscription promos, paywall gates, subscription UI and premium content indicators.",
+      "steps": {
+        "50": "#FFF9D6",
+        "100": "#FFEFA8",
+        "200": "#FFDF42",
+        "300": "#FAC500",
+        "400": "#E0A600",
+        "500": "#D68800",
+        "600": "#C26800",
+        "700": "#A74A02",
+        "800": "#8D3B07",
+        "900": "#70300A",
+        "950": "#471900"
+      }
+    },
+    {
+      "id": "ink",
+      "name": "Ink Gray",
+      "role": "The ink gray scale for text, borders, surfaces and backgrounds.",
+      "steps": {
+        "50": "#F7F7F8",
+        "100": "#EFEFF1",
+        "200": "#DFDFE2",
+        "300": "#C9CACF",
+        "400": "#AFB1B6",
+        "500": "#9799A0",
+        "600": "#7D7E87",
+        "700": "#67686F",
+        "800": "#545459",
+        "900": "#464649",
+        "950": "#2A2A2D"
+      }
+    }
+  ],
+  "clearSpace": {
+    "ratio": 0.25,
+    "note": "Minimum clear space around a logo, as a share of the logo's height (brand hub: about 8 px on a 32 px logo). Confirm with the brand owner: the hub diagram draws it as one full logo height."
+  },
+  "logos": [
+    {
+      "id": "wordmark-red",
+      "family": "wordmark",
+      "name": "Wordmark, red",
+      "file": "wordmark-red.svg",
+      "width": 336,
+      "height": 64,
+      "usage": "Primary. On pure white and light backgrounds (Ink and Red steps 50 to 300), or on pure black and dark (950) backgrounds."
+    },
+    {
+      "id": "wordmark-white",
+      "family": "wordmark",
+      "name": "Wordmark, white",
+      "file": "wordmark-white.svg",
+      "width": 336,
+      "height": 64,
+      "usage": "Any other background with enough contrast, such as mid greys and reds."
+    },
+    {
+      "id": "wordmark-black",
+      "family": "wordmark",
+      "name": "Wordmark, black",
+      "file": "wordmark-black.svg",
+      "width": 336,
+      "height": 64,
+      "usage": "Single colour version for print, embossing or single-ink applications."
+    },
+    {
+      "id": "logomark-square",
+      "family": "logomark",
+      "name": "Logomark, square",
+      "file": "logomark-square.svg",
+      "width": 224,
+      "height": 224,
+      "usage": "Favicon, app icon or social media profile picture."
+    },
+    {
+      "id": "logomark-round",
+      "family": "logomark",
+      "name": "Logomark, round",
+      "file": "logomark-round.svg",
+      "width": 224,
+      "height": 224,
+      "usage": "Round avatars, for example social media profile pictures."
+    },
+    {
+      "id": "logomark-squircle",
+      "family": "logomark",
+      "name": "Logomark, rounded square",
+      "file": "logomark-squircle.svg",
+      "width": 224,
+      "height": 224,
+      "usage": "App icons with softly rounded corners."
+    }
+  ],
+  "fonts": [
+    { "family": "Fira Sans", "role": "Display: headlines, titles, pull quotes", "weights": [400, 500, 600] },
+    { "family": "Inter", "role": "Interface: body, labels, navigation, meta", "weights": [400, 500, 700] },
+    { "family": "DM Mono", "role": "Code, tokens, HEX values", "weights": [400, 500] }
+  ]
+}
