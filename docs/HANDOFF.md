@@ -91,6 +91,29 @@ Read CLAUDE.md and docs/HANDOFF.md. Build issue #35 (1250x400 with static ad). I
 | Brand hub (colours, fonts, logos) | `Rj3ouvoH1d3YsRLTn0crxA` | `212:333` (logo section frame `212:490`) |
 | Ohtuleht 3.0: header designs, page "Rubriigipäised" | `U2Uh9SCqFvHertL18t8nQc` | `83:311`; header `ikea-header-for-claude` = `809:9` |
 
+## Compact or new session?
+
+| | Compact | New session |
+|---|---|---|
+| What it does | Replaces the long chat with a short summary and continues in the same session | Starts empty |
+| What survives | The repo, `CLAUDE.md` (reloaded automatically), a rough summary of the chat | Only the repo and `CLAUDE.md` |
+| What is lost | Details: exact numbers, measurements, why a choice was made, the wording of your instructions | Everything in the chat |
+| Risk | The summary can be wrong or miss a detail, and later work builds on it | None, but you re-orient with the start prompt |
+| Best for | Continuing the same task in the middle | A new task, or after a merged PR |
+
+**Before you compact:**
+
+1. Make sure all work is committed and pushed (`git status` is clean, PRs are open or merged). Nothing important should live only in the chat.
+2. If something matters and is not in the repo (a decision, a hex colour, an open question), ask the AI to write it into `docs/HANDOFF.md` first.
+
+**After you compact**, paste one short message so the AI re-checks reality instead of trusting the summary:
+
+```
+We just compacted. Read CLAUDE.md and docs/HANDOFF.md, run `git status` and `gh pr list`, and tell me in 5 lines what is done and what you think the next step is. Do not start building until I confirm.
+```
+
+Dev servers keep running and the repo is untouched. Compacting does not change files.
+
 ## Session hygiene
 
 - Start a **new session** (or Compact) at each natural break: after a merged PR, or when the AI starts re-explaining things. The repo carries the memory.
