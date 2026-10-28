@@ -40,7 +40,7 @@ export function ContentMarketingHome({ onCreate, onUpload }: { onCreate: (typeId
               <Badge variant="outline">{b.device}</Badge>
             </CardContent>
             <CardFooter className="mt-auto">
-              <Button disabled={!b.ready} onClick={() => onCreate(b.id)}>
+              <Button variant={b.ready ? "default" : "secondary"} disabled={!b.ready} onClick={() => onCreate(b.id)}>
                 {b.ready ? t.create : t.soon}
               </Button>
             </CardFooter>

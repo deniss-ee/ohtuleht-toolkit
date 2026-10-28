@@ -1,14 +1,15 @@
 import { useEffect, useRef } from "react";
-import { Bookmark, CircleHelp, Copy } from "lucide-react";
+import { Bookmark, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { editor as t } from "@/content";
 import { bookmarkletHref, bookmarkletText } from "@/lib/bookmarklet";
 
 // How to get article snippets: install the bookmark once, click it on every article.
-export function BookmarkletHelp() {
-  const link = useRef<HTMLAnchorElement>(null);
+// Controlled from outside so the guide, the articles box and the top bar can all open it.
+export function BookmarkletDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+  const link = useRef<HTMLAnchorElement | null>(null);
   // React blocks "javascript:" in href props, so the bookmark link is set directly on the element.
   const attach = (el: HTMLAnchorElement | null) => {
     link.current = el;
@@ -17,12 +18,7 @@ export function BookmarkletHelp() {
   useEffect(() => link.current?.setAttribute("href", bookmarkletHref));
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="link" size="sm" className="h-auto gap-1.5 p-0">
-          <CircleHelp className="size-4" /> {t.howToSnippet}
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t.bookmarkTitle}</DialogTitle>
@@ -57,6 +53,9 @@ export function BookmarkletHelp() {
           <li>{t.bookmarkStep2}</li>
           <li>{t.bookmarkStep3}</li>
         </ol>
+        <Button className="w-full" onClick={() => onOpenChange(false)}>
+          {t.bookmarkDone}
+        </Button>
       </DialogContent>
     </Dialog>
   );

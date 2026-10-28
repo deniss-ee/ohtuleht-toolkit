@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { resolveTheme } from "@ohtuleht/templates";
 import type { ArticlesBannerConfig, ThemeColors } from "@ohtuleht/templates";
 import { ArticleList } from "@/components/editor/ArticleList";
+import { BookmarkletDialog } from "@/components/editor/BookmarkletHelp";
 import { AutoColorField, ColorField } from "@/components/editor/ColorField";
 import { Preview } from "@/components/editor/Preview";
 import { Button } from "@/components/ui/button";
@@ -63,7 +64,7 @@ function ColorSet({ title, mode, config, onChange }: { title: string; mode: "lig
   const colors = config.theme[mode];
   const resolved = resolveTheme(config, mode);
   const set = (key: keyof ThemeColors) => (hex: string) => onChange({ ...colors, [key]: hex });
-  const reset = (key: "badge" | "headerBg") => () => {
+  const reset = (key: "badge" | "headerBg" | "headerText") => () => {
     const next = { ...colors };
     delete next[key];
     onChange(next);
@@ -76,6 +77,7 @@ function ColorSet({ title, mode, config, onChange }: { title: string; mode: "lig
       <ColorField label={t.colorHover} value={colors.hover} onChange={set("hover")} />
       <AutoColorField label={t.colorBadge} value={resolved.badge} custom={colors.badge !== undefined} onChange={set("badge")} onReset={reset("badge")} />
       <AutoColorField label={t.colorHeader} value={resolved.headerBg} custom={colors.headerBg !== undefined} onChange={set("headerBg")} onReset={reset("headerBg")} />
+      <AutoColorField label={t.colorHeaderText} value={resolved.headerText} custom={colors.headerText !== undefined} onChange={set("headerText")} onReset={reset("headerText")} />
     </div>
   );
 }
@@ -98,7 +100,7 @@ function HoverPill({ icon, label, tone, children }: { icon: ReactNode; label: st
   const hide = () => {
     timer.current = window.setTimeout(() => setOpen(false), 200);
   };
-  const colors = tone === "warn" ? "border-amber-500/60 bg-amber-500/10" : tone === "ok" ? "border-green-600/40 bg-green-600/10" : "";
+  const colors = tone === "warn" ? "border-yellow-400 bg-yellow-100/70 dark:bg-yellow-300/15" : tone === "ok" ? "border-green-600/40 bg-green-600/10" : "";
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -125,6 +127,7 @@ function goTo(id: string) {
 // Full-screen editor: covers the menu so the preview can use the whole width.
 export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChange: (d: Draft) => void; onBack: () => void }) {
   const [busy, setBusy] = useState(false);
+  const [bookmarkOpen, setBookmarkOpen] = useState(false);
   const [pinned, setPinned] = useState(() => window.innerHeight >= 800 && window.innerWidth >= 1000);
   const fileInput = useRef<HTMLInputElement>(null);
   const c = draft.config;
@@ -185,7 +188,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
         </HoverPill>
         <HoverPill
           tone={issues.length === 0 ? "ok" : "warn"}
-          icon={issues.length === 0 ? <CheckCircle2 className="size-3.5 text-green-600" /> : <TriangleAlert className="size-3.5 text-amber-600" />}
+          icon={issues.length === 0 ? <CheckCircle2 className="size-3.5 text-green-600" /> : <TriangleAlert className="size-3.5 text-yellow-600" />}
           label={issues.length === 0 ? t.ready : t.toFix(issues.length)}
         >
           {(close) =>
@@ -228,7 +231,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-[1282px] px-4">
           <div className={pinned ? "sticky top-0 z-20 -mx-4 border-b bg-background px-4 py-3" : "py-3"}>
-            <Preview draft={draft} pinned={pinned} onPin={setPinned} onAddArticles={() => goTo("paste")} onTryExample={loadExample} />
+            <Preview draft={draft} pinned={pinned} onPin={setPinned} onAddArticles={() => goTo("paste")} onTryExample={loadExample} onOpenBookmark={() => setBookmarkOpen(true)} />
           </div>
 
           <div className="space-y-4 pb-24 pt-4">
@@ -284,7 +287,9 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
               </Section>
             </div>
 
-            <ArticleList articles={c.articles} defaultBadge={c.badge} defaultColor={resolveTheme(c, "light").badge} onChange={(articles) => set({ articles })} />
+            <ArticleList articles={c.articles} defaultBadge={c.badge} defaultColor={resolveTheme(c, "light").badge} onChange={(articles) => set({ articles })} onOpenBookmark={() => setBookmarkOpen(true)} />
+
+            <BookmarkletDialog open={bookmarkOpen} onOpenChange={setBookmarkOpen} />
 
             <h2 className="pt-2 text-sm font-semibold text-muted-foreground">{t.advanced}</h2>
             <Collapsible title={t.colorsTitle} description={t.colorsHint}>

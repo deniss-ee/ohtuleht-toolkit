@@ -56,16 +56,28 @@ export function readableOn(color: string, background: string, minRatio = 4.5): s
   return towardsLight ? "#ffffff" : "#000000";
 }
 
+// Text colour for a coloured bar: whichever of a dark or a light tint of the bar's own hue reads best.
+// The tint (a little of the hue, very low saturation) looks softer than pure black or white.
+export function onColor(background: string): string {
+  const [h, s] = rgbToHsl(parseHex(background));
+  const tint = Math.min(s, 0.25);
+  const dark = toHex(hslToRgb([h, tint, 0.08]));
+  const light = toHex(hslToRgb([h, tint, 0.97]));
+  return contrast(dark, background) >= contrast(light, background) ? dark : light;
+}
+
 // Full colour set for one theme. The main colour fills in whatever the campaign did not set by hand:
 // header colour = main colour, label colour = main colour made readable on the background.
 export function resolveTheme(config: Pick<ArticlesBannerConfig, "primary" | "theme">, mode: "light" | "dark"): ResolvedTheme {
   const t = config.theme[mode];
+  const headerBg = t.headerBg ?? config.primary;
   return {
     bg: t.bg,
     text: t.text,
     hover: t.hover,
     primary: config.primary,
     badge: t.badge ?? readableOn(config.primary, t.bg),
-    headerBg: t.headerBg ?? config.primary,
+    headerBg,
+    headerText: t.headerText ?? onColor(headerBg),
   };
 }

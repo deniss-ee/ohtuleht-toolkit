@@ -7,6 +7,7 @@ export interface ThemeColors {
   hover: string; // title colour on hover
   badge?: string; // label colour; when empty, derived from the main colour so it stays readable
   headerBg?: string; // header colour; when empty, the main colour
+  headerText?: string; // text colour on a colour header; when empty, a tinted dark or light picked for contrast
 }
 
 // Every colour filled in (see resolveTheme).
@@ -17,6 +18,7 @@ export interface ResolvedTheme {
   primary: string;
   badge: string;
   headerBg: string;
+  headerText: string;
 }
 
 export interface ArticleItem {

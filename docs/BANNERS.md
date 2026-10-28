@@ -24,12 +24,16 @@ Reference: `content-marketing/st_KultuurSygis_2710-1250x400`, rebuilt without Sw
 | Part | Value |
 |---|---|
 | Banner width | Fixed 1248 px content in a 1250 px banner; never shrinks when the window is narrower |
-| Header | 46 px high, links to a campaign URL. Today: image or solid colour. Planned: text in a chosen font on a colour or image, picked in the generator |
+| Header | 46 px high, 6 px rounded corners, links to a campaign URL. Today: image or solid colour. Planned: text in a chosen font on a colour or image, picked in the generator |
 | Gap under header | 16 px |
 | Card image | 215 px high, 6 px radius, cover |
 | Badge | Over the image bottom-left. Campaign default text (usually "Sisuturundus") and colour; each article can override both |
 | Title | Fira Sans Condensed 700, 20/24, up to the card width |
 | Card gap | 16 px |
+
+**Colour header (Figma "ikea-header-for-claude", node 809:9 in the Ohtuleht 3.0 file)**
+
+Bar 1248x46 with 6 px corners, filled with the main colour. The campaign name is written on it: Fira Sans Condensed Bold, 16 px, line height 16 px, uppercase, 16 px from the left, vertically centred. The text colour is automatic (a tint of the bar's hue, dark or light, whichever reads better) and can be set by hand in Advanced, Colours. The Figma example is yellow `#FFDB00` with black text.
 
 **Behaviour**
 

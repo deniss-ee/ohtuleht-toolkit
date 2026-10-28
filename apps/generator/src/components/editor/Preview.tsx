@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { FlaskConical, Pin, PinOff, Plus } from "lucide-react";
+import { Bookmark, FlaskConical, Pin, PinOff, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { editor as t } from "@/content";
@@ -9,7 +9,7 @@ const W = 1250;
 const H = 400;
 
 // Shown instead of the banner until there is something to show: tells a new person what to do.
-function EmptyGuide({ onAddArticles, onTryExample }: { onAddArticles: () => void; onTryExample: () => void }) {
+function EmptyGuide({ onAddArticles, onTryExample, onOpenBookmark }: { onAddArticles: () => void; onTryExample: () => void; onOpenBookmark: () => void }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4 overflow-auto p-4 text-center">
       <div>
@@ -25,7 +25,10 @@ function EmptyGuide({ onAddArticles, onTryExample }: { onAddArticles: () => void
         ))}
       </ol>
       <div className="flex flex-wrap justify-center gap-2">
-        <Button className="gap-2" onClick={onAddArticles}>
+        <Button className="gap-2" onClick={onOpenBookmark}>
+          <Bookmark className="size-4" /> {t.emptySetupBookmark}
+        </Button>
+        <Button variant="outline" className="gap-2" onClick={onAddArticles}>
           <Plus className="size-4" /> {t.emptyGoArticles}
         </Button>
         <Button variant="outline" className="gap-2" onClick={onTryExample}>
@@ -44,12 +47,14 @@ export function Preview({
   onPin,
   onAddArticles,
   onTryExample,
+  onOpenBookmark,
 }: {
   draft: Draft;
   pinned: boolean;
   onPin: (v: boolean) => void;
   onAddArticles: () => void;
   onTryExample: () => void;
+  onOpenBookmark: () => void;
 }) {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [html, setHtml] = useState("");
@@ -98,7 +103,7 @@ export function Preview({
       </div>
       <div ref={box} className={empty ? "relative w-full overflow-hidden rounded-xl border border-dashed" : "relative w-full overflow-hidden"} style={{ height: Math.max(H * scale, empty ? 300 : 0) }}>
         {empty ? (
-          <EmptyGuide onAddArticles={onAddArticles} onTryExample={onTryExample} />
+          <EmptyGuide onAddArticles={onAddArticles} onTryExample={onTryExample} onOpenBookmark={onOpenBookmark} />
         ) : (
           <>
             {!loaded && <div className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">{t.previewLoading}</div>}

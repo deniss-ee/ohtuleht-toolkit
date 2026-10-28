@@ -14,7 +14,7 @@ const ARROW_LEFT = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'
 const ARROW_RIGHT = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 42 42'%3E%3Cpath fill='%23fff' d='M24.8 21l-9.2-9.2 2.8-2.8 12 12-12 12-2.8-2.8z'/%3E%3C/svg%3E";
 
 function themeVars(t: ResolvedTheme): string {
-  return `--bg:${t.bg};--text:${t.text};--primary:${t.primary};--badge:${t.badge};--hover:${t.hover};--header-bg:${t.headerBg}`;
+  return `--bg:${t.bg};--text:${t.text};--primary:${t.primary};--badge:${t.badge};--hover:${t.hover};--header-bg:${t.headerBg};--header-text:${t.headerText}`;
 }
 
 function css(config: ArticlesBannerConfig): string {
@@ -30,7 +30,9 @@ function css(config: ArticlesBannerConfig): string {
     'html,body{min-width:1248px;overflow:hidden;background:var(--bg);font-family:"Roboto",sans-serif;-webkit-font-smoothing:antialiased}' +
     // Fills the 1250 px ad frame; never narrower than 1248 px.
     ".banner{position:relative;width:100%;min-width:1248px;max-width:1250px}" +
-    `.header{display:block;height:46px;margin-bottom:${GAP}px;${header};cursor:pointer}` +
+    `.header{display:flex;align-items:center;height:46px;margin-bottom:${GAP}px;padding:0 16px;border-radius:6px;overflow:hidden;${header};cursor:pointer}` +
+    // Colour header (design: Figma "ikea-header-for-claude"): campaign name, Fira Sans Condensed Bold 16/16, uppercase, 16 px from the left.
+    '.header-title{overflow:hidden;color:var(--header-text);font:700 16px/16px "Fira Sans Condensed",sans-serif;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap}' +
     ".article{width:100%}" +
     ".img{position:relative;height:215px;border-radius:6px;background-position:center;background-size:cover}" +
     ".badge{position:absolute;bottom:-2px;left:0;padding:7px 5px 0 0;background:var(--bg);color:var(--badge);font-size:12px;font-weight:700;line-height:1;text-transform:capitalize}" +
@@ -59,7 +61,7 @@ function slide(a: ArticlesBannerConfig["articles"][number], defaultBadge: string
 export function renderArticles1250x400(config: ArticlesBannerConfig, assets: RuntimeAssets): string {
   const b = config.behavior;
   const delay = b.autoplay ? b.delayMs : 0;
-  const header = `<a class="header" role="link" tabindex="0" aria-label="${escapeHtml(config.campaign)}" onclick="${clickAttr(escapeJsInAttr(config.header.href))}"></a>`;
+  const header = `<a class="header" role="link" tabindex="0" aria-label="${escapeHtml(config.campaign)}" onclick="${clickAttr(escapeJsInAttr(config.header.href))}">${config.header.type === "color" ? `<span class="header-title">${escapeHtml(config.campaign)}</span>` : ""}</a>`;
   return (
     '<!doctype html><html lang="et"><head><meta charset="utf-8">' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +

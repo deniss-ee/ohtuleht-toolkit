@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, ClipboardPaste, ImageOff, Plus, Trash2 } from "lucide-react";
+import { Bookmark, ChevronDown, ChevronUp, ClipboardPaste, ImageOff, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import type { ArticleItem } from "@ohtuleht/templates";
 import { MIN_ARTICLES } from "@ohtuleht/templates";
@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { BookmarkletHelp } from "@/components/editor/BookmarkletHelp";
 import { editor as t } from "@/content";
 import { emptyArticle } from "@/lib/banner";
 import { parseSnippets } from "@/lib/snippets";
@@ -122,11 +121,13 @@ export function ArticleList({
   defaultBadge,
   defaultColor,
   onChange,
+  onOpenBookmark,
 }: {
   articles: ArticleItem[];
   defaultBadge: string;
   defaultColor: string;
   onChange: (next: ArticleItem[]) => void;
+  onOpenBookmark: () => void;
 }) {
   const [paste, setPaste] = useState("");
 
@@ -168,6 +169,13 @@ export function ArticleList({
         <CardDescription>{t.articlesHint(MIN_ARTICLES)}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 p-4">
+          <p className="max-w-xl text-sm">{t.firstTime}</p>
+          <Button className="gap-2" onClick={onOpenBookmark}>
+            <Bookmark className="size-4" /> {t.howToSnippet}
+          </Button>
+        </div>
+
         <div className="space-y-2 rounded-lg border border-dashed p-4">
           <Label htmlFor="paste">{t.pasteLabel}</Label>
           <Textarea id="paste" rows={3} value={paste} onChange={(e) => setPaste(e.target.value)} placeholder={t.pastePlaceholder} className="font-mono text-xs" />
@@ -175,7 +183,6 @@ export function ArticleList({
             <Button className="gap-2" disabled={!paste.trim()} onClick={addSnippets}>
               <ClipboardPaste className="size-4" /> {t.pasteButton}
             </Button>
-            <BookmarkletHelp />
           </div>
         </div>
 

@@ -2,6 +2,26 @@
 
 A static page in the toolkit where anyone can copy colours and download logos. All content comes from one data file, `packages/brand/brand.json`, so updates never need code changes.
 
+## Brand source (Figma)
+
+Colours and fonts come from the Figma file **Õhtuleht - Brand hub** (frame `212:333`, "manual-old"). The toolkit's own interface uses them as tokens in `apps/generator/src/index.css`.
+
+| Scale | Steps (50 to 950) | Base |
+|---|---|---|
+| Primary Red | `#FFF5F5 #FFEBEB #FFD6D6 #FFB8B8 #FF8F8F #FF6161 #F50000 #C70000 #A00303 #860909 #520000` | 600 `#F50000`: logos, CTAs, links, active states |
+| Secondary Yellow | `#FFF9D6 #FFEFA8 #FFDF42 #FAC500 #E0A600 #D68800 #C26800 #A74A02 #8D3B07 #70300A #471900` | 300 `#FAC500`: highlights and warnings |
+| Ink Gray | `#F7F7F8 #EFEFF1 #DFDFE2 #C9CACF #AFB1B6 #9799A0 #7D7E87 #67686F #545459 #464649 #2A2A2D` | 950 `#2A2A2D`: text and dark surfaces |
+
+| Role | Font | Weights |
+|---|---|---|
+| Display: headlines, titles, pull quotes | Fira Sans | 500, 600 (400 for H3) |
+| Interface: body, labels, navigation, meta | Inter | 400, 500, 700 |
+| Code, tokens, HEX values | DM Mono | 400, 500 |
+
+Interface mapping: light mode uses white surfaces, Ink 950 text, Ink 200 borders and Red 600 for actions; dark mode uses Ink 950 as the page, slightly lifted surfaces (a mix of Ink 950 and white) and Red 500 for actions. Sizes are not taken from the hub yet.
+
+Banners keep their own fonts (Fira Sans Condensed, Roboto) until the banner design says otherwise.
+
 ## Colours
 
 - Swatches grouped: primary, neutrals, accents, campaign presets. Each shows name and role.
