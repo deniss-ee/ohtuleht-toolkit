@@ -66,9 +66,11 @@ export function initSlider(root: HTMLElement): void {
   root.style.setProperty("--ol-visible", String(o.visible));
   root.style.setProperty("--ol-gap", o.gap + "px");
 
-  // Everything fits: plain row, no arrows, no autoplay.
+  // Everything fits: plain row, no arrows, no autoplay. The cards share the whole width
+  // (2 articles = two wide cards), instead of keeping the 4-column width and leaving a gap.
   if (n <= o.visible) {
     root.classList.add("ol-static");
+    root.style.setProperty("--ol-visible", String(n));
     return;
   }
 
@@ -100,9 +102,12 @@ export function initSlider(root: HTMLElement): void {
   let settleTimer = 0;
   let paused = false;
 
+  // Distance between two neighbouring slides. Measured as a difference of fractional positions:
+  // slide widths are often fractional (e.g. 300.5 px), and offsetWidth would round them and drift.
   const measure = () => {
-    const first = track.firstElementChild as HTMLElement;
-    step = first.offsetWidth + o.gap;
+    const a = track.children[0] as HTMLElement;
+    const b = track.children[1] as HTMLElement;
+    step = b.getBoundingClientRect().left - a.getBoundingClientRect().left;
   };
   const place = (x: number, animate: boolean) => {
     track.style.transition = animate && speed ? `transform ${speed}ms ease` : "none";

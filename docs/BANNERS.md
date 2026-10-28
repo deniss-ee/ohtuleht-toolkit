@@ -24,12 +24,16 @@ Reference: `content-marketing/st_KultuurSygis_2710-1250x400`, rebuilt without Sw
 | Part | Value |
 |---|---|
 | Banner width | Fixed 1248 px content in a 1250 px banner; never shrinks when the window is narrower |
-| Header | 46 px high, links to a campaign URL. Today: image or solid colour. Planned: text in a chosen font on a colour or image, picked in the generator |
+| Header | 46 px high, 6 px rounded corners, links to a campaign URL. Today: image or solid colour. Planned: text in a chosen font on a colour or image, picked in the generator |
 | Gap under header | 16 px |
 | Card image | 215 px high, 6 px radius, cover |
-| Badge | Over the image bottom-left, text per campaign (default "Sisuturundus") |
+| Badge | Over the image bottom-left. Campaign default text (usually "Sisuturundus") and colour; each article can override both |
 | Title | Fira Sans Condensed 700, 20/24, up to the card width |
 | Card gap | 16 px |
+
+**Header (Figma "ikea-header-for-claude", node 809:9 in the Ohtuleht 3.0 file)**
+
+Bar 1248x46 with 6 px corners, filled with the main colour or with a background picture (picture without text, best 2496x92, scaled to cover). The campaign name is always written on it: Fira Sans Condensed Bold, 16 px, line height 16 px, uppercase, 16 px from the left, vertically centred. The text colour is automatic (a tint of the bar's hue, or of the picture's average colour on the left third, dark or light, whichever reads better) and can be set by hand in Advanced, Colours. The Figma example is yellow `#FFDB00` with black text.
 
 **Behaviour**
 
@@ -38,14 +42,14 @@ Reference: `content-marketing/st_KultuurSygis_2710-1250x400`, rebuilt without Sw
 | Minimum articles | 2 (generator blocks export below this) |
 | Visible at once | up to 4 |
 | More than 4 | Arrows appear; slider with autoplay and infinite loop |
-| 4 or fewer | Static row, no arrows, no autoplay |
+| 4 or fewer | Static row; the cards share the full width (2 articles = two wide cards); no arrows, no autoplay |
 | Shuffle | On by default (checkbox in generator). Runs in the banner on each view |
 | Autoplay | Default delay 2500 ms, speed 250 ms; editable |
 | Click | Whole card opens the article via ClickTag; header opens the header link |
 
 **Per-campaign colours (all editable, light and dark)**
 
-Badge colour, hover colour, header background (image or colour), title colour, page background. The Kultuurisügis values (`#9500b2`, `#e3000f`, `#003784`) are only this campaign's preset.
+Badge colour (and per-article badge colour), hover colour (red `#e3000f` by default: titles always turn red on hover), header background (image or colour), title colour, page background. The Kultuurisügis values (`#9500b2`, `#e3000f`, `#003784`) are only this campaign's preset.
 
 ## Format 2: Articles 1250x400 with static ad
 

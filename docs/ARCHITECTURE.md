@@ -53,20 +53,21 @@ Uploading the zip into the generator reads this block and restores the form exac
   "v": 1,
   "format": "articles-1250x400",
   "campaign": "Kultuurisügis 2710",
-  "header": { "type": "image", "src": "header.webp", "href": "https://www.ohtuleht.ee/teemalehed/..." },
+  "primary": "#9500b2",
+  "header": { "type": "image", "src": "header.webp", "avg": "#8a0aa6", "href": "https://www.ohtuleht.ee/teemalehed/..." },
   "theme": {
-    "light": { "badge": "#9500b2", "hover": "#e3000f", "headerBg": "#003784", "text": "#272727", "bg": "#ffffff" },
-    "dark":  { "badge": "#9500b2", "hover": "#e3000f", "headerBg": "#003784", "text": "#ffffff", "bg": "#0f0f0f" }
+    "light": { "bg": "#ffffff", "text": "#272727", "hover": "#e3000f" },
+    "dark":  { "bg": "#0f0f0f", "text": "#ffffff", "hover": "#e3000f" }
   },
   "badge": "Sisuturundus",
   "behavior": { "shuffle": true, "autoplay": true, "delayMs": 2500, "speedMs": 250, "loop": true },
   "articles": [
-    { "url": "https://www.ohtuleht.ee/1169772/", "title": "...", "image": "https://p.ohtuleht.ee/webp/54/i/2026/10/26/t1ovwidw.aju.jpg" }
+    { "url": "https://www.ohtuleht.ee/1169772/", "title": "...", "image": "https://p.ohtuleht.ee/webp/54/i/2026/10/26/t1ovwidw.aju.jpg", "badge": "Kontsert", "badgeColor": "#0a7a3d" }
   ]
 }
 ```
 
-Colours are per campaign. The values above are only the Kultuurisügis preset. Fields are validated by a schema in `packages/core`.
+The main colour `primary` drives the header, the arrows and the default label colour. In each theme, `badge` (label colour) and `headerBg` are optional overrides; when empty, the label colour is the main colour automatically lightened or darkened until it is readable on that theme's background (contrast 4.5:1), and the header is the main colour. Each article may carry its own `badge` text and `badgeColor`; without them the campaign `badge` and theme colour apply. Colours are per campaign. The values above are only the Kultuurisügis preset. Fields are validated by a schema in `packages/core`.
 
 ## ClickTag
 

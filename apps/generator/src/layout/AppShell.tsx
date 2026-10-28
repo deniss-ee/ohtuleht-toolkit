@@ -24,7 +24,7 @@ function NavButton({ item, active, onSelect }: { item: NavItem; active: boolean;
   );
 }
 
-function ThemeToggle() {
+export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
   const dark = resolvedTheme === "dark";
   return (
@@ -39,7 +39,7 @@ export function AppShell({ page, onNavigate, children }: { page: PageId; onNavig
   return (
     <div className="flex min-h-svh flex-col">
       <header className="flex h-14 items-center justify-between border-b px-4">
-        <span className="font-semibold">Õhtuleht Toolkit</span>
+        <span className="font-heading text-lg font-semibold">Õhtuleht Toolkit</span>
         <ThemeToggle />
       </header>
       <div className="flex flex-1 flex-col md:flex-row">

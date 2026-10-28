@@ -1,13 +1,60 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
+
+/* Brand fonts (Õhtuleht Brand hub): Fira Sans for headlines, Inter for body and interface, DM Mono for code and HEX values. */
+@import "@fontsource-variable/inter";
+@import "@fontsource/fira-sans/400.css";
+@import "@fontsource/fira-sans/500.css";
+@import "@fontsource/fira-sans/600.css";
+@import "@fontsource/dm-mono/400.css";
+@import "@fontsource/dm-mono/500.css";
 
 @custom-variant dark (&:is(.dark *));
 
+/* Brand colour scales (Õhtuleht Brand hub, 11 steps each). Base brand red is step 600. */
+@theme {
+    --color-red-50: #fff5f5;
+    --color-red-100: #ffebeb;
+    --color-red-200: #ffd6d6;
+    --color-red-300: #ffb8b8;
+    --color-red-400: #ff8f8f;
+    --color-red-500: #ff6161;
+    --color-red-600: #f50000;
+    --color-red-700: #c70000;
+    --color-red-800: #a00303;
+    --color-red-900: #860909;
+    --color-red-950: #520000;
+
+    --color-yellow-50: #fff9d6;
+    --color-yellow-100: #ffefa8;
+    --color-yellow-200: #ffdf42;
+    --color-yellow-300: #fac500;
+    --color-yellow-400: #e0a600;
+    --color-yellow-500: #d68800;
+    --color-yellow-600: #c26800;
+    --color-yellow-700: #a74a02;
+    --color-yellow-800: #8d3b07;
+    --color-yellow-900: #70300a;
+    --color-yellow-950: #471900;
+
+    --color-ink-50: #f7f7f8;
+    --color-ink-100: #efeff1;
+    --color-ink-200: #dfdfe2;
+    --color-ink-300: #c9cacf;
+    --color-ink-400: #afb1b6;
+    --color-ink-500: #9799a0;
+    --color-ink-600: #7d7e87;
+    --color-ink-700: #67686f;
+    --color-ink-800: #545459;
+    --color-ink-900: #464649;
+    --color-ink-950: #2a2a2d;
+}
+
 @theme inline {
-    --font-heading: var(--font-sans);
-    --font-sans: 'Geist Variable', sans-serif;
+    --font-heading: "Fira Sans", "Inter Variable", system-ui, sans-serif;
+    --font-sans: "Inter Variable", system-ui, sans-serif;
+    --font-mono: "DM Mono", ui-monospace, monospace;
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -48,73 +95,76 @@
     --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Interface colours. Light: white surfaces, Ink Gray text and borders, Primary Red for actions and active states. */
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
+    --background: #ffffff;
+    --foreground: var(--color-ink-950);
+    --card: #ffffff;
+    --card-foreground: var(--color-ink-950);
+    --popover: #ffffff;
+    --popover-foreground: var(--color-ink-950);
+    --primary: var(--color-red-600);
+    --primary-foreground: #ffffff;
+    --secondary: var(--color-ink-100);
+    --secondary-foreground: var(--color-ink-950);
+    --muted: var(--color-ink-100);
+    --muted-foreground: var(--color-ink-700);
+    --accent: var(--color-ink-100);
+    --accent-foreground: var(--color-ink-950);
+    --destructive: var(--color-red-700);
+    --border: var(--color-ink-200);
+    --input: var(--color-ink-300);
+    --ring: var(--color-red-500);
+    --chart-1: var(--color-red-600);
+    --chart-2: var(--color-yellow-300);
+    --chart-3: var(--color-ink-600);
+    --chart-4: var(--color-red-300);
+    --chart-5: var(--color-ink-900);
     --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    --sidebar: var(--color-ink-50);
+    --sidebar-foreground: var(--color-ink-950);
+    --sidebar-primary: var(--color-red-600);
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: var(--color-ink-100);
+    --sidebar-accent-foreground: var(--color-ink-950);
+    --sidebar-border: var(--color-ink-200);
+    --sidebar-ring: var(--color-red-500);
 }
 
+/* Dark: near-black surfaces (Ink Gray 950 mixed with black), Ink Gray 950 and 900 for borders and raised parts.
+   Buttons stay the brand red 600 in both themes. */
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    --background: color-mix(in oklab, var(--color-ink-950) 40%, black);
+    --foreground: var(--color-ink-50);
+    --card: color-mix(in oklab, var(--color-ink-950) 55%, black);
+    --card-foreground: var(--color-ink-50);
+    --popover: color-mix(in oklab, var(--color-ink-950) 65%, black);
+    --popover-foreground: var(--color-ink-50);
+    --primary: var(--color-red-600);
+    --primary-foreground: #ffffff;
+    --secondary: var(--color-ink-950);
+    --secondary-foreground: var(--color-ink-50);
+    --muted: color-mix(in oklab, var(--color-ink-950) 60%, black);
+    --muted-foreground: var(--color-ink-400);
+    --accent: var(--color-ink-950);
+    --accent-foreground: var(--color-ink-50);
+    --destructive: var(--color-red-400);
+    --border: color-mix(in oklab, var(--color-ink-950) 85%, white 0%);
+    --input: var(--color-ink-900);
+    --ring: var(--color-red-500);
+    --chart-1: var(--color-red-600);
+    --chart-2: var(--color-yellow-300);
+    --chart-3: var(--color-ink-400);
+    --chart-4: var(--color-red-300);
+    --chart-5: var(--color-ink-200);
+    --sidebar: color-mix(in oklab, var(--color-ink-950) 55%, black);
+    --sidebar-foreground: var(--color-ink-50);
+    --sidebar-primary: var(--color-red-600);
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: var(--color-ink-950);
+    --sidebar-accent-foreground: var(--color-ink-50);
+    --sidebar-border: var(--color-ink-950);
+    --sidebar-ring: var(--color-red-500);
 }
 
 @layer base {
@@ -126,5 +176,9 @@
     }
   html {
     @apply font-sans;
+    }
+  /* Headlines use the display font; everything else stays Inter. */
+  h1, h2, h3, h4 {
+    font-family: var(--font-heading);
     }
 }
