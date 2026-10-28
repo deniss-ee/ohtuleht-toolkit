@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import type { ArticleItem } from "@ohtuleht/templates";
 import { MIN_ARTICLES } from "@ohtuleht/templates";
 import { Button } from "@/components/ui/button";
+import { ColorPicker } from "@/components/editor/ColorPicker";
 import { IconChip } from "@/components/editor/IconChip";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -98,13 +99,7 @@ function ArticleRow({
             <div className="space-y-1.5">
               <Label htmlFor={`${id}-color`}>{t.badgeColor}</Label>
               <div className="flex items-center gap-2">
-                <input
-                  id={`${id}-color`}
-                  type="color"
-                  value={article.badgeColor || defaultColor}
-                  onChange={(e) => onPatch({ badgeColor: e.target.value })}
-                  className="h-9 w-12 cursor-pointer rounded-md border bg-transparent p-1"
-                />
+                <ColorPicker label={t.badgeColor} value={article.badgeColor || defaultColor} onChange={(hex) => onPatch({ badgeColor: hex })} />
                 <Button variant="ghost" size="sm" disabled={!article.badgeColor} onClick={() => onPatch({ badgeColor: undefined })}>
                   {t.useDefault}
                 </Button>

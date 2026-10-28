@@ -42,7 +42,8 @@ export function renderHeaderFiles(d: HeaderDraft) {
 export function renderHeaderPreview(d: HeaderDraft, id: number): string {
   const config: HeaderBarConfig = { ...d.config, picture: d.picture ? { src: d.picture.dataUrl, avg: d.picture.avg } : undefined };
   const { html, css } = renderHeaderBar(config);
-  return html.replace('<link href="style.css" rel="stylesheet" />', `<style>${css}</style>`).replace("</body>", readySignal(id) + "</body>");
+  // In the editor the page behind the bar is transparent, so no grey shows around the rounded corners.
+  return html.replace('<link href="style.css" rel="stylesheet" />', `<style>${css}html,body{background:transparent!important}</style>`).replace("</body>", readySignal(id) + "</body>");
 }
 
 export async function fileToPicture(file: File): Promise<HeaderFile> {

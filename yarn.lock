@@ -2718,6 +2718,11 @@ radix-ui@^1.8.1:
     "@radix-ui/react-use-size" "1.1.5"
     "@radix-ui/react-visually-hidden" "1.2.13"
 
+react-colorful@^5.8.1:
+  version "5.8.1"
+  resolved "https://registry.yarnpkg.com/react-colorful/-/react-colorful-5.8.1.tgz#a6ef2a3946e6903883b142720dda80c72f24267f"
+  integrity sha512-oz68bhsnFWnpDf1ZR8daiQbYpXUnM2h2J6hl9Zg2rTpM/DU6vCqe1E+CpqmqLnJucMZetHZeifSAfJ+geN9lcA==
+
 react-dom@^19.3.1:
   version "19.3.1"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-19.3.1.tgz#b384c53cfcbe9c2a5d09d863b98455de9d68afe2"

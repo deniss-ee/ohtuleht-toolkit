@@ -1,4 +1,5 @@
 import { useEffect, useId, useState } from "react";
+import { ColorPicker } from "@/components/editor/ColorPicker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { editor as t } from "@/content";
@@ -14,13 +15,7 @@ export function ColorField({ label, value, onChange }: { label: string; value: s
     <div className="space-y-1.5">
       <Label htmlFor={id}>{label}</Label>
       <div className="flex gap-2">
-        <input
-          type="color"
-          aria-label={`${label} picker`}
-          value={HEX.test(value) ? value : "#000000"}
-          onChange={(e) => onChange(e.target.value)}
-          className="h-9 w-12 shrink-0 cursor-pointer rounded-md border bg-transparent p-1"
-        />
+        <ColorPicker label={label} value={value} onChange={onChange} />
         <Input
           id={id}
           value={text}

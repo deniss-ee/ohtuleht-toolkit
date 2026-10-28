@@ -59,8 +59,8 @@
     }
   ],
   "clearSpace": {
-    "ratio": 0.25,
-    "note": "Minimum clear space around a logo, as a share of the logo's height (brand hub: about 8 px on a 32 px logo). Confirm with the brand owner: the hub diagram draws it as one full logo height."
+    "ratio": 1,
+    "note": "Minimum clear space around a logo: one full logo height on every side (brand hub diagram: a 64 px tall logo gets 64 px on each side)."
   },
   "logos": [
     {

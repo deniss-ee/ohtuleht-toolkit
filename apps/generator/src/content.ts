@@ -177,7 +177,7 @@ export const headerBar = {
   desktop: "Computer (1248 px)",
   tablet: "Tablet (768 px)",
   phone: "Phone (375 px)",
-  previewNote: "The bar fills the whole width of the page, so it is shown at three widths. Corners are rounded on wide screens only.",
+  previewNote: "The bar fills the whole width of the page, so it is shown at three widths.",
   barTitle: "The bar",
   barHint: "Text, link and colour.",
   label: "Text on the bar",

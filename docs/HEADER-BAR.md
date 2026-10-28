@@ -26,7 +26,7 @@ The preview shows the bar at 1248, 768 and 375 px wide.
 | `style.css` | CSS variables (`--banner-background`, `--banner-text-color`, `--banner-background-image`...), same as the live file |
 | `bg.<ext>` | The picture, when used |
 
-Behaviour (same as the live bar): 16 px side padding, Fira Sans Condensed 700 16 px uppercase, 6 px rounded corners from 1023 px wide, page behind the bar is `#f4f4f4` (`#0f0f0f` in dark mode).
+Behaviour: 16 px side padding, Fira Sans Condensed 700 16 px uppercase, 6 px rounded corners at every width, page behind the bar `#f4f4f4` (`#0f0f0f` in dark mode). The live bar rounds its corners only from 1023 px wide; this tool rounds them everywhere.
 
 ## Put it on the site
 

@@ -76,7 +76,7 @@ Table of standard formats (1250x400, 600x500, 300x250...) with size, weight limi
 | Wordmark, black | Single colour: print, embossing, single-ink |
 | Logomark (square, round, rounded square) | Favicon, app icon, social profile picture |
 
-**Safe zone (clear space).** The hub says: clear space is defined by the cap-height, about 8 px on a 32 px logo. The tool uses 25% of the logo's height on all four sides (`clearSpace.ratio` in `brand.json`). The hub's diagram draws the clear space as one full logo height, so this needs confirming with the brand owner; changing the ratio is one number.
+**Safe zone (clear space).** One full logo height on every side, as drawn in the hub's diagram (a 64 px tall logo gets 64 px on each side). Set by `clearSpace.ratio` (1) in `brand.json`. The hub's text mentions about 8 px on a 32 px logo, which does not match its diagram; the diagram is followed.
 
 ### Adding or changing a logo
 

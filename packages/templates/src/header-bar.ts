@@ -72,16 +72,12 @@ body {
   background-position: left;
   background-size: cover;
   background-repeat: no-repeat;
+  border-radius: 6px;
 }
 .banner__label {
   font: 700 var(--banner-font-size) / 1 var(--banner-font-family);
   text-transform: uppercase;
   color: inherit;
-}
-@media (min-width: 1023px) {
-  .banner {
-    border-radius: 6px;
-  }
 }
 @media (prefers-color-scheme: dark) {
   body,
