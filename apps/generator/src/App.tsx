@@ -1,9 +1,21 @@
-// Placeholder shell. The real start screen is issue "Generator app shell and start screen".
+import { useState } from "react";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { AppShell } from "@/layout/AppShell";
+import { ContentMarketingHome } from "@/pages/ContentMarketingHome";
+import type { PageId } from "@/content";
+
 export function App() {
+  const [page, setPage] = useState<PageId>("content");
   return (
-    <main className="mx-auto max-w-3xl p-4">
-      <h1 className="text-2xl font-bold">Banner generator</h1>
-      <p className="mt-2 text-neutral-600">Scaffold works. Features come in later issues.</p>
-    </main>
+    <ThemeProvider>
+      <TooltipProvider>
+        <AppShell page={page} onNavigate={setPage}>
+          {page === "content" && <ContentMarketingHome />}
+        </AppShell>
+        <Toaster />
+      </TooltipProvider>
+    </ThemeProvider>
   );
 }
