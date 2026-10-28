@@ -18,6 +18,8 @@ Colours and fonts come from the Figma file **Õhtuleht - Brand hub** (frame `212
 | Interface: body, labels, navigation, meta | Inter | 400, 500, 700 |
 | Code, tokens, HEX values | DM Mono | 400, 500 |
 
+**Text on colours (brand rule):** on every scale, steps 50 to 500 take black text and steps 600 and up take white text. The Brand manual swatches, the interface buttons (white on red 600), the generated banner header and the header bar all follow it. For colours that are not brand colours, the text colour is picked automatically for contrast.
+
 Interface mapping: light mode uses white surfaces, Ink 950 text, Ink 200 borders and Red 600 for actions; dark mode uses Ink 950 as the page, slightly lifted surfaces (a mix of Ink 950 and white) and Red 500 for actions. Sizes are not taken from the hub yet.
 
 Banners keep their own fonts (Fira Sans Condensed, Roboto) until the banner design says otherwise.

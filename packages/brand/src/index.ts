@@ -84,8 +84,13 @@ export function contrastRatio(a: string, b: string): number {
 }
 
 // Plain-language WCAG level for normal-size text.
-export function wcagLevel(ratio: number): "AAA" | "AA" | "Fail" {
-  return ratio >= 7 ? "AAA" : ratio >= 4.5 ? "AA" : "Fail";
+export function wcagLevel(ratio: number): "AAA" | "AA" | "AA large" | "Fail" {
+  return ratio >= 7 ? "AAA" : ratio >= 4.5 ? "AA" : ratio >= 3 ? "AA large" : "Fail";
+}
+
+// Brand rule: on the colour steps 50 to 500 the text is black, from 600 up it is white.
+export function textOnStep(step: string | number): "white" | "black" {
+  return Number(step) >= 600 ? "white" : "black";
 }
 
 // ---- token export ----

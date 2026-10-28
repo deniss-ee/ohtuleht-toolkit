@@ -224,7 +224,7 @@ export const brandManual = {
   blackText: "Black",
   copied: (v: string) => `Copied ${v}`,
   copySwatch: (scale: string, step: string, v: string) => `Copy ${scale} ${step}: ${v}`,
-  contrastNote: "On each colour: the better of white or black text, the contrast ratio, and its WCAG level (AAA 7 or more, AA 4.5 or more).",
+  contrastNote: "Text on each colour follows the brand rule: black on steps 50 to 500, white from 600 up. Shown with its contrast ratio and WCAG level (AAA 7 or more, AA 4.5 or more, AA large 3 or more).",
   safeZone: "Include the safe zone",
   safeZoneHint: (r: number) => `Clear space around the logo (${Math.round(r * 100)}% of its height). Shown as a dashed line.`,
   pngSize: "PNG width",

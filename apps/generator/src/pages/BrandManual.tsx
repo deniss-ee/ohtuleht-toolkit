@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Copy, Download, FileArchive, Palette, Shapes } from "lucide-react";
 import { toast } from "sonner";
-import { brand, contrastRatio, formatColor, safeZone, tokensCss, tokensJson, tokensTailwind, wcagLevel, type ColorFormat, type LogoVariant } from "@ohtuleht/brand";
+import { brand, contrastRatio, formatColor, safeZone, textOnStep, tokensCss, tokensJson, tokensTailwind, wcagLevel, type ColorFormat, type LogoVariant } from "@ohtuleht/brand";
 import { IconChip } from "@/components/editor/IconChip";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -54,10 +54,9 @@ async function copy(text: string) {
 // ---------- Colours ----------
 
 function Swatch({ scaleId, step, hex, base, format }: { scaleId: string; step: string; hex: string; base: boolean; format: ColorFormat }) {
-  const white = contrastRatio(hex, "#ffffff");
-  const black = contrastRatio(hex, "#000000");
-  const useWhite = white >= black;
-  const ratio = useWhite ? white : black;
+  // Brand rule: black text on steps 50 to 500, white text from 600 up.
+  const useWhite = textOnStep(step) === "white";
+  const ratio = contrastRatio(hex, useWhite ? "#ffffff" : "#000000");
   const level = wcagLevel(ratio);
   const value = formatColor(scaleId, step, hex, format);
   return (
