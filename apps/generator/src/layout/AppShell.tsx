@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { nav, type NavItem, type PageId } from "@/content";
 
-const icons = { generator: LayoutTemplate, brand: Palette, tasks: ListChecks } satisfies Record<PageId, unknown>;
+const icons = { content: LayoutTemplate, brand: Palette, tasks: ListChecks } satisfies Record<PageId, unknown>;
 
 function NavButton({ item, active, onSelect }: { item: NavItem; active: boolean; onSelect: (id: PageId) => void }) {
   const Icon = icons[item.id];

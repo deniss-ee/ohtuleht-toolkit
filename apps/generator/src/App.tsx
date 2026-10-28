@@ -3,16 +3,16 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppShell } from "@/layout/AppShell";
-import { GeneratorHome } from "@/pages/GeneratorHome";
+import { ContentMarketingHome } from "@/pages/ContentMarketingHome";
 import type { PageId } from "@/content";
 
 export function App() {
-  const [page, setPage] = useState<PageId>("generator");
+  const [page, setPage] = useState<PageId>("content");
   return (
     <ThemeProvider>
       <TooltipProvider>
         <AppShell page={page} onNavigate={setPage}>
-          {page === "generator" && <GeneratorHome />}
+          {page === "content" && <ContentMarketingHome />}
         </AppShell>
         <Toaster />
       </TooltipProvider>
