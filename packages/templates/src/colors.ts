@@ -69,18 +69,21 @@ export function readableOn(color: string, background: string, minRatio = 4.5): s
 
 // Colours lighter than this (relative luminance) get dark text; everything else gets white.
 const WHITE_TEXT_MAX_LUMINANCE = 0.55;
+// HSL lightness above this counts as pale (light pink #ff9fe6 is about 0.81; saturated magenta #ff00dd is 0.5).
+const PALE_LIGHTNESS = 0.78;
 
 // Text colour for a coloured bar. On a brand colour the brand rule decides. Otherwise: white, or a dark tint of the bar's own hue when the colour is light.
 // The tint (a little of the hue, very low saturation) looks softer than pure black or white.
 export function onColor(background: string): string {
   const brandText = brandTextColor(background);
   if (brandText) return brandText;
-  const [h, s] = rgbToHsl(parseHex(background));
+  const [h, s, l] = rgbToHsl(parseHex(background));
   const tint = Math.min(s, 0.25);
   const dark = toHex(hslToRgb([h, tint, 0.08]));
   // White text unless the colour is really light. Mid and saturated colours (for example magenta #ff00dd)
   // get white even where black would measure slightly better: that is the brand owner's choice.
-  return luminance(parseHex(background)) > WHITE_TEXT_MAX_LUMINANCE ? dark : "#ffffff";
+  // Dark text on bright colours (yellow, lime) and on pale ones (light pink, pastel blue); white otherwise.
+  return luminance(parseHex(background)) > WHITE_TEXT_MAX_LUMINANCE || l > PALE_LIGHTNESS ? dark : "#ffffff";
 }
 
 // Full colour set for one theme. The main colour fills in whatever the campaign did not set by hand:

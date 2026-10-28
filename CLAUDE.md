@@ -19,7 +19,7 @@ Internal toolkit for the Õhtuleht newsroom and ad sales. Modules so far: banner
 - Git: issue, branch from `develop`, PR into `develop`, squash merge. `main` is for releases. Branch names `feat/<issue>-slug`. Merge only when the user says so. Commits end with the Co-Authored-By line given by the session.
 - Check current docs and versions of libraries before using them. Banners have **zero dependencies**; the generator app may use libraries.
 - All UI text lives in `apps/generator/src/content.ts` (English now, Estonian later). Banner text is Estonian.
-- **Brand text rule**: on brand colours, steps 50 to 500 get black text, 600 and up get white (`brand.json` is the single source). Other colours: white unless the colour is light (luminance above 0.55). Buttons use brand red 600 only.
+- **Brand text rule**: on brand colours, steps 50 to 500 get black text, 600 and up get white (`brand.json` is the single source). Other colours: white unless the colour is light (luminance above 0.55 or HSL lightness above 0.78). Buttons use brand red 600 only.
 - Never use the native browser colour picker; use `components/editor/ColorPicker.tsx`.
 - Preview frames must not flicker: use `components/editor/SwapFrame.tsx`.
 - Never commit `.env`, tokens or keys. Never put secrets in browser code.
