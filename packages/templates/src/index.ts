@@ -4,3 +4,5 @@ export { validate, MIN_ARTICLES } from "./validate.ts";
 export type { Problem } from "./validate.ts";
 export { CLICKTAG_JS } from "./clicktag.ts";
 export { resolveTheme, readableOn, onColor, contrast } from "./colors.ts";
+export { renderHeaderBar, validateHeaderBar, headerTextColor, iframeCode } from "./header-bar.ts";
+export type { HeaderBarConfig, HeaderBarFiles } from "./header-bar.ts";

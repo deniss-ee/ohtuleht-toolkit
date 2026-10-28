@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { FileUp, Images, Newspaper, Smartphone, type LucideIcon } from "lucide-react";
+import { FileUp, Images, Newspaper, PanelTop, Smartphone, type LucideIcon } from "lucide-react";
 import { IconChip } from "@/components/editor/IconChip";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { bannerTypes, contentMarketing as t } from "@/content";
 
 // One icon per banner type (picked by id so new types only need an entry here).
 const ICONS: Record<string, LucideIcon> = {
+  "header-bar": PanelTop,
   "articles-1250x400": Newspaper,
   "articles-ad-1250x400": Newspaper,
   "image-slider-1250x400": Images,

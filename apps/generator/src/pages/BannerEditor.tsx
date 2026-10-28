@@ -7,13 +7,13 @@ import { ArticleList } from "@/components/editor/ArticleList";
 import { BookmarkletDialog } from "@/components/editor/BookmarkletHelp";
 import { AutoColorField, ColorField } from "@/components/editor/ColorField";
 import { HeaderThumb } from "@/components/editor/HeaderThumb";
+import { goTo, HoverPill } from "@/components/editor/HoverPill";
 import { IconChip, type Tone } from "@/components/editor/IconChip";
 import { Preview } from "@/components/editor/Preview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { editor as t } from "@/content";
@@ -96,41 +96,6 @@ const SPEEDS = [
   { label: t.speedSlow, ms: 500 },
 ];
 const nearestSpeed = (ms: number) => SPEEDS.reduce((best, s) => (Math.abs(s.ms - ms) < Math.abs(best.ms - ms) ? s : best)).ms;
-
-// Pill in the top bar that explains itself on hover (or on click, for touch screens).
-function HoverPill({ icon, label, tone, children }: { icon: ReactNode; label: ReactNode; tone: "ok" | "warn" | "plain"; children: (close: () => void) => ReactNode }) {
-  const [open, setOpen] = useState(false);
-  const timer = useRef<number>(0);
-  const show = () => {
-    window.clearTimeout(timer.current);
-    setOpen(true);
-  };
-  const hide = () => {
-    timer.current = window.setTimeout(() => setOpen(false), 200);
-  };
-  const colors = tone === "warn" ? "border-yellow-400 bg-yellow-100/70 dark:bg-yellow-300/15" : tone === "ok" ? "border-green-600/40 bg-green-600/10" : "";
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <button type="button" onMouseEnter={show} onMouseLeave={hide} className={`inline-flex h-8 items-center gap-1.5 rounded-full border px-3 text-xs font-medium ${colors}`}>
-          {icon}
-          {label}
-        </button>
-      </PopoverTrigger>
-      <PopoverContent align="end" className="w-80" onMouseEnter={show} onMouseLeave={hide}>
-        {children(() => setOpen(false))}
-      </PopoverContent>
-    </Popover>
-  );
-}
-
-// Scrolls to a form field and puts the cursor in it.
-function goTo(id: string) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.scrollIntoView({ block: "center", behavior: "smooth" });
-  setTimeout(() => el.focus({ preventScroll: true }), 350);
-}
 
 // Full-screen editor: covers the menu so the preview can use the whole width.
 export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChange: (d: Draft) => void; onBack: () => void }) {

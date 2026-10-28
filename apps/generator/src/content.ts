@@ -13,7 +13,7 @@ export const nav: NavItem[] = [
   { id: "tasks", label: "Task tracker", ready: false },
 ];
 
-export type Device = "Desktop" | "Mobile";
+export type Device = "Desktop" | "Mobile" | "All screens";
 
 export interface BannerType {
   id: string;
@@ -26,6 +26,7 @@ export interface BannerType {
 
 // Every banner type the category can build. Add new templates here.
 export const bannerTypes: BannerType[] = [
+  { id: "header-bar", name: "Header bar", size: "100% x 46", device: "All screens", description: "The bar at the top of a theme page, shown on the site in an iframe.", ready: true },
   { id: "articles-1250x400", name: "Articles", size: "1250x400", device: "Desktop", description: "Header and a slider of article cards.", ready: true },
   { id: "articles-ad-1250x400", name: "Articles with static ad", size: "1250x400", device: "Desktop", description: "Fixed ad next to a slider of three articles.", ready: false },
   { id: "image-slider-1250x400", name: "Image slider", size: "1250x400", device: "Desktop", description: "Client background with a slider of images.", ready: false },
@@ -166,4 +167,44 @@ export const editor = {
   emptyTryExample: "Not sure? Try an example",
   imported: "Banner loaded.",
   exampleLoaded: "Example loaded.",
+};
+
+export const headerBar = {
+  title: "Header bar",
+  heading: "Header bar for the site",
+  untitled: "New header bar",
+  previewTitle: "How it looks",
+  desktop: "Computer (1248 px)",
+  tablet: "Tablet (768 px)",
+  phone: "Phone (375 px)",
+  previewNote: "The bar fills the whole width of the page, so it is shown at three widths. Corners are rounded on wide screens only.",
+  barTitle: "The bar",
+  barHint: "Text, link and colour.",
+  label: "Text on the bar",
+  labelHint: "Shown in capital letters, for example the name of the theme.",
+  href: "Where the bar leads",
+  hrefHint: "The theme page. It opens in a new tab.",
+  colour: "Bar colour",
+  picture: "Background picture (optional)",
+  pictureChoose: "Choose picture",
+  pictureChange: "Change picture",
+  pictureRemove: "Remove picture",
+  pictureHint: "Shown at the left, filling the bar. The bar colour shows behind it. Use a picture without text.",
+  textColour: "Text colour",
+  embedTitle: "Put it on the site",
+  embedSteps: [
+    "Press Download zip.",
+    "Upload the folder to b.ohtuleht.ee.",
+    "Paste the folder address below.",
+    "Copy the code and give it to the person who edits the page.",
+  ],
+  embedUrl: "Address of the uploaded folder",
+  embedPlaceholder: "https://b.ohtuleht.ee/html5/Ohtuleht/…/",
+  embedCode: "Code for the page",
+  copy: "Copy code",
+  copied: "Code copied.",
+  download: "Download zip",
+  tryExample: "Try an example",
+  ready: "Ready to download",
+  loadedExample: "Example loaded.",
 };

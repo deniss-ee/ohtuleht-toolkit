@@ -7,6 +7,7 @@ A modular set of internal tools for the Õhtuleht newsroom and ad sales: banner 
 | Module | Purpose | Status |
 |---|---|---|
 | Banner generator | Build content-marketing banner zips (articles slider, static ad, image slider) without Swiper | Planned, Phase 1 |
+| Header bar | The 100% wide, 46 px bar for theme pages (iframe), html + css zip with embed code | Built ([docs](docs/HEADER-BAR.md)) |
 | Brand manual | Copy colours (HEX, RGB, HSL...), download logos (SVG, PNG, black, white) | Planned, Phase 0b |
 | Article bookmarklet | Copy an article as a snippet from the live site | Exists (legacy), v2 planned |
 | Article API (Cloudflare Worker) | Fetch article title/image from a URL | Planned, Phase 2 |
@@ -22,6 +23,7 @@ Full plan: [docs/ROADMAP.md](docs/ROADMAP.md).
 |---|---|
 | [docs/WORKFLOW.md](docs/WORKFLOW.md) | Learn the daily git flow (issue, branch, PR) with exact commands |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Understand repo layout, the banner zip format, and how to add a module |
+| [docs/HEADER-BAR.md](docs/HEADER-BAR.md) | Make the header bar for theme pages and get its iframe code |
 | [docs/BANNERS.md](docs/BANNERS.md) | See each banner format's rules, sizes, weight limits, ad-server notes |
 | [docs/BRAND-MANUAL.md](docs/BRAND-MANUAL.md) | See the brand manual spec and the `brand.json` data format |
 | [docs/BOOKMARKLET.md](docs/BOOKMARKLET.md) | Install and use the article bookmarklet |
