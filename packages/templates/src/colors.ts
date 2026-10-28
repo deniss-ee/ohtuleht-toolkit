@@ -68,7 +68,7 @@ export function readableOn(color: string, background: string, minRatio = 4.5): s
 }
 
 // Colours lighter than this (relative luminance) get dark text; everything else gets white.
-const WHITE_TEXT_MAX_LUMINANCE = 0.42;
+const WHITE_TEXT_MAX_LUMINANCE = 0.55;
 
 // Text colour for a coloured bar. On a brand colour the brand rule decides. Otherwise: white, or a dark tint of the bar's own hue when the colour is light.
 // The tint (a little of the hue, very low saturation) looks softer than pure black or white.

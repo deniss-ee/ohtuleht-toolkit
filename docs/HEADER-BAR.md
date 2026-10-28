@@ -13,7 +13,7 @@ In the generator: Content marketing, **Make this banner** on **Header bar** (or 
 | Text on the bar | Shown in capital letters |
 | Where the bar leads | Theme page. Opens in a new tab. Plain link, no ad ClickTag (it is a page, not an ad) |
 | Bar colour | Fills the bar |
-| Text colour | Automatic: brand colours follow the brand rule (black on steps 50 to 500, white from 600 up); other colours get white unless they are light (then a dark tint). Can be set by hand |
+| Text colour | Automatic: brand colours follow the brand rule (black on steps 50 to 500, white from 600 up); other colours get white unless they are very light (luminance above 0.55) (then a dark tint). Can be set by hand |
 | Background picture | Optional. Shown at the left, `cover`. The bar colour shows behind it. Use a picture without text |
 
 The preview shows the bar at 1248, 768 and 375 px wide.
