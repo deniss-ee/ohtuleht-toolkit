@@ -54,7 +54,7 @@ export function Preview({ draft, pinned, onPin }: { draft: Draft; pinned: boolea
           </Tabs>
         </div>
       </div>
-      <div ref={box} className="relative w-full overflow-hidden rounded-md border bg-muted" style={{ height: H * scale }}>
+      <div ref={box} className="relative w-full overflow-hidden" style={{ height: H * scale }}>
         {!loaded && <div className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">{t.previewLoading}</div>}
         <iframe
           title="Banner preview"

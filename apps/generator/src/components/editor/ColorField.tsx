@@ -1,6 +1,7 @@
 import { useEffect, useId, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { editor as t } from "@/content";
 
 const HEX = /^#[0-9a-fA-F]{6}$/;
 
@@ -32,6 +33,20 @@ export function ColorField({ label, value, onChange }: { label: string; value: s
           className="font-mono"
         />
       </div>
+    </div>
+  );
+}
+
+// A colour that is normally worked out automatically. Editing it sets a manual override; the button goes back to automatic.
+export function AutoColorField({ label, value, custom, onChange, onReset }: { label: string; value: string; custom: boolean; onChange: (hex: string) => void; onReset: () => void }) {
+  return (
+    <div className="space-y-1.5">
+      <ColorField label={custom ? label : `${label} (${t.automatic.toLowerCase()})`} value={value} onChange={onChange} />
+      {custom && (
+        <button type="button" className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground" onClick={onReset}>
+          {t.useAutomatic}
+        </button>
+      )}
     </div>
   );
 }

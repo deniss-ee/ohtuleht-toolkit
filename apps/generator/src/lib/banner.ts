@@ -19,9 +19,9 @@ export interface Draft {
 }
 
 // Starting colours copied from the existing banners' stylesheet: titles turn red on hover.
-// Every campaign can change them.
-const light: ThemeColors = { bg: "#ffffff", text: "#272727", badge: "#9500b2", hover: "#e3000f", headerBg: "#003784" };
-const dark: ThemeColors = { bg: "#0f0f0f", text: "#ffffff", badge: "#9500b2", hover: "#e3000f", headerBg: "#003784" };
+// The main colour drives the header, arrows and label colours; every campaign picks its own.
+const light: ThemeColors = { bg: "#ffffff", text: "#272727", hover: "#e3000f" };
+const dark: ThemeColors = { bg: "#0f0f0f", text: "#ffffff", hover: "#e3000f" };
 
 export function newDraft(): Draft {
   return {
@@ -30,6 +30,7 @@ export function newDraft(): Draft {
       v: 1,
       format: "articles-1250x400",
       campaign: "",
+      primary: "#9500b2",
       header: { type: "color", href: "" },
       badge: "Sisuturundus",
       theme: { light: { ...light }, dark: { ...dark } },

@@ -53,6 +53,8 @@ export async function importZip(file: File): Promise<Draft> {
   if (!json) throw new Error("This banner was not made with the toolkit, so it cannot be opened yet.");
   const config = JSON.parse(json) as ArticlesBannerConfig;
   if (config.v !== 1 || config.format !== "articles-1250x400") throw new Error("Unsupported banner version or format.");
+  // Banners made before the main colour existed: take it from their label or header colour.
+  config.primary ??= config.theme.light.badge ?? config.theme.light.headerBg ?? "#9500b2";
   let headerFile: HeaderFile | null = null;
   if (config.header.type === "image") {
     const entry = zip.file(config.header.src);

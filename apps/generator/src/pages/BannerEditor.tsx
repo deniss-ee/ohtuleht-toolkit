@@ -1,9 +1,10 @@
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { ArrowLeft, CheckCircle2, ChevronRight, Download, FlaskConical, ImagePlus, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
-import type { ThemeColors } from "@ohtuleht/templates";
+import { resolveTheme } from "@ohtuleht/templates";
+import type { ArticlesBannerConfig, ThemeColors } from "@ohtuleht/templates";
 import { ArticleList } from "@/components/editor/ArticleList";
-import { ColorField } from "@/components/editor/ColorField";
+import { AutoColorField, ColorField } from "@/components/editor/ColorField";
 import { Preview } from "@/components/editor/Preview";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -58,16 +59,23 @@ function SwitchRow({ id, label, checked, onChange }: { id: string; label: string
   );
 }
 
-function ColorSet({ title, colors, onChange }: { title: string; colors: ThemeColors; onChange: (c: ThemeColors) => void }) {
+function ColorSet({ title, mode, config, onChange }: { title: string; mode: "light" | "dark"; config: ArticlesBannerConfig; onChange: (c: ThemeColors) => void }) {
+  const colors = config.theme[mode];
+  const resolved = resolveTheme(config, mode);
   const set = (key: keyof ThemeColors) => (hex: string) => onChange({ ...colors, [key]: hex });
+  const reset = (key: "badge" | "headerBg") => () => {
+    const next = { ...colors };
+    delete next[key];
+    onChange(next);
+  };
   return (
     <div className="space-y-3">
       <h3 className="text-sm font-semibold">{title}</h3>
       <ColorField label={t.colorBg} value={colors.bg} onChange={set("bg")} />
       <ColorField label={t.colorText} value={colors.text} onChange={set("text")} />
-      <ColorField label={t.colorBadge} value={colors.badge} onChange={set("badge")} />
       <ColorField label={t.colorHover} value={colors.hover} onChange={set("hover")} />
-      <ColorField label={t.colorHeader} value={colors.headerBg} onChange={set("headerBg")} />
+      <AutoColorField label={t.colorBadge} value={resolved.badge} custom={colors.badge !== undefined} onChange={set("badge")} onReset={reset("badge")} />
+      <AutoColorField label={t.colorHeader} value={resolved.headerBg} custom={colors.headerBg !== undefined} onChange={set("headerBg")} onReset={reset("headerBg")} />
     </div>
   );
 }
@@ -197,6 +205,10 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                   <Input id="badge" value={c.badge} onChange={(e) => set({ badge: e.target.value })} />
                   <p className="text-xs text-muted-foreground">{t.badgeHint}</p>
                 </div>
+                <div className="space-y-1.5">
+                  <ColorField label={t.mainColor} value={c.primary} onChange={(primary) => set({ primary })} />
+                  <p className="text-xs text-muted-foreground">{t.mainColorHint}</p>
+                </div>
               </Section>
 
               <Section title={t.headerTitle} description={t.headerHint}>
@@ -220,7 +232,10 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                     <p className="text-xs text-muted-foreground">{t.headerFileHint}</p>
                   </div>
                 ) : (
-                  <ColorField label={t.colorHeader} value={c.theme.light.headerBg} onChange={(hex) => set({ theme: { light: { ...c.theme.light, headerBg: hex }, dark: { ...c.theme.dark, headerBg: hex } } })} />
+                  <div className="flex items-center gap-3 rounded-md border p-3 text-sm text-muted-foreground">
+                    <span className="size-8 shrink-0 rounded border" style={{ background: resolveTheme(c, "light").headerBg }} />
+                    {t.headerUsesMain}
+                  </div>
                 )}
                 <div className="space-y-1.5">
                   <Label htmlFor="header-href">{t.headerLink}</Label>
@@ -230,13 +245,13 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
               </Section>
             </div>
 
-            <ArticleList articles={c.articles} defaultBadge={c.badge} defaultColor={c.theme.light.badge} onChange={(articles) => set({ articles })} />
+            <ArticleList articles={c.articles} defaultBadge={c.badge} defaultColor={resolveTheme(c, "light").badge} onChange={(articles) => set({ articles })} />
 
             <h2 className="pt-2 text-sm font-semibold text-muted-foreground">{t.advanced}</h2>
             <Collapsible title={t.colorsTitle} description={t.colorsHint}>
               <div className="grid gap-6 sm:grid-cols-2">
-                <ColorSet title={t.light} colors={c.theme.light} onChange={(light) => set({ theme: { ...c.theme, light } })} />
-                <ColorSet title={t.dark} colors={c.theme.dark} onChange={(dark) => set({ theme: { ...c.theme, dark } })} />
+                <ColorSet title={t.light} mode="light" config={c} onChange={(light) => set({ theme: { ...c.theme, light } })} />
+                <ColorSet title={t.dark} mode="dark" config={c} onChange={(dark) => set({ theme: { ...c.theme, dark } })} />
               </div>
             </Collapsible>
             <Collapsible title={t.behaviorTitle} description={t.behaviorHint}>

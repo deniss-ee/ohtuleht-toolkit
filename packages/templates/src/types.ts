@@ -2,11 +2,21 @@
 // Draft schema is described in docs/ARCHITECTURE.md.
 
 export interface ThemeColors {
-  bg: string; // page and badge background
+  bg: string; // page and label background
   text: string; // article titles
-  badge: string; // badge text and arrow buttons
   hover: string; // title colour on hover
-  headerBg: string; // header colour (also shown behind a header image)
+  badge?: string; // label colour; when empty, derived from the main colour so it stays readable
+  headerBg?: string; // header colour; when empty, the main colour
+}
+
+// Every colour filled in (see resolveTheme).
+export interface ResolvedTheme {
+  bg: string;
+  text: string;
+  hover: string;
+  primary: string;
+  badge: string;
+  headerBg: string;
 }
 
 export interface ArticleItem {
@@ -25,6 +35,7 @@ export interface ArticlesBannerConfig {
   v: 1;
   format: "articles-1250x400";
   campaign: string;
+  primary: string; // main campaign colour: header, arrows and default label colour
   header: Header;
   badge: string;
   theme: { light: ThemeColors; dark: ThemeColors };

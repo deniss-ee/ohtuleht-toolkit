@@ -27,9 +27,10 @@ const config: ArticlesBannerConfig = {
   campaign: "Kultuurisügis 2710",
   header: { type: "image", src: "header.png", href: "https://www.ohtuleht.ee/teemalehed/kultuurisundmused2026-st" },
   badge: "Sisuturundus",
+  primary: "#9500b2",
   theme: {
-    light: { bg: "#ffffff", text: "#272727", badge: "#9500b2", hover: "#e3000f", headerBg: "#003784" },
-    dark: { bg: "#0f0f0f", text: "#ffffff", badge: "#9500b2", hover: "#e3000f", headerBg: "#003784" },
+    light: { bg: "#ffffff", text: "#272727", hover: "#e3000f" },
+    dark: { bg: "#0f0f0f", text: "#ffffff", hover: "#e3000f" },
   },
   behavior: { shuffle: true, autoplay: true, delayMs: 2500, speedMs: 250, loop: true },
   articles,

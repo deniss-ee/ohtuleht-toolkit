@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { BookmarkletHelp } from "@/components/editor/BookmarkletHelp";
 import { editor as t } from "@/content";
 import { emptyArticle } from "@/lib/banner";
 import { parseSnippets } from "@/lib/snippets";
@@ -17,7 +18,7 @@ function Thumb({ src, badge, badgeColor }: { src: string; badge: string; badgeCo
   const [failed, setFailed] = useState<string | null>(null);
   const bad = !src || failed === src;
   return (
-    <div className="relative aspect-[300/215] w-full overflow-hidden rounded-md bg-muted sm:w-48 sm:shrink-0">
+    <div className="relative aspect-[300/215] w-full self-start overflow-hidden rounded-md bg-muted sm:w-56 sm:shrink-0">
       {bad ? (
         <div className="flex h-full flex-col items-center justify-center gap-1 text-xs text-muted-foreground">
           <ImageOff className="size-5" />
@@ -174,6 +175,7 @@ export function ArticleList({
             <Button className="gap-2" disabled={!paste.trim()} onClick={addSnippets}>
               <ClipboardPaste className="size-4" /> {t.pasteButton}
             </Button>
+            <BookmarkletHelp />
             <span className="text-xs text-muted-foreground">{t.pasteHelp}</span>
           </div>
         </div>
