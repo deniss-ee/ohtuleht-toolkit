@@ -19,7 +19,7 @@ function themeVars(t: ThemeColors): string {
 function css(config: ArticlesBannerConfig): string {
   const header =
     config.header.type === "image"
-      ? `background:var(--header-bg) url("${config.header.src}") center/contain no-repeat`
+      ? `background:url("${config.header.src}") center/contain no-repeat` // image only: no colour behind its rounded corners
       : "background:var(--header-bg)";
   return (
     `:root{${themeVars(config.theme.light)};color-scheme:light dark}` +
