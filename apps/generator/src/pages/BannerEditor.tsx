@@ -276,6 +276,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                     <TabsTrigger value="color">{t.headerColor}</TabsTrigger>
                   </TabsList>
                 </Tabs>
+                <div className="min-h-[7rem]">
                 {c.header.type === "image" ? (
                   <div className="space-y-2">
                     <input ref={fileInput} type="file" className="sr-only" aria-label={t.headerFile} accept="image/png,image/webp,image/svg+xml,image/jpeg" onChange={(e) => onHeaderFile(e.target.files?.[0])} />
@@ -290,6 +291,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                 ) : (
                   <p className="text-xs text-muted-foreground">{t.headerUsesMain}</p>
                 )}
+                </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="header-href">{t.headerLink}</Label>
                   <Input id="header-href" placeholder="https://" value={c.header.href} onChange={(e) => set({ header: { ...c.header, href: e.target.value } })} />

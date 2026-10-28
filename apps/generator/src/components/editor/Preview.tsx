@@ -8,6 +8,11 @@ import { renderPreview, type Draft } from "@/lib/banner";
 const W = 1250;
 const H = 400;
 
+interface Frame {
+  id: number;
+  html: string;
+}
+
 // Shown instead of the banner until there is something to show: tells a new person what to do.
 function EmptyGuide({ onAddArticles, onTryExample, onOpenBookmark }: { onAddArticles: () => void; onTryExample: () => void; onOpenBookmark: () => void }) {
   return (
@@ -39,8 +44,35 @@ function EmptyGuide({ onAddArticles, onTryExample, onOpenBookmark }: { onAddArti
   );
 }
 
-// Live banner in an iframe at full size when the screen allows, otherwise scaled to fit.
-// Re-renders shortly after edits stop. The pin keeps it in view while scrolling the form.
+function BannerFrame({ frame, scale, hidden, frameRef }: { frame: Frame; scale: number; hidden?: boolean; frameRef?: (el: HTMLIFrameElement | null) => void }) {
+  return (
+    <iframe
+      ref={frameRef}
+      title="Banner preview"
+      srcDoc={frame.html}
+      sandbox="allow-scripts allow-popups"
+      width={W}
+      height={H}
+      tabIndex={hidden ? -1 : undefined}
+      aria-hidden={hidden}
+      style={{
+        border: 0,
+        transform: `scale(${scale})`,
+        transformOrigin: "top left",
+        display: "block",
+        position: hidden ? "absolute" : "relative",
+        top: 0,
+        left: 0,
+        visibility: hidden ? "hidden" : "visible",
+        pointerEvents: hidden ? "none" : "auto",
+      }}
+    />
+  );
+}
+
+// Live banner in a frame at full size when the screen allows, otherwise scaled to fit.
+// A change is rendered in a second, hidden frame first; it replaces the visible one only when its fonts and
+// images are ready. So there is no blank flash and no jumping fonts while you edit.
 export function Preview({
   draft,
   pinned,
@@ -57,20 +89,41 @@ export function Preview({
   onOpenBookmark: () => void;
 }) {
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [html, setHtml] = useState("");
+  const [current, setCurrent] = useState<Frame | null>(null);
+  const [pending, setPending] = useState<Frame | null>(null);
+  const pendingFrame = useRef<HTMLIFrameElement | null>(null);
+  const counter = useRef(0);
   const box = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
-  const [loaded, setLoaded] = useState(false);
   const empty = draft.config.articles.length === 0;
 
+  // Prepare the next version shortly after edits stop.
   useEffect(() => {
     if (empty) return;
-    const id = setTimeout(() => {
-      setLoaded(false);
-      setHtml(renderPreview(draft, theme));
+    const timer = setTimeout(() => {
+      const id = ++counter.current;
+      setPending({ id, html: renderPreview(draft, theme, id) });
     }, 300);
-    return () => clearTimeout(id);
+    return () => clearTimeout(timer);
   }, [draft, theme, empty]);
+
+  // The hidden frame says "ready" when fonts, images and the page have loaded; then it takes over.
+  useEffect(() => {
+    if (!pending) return;
+    const swap = () => {
+      setCurrent(pending);
+      setPending(null);
+    };
+    const onMessage = (e: MessageEvent) => {
+      if (e.source === pendingFrame.current?.contentWindow && (e.data as { olPreview?: number } | null)?.olPreview === pending.id) swap();
+    };
+    window.addEventListener("message", onMessage);
+    const fallback = setTimeout(swap, 4000); // never leave an old version showing for long
+    return () => {
+      window.removeEventListener("message", onMessage);
+      clearTimeout(fallback);
+    };
+  }, [pending]);
 
   useEffect(() => {
     const el = box.current;
@@ -106,16 +159,9 @@ export function Preview({
           <EmptyGuide onAddArticles={onAddArticles} onTryExample={onTryExample} onOpenBookmark={onOpenBookmark} />
         ) : (
           <>
-            {!loaded && <div className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">{t.previewLoading}</div>}
-            <iframe
-              title="Banner preview"
-              srcDoc={html}
-              onLoad={() => setLoaded(true)}
-              sandbox="allow-scripts allow-popups"
-              width={W}
-              height={H}
-              style={{ border: 0, transform: `scale(${scale})`, transformOrigin: "top left", display: "block" }}
-            />
+            {!current && <div className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">{t.previewLoading}</div>}
+            {current && <BannerFrame key={current.id} frame={current} scale={scale} />}
+            {pending && <BannerFrame key={pending.id} frame={pending} scale={scale} hidden frameRef={(el) => (pendingFrame.current = el)} />}
           </>
         )}
       </div>

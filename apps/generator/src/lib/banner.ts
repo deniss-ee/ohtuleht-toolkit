@@ -71,12 +71,26 @@ export function problems(draft: Draft): Problem[] {
   return validate(draft.config);
 }
 
+// Runs inside the preview frame: tells the app when fonts, images and the page itself are ready,
+// so the app can swap frames without a flash of unstyled text.
+const readySignal = (id: number) =>
+  "<script>(function(){var id=" +
+  id +
+  ',sent=false;function send(){if(sent)return;sent=true;parent.postMessage({olPreview:id},"*")}' +
+  'var link=document.querySelector("link[media]");' +
+  'var sheet=new Promise(function(r){if(!link||link.media==="all")r();else link.addEventListener("load",r)});' +
+  'var fonts=sheet.then(function(){return Promise.all([document.fonts.load(\'700 20px "Fira Sans Condensed"\'),document.fonts.load("700 12px Roboto")])});' +
+  'var loaded=new Promise(function(r){if(document.readyState==="complete")r();else window.addEventListener("load",r)});' +
+  "Promise.all([fonts,loaded]).then(send,send);setTimeout(send,2500)})();</script>";
+
 // The preview passes the chosen theme's colours as both themes, so no browser setting is needed.
-export function renderPreview(draft: Draft, theme: "light" | "dark"): string {
+// Shuffle is off here so the order does not jump with every edit; the real banner shuffles as set.
+export function renderPreview(draft: Draft, theme: "light" | "dark", id: number): string {
   const c = draft.config;
   const header = draft.headerFile && c.header.type === "image" ? { ...c.header, src: draft.headerFile.dataUrl } : c.header;
   const colors = theme === "dark" ? c.theme.dark : c.theme.light;
-  return renderArticles1250x400({ ...c, header, theme: { light: colors, dark: colors } }, { runtimeJs, sliderCss });
+  const html = renderArticles1250x400({ ...c, header, behavior: { ...c.behavior, shuffle: false }, theme: { light: colors, dark: colors } }, { runtimeJs, sliderCss });
+  return html.replace("</body>", readySignal(id) + "</body>");
 }
 
 // Final html for the zip: the header refers to the file inside the zip.
