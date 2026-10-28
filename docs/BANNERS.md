@@ -33,7 +33,7 @@ Reference: `content-marketing/st_KultuurSygis_2710-1250x400`, rebuilt without Sw
 
 **Header (Figma "ikea-header-for-claude", node 809:9 in the Ohtuleht 3.0 file)**
 
-Bar 1248x46 with 6 px corners, filled with the main colour or with a background picture (picture without text, best 2496x92, scaled to cover). The campaign name is always written on it: Fira Sans Condensed Bold, 16 px, line height 16 px, uppercase, 16 px from the left, vertically centred. The text colour is automatic (a tint of the bar's hue, or of the picture's average colour on the left third, dark or light, whichever reads better) and can be set by hand in Advanced, Colours. The Figma example is yellow `#FFDB00` with black text.
+Bar 1248x46 with 6 px corners, filled with the main colour or with a background picture (picture without text, best 2496x92, scaled to cover). The campaign name is always written on it: Fira Sans Condensed Bold, 16 px, line height 16 px, uppercase, 16 px from the left, vertically centred. The text colour is automatic: on a brand colour the brand rule (black on steps 50 to 500, white from 600 up); on any other colour white, unless the colour is light (relative luminance above 0.42), then a dark tint of the colour; on a picture, the same choice from the picture's average colour on the left third and can be set by hand in Advanced, Colours. The Figma example is yellow `#FFDB00` with black text.
 
 **Behaviour**
 
