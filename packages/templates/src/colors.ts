@@ -68,7 +68,7 @@ export function onColor(background: string): string {
 
 // Full colour set for one theme. The main colour fills in whatever the campaign did not set by hand:
 // header colour = main colour, label colour = main colour made readable on the background.
-export function resolveTheme(config: Pick<ArticlesBannerConfig, "primary" | "theme">, mode: "light" | "dark"): ResolvedTheme {
+export function resolveTheme(config: Pick<ArticlesBannerConfig, "primary" | "theme" | "header">, mode: "light" | "dark"): ResolvedTheme {
   const t = config.theme[mode];
   const headerBg = t.headerBg ?? config.primary;
   return {
@@ -78,6 +78,7 @@ export function resolveTheme(config: Pick<ArticlesBannerConfig, "primary" | "the
     primary: config.primary,
     badge: t.badge ?? readableOn(config.primary, t.bg),
     headerBg,
-    headerText: t.headerText ?? onColor(headerBg),
+    // Over a picture the text colour follows the picture's average colour; on a plain bar, the bar colour.
+    headerText: t.headerText ?? onColor(config.header.type === "image" && config.header.avg ? config.header.avg : headerBg),
   };
 }

@@ -54,7 +54,7 @@ Uploading the zip into the generator reads this block and restores the form exac
   "format": "articles-1250x400",
   "campaign": "Kultuurisügis 2710",
   "primary": "#9500b2",
-  "header": { "type": "image", "src": "header.webp", "href": "https://www.ohtuleht.ee/teemalehed/..." },
+  "header": { "type": "image", "src": "header.webp", "avg": "#8a0aa6", "href": "https://www.ohtuleht.ee/teemalehed/..." },
   "theme": {
     "light": { "bg": "#ffffff", "text": "#272727", "hover": "#e3000f" },
     "dark":  { "bg": "#0f0f0f", "text": "#ffffff", "hover": "#e3000f" }

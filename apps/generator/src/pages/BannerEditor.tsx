@@ -1,11 +1,13 @@
 import { useMemo, useRef, useState, type ReactNode } from "react";
-import { ArrowLeft, CheckCircle2, ChevronRight, Download, FileArchive, FlaskConical, ImagePlus, TriangleAlert } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ChevronRight, Download, FileArchive, FlaskConical, ImagePlus, Megaphone, Palette, PanelTop, SlidersHorizontal, TriangleAlert, type LucideIcon } from "lucide-react";
 import { toast } from "sonner";
 import { resolveTheme } from "@ohtuleht/templates";
 import type { ArticlesBannerConfig, ThemeColors } from "@ohtuleht/templates";
 import { ArticleList } from "@/components/editor/ArticleList";
 import { BookmarkletDialog } from "@/components/editor/BookmarkletHelp";
 import { AutoColorField, ColorField } from "@/components/editor/ColorField";
+import { HeaderThumb } from "@/components/editor/HeaderThumb";
+import { IconChip, type Tone } from "@/components/editor/IconChip";
 import { Preview } from "@/components/editor/Preview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,12 +23,17 @@ import { downloadZip, fileToHeader } from "@/lib/zip";
 
 const BUDGET_KB = 100;
 
-function Section({ title, description, children }: { title: string; description?: string; children: ReactNode }) {
+function Section({ title, description, icon, tone, children }: { title: string; description?: string; icon: LucideIcon; tone: Tone; children: ReactNode }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        {description && <CardDescription>{description}</CardDescription>}
+        <div className="flex items-center gap-3">
+          <IconChip icon={icon} tone={tone} />
+          <div>
+            <CardTitle>{title}</CardTitle>
+            {description && <CardDescription>{description}</CardDescription>}
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">{children}</CardContent>
     </Card>
@@ -34,15 +41,16 @@ function Section({ title, description, children }: { title: string; description?
 }
 
 // Closed by default: advanced settings stay out of the way for people who do not need them.
-function Collapsible({ title, description, children }: { title: string; description: string; children: ReactNode }) {
+function Collapsible({ title, description, icon, tone, children }: { title: string; description: string; icon: LucideIcon; tone: Tone; children: ReactNode }) {
   return (
     <details className="group rounded-xl border bg-card">
       <summary className="flex cursor-pointer list-none items-center gap-3 p-4 [&::-webkit-details-marker]:hidden">
-        <ChevronRight className="size-4 shrink-0 transition-transform group-open:rotate-90" />
-        <div>
+        <IconChip icon={icon} tone={tone} />
+        <div className="flex-1">
           <div className="font-medium leading-none">{title}</div>
           <div className="mt-1 text-sm text-muted-foreground">{description}</div>
         </div>
+        <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" />
       </summary>
       <div className="space-y-4 border-t p-4">{children}</div>
     </details>
@@ -90,7 +98,7 @@ const SPEEDS = [
 const nearestSpeed = (ms: number) => SPEEDS.reduce((best, s) => (Math.abs(s.ms - ms) < Math.abs(best.ms - ms) ? s : best)).ms;
 
 // Pill in the top bar that explains itself on hover (or on click, for touch screens).
-function HoverPill({ icon, label, tone, children }: { icon: ReactNode; label: string; tone: "ok" | "warn" | "plain"; children: (close: () => void) => ReactNode }) {
+function HoverPill({ icon, label, tone, children }: { icon: ReactNode; label: ReactNode; tone: "ok" | "warn" | "plain"; children: (close: () => void) => ReactNode }) {
   const [open, setOpen] = useState(false);
   const timer = useRef<number>(0);
   const show = () => {
@@ -139,8 +147,8 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
 
   const onHeaderFile = async (file: File | undefined) => {
     if (!file) return;
-    const headerFile = await fileToHeader(file);
-    onChange({ ...draft, headerFile, config: { ...c, header: { type: "image", src: headerFile.name, href: c.header.href } } });
+    const { headerFile, avg } = await fileToHeader(file);
+    onChange({ ...draft, headerFile, config: { ...c, header: { type: "image", src: headerFile.name, href: c.header.href, avg } } });
   };
 
   const loadExample = async () => {
@@ -159,7 +167,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
 
   return (
     <div className="fixed inset-0 z-40 flex flex-col bg-background">
-      <header className="flex h-14 shrink-0 items-center gap-2 border-b px-3 sm:gap-3 sm:px-4">
+      <header className="flex shrink-0 flex-wrap items-center gap-x-2 gap-y-2 border-b px-3 py-2 sm:h-14 sm:flex-nowrap sm:gap-3 sm:px-4 sm:py-0">
         <Button variant="ghost" size="sm" className="gap-2" onClick={onBack}>
           <ArrowLeft className="size-4" />
           <span className="hidden sm:inline">{t.back}</span>
@@ -168,6 +176,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
           <div className="truncate font-semibold leading-tight">{c.campaign.trim() || t.untitled}</div>
           <div className="text-xs text-muted-foreground">{t.heading} · 1250x400</div>
         </div>
+        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:flex-nowrap sm:gap-3">
         <HoverPill
           tone="plain"
           icon={<FileArchive className="size-3.5" />}
@@ -189,7 +198,12 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
         <HoverPill
           tone={issues.length === 0 ? "ok" : "warn"}
           icon={issues.length === 0 ? <CheckCircle2 className="size-3.5 text-green-600" /> : <TriangleAlert className="size-3.5 text-yellow-600" />}
-          label={issues.length === 0 ? t.ready : t.toFix(issues.length)}
+          label={
+            <>
+              <span className="hidden sm:inline">{issues.length === 0 ? t.ready : t.toFix(issues.length)}</span>
+              <span className="sm:hidden">{issues.length === 0 ? "" : issues.length}</span>
+            </>
+          }
         >
           {(close) =>
             issues.length === 0 ? (
@@ -223,9 +237,10 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
           <span className="hidden md:inline">{t.loadExample}</span>
         </Button>
         <ThemeToggle />
-        <Button className="gap-2" disabled={issues.length > 0 || busy} onClick={download}>
-          <Download className="size-4" /> {busy ? t.downloading : t.download}
+        <Button className="ml-auto gap-2 sm:ml-0" disabled={issues.length > 0 || busy} onClick={download}>
+          <Download className="size-4" /> {busy ? t.downloading : (<>Download<span className="hidden sm:inline"> zip</span></>)}
         </Button>
+        </div>
       </header>
 
       <div className="flex-1 overflow-y-auto">
@@ -236,7 +251,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
 
           <div className="space-y-4 pb-24 pt-4">
             <div className="grid gap-4 md:grid-cols-2">
-              <Section title={t.campaignTitle}>
+              <Section title={t.campaignTitle} icon={Megaphone} tone="red">
                 <div className="space-y-1.5">
                   <Label htmlFor="campaign">{t.campaignName}</Label>
                   <Input id="campaign" value={c.campaign} onChange={(e) => set({ campaign: e.target.value })} />
@@ -253,8 +268,9 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                 </div>
               </Section>
 
-              <Section title={t.headerTitle} description={t.headerHint}>
-                <Tabs value={c.header.type} onValueChange={(v) => set({ header: v === "image" ? { type: "image", src: draft.headerFile?.name ?? "", href: c.header.href } : { type: "color", href: c.header.href } })}>
+              <Section title={t.headerTitle} description={t.headerHint} icon={PanelTop} tone="ink">
+                <HeaderThumb draft={draft} />
+                <Tabs value={c.header.type} onValueChange={(v) => set({ header: v === "image" ? { type: "image", src: draft.headerFile?.name ?? "", href: c.header.href, avg: draft.headerFile?.avg } : { type: "color", href: c.header.href } })}>
                   <TabsList>
                     <TabsTrigger value="image">{t.headerImage}</TabsTrigger>
                     <TabsTrigger value="color">{t.headerColor}</TabsTrigger>
@@ -263,21 +279,16 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                 {c.header.type === "image" ? (
                   <div className="space-y-2">
                     <input ref={fileInput} type="file" className="sr-only" aria-label={t.headerFile} accept="image/png,image/webp,image/svg+xml,image/jpeg" onChange={(e) => onHeaderFile(e.target.files?.[0])} />
-                    {draft.headerFile ? (
-                      <img src={draft.headerFile.dataUrl} alt="" className="h-auto w-full rounded-md border" style={{ aspectRatio: "1248 / 46", objectFit: "contain" }} />
-                    ) : (
-                      <p className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">{t.headerNone}</p>
-                    )}
                     <Button id="header-choose" variant="outline" size="sm" className="gap-2" onClick={() => fileInput.current?.click()}>
                       <ImagePlus className="size-4" /> {draft.headerFile ? t.headerChange : t.headerChoose}
                     </Button>
-                    <p className="text-xs text-muted-foreground">{t.headerFileHint}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {draft.headerFile ? "" : `${t.headerNone} `}
+                      {t.headerFileHint}
+                    </p>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-3 rounded-md border p-3 text-sm text-muted-foreground">
-                    <span className="size-8 shrink-0 rounded border" style={{ background: resolveTheme(c, "light").headerBg }} />
-                    {t.headerUsesMain}
-                  </div>
+                  <p className="text-xs text-muted-foreground">{t.headerUsesMain}</p>
                 )}
                 <div className="space-y-1.5">
                   <Label htmlFor="header-href">{t.headerLink}</Label>
@@ -292,13 +303,13 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
             <BookmarkletDialog open={bookmarkOpen} onOpenChange={setBookmarkOpen} />
 
             <h2 className="pt-2 text-sm font-semibold text-muted-foreground">{t.advanced}</h2>
-            <Collapsible title={t.colorsTitle} description={t.colorsHint}>
+            <Collapsible title={t.colorsTitle} description={t.colorsHint} icon={Palette} tone="yellow">
               <div className="grid gap-6 sm:grid-cols-2">
                 <ColorSet title={t.light} mode="light" config={c} onChange={(light) => set({ theme: { ...c.theme, light } })} />
                 <ColorSet title={t.dark} mode="dark" config={c} onChange={(dark) => set({ theme: { ...c.theme, dark } })} />
               </div>
             </Collapsible>
-            <Collapsible title={t.behaviorTitle} description={t.behaviorHint}>
+            <Collapsible title={t.behaviorTitle} description={t.behaviorHint} icon={SlidersHorizontal} tone="ink">
               <SwitchRow id="shuffle" label={t.shuffle} checked={c.behavior.shuffle} onChange={(v) => setBehavior({ shuffle: v })} />
               <SwitchRow id="autoplay" label={t.autoplay} checked={c.behavior.autoplay} onChange={(v) => setBehavior({ autoplay: v })} />
               <SwitchRow id="loop" label={t.loop} checked={c.behavior.loop} onChange={(v) => setBehavior({ loop: v })} />

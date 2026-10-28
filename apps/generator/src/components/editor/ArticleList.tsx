@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Bookmark, ChevronDown, ChevronUp, ClipboardPaste, ImageOff, Plus, Trash2 } from "lucide-react";
+import { Bookmark, ChevronDown, ChevronUp, ClipboardPaste, ImageOff, Newspaper, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import type { ArticleItem } from "@ohtuleht/templates";
 import { MIN_ARTICLES } from "@ohtuleht/templates";
 import { Button } from "@/components/ui/button";
+import { IconChip } from "@/components/editor/IconChip";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -163,10 +164,15 @@ export function ArticleList({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          {t.articlesTitle} <span className="font-normal text-muted-foreground">({articles.length})</span>
-        </CardTitle>
-        <CardDescription>{t.articlesHint(MIN_ARTICLES)}</CardDescription>
+        <div className="flex items-center gap-3">
+          <IconChip icon={Newspaper} tone="red" />
+          <div>
+            <CardTitle>
+              {t.articlesTitle} <span className="font-normal text-muted-foreground">({articles.length})</span>
+            </CardTitle>
+            <CardDescription>{t.articlesHint(MIN_ARTICLES)}</CardDescription>
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="space-y-5">
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 p-4">

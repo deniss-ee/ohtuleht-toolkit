@@ -1,7 +1,8 @@
 import { renderArticles1250x400, validate } from "@ohtuleht/templates";
 import type { ArticleItem, ArticlesBannerConfig, Problem, ThemeColors } from "@ohtuleht/templates";
 import runtimeJs from "../../../../packages/banner-runtime/dist/runtime.js?raw";
-import exampleHeader from "@/assets/example-header.png";
+import exampleHeader from "@/assets/example-header.svg";
+import { averageColor, toDataUrl } from "@/lib/image";
 import sliderCssRaw from "../../../../packages/banner-runtime/src/slider.css?raw";
 
 const sliderCss = sliderCssRaw.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, " ");
@@ -11,6 +12,7 @@ export interface HeaderFile {
   name: string; // file name inside the zip, e.g. header.png
   bytes: Uint8Array;
   dataUrl: string;
+  avg?: string; // average colour of the picture, kept so switching header type does not lose it
 }
 
 export interface Draft {
@@ -46,8 +48,10 @@ export async function exampleDraft(): Promise<Draft> {
   const img = (p: string) => `https://p.ohtuleht.ee/webp/54/i/${p}`;
   d.config.campaign = "Example campaign";
   const bytes = new Uint8Array(await (await fetch(exampleHeader)).arrayBuffer());
-  d.headerFile = { name: "header.png", bytes, dataUrl: `data:image/png;base64,${btoa(String.fromCharCode(...bytes))}` };
-  d.config.header = { type: "image", src: "header.png", href: "https://www.ohtuleht.ee/teemalehed/kultuurisundmused2026-st" };
+  const dataUrl = toDataUrl(bytes, "header.svg");
+  const avg = await averageColor(dataUrl);
+  d.headerFile = { name: "header.svg", bytes, dataUrl, avg };
+  d.config.header = { type: "image", src: "header.svg", href: "https://www.ohtuleht.ee/teemalehed/kultuurisundmused2026-st", avg };
   d.config.articles = [
     { url: "https://www.ohtuleht.ee/1169772/", image: img("2026/10/26/t1ovwidw.aju.jpg"), title: "Kaks komöödiat, üks kindel lubadus: rohkesti naeru, äratundmist ja ootamatuid pöördeid!" },
     { url: "https://www.ohtuleht.ee/1169357/", image: img("2026/10/21/ljqh0wyf.zk2.jpg"), title: "Novembrimaagia: Sinatrale pühendatud galaõhtu viib kuulaja aega, mil muusika oli elegantne ja õhk täis romantikat" },

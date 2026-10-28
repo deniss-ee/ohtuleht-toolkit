@@ -30,7 +30,7 @@ export interface ArticleItem {
 }
 
 export type Header =
-  | { type: "image"; src: string; href: string } // src is a file name inside the zip
+  | { type: "image"; src: string; href: string; avg?: string } // src is a file name inside the zip; avg = average colour of the picture, used to pick a readable text colour
   | { type: "color"; href: string };
 
 export interface ArticlesBannerConfig {

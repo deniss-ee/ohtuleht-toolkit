@@ -20,7 +20,7 @@ function themeVars(t: ResolvedTheme): string {
 function css(config: ArticlesBannerConfig): string {
   const header =
     config.header.type === "image"
-      ? `background:url("${config.header.src}") center/contain no-repeat` // image only: no colour behind its rounded corners
+      ? `background:var(--header-bg) url("${config.header.src}") center/cover no-repeat` // picture fills the bar; main colour shows while it loads
       : "background:var(--header-bg)";
   return (
     `:root{${themeVars(resolveTheme(config, "light"))};color-scheme:light dark}` +
@@ -31,7 +31,7 @@ function css(config: ArticlesBannerConfig): string {
     // Fills the 1250 px ad frame; never narrower than 1248 px.
     ".banner{position:relative;width:100%;min-width:1248px;max-width:1250px}" +
     `.header{display:flex;align-items:center;height:46px;margin-bottom:${GAP}px;padding:0 16px;border-radius:6px;overflow:hidden;${header};cursor:pointer}` +
-    // Colour header (design: Figma "ikea-header-for-claude"): campaign name, Fira Sans Condensed Bold 16/16, uppercase, 16 px from the left.
+    // Header (design: Figma "ikea-header-for-claude"): campaign name on a colour or a picture, Fira Sans Condensed Bold 16/16, uppercase, 16 px from the left.
     '.header-title{overflow:hidden;color:var(--header-text);font:700 16px/16px "Fira Sans Condensed",sans-serif;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap}' +
     ".article{width:100%}" +
     ".img{position:relative;height:215px;border-radius:6px;background-position:center;background-size:cover}" +
@@ -61,7 +61,7 @@ function slide(a: ArticlesBannerConfig["articles"][number], defaultBadge: string
 export function renderArticles1250x400(config: ArticlesBannerConfig, assets: RuntimeAssets): string {
   const b = config.behavior;
   const delay = b.autoplay ? b.delayMs : 0;
-  const header = `<a class="header" role="link" tabindex="0" aria-label="${escapeHtml(config.campaign)}" onclick="${clickAttr(escapeJsInAttr(config.header.href))}">${config.header.type === "color" ? `<span class="header-title">${escapeHtml(config.campaign)}</span>` : ""}</a>`;
+  const header = `<a class="header" role="link" tabindex="0" aria-label="${escapeHtml(config.campaign)}" onclick="${clickAttr(escapeJsInAttr(config.header.href))}"><span class="header-title">${escapeHtml(config.campaign)}</span></a>`;
   return (
     '<!doctype html><html lang="et"><head><meta charset="utf-8">' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +

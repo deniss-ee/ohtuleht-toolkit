@@ -1,9 +1,19 @@
 import { useRef } from "react";
-import { FileUp } from "lucide-react";
+import { FileUp, Images, Newspaper, Smartphone, type LucideIcon } from "lucide-react";
+import { IconChip } from "@/components/editor/IconChip";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { bannerTypes, contentMarketing as t } from "@/content";
+
+// One icon per banner type (picked by id so new types only need an entry here).
+const ICONS: Record<string, LucideIcon> = {
+  "articles-1250x400": Newspaper,
+  "articles-ad-1250x400": Newspaper,
+  "image-slider-1250x400": Images,
+  "articles-600x500": Smartphone,
+  "image-slider-600x500": Smartphone,
+};
 
 // Start screen of the category: pick a banner type or open an existing zip.
 // Every card is built the same way (title, details, button at the bottom) so rows line up.
@@ -32,8 +42,13 @@ export function ContentMarketingHome({ onCreate, onUpload }: { onCreate: (typeId
         {bannerTypes.map((b) => (
           <Card key={b.id} className={b.ready ? "h-full" : "h-full opacity-60"}>
             <CardHeader>
-              <CardTitle>{b.name}</CardTitle>
-              <CardDescription>{b.description}</CardDescription>
+              <div className="flex items-center gap-3">
+                <IconChip icon={ICONS[b.id] ?? Newspaper} tone={b.ready ? "red" : "ink"} />
+                <div>
+                  <CardTitle>{b.name}</CardTitle>
+                  <CardDescription>{b.description}</CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="flex gap-2">
               <Badge variant="secondary">{b.size}</Badge>
@@ -48,8 +63,13 @@ export function ContentMarketingHome({ onCreate, onUpload }: { onCreate: (typeId
         ))}
         <Card className="h-full">
           <CardHeader>
-            <CardTitle>{t.uploadTitle}</CardTitle>
-            <CardDescription>{t.uploadText}</CardDescription>
+            <div className="flex items-center gap-3">
+              <IconChip icon={FileUp} tone="yellow" />
+              <div>
+                <CardTitle>{t.uploadTitle}</CardTitle>
+                <CardDescription>{t.uploadText}</CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="flex gap-2">
             <Badge variant="outline">.zip</Badge>

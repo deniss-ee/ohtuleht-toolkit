@@ -25,7 +25,7 @@ const config: ArticlesBannerConfig = {
   v: 1,
   format: "articles-1250x400",
   campaign: "Kultuurisügis 2710",
-  header: { type: "image", src: "header.png", href: "https://www.ohtuleht.ee/teemalehed/kultuurisundmused2026-st" },
+  header: { type: "image", src: "header.svg", avg: "#8a0aa6", href: "https://www.ohtuleht.ee/teemalehed/kultuurisundmused2026-st" },
   badge: "Sisuturundus",
   primary: "#9500b2",
   theme: {
@@ -47,7 +47,7 @@ const html = renderArticles1250x400(config, assets);
 
 mkdirSync(out, { recursive: true });
 writeFileSync(new URL("index.html", out), html);
-copyFileSync(new URL("content-marketing/st_KultuurSygis_2710-1250x400/header.png", root), new URL("header.png", out));
+copyFileSync(new URL("apps/generator/src/assets/example-header.svg", root), new URL("header.svg", out));
 
-const header = readFileSync(new URL("header.png", out)).length;
+const header = readFileSync(new URL("header.svg", out)).length;
 console.log(`index.html ${html.length} B (gzip ${gzipSync(html).length} B), header.png ${header} B, total without article images ${html.length + header} B`);

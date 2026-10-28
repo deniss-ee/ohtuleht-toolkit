@@ -1,6 +1,7 @@
 import JSZip from "jszip";
 import type { ArticlesBannerConfig } from "@ohtuleht/templates";
 import { renderExport, zipName, type Draft, type HeaderFile } from "@/lib/banner";
+import { averageColor, toDataUrl } from "@/lib/image";
 
 export async function buildZip(draft: Draft): Promise<Blob> {
   const zip = new JSZip();
@@ -22,25 +23,13 @@ export function download(blob: Blob, name: string) {
 
 export const downloadZip = async (draft: Draft) => download(await buildZip(draft), zipName(draft));
 
-function mimeOf(name: string): string {
-  const ext = name.split(".").pop()?.toLowerCase();
-  if (ext === "svg") return "image/svg+xml";
-  if (ext === "jpg" || ext === "jpeg") return "image/jpeg";
-  if (ext === "webp") return "image/webp";
-  return "image/png";
-}
-
-function toDataUrl(bytes: Uint8Array, name: string): string {
-  let binary = "";
-  bytes.forEach((b) => (binary += String.fromCharCode(b)));
-  return `data:${mimeOf(name)};base64,${btoa(binary)}`;
-}
-
-export async function fileToHeader(file: File): Promise<HeaderFile> {
+export async function fileToHeader(file: File): Promise<{ headerFile: HeaderFile; avg?: string }> {
   const bytes = new Uint8Array(await file.arrayBuffer());
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "png";
   const name = `header.${ext}`;
-  return { name, bytes, dataUrl: toDataUrl(bytes, name) };
+  const dataUrl = toDataUrl(bytes, name);
+  const avg = await averageColor(dataUrl);
+  return { headerFile: { name, bytes, dataUrl, avg }, avg };
 }
 
 // Reads a banner made by this toolkit: the config is embedded in index.html.
@@ -60,7 +49,7 @@ export async function importZip(file: File): Promise<Draft> {
     const entry = zip.file(config.header.src);
     if (entry) {
       const bytes = await entry.async("uint8array");
-      headerFile = { name: config.header.src, bytes, dataUrl: toDataUrl(bytes, config.header.src) };
+      headerFile = { name: config.header.src, bytes, dataUrl: toDataUrl(bytes, config.header.src), avg: config.header.avg };
     }
   }
   return { config, headerFile };

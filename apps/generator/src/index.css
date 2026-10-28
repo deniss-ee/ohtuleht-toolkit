@@ -131,39 +131,40 @@
     --sidebar-ring: var(--color-red-500);
 }
 
-/* Dark: Ink Gray 950 as the page, slightly lifted surfaces, lighter red (500) so actions stay visible. */
+/* Dark: near-black surfaces (Ink Gray 950 mixed with black), Ink Gray 950 and 900 for borders and raised parts.
+   Buttons stay the brand red 600 in both themes. */
 .dark {
-    --background: var(--color-ink-950);
+    --background: color-mix(in oklab, var(--color-ink-950) 40%, black);
     --foreground: var(--color-ink-50);
-    --card: color-mix(in oklab, var(--color-ink-950) 92%, white);
+    --card: color-mix(in oklab, var(--color-ink-950) 55%, black);
     --card-foreground: var(--color-ink-50);
-    --popover: color-mix(in oklab, var(--color-ink-950) 90%, white);
+    --popover: color-mix(in oklab, var(--color-ink-950) 65%, black);
     --popover-foreground: var(--color-ink-50);
-    --primary: var(--color-red-500);
-    --primary-foreground: var(--color-ink-950);
-    --secondary: var(--color-ink-900);
+    --primary: var(--color-red-600);
+    --primary-foreground: #ffffff;
+    --secondary: var(--color-ink-950);
     --secondary-foreground: var(--color-ink-50);
-    --muted: color-mix(in oklab, var(--color-ink-950) 85%, white);
+    --muted: color-mix(in oklab, var(--color-ink-950) 60%, black);
     --muted-foreground: var(--color-ink-400);
-    --accent: var(--color-ink-900);
+    --accent: var(--color-ink-950);
     --accent-foreground: var(--color-ink-50);
     --destructive: var(--color-red-400);
-    --border: var(--color-ink-900);
-    --input: var(--color-ink-800);
-    --ring: var(--color-red-400);
-    --chart-1: var(--color-red-500);
+    --border: color-mix(in oklab, var(--color-ink-950) 85%, white 0%);
+    --input: var(--color-ink-900);
+    --ring: var(--color-red-500);
+    --chart-1: var(--color-red-600);
     --chart-2: var(--color-yellow-300);
     --chart-3: var(--color-ink-400);
     --chart-4: var(--color-red-300);
     --chart-5: var(--color-ink-200);
-    --sidebar: color-mix(in oklab, var(--color-ink-950) 92%, white);
+    --sidebar: color-mix(in oklab, var(--color-ink-950) 55%, black);
     --sidebar-foreground: var(--color-ink-50);
-    --sidebar-primary: var(--color-red-500);
-    --sidebar-primary-foreground: var(--color-ink-950);
-    --sidebar-accent: var(--color-ink-900);
+    --sidebar-primary: var(--color-red-600);
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: var(--color-ink-950);
     --sidebar-accent-foreground: var(--color-ink-50);
-    --sidebar-border: var(--color-ink-900);
-    --sidebar-ring: var(--color-red-400);
+    --sidebar-border: var(--color-ink-950);
+    --sidebar-ring: var(--color-red-500);
 }
 
 @layer base {
