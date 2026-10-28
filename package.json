@@ -1,0 +1,12 @@
+{
+  "name": "ohtuleht-toolkit",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "yarn workspace @ohtuleht/generator dev",
+    "build": "yarn workspace @ohtuleht/generator build",
+    "typecheck": "yarn workspace @ohtuleht/generator typecheck"
+  },
+  "engines": { "node": ">=20" }
+}
