@@ -23,8 +23,8 @@ Reference: `content-marketing/st_KultuurSygis_2710-1250x400`, rebuilt without Sw
 
 | Part | Value |
 |---|---|
-| Banner width | 1250 px (content max 1248 px) |
-| Header | 46 px high, image or solid colour, links to a campaign URL |
+| Banner width | Fixed 1248 px content in a 1250 px banner; never shrinks when the window is narrower |
+| Header | 46 px high, links to a campaign URL. Today: image or solid colour. Planned: text in a chosen font on a colour or image, picked in the generator |
 | Gap under header | 16 px |
 | Card image | 215 px high, 6 px radius, cover |
 | Badge | Over the image bottom-left, text per campaign (default "Sisuturundus") |

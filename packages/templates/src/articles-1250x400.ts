@@ -25,8 +25,9 @@ function css(config: ArticlesBannerConfig): string {
     `:root{${themeVars(config.theme.light)};color-scheme:light dark}` +
     `@media(prefers-color-scheme:dark){:root{${themeVars(config.theme.dark)}}}` +
     "*{box-sizing:border-box;margin:0;padding:0}" +
-    'html,body{overflow:hidden;background:var(--bg);font-family:"Roboto",sans-serif;-webkit-font-smoothing:antialiased}' +
-    ".banner{position:relative;width:100%;max-width:1248px}" +
+    // Fixed-size ad: never narrower than 1248 px, no matter the window.
+    'html,body{min-width:1248px;overflow:hidden;background:var(--bg);font-family:"Roboto",sans-serif;-webkit-font-smoothing:antialiased}' +
+    ".banner{position:relative;width:1248px}" +
     `.header{display:block;height:46px;margin-bottom:${GAP}px;${header};cursor:pointer}` +
     ".article{width:100%}" +
     ".img{position:relative;height:215px;border-radius:6px;background-position:center;background-size:cover}" +
