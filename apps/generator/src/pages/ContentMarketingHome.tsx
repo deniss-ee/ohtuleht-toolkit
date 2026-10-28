@@ -1,11 +1,13 @@
+import { useRef } from "react";
 import { FileUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { bannerTypes, contentMarketing as t } from "@/content";
 
-// Start screen of the category. Buttons get real behaviour in the form issues.
-export function ContentMarketingHome() {
+// Start screen of the category: pick a banner type or open an existing zip.
+export function ContentMarketingHome({ onCreate, onUpload }: { onCreate: (typeId: string) => void; onUpload: (file: File) => void }) {
+  const input = useRef<HTMLInputElement>(null);
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <div>
@@ -24,7 +26,9 @@ export function ContentMarketingHome() {
               <Badge variant="outline">{b.device}</Badge>
             </CardContent>
             <CardFooter>
-              <Button disabled={!b.ready}>{b.ready ? t.create : t.soon}</Button>
+              <Button disabled={!b.ready} onClick={() => onCreate(b.id)}>
+                {b.ready ? t.create : t.soon}
+              </Button>
             </CardFooter>
           </Card>
         ))}
@@ -34,7 +38,19 @@ export function ContentMarketingHome() {
             <CardDescription>{t.uploadText}</CardDescription>
           </CardHeader>
           <CardFooter>
-            <Button variant="outline" className="gap-2">
+            <input
+              ref={input}
+              type="file"
+              accept=".zip,application/zip"
+              className="sr-only"
+              aria-label={t.uploadButton}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                e.target.value = "";
+                if (f) onUpload(f);
+              }}
+            />
+            <Button variant="outline" className="gap-2" onClick={() => input.current?.click()}>
               <FileUp className="size-4" /> {t.uploadButton}
             </Button>
           </CardFooter>
