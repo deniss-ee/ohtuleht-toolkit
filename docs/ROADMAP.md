@@ -2,6 +2,8 @@
 
 Each phase ends in something usable. Work is tracked as GitHub issues grouped in milestones that match the phases below.
 
+> **Status (2026-10-29):** Phase 0b (brand manual: colours and logos) and most of Phase 1 are built: Articles 1250x400 generator, runtime, bookmarklet v2, header bar tool. Next: old zip import (#34), then lint/CI (#5, #6), static-ad template (#35). See [HANDOFF.md](HANDOFF.md).
+
 ## Phase 0: Foundation and documentation (M0)
 
 - Private repository, `develop` integration branch, `main` release branch.
@@ -74,7 +76,7 @@ A unified brief for banner and campaign requests across three departments: banne
 
 ## Open questions
 
-1. With only 2 or 3 articles on desktop, should cards stretch to full width or keep the 4-column card width? Proposed default: keep card width, left aligned.
+1. ~~With only 2 or 3 articles on desktop, stretch or keep width?~~ Decided: the cards stretch to the full width.
 2. Static-ad variant: side, size, and the mobile "every Nth slide is an ad" rule. Waiting for Figma.
 3. Header: v1 uses an uploaded image or a solid colour per campaign. Generated headers from logo + name later.
 4. Bookmarklet distribution: a hosted loader may be blocked by the site's content security policy.

@@ -1,0 +1,98 @@
+# Handoff: where we are and how to continue
+
+For a new session or a new computer. Claude reads `CLAUDE.md` automatically; this file is the longer story.
+
+## Where we are (end of the first long session, 2026-10-29)
+
+Built and merged into `develop`:
+
+| Module | What it does | Docs |
+|---|---|---|
+| Banner generator, **Articles 1250x400** | Form, live preview (light/dark), article cards with pictures, bookmarklet snippets, per-article label, main colour, header (picture or colour, campaign name on top), zip export and re-open | `docs/BANNERS.md` |
+| Banner runtime | Slider without Swiper: loop, arrows, autoplay, drag, keys, shuffle, 4 or fewer articles share the width | `packages/banner-runtime/README.md` |
+| **Header bar** tool | 100% x 46 px bar for theme pages (index.html + style.css), preview at 3 widths, iframe code | `docs/HEADER-BAR.md` |
+| **Brand manual** | 33 colour swatches (copy as HEX/RGB/HSL/CSS/Tailwind, contrast, token export), 6 logo variants as SVG/PNG, safe zone, sizes, zip | `docs/BRAND-MANUAL.md` |
+| Bookmarklet v2 | Copies an article as a JSON snippet (title, link, picture, label) | `docs/BOOKMARKLET.md` |
+
+Not built yet (GitHub issues, milestones M0 to M4): old Swiper zip import (#34), 1250x400 with static ad (#35), image slider (#36), mobile 600x500 (#37), header font and size options (#64), brand typography and ad formats (#18), lint/format/CI (#5, #6), accessibility pass (#38), IT handoff README (#39), Cloudflare Worker (M2), hosted banners and login (M3), task tracker (M4, spec in `docs/TASK-TRACKER.md`).
+
+## Decisions already made (do not re-ask)
+
+- English interface now; Estonian and Microsoft login come with Phase 3. Static feed and zip are always the fallback.
+- Banners: ClickTag code is fixed in the templates; ad server accepts zip or URL; weight budget about 100 KB without images (soft); only Google Fonts as an external request besides article pictures from `p.ohtuleht.ee`.
+- Runtime shuffle on by default; autoplay ignores the OS "reduce motion" setting and hover-pause is off (like the old Dacia banner), both available as options.
+- Header is a picture or a colour, and the campaign name is **always** written on it (Fira Sans Condensed 700, 16 px, uppercase). Pictures must not contain text.
+- Colours are per campaign (main colour drives header, arrows, labels). Defaults: brand red `#F50000`, hover `#E3000F`.
+- Interface uses the Brand hub: Fira Sans (headlines), Inter (interface), DM Mono (code); buttons brand red 600 only.
+- Logo safe zone = one full logo height on every side.
+- Colour pickers: our own (react-colorful), never the native one.
+
+## Open questions for the user
+
+1. Old banner headers (`header.png`) contain baked-in text. On import, keep the picture and also write the campaign name (double text), or ask for a text-free picture? (Needed for issue #34.)
+2. Static-ad banner (#35): which side, what size, and the mobile rule. Needs the Figma link.
+3. Cloudflare account and domain for Phase 2.
+4. IT: where `dist/` is hosted; whether branch protection is available on the private repo (issue #3).
+
+## Next: issue #34, import old Swiper zips (tomorrow)
+
+Goal: upload an old banner zip, get the form filled in, edit, export a new zip without Swiper.
+
+Legacy fixtures are in the repo (zip them on the fly in tests):
+
+| Folder | Type | How to read it |
+|---|---|---|
+| `content-marketing/st_KultuurSygis_2710-1250x400` | Articles 1250x400 | `<a class="header" href>`; slides `.swiper-slide[onclick]` with `olBanner.getClickTag('URL')`; `.img` `background-image: url(&quot;...&quot;)`; `p.badge`; `p.title`; Swiper options in the inline script (`slidesPerView`, `autoplay.delay`, `speed`); colours in `style.css` (`.badge` colour, `.article:hover .title`, `.header` background, dark mode block) |
+| `content-marketing/st_Autopay0810_1250x400` | Articles + static ad | same slides (3 visible); the ad is `img.banner-img[onclick]` with `banner.jpg`. The static-ad format does not exist yet (#35): import the articles, warn that the ad is skipped |
+| `content-marketing/st_KultuurSygis_2710-600x500` | Mobile articles | `.swiper-slide > .st-wrapper[style=background-image] > .st-text > p.badge + p.header`. No mobile template yet (#37): detect and say it is not supported yet |
+| `content-marketing/dacia_ol-1250x400-noswiper` | Image slider | different module (#36), not an article banner |
+
+Suggested steps: (1) a detector in `apps/generator/src/lib/zip.ts` (look for `#ol-banner`, then `#ol-header`, then legacy markers); (2) a pure parser `lib/legacy.ts` returning a `Draft` plus warnings, using `DOMParser`; (3) map the badge colour to the main colour, the first badge text to the campaign label, the header link and picture to the header; (4) show warnings in a dialog after opening; (5) tests: add Vitest with the issue #5/#6 work, or verify in the browser with the three fixtures; (6) update `docs/BANNERS.md`, close #34.
+
+## Start prompts (paste into a new session)
+
+**Continue in general**
+
+```
+Read CLAUDE.md and docs/HANDOFF.md in this repo, then run `git status`, `git pull` on develop and `gh issue list --state open --limit 30`. Tell me in 5 lines where we are and propose the next step. Do not start building until I answer.
+```
+
+**Tomorrow: old Swiper zip import**
+
+```
+Read CLAUDE.md and docs/HANDOFF.md. Work on issue #34 (open old Swiper banner zips). Start with the plan in HANDOFF ("Next: issue #34"). First ask me the one open question about baked-in header text. Make a branch feat/34-legacy-import from develop, keep the dev server running for me to test, and open a PR when done. Do not merge until I say so.
+```
+
+**Lint, format and CI first**
+
+```
+Read CLAUDE.md and docs/HANDOFF.md. Do issues #5 and #6: ESLint, Prettier, Vitest, and GitHub Actions (typecheck, build, test, runtime size budget). Branch feat/5-lint-ci from develop, PR into develop. Keep the existing code style; do not reformat everything in one huge commit: format only touched files or do one clearly labelled format-only commit.
+```
+
+**Static-ad banner template**
+
+```
+Read CLAUDE.md and docs/HANDOFF.md. Build issue #35 (1250x400 with static ad). I will give you the Figma link for the ad side and size now: <paste link>. Read it with the Figma tools, build the template and form fields, test, open a PR.
+```
+
+## New computer checklist (nothing is synced except GitHub)
+
+1. Install Git, Node 20 or newer, Yarn 1 (`npm install -g yarn` is the one allowed use of npm), GitHub CLI, Claude Code.
+2. `gh auth login` as `deniss-ee`. For the AI to create issues and PRs it needs a fine-grained token with Administration, Contents, Issues, Pull requests, Workflows (read and write) on `ohtuleht-toolkit`.
+3. `git clone https://github.com/deniss-ee/ohtuleht-toolkit.git`, `cd ohtuleht-toolkit`, `git checkout develop`, `yarn install`.
+4. Open Claude Code in the folder. Authorise the Figma connector (`/mcp`).
+5. Check: `yarn dev`, open http://localhost:5173.
+6. Paste a start prompt above. The memory files of the AI are local to each computer; `CLAUDE.md` and this file replace them.
+
+## Figma references
+
+| What | File key | Node |
+|---|---|---|
+| Brand hub (colours, fonts, logos) | `Rj3ouvoH1d3YsRLTn0crxA` | `212:333` (logo section frame `212:490`) |
+| Ohtuleht 3.0: header designs, page "Rubriigipäised" | `U2Uh9SCqFvHertL18t8nQc` | `83:311`; header `ikea-header-for-claude` = `809:9` |
+
+## Session hygiene
+
+- Start a **new session** (or Compact) at each natural break: after a merged PR, or when the AI starts re-explaining things. The repo carries the memory.
+- Keep one task per session, and say "do not merge until I say so" if you want to review.
+- Ask for the test URL and restart command at the end of every task; the AI should always give them.

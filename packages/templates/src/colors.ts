@@ -67,7 +67,10 @@ export function readableOn(color: string, background: string, minRatio = 4.5): s
   return towardsLight ? "#ffffff" : "#000000";
 }
 
-// Text colour for a coloured bar. On a brand colour the brand rule decides. Otherwise: whichever of a dark or a light tint of the bar's own hue reads best.
+// Colours lighter than this (relative luminance) get dark text; everything else gets white.
+const WHITE_TEXT_MAX_LUMINANCE = 0.42;
+
+// Text colour for a coloured bar. On a brand colour the brand rule decides. Otherwise: white, or a dark tint of the bar's own hue when the colour is light.
 // The tint (a little of the hue, very low saturation) looks softer than pure black or white.
 export function onColor(background: string): string {
   const brandText = brandTextColor(background);
@@ -75,8 +78,9 @@ export function onColor(background: string): string {
   const [h, s] = rgbToHsl(parseHex(background));
   const tint = Math.min(s, 0.25);
   const dark = toHex(hslToRgb([h, tint, 0.08]));
-  const light = toHex(hslToRgb([h, tint, 0.97]));
-  return contrast(dark, background) >= contrast(light, background) ? dark : light;
+  // White text unless the colour is really light. Mid and saturated colours (for example magenta #ff00dd)
+  // get white even where black would measure slightly better: that is the brand owner's choice.
+  return luminance(parseHex(background)) > WHITE_TEXT_MAX_LUMINANCE ? dark : "#ffffff";
 }
 
 // Full colour set for one theme. The main colour fills in whatever the campaign did not set by hand:
