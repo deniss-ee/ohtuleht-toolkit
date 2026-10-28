@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Runtime test page</title>
+    <link rel="stylesheet" href="/src/slider.css" />
+    <style>
+      body { margin: 16px; font: 14px/1.4 Arial, sans-serif; }
+      form { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; padding: 12px; background: #f1f1f1; border-radius: 6px; margin-bottom: 16px; }
+      .demo { width: 1248px; max-width: 100%; margin-bottom: 24px; }
+      .ol-slide { height: 120px; background: #9500b2; color: #fff; display: grid; place-items: center; font-size: 28px; border-radius: 6px; }
+      .ol-prev, .ol-next { position: absolute; top: 40px; z-index: 2; width: 40px; height: 40px; }
+      .ol-prev { left: 0; } .ol-next { right: 0; }
+      #log, #state { font-family: monospace; }
+    </style>
+  </head>
+  <body>
+    <!-- Controls reload the page with the chosen options in the address bar. -->
+    <form method="get">
+      <label><input type="checkbox" name="shuffle" value="1" /> Shuffle on load</label>
+      <label><input type="checkbox" name="autoplay" value="1" /> Autoplay</label>
+      <label><input type="checkbox" name="respect" value="1" /> Respect OS "reduce motion" (opt-in)</label>
+      <label><input type="checkbox" name="hover" value="1" /> Pause on hover (opt-in)</label>
+      <button type="submit" name="apply" value="1">Apply and reload</button>
+    </form>
+    <p>State: <span id="state"></span></p>
+    <p>Last click: <span id="log">none</span></p>
+
+    <h3>2 articles (static: no arrows, no autoplay)</h3>
+    <div class="demo ol-slider" id="s2"><div class="ol-viewport"><div class="ol-track"></div></div></div>
+    <h3>4 articles (static)</h3>
+    <div class="demo ol-slider" id="s4"><div class="ol-viewport"><div class="ol-track"></div></div></div>
+    <h3>8 articles (slider)</h3>
+    <div class="demo ol-slider" id="s8">
+      <button class="ol-prev" aria-label="Previous">&lt;</button>
+      <div class="ol-viewport"><div class="ol-track"></div></div>
+      <button class="ol-next" aria-label="Next">&gt;</button>
+    </div>
+
+    <script>
+      var p = new URLSearchParams(location.search);
+      // First visit (no form submitted yet): defaults match real banners, shuffle and autoplay on.
+      var submitted = p.has("apply");
+      var shuffle = submitted ? p.get("shuffle") === "1" : true;
+      var autoplay = submitted ? p.get("autoplay") === "1" : true;
+      var respect = p.get("respect") === "1";
+      var hover = p.get("hover") === "1";
+      // Reflect options in the form and the state line.
+      document.querySelector("[name=shuffle]").checked = shuffle;
+      document.querySelector("[name=autoplay]").checked = autoplay;
+      document.querySelector("[name=respect]").checked = respect;
+      document.querySelector("[name=hover]").checked = hover;
+      var osReduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      document.getElementById("state").textContent =
+        "shuffle=" + shuffle + ", autoplay=" + autoplay + ", OS reduce motion=" + osReduce + ", respected=" + respect +
+        (autoplay && osReduce && respect ? " (autoplay is blocked)" : "");
+
+      [["s2", 2], ["s4", 4], ["s8", 8]].forEach(function (c) {
+        var root = document.getElementById(c[0]);
+        root.dataset.shuffle = shuffle ? "1" : "0";
+        root.dataset.delay = autoplay ? "2500" : "0";
+        if (respect) root.dataset.respectMotion = "1";
+        if (hover) root.dataset.pauseOnHover = "1";
+        var track = root.querySelector(".ol-track");
+        for (var i = 1; i <= c[1]; i++) {
+          var d = document.createElement("div");
+          d.className = "ol-slide";
+          d.textContent = i;
+          d.setAttribute("onclick", "document.getElementById('log').textContent='" + c[0] + " #" + i + "'");
+          track.appendChild(d);
+        }
+      });
+    </script>
+    <script type="module" src="/src/index.ts"></script>
+  </body>
+</html>
