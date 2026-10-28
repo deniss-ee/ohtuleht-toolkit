@@ -11,6 +11,7 @@ A modular set of internal tools for the Õhtuleht newsroom and ad sales: banner 
 | Article bookmarklet | Copy an article as a snippet from the live site | Exists (legacy), v2 planned |
 | Article API (Cloudflare Worker) | Fetch article title/image from a URL | Planned, Phase 2 |
 | Hosted banners + login | Banners served by URL, Microsoft login | Planned, Phase 3 |
+| Task tracker | Unified briefs for banner requests, optional Outlook sync | Planned, Phase 4 ([spec](docs/TASK-TRACKER.md)) |
 | Legacy tools | Image cropper, two-article story generator, CapCut template, movie banner, video ZIP, podcast story | Exist in `tools/`, migrated one by one |
 
 Full plan: [docs/ROADMAP.md](docs/ROADMAP.md).

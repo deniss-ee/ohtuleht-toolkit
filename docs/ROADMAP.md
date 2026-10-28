@@ -53,6 +53,12 @@ Done when: ad sales can produce a correct 1250x400 banner zip alone, in under fi
 - Microsoft login (Entra ID; Cloudflare Access is the lowest-code route).
 - Estonian interface.
 
+## Phase 4: Task tracker (M4)
+
+Spec: [TASK-TRACKER.md](TASK-TRACKER.md).
+
+A unified brief for banner and campaign requests across three departments: banner list with formats and placements, texts, images, links, optional Outlook/Exchange sync, Microsoft login. Depends on Phase 3 login. Starts with design work (interviews, brief schema) and can be prepared earlier.
+
 ## Future module ideas
 
 | Idea | Notes |
