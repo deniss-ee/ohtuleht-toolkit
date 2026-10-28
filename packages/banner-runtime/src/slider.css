@@ -9,6 +9,7 @@
 }
 .ol-static .ol-prev,
 .ol-static .ol-next { display: none; }
+/* Only when a banner opts in with data-respect-motion="1" */
 @media (prefers-reduced-motion: reduce) {
-  .ol-track { transition: none !important; }
+  .ol-slider[data-respect-motion="1"] .ol-track { transition: none !important; }
 }

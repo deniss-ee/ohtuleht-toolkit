@@ -12,6 +12,12 @@ interface Options {
   speed: number; // transition time in ms
   shuffle: boolean;
   loop: boolean;
+  // Off by default, like every existing banner: autoplay and sliding animation
+  // run even when the OS has "reduce motion" on. Set data-respect-motion="1" to obey it.
+  respectMotion: boolean;
+  // Off by default: autoplay keeps running under the pointer, like the Dacia banner.
+  // Set data-pause-on-hover="1" to pause while hovered or focused.
+  pauseOnHover: boolean;
 }
 
 const DRAG_START_PX = 5; // movement before a press counts as a drag
@@ -29,6 +35,8 @@ function readOptions(el: HTMLElement): Options {
     speed: num("speed", 250),
     shuffle: num("shuffle", 1) === 1,
     loop: num("loop", 1) === 1,
+    respectMotion: num("respectMotion", 0) === 1,
+    pauseOnHover: num("pauseOnHover", 0) === 1,
   };
 }
 
@@ -64,7 +72,7 @@ export function initSlider(root: HTMLElement): void {
     return;
   }
 
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduceMotion = o.respectMotion && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const speed = reduceMotion ? 0 : o.speed;
   const prevBtn = root.querySelector<HTMLButtonElement>(".ol-prev");
   const nextBtn = root.querySelector<HTMLButtonElement>(".ol-next");
@@ -149,11 +157,13 @@ export function initSlider(root: HTMLElement): void {
     start();
   });
 
-  // Pause while the user points at or focuses the banner, and in background tabs.
-  root.addEventListener("mouseenter", () => setPaused(true));
-  root.addEventListener("mouseleave", () => setPaused(false));
-  root.addEventListener("focusin", () => setPaused(true));
-  root.addEventListener("focusout", () => setPaused(false));
+  // Always pause in background tabs; optionally while pointed at or focused.
+  if (o.pauseOnHover) {
+    root.addEventListener("mouseenter", () => setPaused(true));
+    root.addEventListener("mouseleave", () => setPaused(false));
+    root.addEventListener("focusin", () => setPaused(true));
+    root.addEventListener("focusout", () => setPaused(false));
+  }
   document.addEventListener("visibilitychange", start);
 
   // Drag and swipe (mouse, touch, pen)

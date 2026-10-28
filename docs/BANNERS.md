@@ -12,7 +12,7 @@ Specification for every banner format the generator produces.
 | ClickTag | Fixed helper in every template; never edited by hand. See [ARCHITECTURE.md](ARCHITECTURE.md#clicktag) |
 | Libraries | None. Swiper is removed |
 | Browsers | Current Chrome, Safari, Firefox, Edge; iOS Safari; Android Chrome |
-| Accessibility | Arrows are `<button>` with labels, keyboard focus visible, reduced motion respected |
+| Accessibility | Arrows are `<button>` with labels, keyboard focus visible. Autoplay ignores the OS "reduce motion" setting by default (as existing banners do); `respectMotion` and `pauseOnHover` are opt-in switches |
 | Dark mode | Supported through `prefers-color-scheme: dark` |
 
 ## Format 1: Articles 1250x400 (first to build)

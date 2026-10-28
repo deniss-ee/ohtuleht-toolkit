@@ -8,7 +8,7 @@ Dependency-free slider script that replaces Swiper in banners. Builds to one fil
 yarn workspace @ohtuleht/banner-runtime dev
 ```
 
-Open `http://localhost:5174/test-page/index.html`. Add `?motion=1` to force animation on when your OS has "reduce motion" enabled (autoplay is off in that case by design).
+Open `http://localhost:5174/test-page/index.html`. The page has toggles for shuffle, autoplay, pause on hover and respecting the OS "reduce motion" setting.
 
 ## Build
 
@@ -41,12 +41,14 @@ Nothing on its own. The templates inline `dist/runtime.js` and `src/slider.css` 
 | `data-speed` | 250 | Transition time in ms |
 | `data-shuffle` | 1 | Shuffle slides on load |
 | `data-loop` | 1 | Endless loop |
+| `data-respect-motion` | 0 | 1 = obey the OS "reduce motion" setting (autoplay off, no slide animation) |
+| `data-pause-on-hover` | 0 | 1 = pause autoplay while hovered or focused |
 
 ## Behaviour
 
 - Slides at or below `data-visible`: static row, arrows hidden, no autoplay.
 - More slides: arrows, autoplay, endless loop (edge slides are cloned), mouse/touch drag, Left/Right keys.
-- Autoplay pauses on hover, focus and hidden tabs; it is off with `prefers-reduced-motion`.
+- Autoplay always runs, like the existing banners, and pauses only in hidden tabs. Hover pause and `prefers-reduced-motion` are opt-in (see attributes).
 - A drag never triggers the slide's click.
 
 ## Open items

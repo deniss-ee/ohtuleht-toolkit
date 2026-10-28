@@ -91,7 +91,7 @@ One small script, no dependencies. Responsibilities:
 | Slider | Active only when articles exceed visible count (4 on desktop) |
 | Loop | Infinite via cloned edge items and `transform` |
 | Input | Arrow buttons, touch swipe, mouse drag, keyboard |
-| Motion | Respects `prefers-reduced-motion` |
+| Motion | Autoplay runs by default; `respectMotion` opt-in obeys `prefers-reduced-motion`; `pauseOnHover` opt-in |
 | Theme | CSS variables; dark values under `prefers-color-scheme: dark` |
 | Transitions | `slide` (default), `fade`, `cube` for the image slider |
 | Budget | Runtime at most about 3 KB gzip |
