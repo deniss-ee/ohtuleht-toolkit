@@ -6,23 +6,33 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { contentMarketing, editor, type PageId } from "@/content";
 import { AppShell } from "@/layout/AppShell";
 import { newDraft, type Draft } from "@/lib/banner";
+import { importHeaderZip, newHeaderDraft, type HeaderDraft } from "@/lib/header";
 import { importZip } from "@/lib/zip";
 import { BannerEditor } from "@/pages/BannerEditor";
 import { ContentMarketingHome } from "@/pages/ContentMarketingHome";
+import { HeaderBarEditor } from "@/pages/HeaderBarEditor";
+
+// What is being edited right now: nothing (start screen), an articles banner, or a header bar.
+type Work = { kind: "banner"; draft: Draft } | { kind: "header"; draft: HeaderDraft } | null;
 
 export function App() {
   const [page, setPage] = useState<PageId>("content");
-  // null = start screen; a draft = editing that banner.
-  const [draft, setDraft] = useState<Draft | null>(null);
+  const [work, setWork] = useState<Work>(null);
 
+  const create = (typeId: string) => setWork(typeId === "header-bar" ? { kind: "header", draft: newHeaderDraft() } : { kind: "banner", draft: newDraft() });
+
+  // A zip may be a banner or a header bar made with this tool.
   const open = async (file: File) => {
     try {
-      setDraft(await importZip(file));
+      const header = await importHeaderZip(file);
+      setWork(header ? { kind: "header", draft: header } : { kind: "banner", draft: await importZip(file) });
       toast.success(editor.imported);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : contentMarketing.uploadFailed);
     }
   };
+
+  const close = () => setWork(null);
 
   return (
     <ThemeProvider>
@@ -31,11 +41,17 @@ export function App() {
           page={page}
           onNavigate={(p) => {
             setPage(p);
-            setDraft(null);
+            close();
           }}
         >
           {page === "content" &&
-            (draft ? <BannerEditor draft={draft} onChange={setDraft} onBack={() => setDraft(null)} /> : <ContentMarketingHome onCreate={() => setDraft(newDraft())} onUpload={open} />)}
+            (work?.kind === "banner" ? (
+              <BannerEditor draft={work.draft} onChange={(draft) => setWork({ kind: "banner", draft })} onBack={close} />
+            ) : work?.kind === "header" ? (
+              <HeaderBarEditor draft={work.draft} onChange={(draft) => setWork({ kind: "header", draft })} onBack={close} />
+            ) : (
+              <ContentMarketingHome onCreate={create} onUpload={open} />
+            ))}
         </AppShell>
         <Toaster />
       </TooltipProvider>
