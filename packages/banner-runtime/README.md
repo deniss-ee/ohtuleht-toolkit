@@ -46,7 +46,7 @@ Nothing on its own. The templates inline `dist/runtime.js` and `src/slider.css` 
 
 ## Behaviour
 
-- Slides at or below `data-visible`: static row, arrows hidden, no autoplay.
+- Slides at or below `data-visible`: static row, arrows hidden, no autoplay; the cards share the full width instead of keeping the column width.
 - More slides: arrows, autoplay, endless loop (edge slides are cloned), mouse/touch drag, Left/Right keys.
 - Autoplay always runs, like the existing banners, and pauses only in hidden tabs. Hover pause and `prefers-reduced-motion` are opt-in (see attributes).
 - A drag never triggers the slide's click.

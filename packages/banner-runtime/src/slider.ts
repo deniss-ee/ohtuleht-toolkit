@@ -66,9 +66,11 @@ export function initSlider(root: HTMLElement): void {
   root.style.setProperty("--ol-visible", String(o.visible));
   root.style.setProperty("--ol-gap", o.gap + "px");
 
-  // Everything fits: plain row, no arrows, no autoplay.
+  // Everything fits: plain row, no arrows, no autoplay. The cards share the whole width
+  // (2 articles = two wide cards), instead of keeping the 4-column width and leaving a gap.
   if (n <= o.visible) {
     root.classList.add("ol-static");
+    root.style.setProperty("--ol-visible", String(n));
     return;
   }
 
