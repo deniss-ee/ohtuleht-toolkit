@@ -1,5 +1,5 @@
 import { renderArticles1250x400, validate } from "@ohtuleht/templates";
-import type { ArticleItem, ArticlesBannerConfig, ThemeColors } from "@ohtuleht/templates";
+import type { ArticleItem, ArticlesBannerConfig, Problem, ThemeColors } from "@ohtuleht/templates";
 import runtimeJs from "../../../../packages/banner-runtime/dist/runtime.js?raw";
 import exampleHeader from "@/assets/example-header.png";
 import sliderCssRaw from "../../../../packages/banner-runtime/src/slider.css?raw";
@@ -63,7 +63,7 @@ export function emptyArticle(): ArticleItem {
   return { url: "", title: "", image: "" };
 }
 
-export function problems(draft: Draft): string[] {
+export function problems(draft: Draft): Problem[] {
   return validate(draft.config);
 }
 

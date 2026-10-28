@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { bannerTypes, contentMarketing as t } from "@/content";
 
 // Start screen of the category: pick a banner type or open an existing zip.
+// Every card is built the same way (title, details, button at the bottom) so rows line up.
 export function ContentMarketingHome({ onCreate, onUpload }: { onCreate: (typeId: string) => void; onUpload: (file: File) => void }) {
   const input = useRef<HTMLInputElement>(null);
   return (
@@ -14,9 +15,22 @@ export function ContentMarketingHome({ onCreate, onUpload }: { onCreate: (typeId
         <h1 className="text-2xl font-semibold">{t.title}</h1>
         <p className="text-muted-foreground">{t.intro}</p>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+
+      <ol className="grid gap-3 sm:grid-cols-3">
+        {t.steps.map((s, i) => (
+          <li key={s.title} className="flex items-start gap-3 rounded-xl border p-4">
+            <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">{i + 1}</span>
+            <div>
+              <div className="font-medium">{s.title}</div>
+              <div className="text-sm text-muted-foreground">{s.text}</div>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <div className="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {bannerTypes.map((b) => (
-          <Card key={b.id} className={b.ready ? undefined : "opacity-60"}>
+          <Card key={b.id} className={b.ready ? "h-full" : "h-full opacity-60"}>
             <CardHeader>
               <CardTitle>{b.name}</CardTitle>
               <CardDescription>{b.description}</CardDescription>
@@ -25,19 +39,22 @@ export function ContentMarketingHome({ onCreate, onUpload }: { onCreate: (typeId
               <Badge variant="secondary">{b.size}</Badge>
               <Badge variant="outline">{b.device}</Badge>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="mt-auto">
               <Button disabled={!b.ready} onClick={() => onCreate(b.id)}>
                 {b.ready ? t.create : t.soon}
               </Button>
             </CardFooter>
           </Card>
         ))}
-        <Card>
+        <Card className="h-full">
           <CardHeader>
             <CardTitle>{t.uploadTitle}</CardTitle>
             <CardDescription>{t.uploadText}</CardDescription>
           </CardHeader>
-          <CardFooter>
+          <CardContent className="flex gap-2">
+            <Badge variant="outline">.zip</Badge>
+          </CardContent>
+          <CardFooter className="mt-auto">
             <input
               ref={input}
               type="file"

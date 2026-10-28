@@ -176,7 +176,6 @@ export function ArticleList({
               <ClipboardPaste className="size-4" /> {t.pasteButton}
             </Button>
             <BookmarkletHelp />
-            <span className="text-xs text-muted-foreground">{t.pasteHelp}</span>
           </div>
         </div>
 

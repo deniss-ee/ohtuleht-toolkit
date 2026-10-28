@@ -37,7 +37,7 @@ const config: ArticlesBannerConfig = {
 };
 
 const problems = validate(config);
-if (problems.length) throw new Error(problems.join("\n"));
+if (problems.length) throw new Error(problems.map((p) => p.message).join("\n"));
 
 const assets = {
   runtimeJs: readFileSync(new URL("packages/banner-runtime/dist/runtime.js", root), "utf8"),

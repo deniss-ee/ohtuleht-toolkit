@@ -1,16 +1,16 @@
 import { useMemo, useRef, useState, type ReactNode } from "react";
-import { ArrowLeft, CheckCircle2, ChevronRight, Download, FlaskConical, ImagePlus, TriangleAlert } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ChevronRight, Download, FileArchive, FlaskConical, ImagePlus, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import { resolveTheme } from "@ohtuleht/templates";
 import type { ArticlesBannerConfig, ThemeColors } from "@ohtuleht/templates";
 import { ArticleList } from "@/components/editor/ArticleList";
 import { AutoColorField, ColorField } from "@/components/editor/ColorField";
 import { Preview } from "@/components/editor/Preview";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { editor as t } from "@/content";
@@ -87,6 +87,41 @@ const SPEEDS = [
 ];
 const nearestSpeed = (ms: number) => SPEEDS.reduce((best, s) => (Math.abs(s.ms - ms) < Math.abs(best.ms - ms) ? s : best)).ms;
 
+// Pill in the top bar that explains itself on hover (or on click, for touch screens).
+function HoverPill({ icon, label, tone, children }: { icon: ReactNode; label: string; tone: "ok" | "warn" | "plain"; children: (close: () => void) => ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const timer = useRef<number>(0);
+  const show = () => {
+    window.clearTimeout(timer.current);
+    setOpen(true);
+  };
+  const hide = () => {
+    timer.current = window.setTimeout(() => setOpen(false), 200);
+  };
+  const colors = tone === "warn" ? "border-amber-500/60 bg-amber-500/10" : tone === "ok" ? "border-green-600/40 bg-green-600/10" : "";
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button type="button" onMouseEnter={show} onMouseLeave={hide} className={`inline-flex h-8 items-center gap-1.5 rounded-full border px-3 text-xs font-medium ${colors}`}>
+          {icon}
+          {label}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-80" onMouseEnter={show} onMouseLeave={hide}>
+        {children(() => setOpen(false))}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// Scrolls to a form field and puts the cursor in it.
+function goTo(id: string) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({ block: "center", behavior: "smooth" });
+  setTimeout(() => el.focus({ preventScroll: true }), 350);
+}
+
 // Full-screen editor: covers the menu so the preview can use the whole width.
 export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChange: (d: Draft) => void; onBack: () => void }) {
   const [busy, setBusy] = useState(false);
@@ -130,15 +165,56 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
           <div className="truncate font-semibold leading-tight">{c.campaign.trim() || t.untitled}</div>
           <div className="text-xs text-muted-foreground">{t.heading} · 1250x400</div>
         </div>
-        {issues.length === 0 ? (
-          <Badge variant="secondary" className="hidden gap-1 sm:inline-flex">
-            <CheckCircle2 className="size-3.5 text-green-600" /> {t.ready}
-          </Badge>
-        ) : (
-          <Badge variant="outline" className="hidden gap-1 sm:inline-flex">
-            <TriangleAlert className="size-3.5 text-amber-600" /> {t.toFix(issues.length)}
-          </Badge>
-        )}
+        <HoverPill
+          tone="plain"
+          icon={<FileArchive className="size-3.5" />}
+          label={`${weightKb.toFixed(1)} KB`}
+        >
+          {() => (
+            <div className="space-y-2">
+              <div className="flex items-baseline justify-between text-sm font-medium">
+                <span>{t.weight}</span>
+                <span className="font-mono">{weightKb.toFixed(1)} / {BUDGET_KB} KB</span>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={Math.round(weightKb)} aria-valuemax={BUDGET_KB} aria-label={t.weight}>
+                <div className={weightKb > BUDGET_KB ? "h-full bg-destructive" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weightKb / BUDGET_KB) * 100)}%` }} />
+              </div>
+              <p className="text-xs text-muted-foreground">{t.sizeHelp}</p>
+            </div>
+          )}
+        </HoverPill>
+        <HoverPill
+          tone={issues.length === 0 ? "ok" : "warn"}
+          icon={issues.length === 0 ? <CheckCircle2 className="size-3.5 text-green-600" /> : <TriangleAlert className="size-3.5 text-amber-600" />}
+          label={issues.length === 0 ? t.ready : t.toFix(issues.length)}
+        >
+          {(close) =>
+            issues.length === 0 ? (
+              <p className="text-sm">{t.allGood}</p>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-sm font-medium">{t.toFixTitle}</p>
+                <p className="text-xs text-muted-foreground">{t.toFixHelp}</p>
+                <ul className="space-y-1">
+                  {issues.map((p) => (
+                    <li key={p.field + p.message}>
+                      <button
+                        type="button"
+                        className="w-full rounded-md px-2 py-1.5 text-left text-sm hover:bg-muted"
+                        onClick={() => {
+                          close();
+                          goTo(p.field);
+                        }}
+                      >
+                        {p.message}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          }
+        </HoverPill>
         <Button variant="outline" size="sm" className="gap-2" onClick={loadExample}>
           <FlaskConical className="size-4" />
           <span className="hidden md:inline">{t.loadExample}</span>
@@ -152,47 +228,10 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-[1282px] px-4">
           <div className={pinned ? "sticky top-0 z-20 -mx-4 border-b bg-background px-4 py-3" : "py-3"}>
-            <Preview draft={draft} pinned={pinned} onPin={setPinned} />
+            <Preview draft={draft} pinned={pinned} onPin={setPinned} onAddArticles={() => goTo("paste")} onTryExample={loadExample} />
           </div>
 
           <div className="space-y-4 pb-24 pt-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <Card>
-                <CardContent className="space-y-2 pt-6">
-                  <div className="flex items-baseline justify-between">
-                    <span className="text-sm font-medium">{t.weight}</span>
-                    <span className="font-mono text-sm">
-                      {weightKb.toFixed(1)} KB / {BUDGET_KB} KB
-                    </span>
-                  </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={Math.round(weightKb)} aria-valuemax={BUDGET_KB} aria-label={t.weight}>
-                    <div className={weightKb > BUDGET_KB ? "h-full bg-destructive" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weightKb / BUDGET_KB) * 100)}%` }} />
-                  </div>
-                  <p className="text-xs text-muted-foreground">{t.weightHint}</p>
-                </CardContent>
-              </Card>
-              <Card className={issues.length ? "border-amber-500/50" : undefined}>
-                <CardContent className="pt-6">
-                  {issues.length === 0 ? (
-                    <p className="flex items-center gap-2 text-sm font-medium">
-                      <CheckCircle2 className="size-4 text-green-600" /> {t.ready}
-                    </p>
-                  ) : (
-                    <>
-                      <p className="mb-1 flex items-center gap-2 text-sm font-medium">
-                        <TriangleAlert className="size-4 text-amber-600" /> {t.todoTitle}
-                      </p>
-                      <ul className="list-disc space-y-0.5 pl-6 text-sm text-muted-foreground">
-                        {issues.map((p) => (
-                          <li key={p}>{p}</li>
-                        ))}
-                      </ul>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-
             <div className="grid gap-4 md:grid-cols-2">
               <Section title={t.campaignTitle}>
                 <div className="space-y-1.5">
@@ -226,7 +265,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                     ) : (
                       <p className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">{t.headerNone}</p>
                     )}
-                    <Button variant="outline" size="sm" className="gap-2" onClick={() => fileInput.current?.click()}>
+                    <Button id="header-choose" variant="outline" size="sm" className="gap-2" onClick={() => fileInput.current?.click()}>
                       <ImagePlus className="size-4" /> {draft.headerFile ? t.headerChange : t.headerChoose}
                     </Button>
                     <p className="text-xs text-muted-foreground">{t.headerFileHint}</p>
