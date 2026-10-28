@@ -1,6 +1,7 @@
 import { renderArticles1250x400, validate } from "@ohtuleht/templates";
 import type { ArticleItem, ArticlesBannerConfig, ThemeColors } from "@ohtuleht/templates";
 import runtimeJs from "../../../../packages/banner-runtime/dist/runtime.js?raw";
+import exampleHeader from "@/assets/example-header.png";
 import sliderCssRaw from "../../../../packages/banner-runtime/src/slider.css?raw";
 
 const sliderCss = sliderCssRaw.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, " ");
@@ -17,9 +18,10 @@ export interface Draft {
   headerFile: HeaderFile | null;
 }
 
-// Neutral starting colours. Every campaign sets its own.
-const light: ThemeColors = { bg: "#ffffff", text: "#272727", badge: "#333333", hover: "#000000", headerBg: "#333333" };
-const dark: ThemeColors = { bg: "#0f0f0f", text: "#ffffff", badge: "#cccccc", hover: "#ffffff", headerBg: "#333333" };
+// Starting colours copied from the existing banners' stylesheet: titles turn red on hover.
+// Every campaign can change them.
+const light: ThemeColors = { bg: "#ffffff", text: "#272727", badge: "#9500b2", hover: "#e3000f", headerBg: "#003784" };
+const dark: ThemeColors = { bg: "#0f0f0f", text: "#ffffff", badge: "#9500b2", hover: "#e3000f", headerBg: "#003784" };
 
 export function newDraft(): Draft {
   return {
@@ -37,16 +39,18 @@ export function newDraft(): Draft {
   };
 }
 
-// Filled-in sample so the form can be tried without collecting articles first.
-export function exampleDraft(): Draft {
+// Filled-in sample (with a real header image) so the form can be tried without collecting anything first.
+export async function exampleDraft(): Promise<Draft> {
   const d = newDraft();
   const img = (p: string) => `https://p.ohtuleht.ee/webp/54/i/${p}`;
   d.config.campaign = "Example campaign";
-  d.config.header = { type: "color", href: "https://www.ohtuleht.ee/" };
+  const bytes = new Uint8Array(await (await fetch(exampleHeader)).arrayBuffer());
+  d.headerFile = { name: "header.png", bytes, dataUrl: `data:image/png;base64,${btoa(String.fromCharCode(...bytes))}` };
+  d.config.header = { type: "image", src: "header.png", href: "https://www.ohtuleht.ee/teemalehed/kultuurisundmused2026-st" };
   d.config.articles = [
     { url: "https://www.ohtuleht.ee/1169772/", image: img("2026/10/26/t1ovwidw.aju.jpg"), title: "Kaks komöödiat, üks kindel lubadus: rohkesti naeru, äratundmist ja ootamatuid pöördeid!" },
     { url: "https://www.ohtuleht.ee/1169357/", image: img("2026/10/21/ljqh0wyf.zk2.jpg"), title: "Novembrimaagia: Sinatrale pühendatud galaõhtu viib kuulaja aega, mil muusika oli elegantne ja õhk täis romantikat" },
-    { url: "https://www.ohtuleht.ee/1169358/", image: img("2026/10/21/i4kotj21.a5u.jpg"), title: "Muhedad jõulukontserdid: Koit Toome ja Karl-Erik Taukar lubavad kauneid duette ja põnevaid muusikalisi valikuid" },
+    { url: "https://www.ohtuleht.ee/1169358/", image: img("2026/10/21/i4kotj21.a5u.jpg"), title: "Muhedad jõulukontserdid: Koit Toome ja Karl-Erik Taukar lubavad kauneid duette ja põnevaid muusikalisi valikuid", badge: "Kontsert", badgeColor: "#0a7a3d" },
     { url: "https://www.ohtuleht.ee/1169360/", image: img("2026/10/21/ikgyfay1.0d4.jpg"), title: "Huumor ja kaunis jõulumuusika – just seda pakuvad Suured Tüdrukud ja Reigo Tamm!" },
     { url: "https://www.ohtuleht.ee/1169361/", image: img("2026/10/21/uhkpo021.vhi.jpg"), title: "Hispaania tenorite trio Les Bohèmes toob publikuni maailmakuulsa ooperimuusika – tõeliselt elegantses võtmes" },
     { url: "https://www.ohtuleht.ee/1169362/", image: img("2026/10/20/0ba3iixt.ati.jpg"), title: "Ines astub jõuluajal taas lavale! Õhtu, mil ei pea kuhugi kiirustama ja võib nautida jõuluaja maagiat..." },

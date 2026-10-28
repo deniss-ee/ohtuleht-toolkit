@@ -61,12 +61,12 @@ Uploading the zip into the generator reads this block and restores the form exac
   "badge": "Sisuturundus",
   "behavior": { "shuffle": true, "autoplay": true, "delayMs": 2500, "speedMs": 250, "loop": true },
   "articles": [
-    { "url": "https://www.ohtuleht.ee/1169772/", "title": "...", "image": "https://p.ohtuleht.ee/webp/54/i/2026/10/26/t1ovwidw.aju.jpg" }
+    { "url": "https://www.ohtuleht.ee/1169772/", "title": "...", "image": "https://p.ohtuleht.ee/webp/54/i/2026/10/26/t1ovwidw.aju.jpg", "badge": "Kontsert", "badgeColor": "#0a7a3d" }
   ]
 }
 ```
 
-Colours are per campaign. The values above are only the Kultuurisügis preset. Fields are validated by a schema in `packages/core`.
+Each article may carry its own `badge` text and `badgeColor`; without them the campaign `badge` and theme colour apply. Colours are per campaign. The values above are only the Kultuurisügis preset. Fields are validated by a schema in `packages/core`.
 
 ## ClickTag
 

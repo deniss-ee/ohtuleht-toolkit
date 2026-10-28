@@ -27,7 +27,7 @@ Reference: `content-marketing/st_KultuurSygis_2710-1250x400`, rebuilt without Sw
 | Header | 46 px high, links to a campaign URL. Today: image or solid colour. Planned: text in a chosen font on a colour or image, picked in the generator |
 | Gap under header | 16 px |
 | Card image | 215 px high, 6 px radius, cover |
-| Badge | Over the image bottom-left, text per campaign (default "Sisuturundus") |
+| Badge | Over the image bottom-left. Campaign default text (usually "Sisuturundus") and colour; each article can override both |
 | Title | Fira Sans Condensed 700, 20/24, up to the card width |
 | Card gap | 16 px |
 
@@ -45,7 +45,7 @@ Reference: `content-marketing/st_KultuurSygis_2710-1250x400`, rebuilt without Sw
 
 **Per-campaign colours (all editable, light and dark)**
 
-Badge colour, hover colour, header background (image or colour), title colour, page background. The Kultuurisügis values (`#9500b2`, `#e3000f`, `#003784`) are only this campaign's preset.
+Badge colour (and per-article badge colour), hover colour (red `#e3000f` by default: titles always turn red on hover), header background (image or colour), title colour, page background. The Kultuurisügis values (`#9500b2`, `#e3000f`, `#003784`) are only this campaign's preset.
 
 ## Format 2: Articles 1250x400 with static ad
 

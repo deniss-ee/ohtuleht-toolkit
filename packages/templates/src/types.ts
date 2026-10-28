@@ -13,6 +13,8 @@ export interface ArticleItem {
   url: string;
   title: string;
   image: string;
+  badge?: string; // overrides the campaign badge text for this article
+  badgeColor?: string; // overrides the badge colour for this article (hex)
 }
 
 export type Header =

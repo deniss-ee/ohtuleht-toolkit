@@ -1,16 +1,19 @@
-import { useMemo, useState, type ReactNode } from "react";
-import { ArrowLeft, Download, FlaskConical } from "lucide-react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
+import { ArrowLeft, CheckCircle2, ChevronRight, Download, FlaskConical, ImagePlus, TriangleAlert } from "lucide-react";
+import { toast } from "sonner";
 import type { ThemeColors } from "@ohtuleht/templates";
 import { ArticleList } from "@/components/editor/ArticleList";
 import { ColorField } from "@/components/editor/ColorField";
 import { Preview } from "@/components/editor/Preview";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { editor as t } from "@/content";
+import { ThemeToggle } from "@/layout/AppShell";
 import { bytesOf, exampleDraft, problems, renderExport, type Draft } from "@/lib/banner";
 import { downloadZip, fileToHeader } from "@/lib/zip";
 
@@ -28,10 +31,28 @@ function Section({ title, description, children }: { title: string; description?
   );
 }
 
+// Closed by default: advanced settings stay out of the way for people who do not need them.
+function Collapsible({ title, description, children }: { title: string; description: string; children: ReactNode }) {
+  return (
+    <details className="group rounded-xl border bg-card">
+      <summary className="flex cursor-pointer list-none items-center gap-3 p-4 [&::-webkit-details-marker]:hidden">
+        <ChevronRight className="size-4 shrink-0 transition-transform group-open:rotate-90" />
+        <div>
+          <div className="font-medium leading-none">{title}</div>
+          <div className="mt-1 text-sm text-muted-foreground">{description}</div>
+        </div>
+      </summary>
+      <div className="space-y-4 border-t p-4">{children}</div>
+    </details>
+  );
+}
+
 function SwitchRow({ id, label, checked, onChange }: { id: string; label: string; checked: boolean; onChange: (v: boolean) => void }) {
   return (
     <div className="flex items-center justify-between gap-4">
-      <Label htmlFor={id}>{label}</Label>
+      <Label htmlFor={id} className="font-normal">
+        {label}
+      </Label>
       <Switch id={id} checked={checked} onCheckedChange={onChange} />
     </div>
   );
@@ -41,7 +62,7 @@ function ColorSet({ title, colors, onChange }: { title: string; colors: ThemeCol
   const set = (key: keyof ThemeColors) => (hex: string) => onChange({ ...colors, [key]: hex });
   return (
     <div className="space-y-3">
-      <h3 className="text-sm font-medium">{title}</h3>
+      <h3 className="text-sm font-semibold">{title}</h3>
       <ColorField label={t.colorBg} value={colors.bg} onChange={set("bg")} />
       <ColorField label={t.colorText} value={colors.text} onChange={set("text")} />
       <ColorField label={t.colorBadge} value={colors.badge} onChange={set("badge")} />
@@ -51,10 +72,21 @@ function ColorSet({ title, colors, onChange }: { title: string; colors: ThemeCol
   );
 }
 
+const SPEEDS = [
+  { label: t.speedFast, ms: 150 },
+  { label: t.speedNormal, ms: 250 },
+  { label: t.speedSlow, ms: 500 },
+];
+const nearestSpeed = (ms: number) => SPEEDS.reduce((best, s) => (Math.abs(s.ms - ms) < Math.abs(best.ms - ms) ? s : best)).ms;
+
+// Full-screen editor: covers the menu so the preview can use the whole width.
 export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChange: (d: Draft) => void; onBack: () => void }) {
   const [busy, setBusy] = useState(false);
+  const [pinned, setPinned] = useState(() => window.innerHeight >= 800 && window.innerWidth >= 1000);
+  const fileInput = useRef<HTMLInputElement>(null);
   const c = draft.config;
   const set = (patch: Partial<Draft["config"]>) => onChange({ ...draft, config: { ...c, ...patch } });
+  const setBehavior = (patch: Partial<Draft["config"]["behavior"]>) => set({ behavior: { ...c.behavior, ...patch } });
 
   const issues = problems(draft);
   const weightKb = useMemo(() => (bytesOf(renderExport(draft)) + (c.header.type === "image" ? (draft.headerFile?.bytes.length ?? 0) : 0)) / 1024, [draft, c.header.type]);
@@ -63,6 +95,11 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
     if (!file) return;
     const headerFile = await fileToHeader(file);
     onChange({ ...draft, headerFile, config: { ...c, header: { type: "image", src: headerFile.name, href: c.header.href } } });
+  };
+
+  const loadExample = async () => {
+    onChange(await exampleDraft());
+    toast.success(t.exampleLoaded);
   };
 
   const download = async () => {
@@ -75,122 +112,157 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
   };
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="gap-2" onClick={onBack}>
-            <ArrowLeft className="size-4" /> {t.back}
-          </Button>
-          <h1 className="text-xl font-semibold">{t.title}</h1>
+    <div className="fixed inset-0 z-40 flex flex-col bg-background">
+      <header className="flex h-14 shrink-0 items-center gap-2 border-b px-3 sm:gap-3 sm:px-4">
+        <Button variant="ghost" size="sm" className="gap-2" onClick={onBack}>
+          <ArrowLeft className="size-4" />
+          <span className="hidden sm:inline">{t.back}</span>
+        </Button>
+        <div className="min-w-0 flex-1">
+          <div className="truncate font-semibold leading-tight">{c.campaign.trim() || t.untitled}</div>
+          <div className="text-xs text-muted-foreground">{t.heading} · 1250x400</div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="gap-2" onClick={() => onChange(exampleDraft())}>
-            <FlaskConical className="size-4" /> {t.loadExample}
-          </Button>
-          <Button size="sm" className="gap-2" disabled={issues.length > 0 || busy} onClick={download}>
-            <Download className="size-4" /> {busy ? t.downloading : t.download}
-          </Button>
-        </div>
-      </div>
-
-      <Preview draft={draft} />
-
-      <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-start">
-        <Card>
-          <CardContent className="space-y-2 pt-6">
-            <div className="flex items-baseline justify-between">
-              <span className="text-sm font-medium">{t.weight}</span>
-              <span className="font-mono text-sm">
-                {weightKb.toFixed(1)} KB / {BUDGET_KB} KB
-              </span>
-            </div>
-            <div className="h-2 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={Math.round(weightKb)} aria-valuemax={BUDGET_KB} aria-label={t.weight}>
-              <div className={weightKb > BUDGET_KB ? "h-full bg-destructive" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weightKb / BUDGET_KB) * 100)}%` }} />
-            </div>
-            <p className="text-xs text-muted-foreground">{t.weightHint}</p>
-          </CardContent>
-        </Card>
-        {issues.length > 0 && (
-          <Card className="border-destructive/50">
-            <CardContent className="pt-6">
-              <p className="mb-1 text-sm font-medium">{t.problemsTitle}</p>
-              <ul className="list-disc space-y-0.5 pl-5 text-sm text-muted-foreground">
-                {issues.map((p) => (
-                  <li key={p}>{p}</li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+        {issues.length === 0 ? (
+          <Badge variant="secondary" className="hidden gap-1 sm:inline-flex">
+            <CheckCircle2 className="size-3.5 text-green-600" /> {t.ready}
+          </Badge>
+        ) : (
+          <Badge variant="outline" className="hidden gap-1 sm:inline-flex">
+            <TriangleAlert className="size-3.5 text-amber-600" /> {t.toFix(issues.length)}
+          </Badge>
         )}
-      </div>
+        <Button variant="outline" size="sm" className="gap-2" onClick={loadExample}>
+          <FlaskConical className="size-4" />
+          <span className="hidden md:inline">{t.loadExample}</span>
+        </Button>
+        <ThemeToggle />
+        <Button className="gap-2" disabled={issues.length > 0 || busy} onClick={download}>
+          <Download className="size-4" /> {busy ? t.downloading : t.download}
+        </Button>
+      </header>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <div className="space-y-4">
-          <Section title={t.campaignCard}>
-            <div className="space-y-1.5">
-              <Label htmlFor="campaign">{t.campaignName}</Label>
-              <Input id="campaign" value={c.campaign} onChange={(e) => set({ campaign: e.target.value })} />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="badge">{t.badge}</Label>
-              <Input id="badge" value={c.badge} onChange={(e) => set({ badge: e.target.value })} />
-              <p className="text-xs text-muted-foreground">{t.badgeHint}</p>
-            </div>
-          </Section>
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto w-full max-w-[1282px] px-4">
+          <div className={pinned ? "sticky top-0 z-20 -mx-4 border-b bg-background px-4 py-3" : "py-3"}>
+            <Preview draft={draft} pinned={pinned} onPin={setPinned} />
+          </div>
 
-          <Section title={t.headerCard}>
-            <div className="space-y-1.5">
-              <Label htmlFor="header-type">{t.headerType}</Label>
-              <Select value={c.header.type} onValueChange={(v) => set({ header: v === "image" ? { type: "image", src: draft.headerFile?.name ?? "", href: c.header.href } : { type: "color", href: c.header.href } })}>
-                <SelectTrigger id="header-type" className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="image">{t.headerImage}</SelectItem>
-                  <SelectItem value="color">{t.headerColor}</SelectItem>
-                </SelectContent>
-              </Select>
+          <div className="space-y-4 pb-24 pt-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <Card>
+                <CardContent className="space-y-2 pt-6">
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-sm font-medium">{t.weight}</span>
+                    <span className="font-mono text-sm">
+                      {weightKb.toFixed(1)} KB / {BUDGET_KB} KB
+                    </span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={Math.round(weightKb)} aria-valuemax={BUDGET_KB} aria-label={t.weight}>
+                    <div className={weightKb > BUDGET_KB ? "h-full bg-destructive" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weightKb / BUDGET_KB) * 100)}%` }} />
+                  </div>
+                  <p className="text-xs text-muted-foreground">{t.weightHint}</p>
+                </CardContent>
+              </Card>
+              <Card className={issues.length ? "border-amber-500/50" : undefined}>
+                <CardContent className="pt-6">
+                  {issues.length === 0 ? (
+                    <p className="flex items-center gap-2 text-sm font-medium">
+                      <CheckCircle2 className="size-4 text-green-600" /> {t.ready}
+                    </p>
+                  ) : (
+                    <>
+                      <p className="mb-1 flex items-center gap-2 text-sm font-medium">
+                        <TriangleAlert className="size-4 text-amber-600" /> {t.todoTitle}
+                      </p>
+                      <ul className="list-disc space-y-0.5 pl-6 text-sm text-muted-foreground">
+                        {issues.map((p) => (
+                          <li key={p}>{p}</li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
             </div>
-            {c.header.type === "image" && (
-              <div className="space-y-1.5">
-                <Label htmlFor="header-file">{t.headerFile}</Label>
-                <Input id="header-file" type="file" accept="image/png,image/webp,image/svg+xml,image/jpeg" onChange={(e) => onHeaderFile(e.target.files?.[0])} />
-                <p className="text-xs text-muted-foreground">{draft.headerFile ? draft.headerFile.name : t.headerNone}. {t.headerFileHint}</p>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <Section title={t.campaignTitle}>
+                <div className="space-y-1.5">
+                  <Label htmlFor="campaign">{t.campaignName}</Label>
+                  <Input id="campaign" value={c.campaign} onChange={(e) => set({ campaign: e.target.value })} />
+                  <p className="text-xs text-muted-foreground">{t.campaignHint}</p>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="badge">{t.badge}</Label>
+                  <Input id="badge" value={c.badge} onChange={(e) => set({ badge: e.target.value })} />
+                  <p className="text-xs text-muted-foreground">{t.badgeHint}</p>
+                </div>
+              </Section>
+
+              <Section title={t.headerTitle} description={t.headerHint}>
+                <Tabs value={c.header.type} onValueChange={(v) => set({ header: v === "image" ? { type: "image", src: draft.headerFile?.name ?? "", href: c.header.href } : { type: "color", href: c.header.href } })}>
+                  <TabsList>
+                    <TabsTrigger value="image">{t.headerImage}</TabsTrigger>
+                    <TabsTrigger value="color">{t.headerColor}</TabsTrigger>
+                  </TabsList>
+                </Tabs>
+                {c.header.type === "image" ? (
+                  <div className="space-y-2">
+                    <input ref={fileInput} type="file" className="sr-only" aria-label={t.headerFile} accept="image/png,image/webp,image/svg+xml,image/jpeg" onChange={(e) => onHeaderFile(e.target.files?.[0])} />
+                    {draft.headerFile ? (
+                      <img src={draft.headerFile.dataUrl} alt="" className="h-auto w-full rounded-md border" style={{ aspectRatio: "1248 / 46", objectFit: "contain" }} />
+                    ) : (
+                      <p className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">{t.headerNone}</p>
+                    )}
+                    <Button variant="outline" size="sm" className="gap-2" onClick={() => fileInput.current?.click()}>
+                      <ImagePlus className="size-4" /> {draft.headerFile ? t.headerChange : t.headerChoose}
+                    </Button>
+                    <p className="text-xs text-muted-foreground">{t.headerFileHint}</p>
+                  </div>
+                ) : (
+                  <ColorField label={t.colorHeader} value={c.theme.light.headerBg} onChange={(hex) => set({ theme: { light: { ...c.theme.light, headerBg: hex }, dark: { ...c.theme.dark, headerBg: hex } } })} />
+                )}
+                <div className="space-y-1.5">
+                  <Label htmlFor="header-href">{t.headerLink}</Label>
+                  <Input id="header-href" placeholder="https://" value={c.header.href} onChange={(e) => set({ header: { ...c.header, href: e.target.value } })} />
+                  <p className="text-xs text-muted-foreground">{t.headerLinkHint}</p>
+                </div>
+              </Section>
+            </div>
+
+            <ArticleList articles={c.articles} defaultBadge={c.badge} defaultColor={c.theme.light.badge} onChange={(articles) => set({ articles })} />
+
+            <h2 className="pt-2 text-sm font-semibold text-muted-foreground">{t.advanced}</h2>
+            <Collapsible title={t.colorsTitle} description={t.colorsHint}>
+              <div className="grid gap-6 sm:grid-cols-2">
+                <ColorSet title={t.light} colors={c.theme.light} onChange={(light) => set({ theme: { ...c.theme, light } })} />
+                <ColorSet title={t.dark} colors={c.theme.dark} onChange={(dark) => set({ theme: { ...c.theme, dark } })} />
               </div>
-            )}
-            <div className="space-y-1.5">
-              <Label htmlFor="header-href">{t.headerLink}</Label>
-              <Input id="header-href" placeholder="https://" value={c.header.href} onChange={(e) => set({ header: { ...c.header, href: e.target.value } })} />
-            </div>
-          </Section>
-
-          <Section title={t.behaviorCard}>
-            <SwitchRow id="shuffle" label={t.shuffle} checked={c.behavior.shuffle} onChange={(v) => set({ behavior: { ...c.behavior, shuffle: v } })} />
-            <SwitchRow id="autoplay" label={t.autoplay} checked={c.behavior.autoplay} onChange={(v) => set({ behavior: { ...c.behavior, autoplay: v } })} />
-            <SwitchRow id="loop" label={t.loop} checked={c.behavior.loop} onChange={(v) => set({ behavior: { ...c.behavior, loop: v } })} />
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="delay">{t.delay}</Label>
-                <Input id="delay" type="number" min={500} step={100} value={c.behavior.delayMs} onChange={(e) => set({ behavior: { ...c.behavior, delayMs: Number(e.target.value) || 2500 } })} />
+            </Collapsible>
+            <Collapsible title={t.behaviorTitle} description={t.behaviorHint}>
+              <SwitchRow id="shuffle" label={t.shuffle} checked={c.behavior.shuffle} onChange={(v) => setBehavior({ shuffle: v })} />
+              <SwitchRow id="autoplay" label={t.autoplay} checked={c.behavior.autoplay} onChange={(v) => setBehavior({ autoplay: v })} />
+              <SwitchRow id="loop" label={t.loop} checked={c.behavior.loop} onChange={(v) => setBehavior({ loop: v })} />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <Label htmlFor="delay">{t.delay}</Label>
+                  <Input id="delay" type="number" min={1} step={0.5} value={c.behavior.delayMs / 1000} onChange={(e) => setBehavior({ delayMs: Math.max(500, Math.round((Number(e.target.value) || 2.5) * 1000)) })} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>{t.speed}</Label>
+                  <div className="flex gap-2" role="group" aria-label={t.speed}>
+                    {SPEEDS.map((s) => (
+                      <Button key={s.ms} variant={nearestSpeed(c.behavior.speedMs) === s.ms ? "default" : "outline"} size="sm" aria-pressed={nearestSpeed(c.behavior.speedMs) === s.ms} onClick={() => setBehavior({ speedMs: s.ms })}>
+                        {s.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="speed">{t.speed}</Label>
-                <Input id="speed" type="number" min={0} step={50} value={c.behavior.speedMs} onChange={(e) => set({ behavior: { ...c.behavior, speedMs: Number(e.target.value) || 0 } })} />
-              </div>
-            </div>
-          </Section>
-
-          <Section title={t.colorsCard}>
-            <div className="grid gap-6 sm:grid-cols-2">
-              <ColorSet title={t.light} colors={c.theme.light} onChange={(light) => set({ theme: { ...c.theme, light } })} />
-              <ColorSet title={t.dark} colors={c.theme.dark} onChange={(dark) => set({ theme: { ...c.theme, dark } })} />
-            </div>
-          </Section>
+            </Collapsible>
+          </div>
         </div>
-
-        <ArticleList articles={c.articles} onChange={(articles) => set({ articles })} />
       </div>
     </div>
   );
 }
-

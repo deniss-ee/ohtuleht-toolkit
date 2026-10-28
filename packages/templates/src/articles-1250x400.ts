@@ -27,7 +27,8 @@ function css(config: ArticlesBannerConfig): string {
     "*{box-sizing:border-box;margin:0;padding:0}" +
     // Fixed-size ad: never narrower than 1248 px, no matter the window.
     'html,body{min-width:1248px;overflow:hidden;background:var(--bg);font-family:"Roboto",sans-serif;-webkit-font-smoothing:antialiased}' +
-    ".banner{position:relative;width:1248px}" +
+    // Fills the 1250 px ad frame; never narrower than 1248 px.
+    ".banner{position:relative;width:100%;min-width:1248px;max-width:1250px}" +
     `.header{display:block;height:46px;margin-bottom:${GAP}px;${header};cursor:pointer}` +
     ".article{width:100%}" +
     ".img{position:relative;height:215px;border-radius:6px;background-position:center;background-size:cover}" +
@@ -41,12 +42,15 @@ function css(config: ArticlesBannerConfig): string {
   );
 }
 
-function slide(a: ArticlesBannerConfig["articles"][number], badge: string): string {
+function slide(a: ArticlesBannerConfig["articles"][number], defaultBadge: string): string {
+  // Each article may carry its own badge text and colour (set when the snippet is made); otherwise the campaign default.
+  const badge = a.badge?.trim() || defaultBadge;
+  const color = a.badgeColor ? ` style="color:${escapeHtml(a.badgeColor)}"` : "";
   const open = clickAttr(escapeJsInAttr(a.url));
   return (
     `<div class="ol-slide" role="link" tabindex="0" onclick="${open}">` +
     `<div class="article"><div class="img" style="background-image:url(&quot;${escapeCssUrlInAttr(a.image)}&quot;)">` +
-    `<p class="badge">${escapeHtml(badge)}</p></div>` +
+    `<p class="badge"${color}>${escapeHtml(badge)}</p></div>` +
     `<p class="title">${escapeHtml(a.title)}</p></div></div>`
   );
 }
@@ -60,7 +64,8 @@ export function renderArticles1250x400(config: ArticlesBannerConfig, assets: Run
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +
     `<title>${escapeHtml(config.campaign)} 1250x400</title>` +
     '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' +
-    `<link rel="stylesheet" href="${FONTS_URL}">` +
+    // Fonts must never block the first paint: load as "print" media, then switch to "all" once loaded.
+    `<link rel="stylesheet" href="${FONTS_URL}" media="print" onload="this.media='all'">` +
     `<style>${assets.sliderCss}${css(config)}</style></head><body>` +
     `<div class="banner">${header}` +
     `<div class="ol-slider" data-visible="${VISIBLE}" data-gap="${GAP}" data-delay="${delay}" data-speed="${b.speedMs}" data-shuffle="${b.shuffle ? 1 : 0}" data-loop="${b.loop ? 1 : 0}">` +

@@ -24,7 +24,7 @@ function NavButton({ item, active, onSelect }: { item: NavItem; active: boolean;
   );
 }
 
-function ThemeToggle() {
+export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
   const dark = resolvedTheme === "dark";
   return (

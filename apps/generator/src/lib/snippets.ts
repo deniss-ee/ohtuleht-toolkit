@@ -15,7 +15,10 @@ function fromJson(value: unknown): ArticleItem | null {
   if (!value || typeof value !== "object") return null;
   const o = value as Record<string, unknown>;
   if (typeof o.url !== "string" || typeof o.title !== "string" || typeof o.image !== "string") return null;
-  return { url: o.url.trim(), title: o.title.trim(), image: o.image.trim() };
+  const item: ArticleItem = { url: o.url.trim(), title: o.title.trim(), image: o.image.trim() };
+  if (typeof o.badge === "string" && o.badge.trim()) item.badge = o.badge.trim();
+  if (typeof o.badgeColor === "string" && /^#[0-9a-fA-F]{6}$/.test(o.badgeColor.trim())) item.badgeColor = o.badgeColor.trim();
+  return item;
 }
 
 // Old bookmarklet output: slide div with onclick getClickTag('URL'), a background-image url and a title or header paragraph.
@@ -28,7 +31,8 @@ function fromLegacyHtml(html: string): ArticleItem[] {
     const style = slide.querySelector<HTMLElement>("[style*='background-image']")?.getAttribute("style") ?? "";
     const image = /url\(\s*["']?([^"')]+)["']?\s*\)/.exec(style)?.[1];
     const title = slide.querySelector(".title, .header")?.textContent;
-    if (url && image && title) out.push({ url: decodeEntities(url), image: decodeEntities(image), title: title.trim() });
+    const badge = slide.querySelector(".badge")?.textContent?.trim();
+    if (url && image && title) out.push({ url: decodeEntities(url), image: decodeEntities(image), title: title.trim(), ...(badge ? { badge } : {}) });
   });
   return out;
 }
