@@ -174,27 +174,29 @@ function LogoCard({ logo, withSafeZone, pixelWidth, background }: { logo: LogoVa
     }
   };
 
+  // Same structure in every card so the rows line up: picture box (fixed height), title, usage (reserved lines),
+  // size line, and the buttons pinned to the bottom edge.
   return (
-    <Card>
-      <CardHeader>
+    <Card className="h-full gap-0 py-0">
+      <div className="m-3 mb-0 flex h-44 items-center justify-center overflow-hidden rounded-lg border p-4" style={{ background: PREVIEW_BG[logo.id] ?? "#fff" }}>
+        <img
+          src={svgDataUrl(logoSvg(logo, o))}
+          alt={logo.name}
+          className={withSafeZone ? "outline outline-1 outline-dashed outline-red-500" : undefined}
+          style={{ maxWidth: "100%", maxHeight: "100%", width: "auto", height: "auto", objectFit: "contain" }}
+        />
+      </div>
+      <CardHeader className="px-4 pt-4">
         <CardTitle>{logo.name}</CardTitle>
-        <CardDescription>{logo.usage}</CardDescription>
+        <CardDescription className="min-h-[4.5rem]">{logo.usage}</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="flex items-center justify-center rounded-lg border p-4" style={{ background: PREVIEW_BG[logo.id] ?? "#fff", minHeight: 140 }}>
-          <img
-            src={svgDataUrl(logoSvg(logo, o))}
-            alt={logo.name}
-            className={withSafeZone ? "outline outline-1 outline-dashed outline-red-500" : undefined}
-            style={{ width: logo.family === "wordmark" ? "100%" : 96, maxWidth: logo.family === "wordmark" ? 336 : 96, height: "auto" }}
-          />
-        </div>
-        <p className="mt-2 text-xs text-muted-foreground">
+      <CardContent className="px-4 pt-2">
+        <p className="text-xs text-muted-foreground">
           {t.sizeInfo(logo.width, logo.height)}
           {withSafeZone && ` · ${t.safeZonePad(safeZone(logo))}`}
         </p>
       </CardContent>
-      <CardFooter className="flex flex-wrap gap-2">
+      <CardFooter className="mt-auto flex flex-wrap gap-2 px-4 py-3">
         <Button size="sm" className="gap-2" onClick={() => download(new Blob([logoSvg(logo, o)], { type: "image/svg+xml" }), logoFileName(logo, o, "svg"))}>
           <Download className="size-4" /> SVG
         </Button>
@@ -263,7 +265,7 @@ function Logos() {
       {(["wordmark", "logomark"] as const).map((family) => (
         <section key={family} className="space-y-3">
           <h2 className="text-lg font-semibold">{family === "wordmark" ? t.wordmarks : t.logomarks}</h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {brand.logos
               .filter((l) => l.family === family)
               .map((l) => (
