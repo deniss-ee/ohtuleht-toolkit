@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Video Banner Generator (Dynamic Size)</title>
+    <meta name="viewport" content="width=1800,user-scalable=no" />
+    <style>
+      body {
+        font-family: sans-serif;
+        background: #f5f7fa;
+        margin: 0;
+      }
+      .container {
+        max-width: 1800px;
+        margin: 40px auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px #0001;
+        padding: 32px;
+      }
+      label {
+        display: block;
+        margin-top: 18px;
+      }
+      input[type="number"],
+      input[type="text"],
+      select {
+        padding: 7px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+        margin-top: 4px;
+      }
+      .preview-wrap {
+        margin: 30px 0;
+        border: 2px dashed #ccc;
+        border-radius: 10px;
+        background: #eee;
+        position: relative;
+        min-height: 200px;
+        min-width: 300px;
+        overflow: hidden;
+        transition: width 0.2s, height 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #preview-bg {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 0;
+      }
+      #preview-video {
+        position: absolute;
+        z-index: 1;
+        background: #000;
+      }
+      .controls {
+        margin-top: 30px;
+        display: flex;
+        gap: 15px;
+      }
+      button {
+        background: #1e88e5;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 12px 30px;
+        font-size: 17px;
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.6;
+      }
+      .info-row {
+        margin-top: 10px;
+        color: #888;
+        font-size: 15px;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  </head>
+  <body>
+    <div class="container" id="container">
+      <h2>Video Banner ZIP Generator</h2>
+      <label>Background image (1250px version): <input type="file" accept="image/*" id="bg-input" /></label>
+      <label>Background image (1280px version): <input type="file" accept="image/*" id="bg-input-2" /></label>
+      <label>Video: <input type="file" accept="video/mp4,video/webm" id="video-input" /></label>
+      <label>Video height (px): <input type="number" id="video-height" value="320" min="50" max="1000" /></label>
+      <label>
+        Video position:
+        <select id="video-position">
+          <option value="left">Left</option>
+          <option value="center" selected>Center</option>
+          <option value="right">Right</option>
+        </select>
+      </label>
+      <label>Horizontal offset (px): <input type="number" id="video-offset" value="40" min="0" max="500" /></label>
+      <label>Click URL for 1250px version (optional): <input type="text" id="click-url" placeholder="https://example.com" /></label>
+      <label>Click URL for 1280px version (optional): <input type="text" id="click-url-2" placeholder="https://example.com" /></label>
+      <div class="info-row" id="size-info"></div>
+      <div class="preview-wrap" id="preview-wrap" style="width: 600px; height: 400px">
+        <img id="preview-bg" src="" alt="Background preview" hidden />
+        <video id="preview-video" src="" autoplay muted loop playsinline hidden></video>
+      </div>
+      <div class="controls">
+        <button id="download-btn" disabled>Download ZIP</button>
+      </div>
+    </div>
+
+    <script>
+      const bgInput = document.getElementById("bg-input");
+      const bgInput2 = document.getElementById("bg-input-2");
+      const videoInput = document.getElementById("video-input");
+      const videoHeight = document.getElementById("video-height");
+      const videoPosition = document.getElementById("video-position");
+      const videoOffset = document.getElementById("video-offset");
+      const previewBg = document.getElementById("preview-bg");
+      const previewVideo = document.getElementById("preview-video");
+      const previewWrap = document.getElementById("preview-wrap");
+      const downloadBtn = document.getElementById("download-btn");
+      const sizeInfo = document.getElementById("size-info");
+      const container = document.getElementById("container");
+      const clickUrlInput = document.getElementById("click-url");
+      const clickUrlInput2 = document.getElementById("click-url-2");
+
+      let bgFile = null,
+        bgFile2 = null,
+        videoFile = null;
+      let bgNaturalWidth = 600,
+        bgNaturalHeight = 400;
+      let bgNaturalWidth2 = 600,
+        bgNaturalHeight2 = 400;
+      let bgImageUrl = "",
+        bgImageUrl2 = "",
+        videoUrl = "";
+
+      function setPreviewSize(w, h) {
+        previewWrap.style.width = w + "px";
+        previewWrap.style.height = h + "px";
+        container.style.maxWidth = w + 80 + "px";
+      }
+
+      function updatePreview() {
+        previewBg.hidden = !bgFile;
+        previewVideo.hidden = !videoFile;
+        if (bgFile) previewBg.src = bgImageUrl;
+        if (videoFile) previewVideo.src = videoUrl;
+
+        setPreviewSize(bgNaturalWidth, bgNaturalHeight);
+        sizeInfo.innerText = `Banner size: ${bgNaturalWidth} x ${bgNaturalHeight}px`;
+
+        const h = parseInt(videoHeight.value) || 320;
+        previewVideo.style.height = h + "px";
+        previewVideo.style.width = "auto";
+        previewVideo.style.top = "50%";
+        previewVideo.style.transform = "translateY(-50%)";
+        let pos = videoPosition.value;
+        let offset = parseInt(videoOffset.value) || 0;
+        previewVideo.style.right = "";
+        previewVideo.style.left = "";
+        previewVideo.style.marginLeft = "";
+        if (pos === "left") {
+          previewVideo.style.left = offset + "px";
+        } else if (pos === "center") {
+          previewVideo.style.left = "50%";
+          previewVideo.style.transform += " translateX(-50%)";
+        } else if (pos === "right") {
+          previewVideo.style.right = offset + "px";
+        }
+      }
+
+      // Background image 1 input event
+      bgInput.addEventListener("input", function () {
+        if (bgInput.files[0]) {
+          bgFile = bgInput.files[0];
+          bgImageUrl = URL.createObjectURL(bgFile);
+          const img = new Image();
+          img.onload = function () {
+            bgNaturalWidth = img.naturalWidth;
+            bgNaturalHeight = img.naturalHeight;
+            setPreviewSize(bgNaturalWidth, bgNaturalHeight);
+            previewBg.src = bgImageUrl;
+            previewBg.hidden = false;
+            updatePreview();
+            enableDownloadIfReady();
+          };
+          img.src = bgImageUrl;
+        }
+      });
+
+      // Background image 2 input event
+      bgInput2.addEventListener("input", function () {
+        if (bgInput2.files[0]) {
+          bgFile2 = bgInput2.files[0];
+          bgImageUrl2 = URL.createObjectURL(bgFile2);
+          const img = new Image();
+          img.onload = function () {
+            bgNaturalWidth2 = img.naturalWidth;
+            bgNaturalHeight2 = img.naturalHeight;
+            enableDownloadIfReady();
+          };
+          img.src = bgImageUrl2;
+        }
+      });
+
+      // Video input event
+      videoInput.addEventListener("input", function () {
+        if (videoInput.files[0]) {
+          videoFile = videoInput.files[0];
+          videoUrl = URL.createObjectURL(videoFile);
+          previewVideo.src = videoUrl;
+          previewVideo.hidden = false;
+          updatePreview();
+          enableDownloadIfReady();
+        }
+      });
+
+      [videoHeight, videoPosition, videoOffset].forEach((el) => el.addEventListener("input", updatePreview));
+      videoPosition.addEventListener("change", updatePreview);
+
+      function enableDownloadIfReady() {
+        downloadBtn.disabled = !(bgFile && bgFile2 && videoFile);
+      }
+
+      downloadBtn.addEventListener("click", async function () {
+        if (!(bgFile && bgFile2 && videoFile)) return;
+        const h = parseInt(videoHeight.value) || 320;
+        const pos = videoPosition.value;
+        const offset = parseInt(videoOffset.value) || 0;
+        const clickUrl = clickUrlInput.value.trim() || '';
+        const clickUrl2 = clickUrlInput2.value.trim() || '';
+        const bgName = bgFile.name;
+        const bgName2 = bgFile2.name;
+        const videoName = "video.mp4"; // Always video.mp4
+
+        let videoPosCSS = "";
+        if (pos === "left") {
+          videoPosCSS = `left:${offset}px; top:50%; transform:translateY(-50%);`;
+        } else if (pos === "center") {
+          videoPosCSS = `left:50%; top:50%; transform:translate(-50%,-50%);`;
+        } else if (pos === "right") {
+          videoPosCSS = `right:${offset}px; top:50%; transform:translateY(-50%);`;
+        }
+
+        // Function to generate banner HTML with correct dimensions
+        function createBannerHTML(width, height, bgImageName, clickUrlForVersion) {
+          return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Video Banner</title>
+  <meta name="viewport" content="width=${width}, user-scalable=no">
+  <script>
+    var olBanner = {
+	getQueryStringValue: function(key) {
+		return decodeURIComponent(window.location.search.replace(new RegExp("^(?:.*[&?]" + encodeURIComponent(key).replace(/[.+*]/g, "$&") + "(?:=([^&]*))?)?.*$", "i"), "$1"));
+	},
+	
+	getClickTag: function(customDestinationUrl) {
+		this.clickMacro = this.getQueryStringValue('clickMacro');
+		this.clickTag = this.getQueryStringValue('clickTag');
+
+		if (customDestinationUrl !== undefined && customDestinationUrl.length > 0) {
+			return this.clickMacro + customDestinationUrl;
+		} else {
+			return this.clickTag;
+		}
+	}
+}
+var clickTag = ""
+  <\/script>
+  <style>
+    body { margin:0; padding:0; cursor: pointer; }
+    .banner-bg {
+      background: url('${bgImageName}') center center/cover no-repeat;
+      width: ${width}px; height: ${height}px; position: relative; overflow: hidden;
+    }
+    .video-wrap {
+      position: absolute; z-index:2; ${videoPosCSS} height:${h}px; width:auto;
+    }
+    video { height:100%; width:auto; display:block; object-fit:contain; background:#000; }
+    
+    /* Video Controls */
+    #video-controls {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      z-index: 100;
+    }
+    #video-controls > button {
+      position: relative;
+      background-color: transparent;
+      background-size: 30px;
+      background-repeat: no-repeat;
+      background-position: center;
+      width: 30px;
+      height: 30px;
+      border: none;
+      opacity: 0.7;
+      border-radius: 15px;
+      cursor: pointer;
+      margin-left: 5px;
+      display: inline-block;
+    }
+    #video-controls > button:hover {
+      opacity: 1;
+    }
+    #video-controls > button:focus {
+      outline: none;
+      box-shadow: none;
+    }
+    #video-controls > button svg {
+      pointer-events: none;
+    }
+    #video-control-audio {
+      background-image: none !important;
+    }
+  </style>
+</head>
+<body onclick="window.open(olBanner.getClickTag('${clickUrlForVersion}'), '_blank')">
+  <div class="banner-bg">
+    <div class="video-wrap">
+      <video src="video.mp4" autoplay loop muted playsinline></video>
+      <div id="video-controls">
+        <button id="video-control-audio" onclick="event.stopPropagation(); toggleVideoAudio();">
+          <svg id="volume-off" xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 24 24" width="30px" fill="#FFFFFF">
+            <path d="M0 0h24v24H0V0z" fill="none"/>
+            <path d="M4.34 2.93L2.93 4.34 7.29 8.7 7 9H3v6h4l5 5v-6.59l4.18 4.18c-.65.49-1.38.88-2.18 1.11v2.06c1.34-.3 2.57-.92 3.61-1.75l2.05 2.05 1.41-1.41L4.34 2.93zM10 15.17L7.83 13H5v-2h2.83l.88-.88L10 11.41v3.76zM19 12c0 .82-.15 1.61-.41 2.34l1.53 1.53c.56-1.17.88-2.48.88-3.87 0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zm-7-8l-1.88 1.88L12 7.76zm4.5 8c0-1.77-1.02-3.29-2.5-4.03v1.79l2.48 2.48c.01-.08.02-.16.02-.24z"/>
+          </svg>
+          <svg id="volume-on" xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 24 24" width="30px" fill="#FFFFFF" style="display:none;">
+            <path d="M0 0h24v24H0V0z" fill="none"/>
+            <path d="M3 9v6h4l5 5V4L7 9H3zm7-.17v6.34L7.83 13H5v-2h2.83L10 8.83zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77 0-4.28-2.99-7.86-7-8.77z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <script>
+    function toggleVideoAudio() {
+      var video = document.querySelector('video');
+      var volumeOff = document.getElementById('volume-off');
+      var volumeOn = document.getElementById('volume-on');
+      
+      if (video.muted) {
+        video.muted = false;
+        volumeOff.style.display = 'none';
+        volumeOn.style.display = 'block';
+      } else {
+        video.muted = true;
+        volumeOff.style.display = 'block';
+        volumeOn.style.display = 'none';
+      }
+    }
+  <\/script>
+</body>
+</html>
+`;
+        }
+
+        // Create first archive (1250 version)
+        const html1 = createBannerHTML(bgNaturalWidth, bgNaturalHeight, bgName, clickUrl);
+        const zip1 = new JSZip();
+        zip1.file("index.html", html1);
+        zip1.file(bgName, bgFile);
+        const videoBlob = videoFile.slice(0, videoFile.size, videoFile.type);
+        zip1.file("video.mp4", videoBlob);
+
+        // Create second archive (1280 version)
+        const html2 = createBannerHTML(bgNaturalWidth2, bgNaturalHeight2, bgName2, clickUrl2);
+        const zip2 = new JSZip();
+        zip2.file("index.html", html2);
+        zip2.file(bgName2, bgFile2);
+        zip2.file("video.mp4", videoBlob);
+
+        // Archive names based on background image names
+        let archiveName1 = bgName;
+        if (archiveName1.lastIndexOf(".") > 0) {
+          archiveName1 = archiveName1.substring(0, archiveName1.lastIndexOf("."));
+        }
+        
+        let archiveName2 = bgName2;
+        if (archiveName2.lastIndexOf(".") > 0) {
+          archiveName2 = archiveName2.substring(0, archiveName2.lastIndexOf("."));
+        }
+
+        // Download first archive
+        const blob1 = await zip1.generateAsync({ type: "blob" });
+        const a1 = document.createElement("a");
+        a1.href = URL.createObjectURL(blob1);
+        a1.download = archiveName1 + "_1250.zip";
+        a1.click();
+        
+        // Short delay before second download
+        setTimeout(async () => {
+          const blob2 = await zip2.generateAsync({ type: "blob" });
+          const a2 = document.createElement("a");
+          a2.href = URL.createObjectURL(blob2);
+          a2.download = archiveName2 + "_1280.zip";
+          a2.click();
+          setTimeout(() => {
+            URL.revokeObjectURL(a1.href);
+            URL.revokeObjectURL(a2.href);
+          }, 500);
+        }, 500);
+      });
+    </script>
+  </body>
+</html>
