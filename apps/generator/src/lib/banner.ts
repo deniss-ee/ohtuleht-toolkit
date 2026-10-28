@@ -33,7 +33,7 @@ export function newDraft(): Draft {
       v: 1,
       format: "articles-1250x400",
       campaign: "",
-      primary: "#9500b2",
+      primary: "#f50000", // brand red (Primary Red 600)
       header: { type: "color", href: "" },
       badge: "Sisuturundus",
       theme: { light: { ...light }, dark: { ...dark } },

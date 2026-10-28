@@ -126,12 +126,31 @@ export function initSlider(root: HTMLElement): void {
     else if (index < pad) index += n;
     render(false);
   };
+  let animating = false;
+  let queued = 0; // arrow presses that arrived while a slide was still moving
   const go = (target: number) => {
     window.clearTimeout(settleTimer);
+    animating = true;
     index = Math.min(Math.max(target, 0), maxIndex);
     render(true);
     updateArrows();
-    settleTimer = window.setTimeout(normalize, speed + 30);
+    settleTimer = window.setTimeout(settle, speed + 30);
+  };
+  // The move has finished: leave the copies, then do the next waiting press (if any).
+  const settle = () => {
+    animating = false;
+    normalize();
+    if (queued) {
+      const dir = queued > 0 ? 1 : -1;
+      queued -= dir;
+      go(index + dir);
+    }
+  };
+  // One article per press. A press during a move waits its turn, so fast clicks are never lost or merged
+  // (before, the index was clamped to the copied range and the extra click was dropped near the ends).
+  const move = (dir: 1 | -1) => {
+    if (animating) queued = Math.max(-3, Math.min(3, queued + dir));
+    else go(index + dir);
   };
 
   // Autoplay
@@ -139,7 +158,9 @@ export function initSlider(root: HTMLElement): void {
   const start = () => {
     stop();
     if (reduceMotion || !o.delay || paused || document.hidden) return;
-    timer = window.setInterval(() => go(!o.loop && index >= maxIndex ? 0 : index + 1), o.delay);
+    timer = window.setInterval(() => {
+      if (!animating) go(!o.loop && index >= maxIndex ? 0 : index + 1);
+    }, o.delay);
   };
   const setPaused = (value: boolean) => {
     paused = value;
@@ -148,17 +169,17 @@ export function initSlider(root: HTMLElement): void {
 
   // Arrows and keyboard
   prevBtn?.addEventListener("click", () => {
-    go(index - 1);
+    move(-1);
     start();
   });
   nextBtn?.addEventListener("click", () => {
-    go(index + 1);
+    move(1);
     start();
   });
   viewport.tabIndex = 0;
   root.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowLeft") go(index - 1);
-    else if (e.key === "ArrowRight") go(index + 1);
+    if (e.key === "ArrowLeft") move(-1);
+    else if (e.key === "ArrowRight") move(1);
     else return;
     start();
   });
@@ -183,6 +204,8 @@ export function initSlider(root: HTMLElement): void {
   viewport.addEventListener("pointerdown", (e) => {
     if (e.button !== 0) return;
     window.clearTimeout(settleTimer);
+    animating = false; // a press on the slides takes over from any running move
+    queued = 0;
     let x = currentX();
     if (o.loop) {
       // Interrupted inside the copies: wrap to the equivalent real position first.

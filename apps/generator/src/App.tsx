@@ -9,6 +9,7 @@ import { newDraft, type Draft } from "@/lib/banner";
 import { importHeaderZip, newHeaderDraft, type HeaderDraft } from "@/lib/header";
 import { importZip } from "@/lib/zip";
 import { BannerEditor } from "@/pages/BannerEditor";
+import { BrandManual } from "@/pages/BrandManual";
 import { ContentMarketingHome } from "@/pages/ContentMarketingHome";
 import { HeaderBarEditor } from "@/pages/HeaderBarEditor";
 
@@ -52,6 +53,7 @@ export function App() {
             ) : (
               <ContentMarketingHome onCreate={create} onUpload={open} />
             ))}
+          {page === "brand" && <BrandManual />}
         </AppShell>
         <Toaster />
       </TooltipProvider>

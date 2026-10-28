@@ -1,4 +1,15 @@
+import brand from "../../brand/brand.json" with { type: "json" };
 import type { ArticlesBannerConfig, ResolvedTheme } from "./types.ts";
+
+// Brand rule (Brand hub, confirmed by the brand owner): on the brand colours, steps 50 to 500 take black text,
+// steps 600 and up take white text. brand.json is the single source of the colours.
+const BRAND_STEP = new Map<string, number>();
+for (const scale of brand.colors) for (const [step, hex] of Object.entries(scale.steps)) BRAND_STEP.set(hex.toLowerCase(), Number(step));
+
+export function brandTextColor(background: string): string | undefined {
+  const step = BRAND_STEP.get(background.toLowerCase());
+  return step === undefined ? undefined : step <= 500 ? "#000000" : "#ffffff";
+}
 
 type Rgb = [number, number, number];
 
@@ -56,9 +67,11 @@ export function readableOn(color: string, background: string, minRatio = 4.5): s
   return towardsLight ? "#ffffff" : "#000000";
 }
 
-// Text colour for a coloured bar: whichever of a dark or a light tint of the bar's own hue reads best.
+// Text colour for a coloured bar. On a brand colour the brand rule decides. Otherwise: whichever of a dark or a light tint of the bar's own hue reads best.
 // The tint (a little of the hue, very low saturation) looks softer than pure black or white.
 export function onColor(background: string): string {
+  const brandText = brandTextColor(background);
+  if (brandText) return brandText;
   const [h, s] = rgbToHsl(parseHex(background));
   const tint = Math.min(s, 0.25);
   const dark = toHex(hslToRgb([h, tint, 0.08]));
