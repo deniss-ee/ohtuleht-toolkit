@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Runtime test page</title>
+    <link rel="stylesheet" href="/src/slider.css" />
+    <style>
+      body { margin: 16px; font: 14px/1.4 Arial, sans-serif; }
+      .demo { width: 1248px; max-width: 100%; margin-bottom: 24px; }
+      .ol-slide { height: 120px; background: #9500b2; color: #fff; display: grid; place-items: center; font-size: 28px; border-radius: 6px; }
+      .ol-prev, .ol-next { position: absolute; top: 40px; z-index: 2; width: 40px; height: 40px; }
+      .ol-prev { left: 0; } .ol-next { right: 0; }
+      #log { font-family: monospace; }
+    </style>
+  </head>
+  <body>
+    <script>
+      // Test only: ?motion=1 pretends the OS allows motion, ?motion=0 pretends it does not.
+      var m = new URLSearchParams(location.search).get("motion");
+      if (m !== null) {
+        var real = window.matchMedia.bind(window);
+        window.matchMedia = function (q) {
+          return /reduced-motion/.test(q) ? { matches: m === "0", addEventListener: function () {} } : real(q);
+        };
+      }
+    </script>
+    <p>Clicks: <span id="log">none</span></p>
+    <h3>2 articles (static)</h3>
+    <div class="demo ol-slider" id="s2" data-shuffle="0"><div class="ol-viewport"><div class="ol-track"></div></div></div>
+    <h3>4 articles (static)</h3>
+    <div class="demo ol-slider" id="s4" data-shuffle="0"><div class="ol-viewport"><div class="ol-track"></div></div></div>
+    <h3>8 articles, loop, shuffle off, autoplay 2500</h3>
+    <div class="demo ol-slider" id="s8" data-shuffle="0">
+      <button class="ol-prev" aria-label="Previous">&lt;</button>
+      <div class="ol-viewport"><div class="ol-track"></div></div>
+      <button class="ol-next" aria-label="Next">&gt;</button>
+    </div>
+    <h3>8 articles, shuffle on, no autoplay</h3>
+    <div class="demo ol-slider" id="s8s" data-delay="0">
+      <button class="ol-prev" aria-label="Previous">&lt;</button>
+      <div class="ol-viewport"><div class="ol-track"></div></div>
+      <button class="ol-next" aria-label="Next">&gt;</button>
+    </div>
+    <script>
+      [["s2", 2], ["s4", 4], ["s8", 8], ["s8s", 8]].forEach(function (c) {
+        var track = document.querySelector("#" + c[0] + " .ol-track");
+        for (var i = 1; i <= c[1]; i++) {
+          var d = document.createElement("div");
+          d.className = "ol-slide";
+          d.textContent = i;
+          d.setAttribute("onclick", "document.getElementById('log').textContent='" + c[0] + " #" + i + "'");
+          track.appendChild(d);
+        }
+      });
+    </script>
+    <script type="module" src="/src/index.ts"></script>
+  </body>
+</html>
