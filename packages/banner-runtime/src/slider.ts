@@ -83,6 +83,7 @@ export function initSlider(root: HTMLElement): void {
     const copy = (s: HTMLElement) => {
       const c = s.cloneNode(true) as HTMLElement;
       c.setAttribute("aria-hidden", "true");
+      c.setAttribute("tabindex", "-1"); // copies are not keyboard stops
       return c;
     };
     slides.slice(0, pad).forEach((s) => track.appendChild(copy(s)));
