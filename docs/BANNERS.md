@@ -96,6 +96,7 @@ Design: Figma "Õhtuleht - Brand hub", frame "Mobile Content". Format id `articl
 - **Everything inside has a fixed size:** header 46 px, 17 px gap, cards 267x400 (about 2:3) with 8 px between, 28 px gap, dots 8 px. Height is 499 px. The banner is centred vertically in the page.
 - Card: picture, black gradient behind the title (216 px), title in Fira Sans Condensed Bold 18/23, white. No label, no hover colour.
 - Pagination: 6 dots in the design, one per article here; the active one is solid, the others 30 %. Black on light, white on dark. Dots are clickable (16 px touch area).
+- **Pictures:** the banner uses the `/webp/48/` version of each picture (cropped, higher resolution) whatever size was pasted: `/webp/54/` becomes `/webp/48/` when the banner is written. The form keeps the pasted address.
 - Swipe, drag, autoplay, loop and shuffle as in the desktop banner. No arrows.
 - Theme: light background white, dark background `#1c1c1c`. Header colour and picture work as on desktop. Title and label colours do not apply, so the editor hides them.
 - The editor preview has a phone width switch (375, 390, 430).

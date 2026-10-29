@@ -11,6 +11,11 @@ const CARD_W = 267;
 const CARD_H = 400;
 const GAP = 8;
 
+// ohtuleht.ee picture sizes: /webp/54/ suits the desktop cards, /webp/48/ is the cropped, higher-resolution version for phones.
+// Applied when the banner is written, so the form keeps the address the person pasted.
+const MOBILE_IMAGE = "/webp/48/";
+const forMobile = (url: string) => url.replace(/\/webp\/\d+\//, MOBILE_IMAGE);
+
 // Dots are black on a light background and white on a dark one.
 const dotColor = (bg: string) => (contrast(bg, "#000000") >= contrast(bg, "#ffffff") ? "#000000" : "#ffffff");
 
@@ -46,7 +51,7 @@ function css(config: ArticlesBannerConfig): string {
 function slide(a: ArticlesBannerConfig["articles"][number]): string {
   return (
     `<div class="ol-slide" role="link" tabindex="0" onclick="${clickAttr(escapeJsInAttr(a.url))}">` +
-    `<div class="card" style="background-image:url(&quot;${escapeCssUrlInAttr(a.image)}&quot;)">` +
+    `<div class="card" style="background-image:url(&quot;${escapeCssUrlInAttr(forMobile(a.image))}&quot;)">` +
     `<div class="shade"><p class="title">${escapeHtml(a.title)}</p></div></div></div>`
   );
 }
