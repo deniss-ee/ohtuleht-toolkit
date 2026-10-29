@@ -22,7 +22,7 @@ Checked live on sample points of each shape (a fraction of a millisecond, so dra
 |---|---|
 | Iris and its highlight | 100% visible |
 | Top of the letter (cap) | 100% visible, never cut |
-| White of the eye | at least 90% visible |
+| White of the eye | at least 85% visible |
 | The letter as a whole | at least 55% visible |
 
 The Figma peeking variants show 77 to 81% of the letter, so the 55% limit leaves room. To change a limit, edit `LIMITS` in `eye.ts`.
