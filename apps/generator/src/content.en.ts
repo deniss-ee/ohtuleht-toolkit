@@ -440,13 +440,13 @@ export const brandEye = {
   rules: {
     iris: "The dark part of the eye is always fully visible.",
     cap: "The top of the letter is never cut.",
-    eye: "At least 85% of the white of the eye is visible.",
+    eye: "At least 80% of the white of the eye is visible.",
     letter: "At least 55% of the letter is visible.",
   } as Record<string, string>,
   rulesShort: {
     iris: "Dark part of the eye: all visible",
     cap: "Top of the letter: not cut",
-    eye: "White of the eye: 85% or more",
+    eye: "White of the eye: 80% or more",
     letter: "The letter: 55% or more",
   } as Record<string, string>,
   unsafe: (first: string, more: number) => `Not allowed: ${first}${more ? ` (and ${more} more)` : ""}`,

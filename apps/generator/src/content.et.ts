@@ -407,13 +407,13 @@ export const brandEye: typeof En.brandEye = {
   rules: {
     iris: "Silma tume osa on alati täielikult nähtav.",
     cap: "Tähe ülaosa ei lõigata kunagi ära.",
-    eye: "Vähemalt 85% silma valgest osast on nähtav.",
+    eye: "Vähemalt 80% silma valgest osast on nähtav.",
     letter: "Vähemalt 55% tähest on nähtav.",
   },
   rulesShort: {
     iris: "Silma tume osa: täielikult nähtav",
     cap: "Tähe ülaosa: lõikamata",
-    eye: "Silma valge osa: 85% või rohkem",
+    eye: "Silma valge osa: 80% või rohkem",
     letter: "Täht: 55% või rohkem",
   },
   unsafe: (first: string, more: number) => `Pole lubatud: ${first}${more ? ` (ja veel ${more})` : ""}`,
