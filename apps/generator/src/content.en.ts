@@ -396,12 +396,12 @@ export const marketing = {
 };
 
 export const brandEye = {
-  intro: "The eye in the letter ы. Make it look where you want, turn it or let it peek out from an edge, then download a PNG or an SVG.",
+  intro: "The eye in the letter Õ. Make it look where you want, turn it or let it peek out from an edge, then download a PNG or an SVG.",
   style: "Version",
   filled: "Filled",
   outline: "Outline",
   filledHint: "Red. Works on any background, also on photos.",
-  outlineHint: "White lines. Only for plain, dark or red backgrounds.",
+  outlineHint: "White lines. Only for plain dark or red backgrounds, or on a transparent one.",
   presets: "Start from",
   presetNames: {
     straight: "Straight",
@@ -430,10 +430,13 @@ export const brandEye = {
   custom: "Other colour",
   customLabel: "Background colour",
   previewTitle: "Preview",
-  previewHint: "Drag the letter to move it. Drag the dark part of the eye to change where it looks.",
+  previewHint: "Drag the letter to move it. Drag the dark part of the eye to change where it looks. Drag the round button to turn the letter.",
+  turnHandle: "Turn the letter (drag, or use the arrow keys)",
+  moreOptions: "More options",
+  moreHint: "Picture shape, background, exact position and where the eye looks.",
   previewLabel: "Preview of the eye",
   safety: "Safety rules",
-  safetyIntro: "These stay true whatever you do. A control stops when it would break one.",
+  safetyIntro: "Always true. A control stops when it would break one.",
   rules: {
     iris: "The dark part of the eye is always fully visible.",
     cap: "The top of the letter is never cut.",
@@ -441,7 +444,7 @@ export const brandEye = {
     letter: "At least 55% of the letter is visible.",
   } as Record<string, string>,
   stopped: (rule: string) => "Stopped here: " + rule.charAt(0).toLowerCase() + rule.slice(1),
-  outlineWarning: "White lines need a dark or red background. On this background they are hard to see.",
+  outlineWarning: "White lines need a dark or red background or none at all. On this background they are hard to see.",
   download: "Download",
   png: "PNG",
   svg: "SVG",

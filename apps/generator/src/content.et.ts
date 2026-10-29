@@ -363,12 +363,12 @@ export const marketing: typeof En.marketing = {
 };
 
 export const brandEye: typeof En.brandEye = {
-  intro: "Silm tähes ы. Pane see vaatama, kuhu soovid, pööra seda või lase servast piiluda ning laadi alla PNG või SVG.",
+  intro: "Silm tähes Õ. Pane see vaatama, kuhu soovid, pööra seda või lase servast piiluda ning laadi alla PNG või SVG.",
   style: "Versioon",
   filled: "Täidetud",
   outline: "Kontuur",
   filledHint: "Punane. Sobib igale taustale, ka fotodele.",
-  outlineHint: "Valged jooned. Ainult ühtlasele, tumedale või punasele taustale.",
+  outlineHint: "Valged jooned. Ainult ühtlasele tumedale või punasele taustale või läbipaistvale.",
   presets: "Alusta siit",
   presetNames: {
     straight: "Otse",
@@ -397,10 +397,13 @@ export const brandEye: typeof En.brandEye = {
   custom: "Muu värv",
   customLabel: "Tausta värv",
   previewTitle: "Eelvaade",
-  previewHint: "Tähe liigutamiseks lohista seda. Lohista silma tumedat osa, et muuta vaatamissuunda.",
+  previewHint: "Tähe liigutamiseks lohista seda. Lohista silma tumedat osa, et muuta vaatamissuunda. Tähe pööramiseks lohista ümmargust nuppu.",
+  turnHandle: "Pööra tähte (lohista või kasuta nooleklahve)",
+  moreOptions: "Rohkem valikuid",
+  moreHint: "Pildi kuju, taust, täpne asukoht ja silma vaatamissuund.",
   previewLabel: "Silma eelvaade",
   safety: "Ohutusreeglid",
-  safetyIntro: "Need kehtivad alati. Juhtnupp peatub, kui see mõnda reeglit rikuks.",
+  safetyIntro: "Kehtivad alati. Juhtnupp peatub, kui see mõnda reeglit rikuks.",
   rules: {
     iris: "Silma tume osa on alati täielikult nähtav.",
     cap: "Tähe ülaosa ei lõigata kunagi ära.",
@@ -408,7 +411,7 @@ export const brandEye: typeof En.brandEye = {
     letter: "Vähemalt 55% tähest on nähtav.",
   },
   stopped: (rule: string) => "Siin peatus: " + rule.charAt(0).toLowerCase() + rule.slice(1),
-  outlineWarning: "Valged jooned vajavad tumedat või punast tausta. Sellel taustal on need halvasti näha.",
+  outlineWarning: "Valged jooned vajavad tumedat või punast tausta või üldse mitte taustaga. Sellel taustal on need halvasti näha.",
   download: "Laadi alla",
   png: "PNG",
   svg: "SVG",

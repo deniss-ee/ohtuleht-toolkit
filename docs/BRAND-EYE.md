@@ -1,6 +1,6 @@
 # Brand eye generator
 
-Brand manual tab **Eye** (`?section=brand&tab=eye`). Makes the eye in the letter ы as PNG or SVG. Design: Figma "Õhtuleht - Brand hub", page Eye (node 39:230).
+Brand manual tab **Eye** (`?section=brand&tab=eye`). Makes the eye in the letter Õ as PNG or SVG. Design: Figma "Õhtuleht - Brand hub", page Eye (node 39:230).
 
 ## What you can set
 
@@ -8,15 +8,14 @@ Brand manual tab **Eye** (`?section=brand&tab=eye`). Makes the eye in the letter
 |---|---|
 | Version | **Filled** (red, any background, also photos) or **Outline** (white lines, plain dark or red backgrounds). Outline is always white, filled is always red |
 | Start from | Straight, looks left, looks down, turned right, turned left, peeks from top left, peeks from bottom right (the Figma variants) |
-| Turn, size, position | Sliders, or drag the letter on the preview |
-| Where the eye looks | Two sliders, or drag the dark part of the eye. The iris stays inside the eye |
-| Picture shape | 1:1, 4:3, 3:4, 16:9, 9:16 (short side is 1200 units) |
-| Background | Transparent (default), white, brand red, dark, yellow, or any colour (own colour picker) |
+| Turn, size, position | Turn: drag the round button on the preview (or arrow keys), or the slider. Size slider. Move: drag the letter. Exact position sliders are under More options |
+| Where the eye looks | Drag the dark part of the eye (sliders under More options). The iris always keeps a gap of white to the edge of the eye (`IRIS_GAP` in `eye.ts`) |
+| More options (closed) | Picture shape (default 1:1; also 4:3, 3:4, 16:9, 9:16), background (default transparent), exact position and look sliders |
 | Download | SVG, or PNG at 512, 1024 or 2048 px wide. PNG and SVG keep a transparent background unless one is chosen |
 
 ## Safety rules
 
-Checked live by counting pixels (`checkSafety` in `apps/generator/src/lib/eye.ts`). A control stops where a rule would break, and says which.
+Checked live on sample points of each shape (a fraction of a millisecond, so dragging stays smooth) (`checkSafety` in `apps/generator/src/lib/eye.ts`). A control stops where a rule would break, and says which.
 
 | Rule | Limit |
 |---|---|

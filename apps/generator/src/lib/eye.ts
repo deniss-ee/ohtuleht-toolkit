@@ -1,4 +1,4 @@
-// The Õhtuleht eye: the eye in the letter ы. Drawing, SVG and the safety rules.
+// The Õhtuleht eye: the eye in the letter Õ. Drawing, SVG and the safety rules.
 // Shapes are copied from Figma ("Õhtuleht - Brand hub", page Eye, frames 39:231 filled and 39:314 outline).
 // Glyph space is the Figma frame: 1200 x 1200, the letter fills x 220 to 980 and y 140 to 1060, its centre is (600, 600).
 import { brand } from "@ohtuleht/brand";
@@ -12,6 +12,7 @@ export const EYE_WHITE = "#FFFFFF";
 export const GLYPH = { cx: 600, cy: 600, width: 760, height: 920 };
 const HOLE_BOX = { x: 403, y: 525, w: 356, h: 375 };
 export const IRIS_R = 71;
+export const IRIS_GAP = 38; // white always left between the dark part and the edge of the eye (Figma looks have 43 to 64)
 const HIGHLIGHT = { dx: 16.55, dy: -12.56, r: 28 };
 export const IRIS_DEFAULT = { x: 618.714, y: 651.61 }; // where Figma draws the iris
 
@@ -71,7 +72,7 @@ export function eyeSvg(s: EyeState): string {
     `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none">` +
     `<title>Õhtuleht eye</title>` +
     `<defs><clipPath id="eye-hole"><path d="${HOLE}"/></clipPath></defs>` +
-    (s.background ? `<rect width="${w}" height="${h}" fill="${s.background}"/>` : "") +
+    (s.background && /^#[0-9a-f]{3,8}$/i.test(s.background) ? `<rect width="${w}" height="${h}" fill="${s.background}"/>` : "") +
     `<g transform="${place}">${parts}</g></svg>`
   );
 }
@@ -100,7 +101,8 @@ export async function eyePng(s: EyeState, pixelWidth: number): Promise<Blob> {
 export type RuleId = "iris" | "cap" | "eye" | "letter";
 // Shares of each part that must stay inside the picture.
 export const LIMITS: Record<RuleId, number> = { iris: 1, cap: 1, eye: 0.9, letter: 0.55 };
-const TOLERANCE = 0.015; // raster counting is not exact
+// Shares are counted on sample points, so a small slack is allowed (the cap and iris get almost none).
+const SLACK: Record<RuleId, number> = { iris: 0.002, cap: 0.002, eye: 0.01, letter: 0.01 };
 
 export interface Safety {
   shares: Record<RuleId, number>; // 0 to 1
@@ -108,75 +110,82 @@ export interface Safety {
   broken: RuleId[];
 }
 
-const RES = 0.25; // pixels per drawing unit when counting
-const holePath = new Path2D(HOLE);
-const parts = { body: new Path2D(BODY), cap: new Path2D(CAP) };
-let totals: Record<RuleId, number> | null = null;
+// Each part is turned into a few thousand sample points once (flat arrays x, y, x, y ...). Checking a picture then only
+// moves those points and counts the ones inside the picture: fast enough to run on every pointer move.
+type Points = Float32Array;
+let samples: { cap: Points; eye: Points; letter: Points; iris: Points } | null = null;
 
-function count(draw: (ctx: CanvasRenderingContext2D) => void, w: number, h: number, transform: DOMMatrix | null): number {
+function sample(draw: (ctx: CanvasRenderingContext2D) => void, step: number): Points {
+  const size = 1200 / 2; // half resolution is plenty for counting
   const canvas = document.createElement("canvas");
-  canvas.width = Math.max(1, Math.ceil(w * RES));
-  canvas.height = Math.max(1, Math.ceil(h * RES));
+  canvas.width = size;
+  canvas.height = size;
   const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
-  ctx.scale(RES, RES);
-  if (transform) ctx.transform(transform.a, transform.b, transform.c, transform.d, transform.e, transform.f);
+  ctx.scale(0.5, 0.5);
   ctx.fillStyle = "#000";
   draw(ctx);
-  const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-  let sum = 0;
-  for (let i = 3; i < data.length; i += 4) sum += data[i]! / 255;
-  return sum;
+  const data = ctx.getImageData(0, 0, size, size).data;
+  const out: number[] = [];
+  for (let y = 0; y < size; y += step) for (let x = 0; x < size; x += step) if ((data[(y * size + x) * 4 + 3] ?? 0) > 127) out.push(x * 2, y * 2);
+  return Float32Array.from(out);
 }
 
-const drawIris = (ctx: CanvasRenderingContext2D, iris: EyeState["iris"]) => {
-  ctx.beginPath();
-  ctx.arc(iris.x, iris.y, IRIS_R, 0, Math.PI * 2);
-  ctx.arc(iris.x + HIGHLIGHT.dx, iris.y + HIGHLIGHT.dy, HIGHLIGHT.r, 0, Math.PI * 2);
-  ctx.fill("nonzero");
-};
-const drawLetter = (ctx: CanvasRenderingContext2D) => {
-  ctx.fill(parts.body);
-  ctx.fill(parts.cap);
-};
+function samplesOf() {
+  samples ??= {
+    cap: sample((c) => c.fill(new Path2D(CAP)), 2),
+    eye: sample((c) => c.fill(new Path2D(HOLE)), 3),
+    letter: sample((c) => (c.fill(new Path2D(BODY)), c.fill(new Path2D(CAP))), 5),
+    // The iris is a circle around (0, 0): moved to the real place when counting.
+    iris: (() => {
+      const out: number[] = [];
+      for (let y = -IRIS_R; y <= IRIS_R; y += 6) for (let x = -IRIS_R; x <= IRIS_R; x += 6) if (x * x + y * y <= IRIS_R * IRIS_R) out.push(x, y);
+      return Float32Array.from(out);
+    })(),
+  };
+  return samples;
+}
 
-// Area of each part in drawing units when nothing is cut (counted once).
-function totalsOf(iris: EyeState["iris"]) {
-  if (!totals) {
-    totals = {
-      iris: count((c) => drawIris(c, IRIS_DEFAULT), 1200, 1200, null),
-      cap: count((c) => c.fill(parts.cap), 1200, 1200, null),
-      eye: count((c) => c.fill(holePath), 1200, 1200, null),
-      letter: count(drawLetter, 1200, 1200, null),
-    };
+// Share of the points that land inside the picture after the letter is turned, scaled and placed.
+function insideShare(points: Points, s: EyeState, w: number, h: number, shift?: { x: number; y: number }): number {
+  const rad = (s.angle * Math.PI) / 180;
+  const cos = Math.cos(rad) * s.size;
+  const sin = Math.sin(rad) * s.size;
+  const ox = s.fx * w;
+  const oy = s.fy * h;
+  let inside = 0;
+  for (let i = 0; i < points.length; i += 2) {
+    const px = (shift ? shift.x + points[i]! : points[i]!) - GLYPH.cx;
+    const py = (shift ? shift.y + points[i + 1]! : points[i + 1]!) - GLYPH.cy;
+    const x = ox + px * cos - py * sin;
+    const y = oy + px * sin + py * cos;
+    if (x >= 0 && x <= w && y >= 0 && y <= h) inside++;
   }
-  void iris;
-  return totals;
+  return inside / (points.length / 2);
 }
 
 // How much of each part is inside the picture, and which rules are broken.
 export function checkSafety(s: EyeState): Safety {
   const { w, h } = canvasOf(s.ratio);
-  const t = totalsOf(s.iris);
-  const m = new DOMMatrix().translate(s.fx * w, s.fy * h).rotate(s.angle).scale(s.size).translate(-GLYPH.cx, -GLYPH.cy);
-  const k = s.size * s.size;
-  const share = (visible: number, total: number) => Math.min(1, visible / (total * k));
+  const p = samplesOf();
   const shares: Record<RuleId, number> = {
-    iris: share(count((c) => drawIris(c, s.iris), w, h, m), t.iris),
-    cap: share(count((c) => c.fill(parts.cap), w, h, m), t.cap),
-    eye: share(count((c) => c.fill(holePath), w, h, m), t.eye),
-    letter: share(count(drawLetter, w, h, m), t.letter),
+    iris: insideShare(p.iris, s, w, h, s.iris),
+    cap: insideShare(p.cap, s, w, h),
+    eye: insideShare(p.eye, s, w, h),
+    letter: insideShare(p.letter, s, w, h),
   };
-  const broken = (Object.keys(LIMITS) as RuleId[]).filter((id) => shares[id] < LIMITS[id] - TOLERANCE);
+  const broken = (Object.keys(LIMITS) as RuleId[]).filter((id) => shares[id] < LIMITS[id] - SLACK[id]);
   return { shares, ok: broken.length === 0, broken };
 }
 
 // ---------- Moving the iris ----------
 
+const holePath = new Path2D(HOLE);
 const ctxProbe = document.createElement("canvas").getContext("2d")!;
 const irisFits = (x: number, y: number) => {
+  const r = IRIS_R + IRIS_GAP;
   for (let i = 0; i < 48; i++) {
     const a = (i / 48) * Math.PI * 2;
-    if (!ctxProbe.isPointInPath(holePath, x + Math.cos(a) * IRIS_R, y + Math.sin(a) * IRIS_R)) return false;
+    if (!ctxProbe.isPointInPath(holePath, x + Math.cos(a) * r, y + Math.sin(a) * r)) return false;
   }
   return true;
 };
