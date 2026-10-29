@@ -12,13 +12,13 @@
 
 ```
 apps/
-  generator/        React + Vite + Tailwind v4 + shadcn/ui: banners, header bar, brand manual (one app, static dist/)
+  generator/        React + Vite + Tailwind v4 + shadcn/ui: banners, header bar, tools (image cropper, movie banner), brand manual (one app, static dist/)
 packages/
   banner-runtime/   Vanilla TS compiled to one small script (slider)
   templates/        Banner and header-bar HTML/CSS templates, colour logic, validation, types
   brand/            brand.json (colours, logos, fonts, clear space), optimised logo SVGs, helpers
 tools/bookmarklet/  Article bookmarklet v2 (source)
-tools/              Older standalone tools (migrated gradually)
+tools/              Older standalone tools (migrated gradually; image cropper and movie banner are rebuilt in the app)
 category/           Older category header (reference for the header bar)
 docs/               Documentation
 ```

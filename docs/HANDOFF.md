@@ -2,7 +2,9 @@
 
 For a new session or a new computer. Claude reads `CLAUDE.md` automatically; this file is the longer story.
 
-## Where we are (end of the first long session, 2026-10-29)
+## Where we are (2026-10-29)
+
+All pull requests so far (#93, #94, #96, #98 and the docs clean-up with the GitHub Pages workflow) are merged into `develop`. The GitHub Pages site still needs the one-time setup in [DEPLOY.md](DEPLOY.md).
 
 Built and merged into `develop`:
 
@@ -15,6 +17,8 @@ Built and merged into `develop`:
 | **Brand manual** | 33 colour swatches (copy as HEX/RGB/HSL/CSS/Tailwind, contrast, token export), 6 logo variants as SVG/PNG, safe zone, sizes, zip | `docs/BRAND-MANUAL.md` |
 | **Tools: Image cropper** | Picture onto 1920x1080, 4 modes, drag, blur or colour background, JPG | `docs/IMAGE-CROPPER.md` |
 | **Tools: Movie banner** | Video on a picture, two zips, preview | `docs/MOVIE-BANNER.md` |
+| **Estonian interface** | EN/ET switch in every top bar; all text in `content.en.ts` and `content.et.ts` | `docs/LANGUAGES.md` |
+| **GitHub Pages workflow** | Publishes `apps/generator/dist`; needs a one-time setup by the repository owner | `docs/DEPLOY.md` |
 | Bookmarklet v2 | Copies an article as a JSON snippet (title, link, picture, label) | `docs/BOOKMARKLET.md` |
 
 Not built yet (GitHub issues, milestones M0 to M4): 1250x400 with static ad (#35), image slider (#36), header font and size options (#64), brand typography and ad formats (#18), lint/format/CI (#5, #6), accessibility pass (#38), IT handoff README (#39), Cloudflare Worker (M2), hosted banners and login (M3), task tracker (M4, spec in `docs/TASK-TRACKER.md`).
@@ -41,9 +45,12 @@ Doc status: all `docs/*.md`, package READMEs and the generator README were check
 
 ## Next steps
 
-1. Lint, format, tests and CI (issues #5, #6): see the start prompt below.
-2. Static-ad banner (#35): needs the Figma link for the ad side and size.
-3. Image slider (#36), mobile image slider, header font options (#64), brand typography (#18).
+1. Merge the PR stack above; set up GitHub Pages ([DEPLOY.md](DEPLOY.md), read the privacy note first).
+2. Have a native speaker read the Estonian text (`content.et.ts`).
+3. Lint, format, tests and CI (issues #5, #6): see the start prompt below.
+4. Static-ad banner (#35): needs the Figma link for the ad side and size.
+5. Image slider (#36), mobile image slider, header font options (#64), brand typography (#18).
+6. Move the remaining legacy tools (`tools/`) into the Tools section one by one.
 
 Old banner import is built (`apps/generator/src/lib/legacy.ts`). The old banner folders (`content-marketing/`) were removed from the repo; they are still in git history (before the commit that removed them). There are no automated tests yet: when adding Vitest tests for `legacy.ts` with the #5/#6 work, take a real old zip from the user as a sample (the Vite dev server rewrites CSS when fetched, so test with real files, not through the browser).
 

@@ -1,6 +1,16 @@
 # Õhtuleht Toolkit
 
-A modular set of internal tools for the Õhtuleht newsroom and ad sales: banner generators, a header bar tool, a brand manual, and small automation utilities. Each tool is a self-contained module; new ones are added over time.
+A modular set of internal tools for the Õhtuleht newsroom and ad sales. Each tool is a self-contained module; new ones are added over time. The interface is in English and Estonian (EN / ET switch).
+
+## What you can do with it
+
+| Section | What it makes |
+|---|---|
+| **Content marketing** | Article banners (desktop 1250x400 and mobile) and the header bar for theme pages, as zips for the ad server |
+| **Tools** | **Image cropper** (any picture to a 1920x1080 JPG) and **Movie banner** (video on a picture, two zips) |
+| **Brand manual** | Brand colours (copy in many formats) and logos (SVG, PNG) |
+
+Try it: run it locally (below) or open the published site once it is set up ([docs/DEPLOY.md](docs/DEPLOY.md)).
 
 **Working on this with an AI assistant?** Start with [CLAUDE.md](CLAUDE.md) and [docs/HANDOFF.md](docs/HANDOFF.md). They hold the rules, the current state and ready-made start prompts.
 
@@ -16,11 +26,12 @@ A modular set of internal tools for the Õhtuleht newsroom and ad sales: banner 
 | Brand manual | Colours (copy as HEX/RGB/HSL/CSS/Tailwind, contrast, token export) and 6 logo variants (SVG, PNG, safe zone, sizes) | **Colours and logos built** ([docs](docs/BRAND-MANUAL.md)); typography and ad formats planned (#18) |
 | Tools: Image cropper | Any picture onto a 1920x1080 canvas (fit, fill, original, custom width, blurred or colour background), JPG | **Built** ([docs](docs/IMAGE-CROPPER.md)) |
 | Tools: Movie banner | Video on a background picture, two zips (1250 and 1280) for the ad server | **Built** ([docs](docs/MOVIE-BANNER.md)) |
+| Interface languages | English and Estonian, EN/ET switch in every top bar | **Built** ([docs](docs/LANGUAGES.md)) |
 | Article bookmarklet v2 | Copy an article as a snippet from the live site | **Built** ([docs](docs/BOOKMARKLET.md)) |
 | Article API (Cloudflare Worker) | Fetch article title and picture from a URL | Planned, Phase 2 |
-| Hosted banners + login | Banners served by URL, Microsoft login, Estonian UI | Planned, Phase 3 |
+| Hosted banners + login | Banners served by URL, Microsoft login | Planned, Phase 3 |
 | Task tracker | Unified briefs for banner requests, optional Outlook sync | Planned, Phase 4 ([spec](docs/TASK-TRACKER.md)) |
-| Legacy tools | Image cropper, two-article story generator, CapCut template, movie banner, video ZIP, podcast story | Exist in `tools/`, migrated one by one |
+| Legacy tools | Two-article story generator, CapCut template, video ZIP, podcast story, article scrapper | Exist in `tools/`, migrated one by one. The image cropper and movie banner are rebuilt in the toolkit (their old folders stay as reference) |
 
 Full plan: [docs/ROADMAP.md](docs/ROADMAP.md).
 
@@ -38,6 +49,7 @@ Full plan: [docs/ROADMAP.md](docs/ROADMAP.md).
 | [docs/LANGUAGES.md](docs/LANGUAGES.md) | Add or change interface text in English and Estonian |
 | [docs/IMAGE-CROPPER.md](docs/IMAGE-CROPPER.md) | Use the image cropper (1920x1080 JPG) |
 | [docs/MOVIE-BANNER.md](docs/MOVIE-BANNER.md) | Make the movie banner (video on a picture, two zips) |
+| [docs/DEPLOY.md](docs/DEPLOY.md) | Publish the toolkit online with GitHub Pages |
 | [docs/BOOKMARKLET.md](docs/BOOKMARKLET.md) | Install and use the article bookmarklet |
 | [docs/RECOMMENDATIONS.md](docs/RECOMMENDATIONS.md) | Follow working advice and checklists |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Know the rules for changes and reviews |
@@ -82,6 +94,8 @@ yarn build
 ```
 
 ## What to upload
+
+On GitHub Pages this happens by itself ([docs/DEPLOY.md](docs/DEPLOY.md)). By hand:
 
 The **contents of `apps/generator/dist/`** to a static host. No server code is needed yet. The banners and header bars the tool produces are separate zips that go to the ad server or to `b.ohtuleht.ee`.
 
