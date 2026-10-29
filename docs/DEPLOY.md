@@ -41,6 +41,17 @@ At the DNS host (for example Zone.eu):
 
 Then press **Check again** in Settings, Pages (DNS can take up to 24 hours, usually minutes) and tick **Enforce HTTPS** when it becomes available.
 
+## Your own server in a sub-folder (for example linkdesign.eu/ohtuleht-toolkit)
+
+GitHub Pages cannot serve a project under a path of a domain that has another website. For that, upload the build to the web hosting instead (the build uses relative paths, so any folder works):
+
+1. `yarn build`.
+2. In the hosting file manager or over SFTP, open the web root of the domain (on Zone.eu usually `htdocs`) and create the folder `ohtuleht-toolkit`.
+3. Upload the **contents** of `apps/generator/dist/` into it (`index.html` and the `assets` folder).
+4. Open `https://linkdesign.eu/ohtuleht-toolkit/`.
+
+The rest of the domain stays untouched. If a custom domain is also set on GitHub Pages, remove it (Settings, Pages, Remove) so `deniss-ee.github.io/ohtuleht-toolkit` does not redirect to it. To update the site, repeat steps 1 to 3.
+
 ## Automatic way (when Actions works)
 
 `.github/workflows/pages.yml` builds and publishes `apps/generator/dist` whenever `develop` changes, or by hand (Actions tab, Run workflow). To use it: Settings, Pages, Source **GitHub Actions**. It needs a GitHub account without a billing lock.
