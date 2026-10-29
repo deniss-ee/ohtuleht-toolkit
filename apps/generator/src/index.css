@@ -2,11 +2,15 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* Brand fonts (Õhtuleht Brand hub): Fira Sans for headlines, Inter for body and interface, DM Mono for code and HEX values. */
+/* Brand fonts (Õhtuleht Brand hub): Fira Sans for headlines, Fira Sans Condensed for narrow titles, Inter for body and interface, DM Mono for code and HEX values. */
 @import "@fontsource-variable/inter";
 @import "@fontsource/fira-sans/400.css";
 @import "@fontsource/fira-sans/500.css";
 @import "@fontsource/fira-sans/600.css";
+@import "@fontsource/fira-sans-condensed/400.css";
+@import "@fontsource/fira-sans-condensed/500.css";
+@import "@fontsource/fira-sans-condensed/600.css";
+@import "@fontsource/fira-sans-condensed/700.css";
 @import "@fontsource/dm-mono/400.css";
 @import "@fontsource/dm-mono/500.css";
 
