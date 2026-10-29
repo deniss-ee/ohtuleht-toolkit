@@ -229,8 +229,10 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
             <Preview draft={draft} pinned={pinned} onPin={setPinned} onAddArticles={() => goTo("paste")} onTryExample={loadExample} onOpenBookmark={() => setBookmarkOpen(true)} />
           </div>
 
-          <div className="space-y-4 pb-24 pt-4">
-            <div className="grid gap-4 md:grid-cols-2">
+          <div className="pb-24 pt-4">
+            {/* Wide screens: articles on the left, settings on the right, so the page stays short with many articles. Narrow screens: one column in the order campaign, header, articles, advanced. */}
+            <div className="grid items-start gap-4 md:grid-cols-2 lg:grid-rows-[auto_auto_1fr]">
+              <div className="min-w-0 lg:col-start-2 lg:row-start-1">
               <Section title={t.campaignTitle} icon={Megaphone} tone="red">
                 <div className="space-y-1.5">
                   <Label htmlFor="campaign">{t.campaignName}</Label>
@@ -247,7 +249,9 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                   <p className="text-xs text-muted-foreground">{t.mainColorHint}</p>
                 </div>
               </Section>
+              </div>
 
+              <div className="min-w-0 lg:col-start-2 lg:row-start-2">
               <Section title={t.headerTitle} description={t.headerHint} icon={PanelTop} tone="ink">
                 <HeaderThumb draft={draft} />
                 <Tabs value={c.header.type} onValueChange={(v) => set({ header: v === "image" ? { type: "image", src: draft.headerFile?.name ?? "", href: c.header.href, avg: draft.headerFile?.avg, textInPicture: c.header.textInPicture } : { type: "color", href: c.header.href, textInPicture: c.header.textInPicture } })}>
@@ -287,12 +291,15 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                   <p className="text-xs text-muted-foreground">{t.headerLinkHint}</p>
                 </div>
               </Section>
-            </div>
+              </div>
 
+              <div className="min-w-0 md:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-span-3 lg:row-start-1">
             <ArticleList articles={c.articles} defaultBadge={c.badge} defaultColor={c.format === "articles-mobile" ? (c.theme.light.badge ?? c.primary) : resolveTheme(c, "light").badge} onChange={(articles) => set({ articles })} onOpenBookmark={() => setBookmarkOpen(true)} />
+              </div>
 
             <BookmarkletDialog open={bookmarkOpen} onOpenChange={setBookmarkOpen} />
 
+              <div className="min-w-0 space-y-4 md:col-span-2 lg:col-span-1 lg:col-start-2 lg:row-start-3">
             <h2 className="pt-2 text-sm font-semibold text-muted-foreground">{t.advanced}</h2>
             <Collapsible title={t.colorsTitle} description={t.colorsHint} icon={Palette} tone="yellow">
               <div className="grid gap-6 sm:grid-cols-2">
@@ -321,6 +328,8 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                 </div>
               </div>
             </Collapsible>
+              </div>
+            </div>
           </div>
         </div>
       </div>
