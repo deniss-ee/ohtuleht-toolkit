@@ -132,7 +132,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
 
   return (
     <div className="fixed inset-0 z-40 flex flex-col bg-background">
-      <header className="flex shrink-0 flex-wrap items-center gap-x-2 gap-y-2 border-b px-3 py-2 sm:h-14 sm:flex-nowrap sm:gap-3 sm:px-4 sm:py-0">
+      <header className="flex shrink-0 flex-wrap items-center gap-x-2 gap-y-2 border-b px-3 py-2 lg:h-14 lg:flex-nowrap lg:gap-3 lg:px-4 lg:py-0">
         <Button variant="ghost" size="sm" className="gap-2" onClick={onBack}>
           <ArrowLeft className="size-4" />
           <span className="hidden sm:inline">{t.back}</span>
@@ -141,7 +141,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
           <div className="truncate font-semibold leading-tight">{c.campaign.trim() || t.untitled}</div>
           <div className="text-xs text-muted-foreground">{t.heading} · 1250x400</div>
         </div>
-        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:flex-nowrap sm:gap-3">
+        <div className="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:flex-nowrap lg:gap-3">
         <HoverPill
           tone="plain"
           icon={<FileArchive className="size-3.5" />}
