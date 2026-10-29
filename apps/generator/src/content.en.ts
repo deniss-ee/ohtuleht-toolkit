@@ -331,7 +331,7 @@ export const brandManual = {
 
 // Tools section: small stand-alone helpers (not banners made from articles).
 export interface ToolInfo {
-  id: "image-cropper" | "movie-banner";
+  id: "image-cropper" | "movie-banner" | "article-scraper" | "picture-converter";
   name: string;
   description: string;
   tag: string;
@@ -346,7 +346,52 @@ export const tools = {
   items: [
     { id: "image-cropper", name: "Image cropper", description: "Put any picture on a 1920x1080 canvas and download it as a JPG.", tag: "1920x1080", ready: true },
     { id: "movie-banner", name: "Movie banner", description: "Banner with a video on a background picture. Makes two zips for the ad server.", tag: "1250 and 1280", ready: true },
+    { id: "article-scraper", name: "Article scraper", description: "Title, lead text, link and picture link of an article, ready to copy. For marketing.", tag: "Bookmark", ready: true },
+    { id: "picture-converter", name: "Picture link converter", description: "Change the size number of CMS picture links to the banner sizes (54 and 48).", tag: "54 and 48", ready: true },
   ] satisfies ToolInfo[],
+};
+
+export const marketing = {
+  back: "Back to Tools",
+  scraperTitle: "Article scraper",
+  scraperIntro: "Click one bookmark on an article and get its title, lead text, link and picture link, ready to copy.",
+  installTitle: "Set it up once",
+  installStep1: "Drag this button to your bookmarks bar (Ctrl+Shift+B shows the bar).",
+  installName: "Scrape article",
+  installStep2: "Open an article on ohtuleht.ee and click the bookmark. This page opens with the article.",
+  installCopyCode: "Copy the code instead",
+  installCopyHint: "If dragging does not work: make a new bookmark by hand and paste this code as its address.",
+  installCopied: "Bookmark code copied.",
+  resultTitle: "Your article",
+  noData: "No article yet. Click the bookmark on an article page.",
+  fields: { title: "Title", lead: "Lead text", url: "Article link", image: "Picture link" },
+  notFound: "Not found on the page",
+  leadMissing: "The lead text was not found. The article may have no lead, or the site changed.",
+  copy: "Copy",
+  copyAll: "Copy all",
+  copyBanner: "Copy banner snippet",
+  copied: (what: string) => `Copied: ${what}`,
+  copiedAll: "Copied title, lead, link and picture link.",
+  copiedBanner: "Banner snippet copied. Paste it in the banner maker.",
+  pictureAlt: "Article picture",
+  idTitle: "Article number",
+  idHint: "Soon: type an article number and get the same fields without opening the article.",
+  idPlaceholder: "For example 1169772",
+  converterTitle: "Picture link converter",
+  converterIntro: "Picture links from the CMS have another size number than the site. Paste them and get the banner sizes.",
+  converterInput: "Picture links (one per line)",
+  converterPlaceholder: "https://p.ohtuleht.ee/webp/59/i/2026/10/26/example.jpg",
+  converterDesktop: "Desktop banner (54)",
+  converterMobile: "Mobile banner (48)",
+  converterBadLine: (n: number) => `Line ${n} is not an Õhtuleht picture link (it has no /webp/number/ part).`,
+  converterEmpty: "Paste a link above and the converted links appear here.",
+  converterCopyAll: "Copy all",
+  brandTitle: "Brand manual",
+  brandText: "Colours, logos and fonts for your material.",
+  brandColours: "Colours",
+  brandLogos: "Logos",
+  brandFonts: "Fonts",
+  openConverter: "Picture link converter",
 };
 
 export const imageCropper = {
@@ -486,6 +531,15 @@ export const home = {
       items: [
         { id: "movie-banner", name: "Movie banner", text: "A video on a picture. Two zips: 1250 and 1280." },
         { id: "image-cropper", name: "Image cropper", text: "Any picture to a 1920x1080 JPG." },
+      ],
+    },
+    {
+      id: "marketing",
+      title: "Marketing helpers",
+      text: "For texts and picture links.",
+      items: [
+        { id: "article-scraper", name: "Article scraper", text: "Title, lead, link and picture link of an article." },
+        { id: "picture-converter", name: "Picture link converter", text: "CMS picture links to the banner sizes." },
       ],
     },
     {

@@ -313,7 +313,52 @@ export const tools: typeof En.tools = {
   items: [
     { id: "image-cropper", name: "Pildilõikur", description: "Pane mis tahes pilt 1920x1080 lõuendile ja laadi alla JPG-na.", tag: "1920x1080", ready: true },
     { id: "movie-banner", name: "Filmibänner", description: "Bänner videoga taustapildil. Teeb reklaamiserveri jaoks kaks zip-faili.", tag: "1250 ja 1280", ready: true },
+    { id: "article-scraper", name: "Artikli kopeerija", description: "Artikli pealkiri, juhttekst, link ja pildi link, valmis kopeerimiseks. Turundusele.", tag: "Järjehoidja", ready: true },
+    { id: "picture-converter", name: "Pildi lingi muundur", description: "Muuda CMS-i piltide linkide suuruse number bänneri suurusteks (54 ja 48).", tag: "54 ja 48", ready: true },
   ],
+};
+
+export const marketing: typeof En.marketing = {
+  back: "Tagasi tööriistade juurde",
+  scraperTitle: "Artikli kopeerija",
+  scraperIntro: "Klõpsa artiklil ühte järjehoidjat ja saad pealkirja, juhtteksti, lingi ja pildi lingi, valmis kopeerimiseks.",
+  installTitle: "Seadista ühe korra",
+  installStep1: "Lohista see nupp brauseri järjehoidjate ribale (riba nägemiseks vajuta Ctrl+Shift+B).",
+  installName: "Kopeeri artikkel",
+  installStep2: "Ava artikkel ohtuleht.ee-s ja klõpsa järjehoidjal. Siin avaneb leht selle artikliga.",
+  installCopyCode: "Kopeeri hoopis kood",
+  installCopyHint: "Kui lohistamine ei tööta: loo järjehoidja käsitsi ja kleebi see kood selle aadressiks.",
+  installCopied: "Järjehoidja kood kopeeritud.",
+  resultTitle: "Sinu artikkel",
+  noData: "Artiklit veel pole. Klõpsa järjehoidjat artikli lehel.",
+  fields: { title: "Pealkiri", lead: "Juhttekst", url: "Artikli link", image: "Pildi link" },
+  notFound: "Lehelt ei leitud",
+  leadMissing: "Juhtteksti ei leitud. Artiklil ei pruugi juhtteksti olla või sait on muutunud.",
+  copy: "Kopeeri",
+  copyAll: "Kopeeri kõik",
+  copyBanner: "Kopeeri bänneri kood",
+  copied: (what: string) => `Kopeeritud: ${what}`,
+  copiedAll: "Pealkiri, juhttekst, link ja pildi link kopeeritud.",
+  copiedBanner: "Bänneri kood kopeeritud. Kleebi see bännerite tegijasse.",
+  pictureAlt: "Artikli pilt",
+  idTitle: "Artikli number",
+  idHint: "Varsti: sisesta artikli number ja saad samad väljad artiklit avamata.",
+  idPlaceholder: "Näiteks 1169772",
+  converterTitle: "Pildi lingi muundur",
+  converterIntro: "CMS-i piltide linkidel on teine suuruse number kui saidil. Kleebi need siia ja saad bänneri suurused.",
+  converterInput: "Piltide lingid (üks rea kohta)",
+  converterPlaceholder: "https://p.ohtuleht.ee/webp/59/i/2026/10/26/example.jpg",
+  converterDesktop: "Töölauabänner (54)",
+  converterMobile: "Mobiilibänner (48)",
+  converterBadLine: (n: number) => `Rida ${n} ei ole Õhtulehe pildi link (selles pole osa /webp/number/).`,
+  converterEmpty: "Kleebi ülal link ja muudetud lingid ilmuvad siia.",
+  converterCopyAll: "Kopeeri kõik",
+  brandTitle: "Brändiraamat",
+  brandText: "Värvid, logod ja fondid sinu materjalile.",
+  brandColours: "Värvid",
+  brandLogos: "Logod",
+  brandFonts: "Fondid",
+  openConverter: "Pildi lingi muundur",
 };
 
 export const imageCropper: typeof En.imageCropper = {
@@ -451,6 +496,15 @@ export const home: typeof En.home = {
       items: [
         { id: "movie-banner", name: "Filmibänner", text: "Video pildi peal. Kaks zip-faili: 1250 ja 1280." },
         { id: "image-cropper", name: "Pildilõikur", text: "Mis tahes pilt 1920x1080 JPG-ks." },
+      ],
+    },
+    {
+      id: "marketing",
+      title: "Turunduse abilised",
+      text: "Tekstide ja piltide linkide jaoks.",
+      items: [
+        { id: "article-scraper", name: "Artikli kopeerija", text: "Artikli pealkiri, juhttekst, link ja pildi link." },
+        { id: "picture-converter", name: "Pildi lingi muundur", text: "CMS-i piltide lingid bänneri suurusteks." },
       ],
     },
     {

@@ -37,6 +37,10 @@ The generator also accepts `"badgeColor":"#rrggbb"` and the old HTML slide snipp
 
 `tools/bookmarklet/article-snippet.js` is the readable source (about 1.2 KB once minified). The generator turns it into the bookmark at runtime (`apps/generator/src/lib/bookmarklet.ts`), so there is nothing to build or keep in sync. Keep the file free of regex literals and of double spaces inside strings, because the conversion collapses whitespace.
 
+## Marketing scraper
+
+A second bookmark (`tools/bookmarklet/article-scraper.js`) reads title, lead text, link and picture link and opens the toolkit page with them. See [MARKETING-TOOLS.md](MARKETING-TOOLS.md).
+
 ## Older tools
 
 `tools/article scrapper/` holds the earlier versions (separate mobile and desktop HTML snippets, and the one-article banner download). They stay until the mobile template is rebuilt; the new bookmarklet serves the desktop 1250x400 banner only for now.
