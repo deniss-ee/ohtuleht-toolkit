@@ -81,7 +81,7 @@ export function AppShell({ page, onNavigate, children }: { page: PageId; onNavig
             <NavButton key={item.id} item={item} active={item.id === page} onSelect={onNavigate} />
           ))}
         </nav>
-        <main className="flex-1 p-4 md:p-6">{children}</main>
+        <main className="flex-1 p-4 md:px-6 md:py-4">{children}</main>
       </div>
     </div>
   );

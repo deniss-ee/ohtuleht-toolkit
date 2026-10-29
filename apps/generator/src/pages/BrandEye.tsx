@@ -153,25 +153,25 @@ export function BrandEye() {
   return (
     <div className="grid gap-x-6 gap-y-4 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div className="min-w-0 space-y-3">
-        <section aria-label={t.safety} className="rounded-xl border bg-card p-3">
-          <div className="mb-2 flex flex-wrap items-baseline justify-between gap-x-3">
+        <section aria-label={t.safety} className="rounded-xl border bg-card p-2">
+          <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-x-3 px-1">
             <h2 className="text-sm font-semibold">{t.safety}</h2>
-            <span className="text-xs text-muted-foreground">{t.safetyIntro}</span>
+            <span className="text-xs text-muted-foreground [@media(min-width:640px)_and_(max-height:860px)]:hidden">{t.safetyIntro}</span>
           </div>
-          <ul className="grid gap-2 text-sm sm:grid-cols-2">
+          <ul className="grid grid-cols-2 gap-1.5 text-xs sm:text-sm xl:grid-cols-4">
             {RULES.map((id) => {
               const ok = !safety.broken.includes(id);
               const Icon = ok ? Check : X;
               return (
                 <li
                   key={id}
-                  title={`${Math.round(safety.shares[id] * 100)}% / ${Math.round(LIMITS[id] * 100)}%`}
-                  className={`flex items-center gap-2.5 rounded-lg border px-3 py-2 ${ok ? "border-green-600/40 bg-green-600/10" : "border-red-600/60 bg-red-600/15 text-red-700 dark:text-red-300"}`}
+                  title={`${t.rules[id]} (${Math.round(safety.shares[id] * 100)}% / ${Math.round(LIMITS[id] * 100)}%)`}
+                  className={`flex items-center gap-2 rounded-lg border px-2 py-1.5 ${ok ? "border-green-600/40 bg-green-600/10" : "border-red-600/60 bg-red-600/15 text-red-700 dark:text-red-300"}`}
                 >
                   <span className={`flex size-5 shrink-0 items-center justify-center rounded-full text-white ${ok ? "bg-green-600" : "bg-red-600"}`}>
                     <Icon className="size-3.5" strokeWidth={3} aria-hidden />
                   </span>
-                  <span>{t.rules[id]}</span>
+                  <span className="leading-tight">{t.rulesShort[id]}</span>
                 </li>
               );
             })}
@@ -184,7 +184,7 @@ export function BrandEye() {
           role="img"
           aria-label={t.previewLabel}
           className="relative mx-auto cursor-grab touch-none overflow-hidden rounded-xl border active:cursor-grabbing"
-          style={{ aspectRatio: `${w} / ${h}`, width: `min(100%, calc((100vh - 25rem) * ${w / h}))`, minWidth: "min(100%, 240px)", ...checker, backgroundColor: background ?? undefined }}
+          style={{ aspectRatio: `${w} / ${h}`, width: `min(100%, calc((100vh - 19rem) * ${w / h}))`, minWidth: "min(100%, 240px)", ...checker, backgroundColor: background ?? undefined }}
           onPointerDown={onDown}
           onPointerMove={onMove}
           onPointerUp={onUp}

@@ -7,8 +7,9 @@ export function PageHeader({ icon, title, intro }: { icon: LucideIcon; title: st
     <div className="flex items-center gap-3">
       <IconChip icon={icon} tone="red" />
       <div>
-        <h1 className="text-2xl font-semibold">{title}</h1>
-        <p className="text-muted-foreground">{intro}</p>
+        <h1 className="text-xl font-semibold sm:text-2xl">{title}</h1>
+        {/* On short screens the help line gives way to the tools. */}
+        <p className="text-sm text-muted-foreground sm:text-base [@media(min-width:640px)_and_(max-height:860px)]:hidden">{intro}</p>
       </div>
     </div>
   );

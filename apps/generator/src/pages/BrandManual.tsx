@@ -284,7 +284,7 @@ function Logos() {
 
 export function BrandManual({ tab, onTab }: { tab: BrandTab; onTab: (t: BrandTab) => void }) {
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
+    <div className="mx-auto max-w-6xl space-y-4">
       <PageHeader icon={Palette} title={t.title} intro={t.intro} />
       <Tabs value={tab} onValueChange={(v) => onTab(v as BrandTab)}>
         <TabsList>
@@ -301,16 +301,16 @@ export function BrandManual({ tab, onTab }: { tab: BrandTab; onTab: (t: BrandTab
             <Type className="size-4" /> {t.tabFonts}
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="colours" className="pt-4">
+        <TabsContent value="colours" className="pt-3">
           <Colours />
         </TabsContent>
-        <TabsContent value="logos" className="pt-4">
+        <TabsContent value="logos" className="pt-3">
           <Logos />
         </TabsContent>
-        <TabsContent value="eye" className="pt-4">
+        <TabsContent value="eye" className="pt-3">
           <BrandEye />
         </TabsContent>
-        <TabsContent value="fonts" className="pt-4">
+        <TabsContent value="fonts" className="pt-3">
           <Fonts />
         </TabsContent>
       </Tabs>

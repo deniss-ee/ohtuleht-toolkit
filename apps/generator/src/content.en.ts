@@ -443,6 +443,12 @@ export const brandEye = {
     eye: "At least 90% of the white of the eye is visible.",
     letter: "At least 55% of the letter is visible.",
   } as Record<string, string>,
+  rulesShort: {
+    iris: "Dark part of the eye: all visible",
+    cap: "Top of the letter: not cut",
+    eye: "White of the eye: 90% or more",
+    letter: "The letter: 55% or more",
+  } as Record<string, string>,
   unsafe: (first: string, more: number) => `Not allowed: ${first}${more ? ` (and ${more} more)` : ""}`,
   cannotDownload: "Fix the red cross first: move the letter back until all four rules are ticked.",
   outlineWarning: "White lines need a dark or red background or none at all. On this background they are hard to see.",
