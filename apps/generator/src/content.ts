@@ -17,6 +17,9 @@ const KEY = "ol-lang";
 const sets = { en, et };
 
 function readLang(): Lang {
+  // A link with ?lang=et opens in Estonian for this visit (it is not stored, so the person's own choice stays).
+  const fromLink = typeof location !== "undefined" ? new URLSearchParams(location.search).get("lang") : null;
+  if (fromLink === "en" || fromLink === "et") return fromLink;
   try {
     const v = localStorage.getItem(KEY);
     if (v === "en" || v === "et") return v;

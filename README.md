@@ -35,6 +35,21 @@ Try it: run it locally (below) or open the published site once it is set up ([do
 
 Full plan: [docs/ROADMAP.md](docs/ROADMAP.md).
 
+## Direct links
+
+The address after the `?` follows the app, so any place can be sent to a colleague. Add it to the site address (for example `https://deniss-ee.github.io/ohtuleht-toolkit/`):
+
+| Link | Opens |
+|---|---|
+| `?section=content` | Content marketing |
+| `?section=content&make=header-bar` | A new header bar (also `articles-1250x400`, `articles-mobile`) |
+| `?section=tools` | Tools |
+| `?section=tools&tool=image-cropper` | Image cropper (also `movie-banner`) |
+| `?section=brand&tab=colours` | Brand manual, colours (or `tab=logos`) |
+| add `&lang=et` | Estonian for that visit (`lang=en` for English) |
+
+Example: `?section=tools&tool=movie-banner&lang=et`. The address changes by itself while you click around, so you can also just copy it from the address bar. The browser Back button works.
+
 ## Documentation
 
 | Document | Read it to... |

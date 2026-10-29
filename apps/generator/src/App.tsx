@@ -5,10 +5,11 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { contentMarketing, editor, getLang, subscribeLang, type PageId, type ToolInfo } from "@/content";
+import { contentMarketing, editor, getLang, setLang, subscribeLang, type PageId, type ToolInfo } from "@/content";
 import { AppShell } from "@/layout/AppShell";
 import { newDraft } from "@/lib/banner";
 import { importHeaderZip, newHeaderDraft } from "@/lib/header";
+import { buildSearch, PAGES, parseRoute, type BrandTab } from "@/lib/route";
 import { clearWork, loadWork, readPage, savedInfo, saveWork, writePage, type SavedInfo, type Work } from "@/lib/storage";
 import { importZip } from "@/lib/zip";
 import { BannerEditor } from "@/pages/BannerEditor";
@@ -19,17 +20,20 @@ import { ImageCropper } from "@/pages/ImageCropper";
 import { MovieBanner } from "@/pages/MovieBanner";
 import { ToolsHome } from "@/pages/ToolsHome";
 
-const PAGES: PageId[] = ["content", "tools", "brand"];
+const newWork = (typeId: string): Work => (typeId === "header-bar" ? { kind: "header", draft: newHeaderDraft() } : { kind: "banner", draft: newDraft(typeId === "articles-mobile" ? "articles-mobile" : "articles-1250x400") });
 
 export function App() {
-  useSyncExternalStore(subscribeLang, getLang); // render everything again when the language changes
-  const [page, setPage] = useState<PageId>(() => PAGES.find((p) => p === readPage()) ?? "content"); // the section used last time
-  const [work, setWork] = useState<Work>(null); // what is being edited: nothing (start screen), an articles banner or a header bar
+  const lang = useSyncExternalStore(subscribeLang, getLang); // render everything again when the language changes
+  const link = useRef(parseRoute(location.search)).current; // where the address says to start
+  // The address wins; without one, the section used last time.
+  const [page, setPage] = useState<PageId>(() => link.page ?? PAGES.find((p) => p === readPage()) ?? "content");
+  const [tab, setTab] = useState<BrandTab>(link.tab);
+  const [work, setWork] = useState<Work>(() => (link.make ? newWork(link.make) : null)); // what is being edited: nothing (start screen), an articles banner or a header bar
   const [saved, setSaved] = useState<SavedInfo | null>(savedInfo); // unfinished work from an earlier visit
   const edited = useRef(false); // changed since it was opened and not downloaded yet
   const workRef = useRef<Work>(null);
   workRef.current = work;
-  const [tool, setTool] = useState<ToolInfo["id"] | null>(null); // open tool in the Tools section
+  const [tool, setTool] = useState<ToolInfo["id"] | null>(link.tool); // open tool in the Tools section
   const [notes, setNotes] = useState<string[]>([]); // things to check after opening an old banner
 
   const start = (w: Work) => {
@@ -41,7 +45,7 @@ export function App() {
     setWork(w);
   };
 
-  const create = (typeId: string) => start(typeId === "header-bar" ? { kind: "header", draft: newHeaderDraft() } : { kind: "banner", draft: newDraft(typeId === "articles-mobile" ? "articles-mobile" : "articles-1250x400") });
+  const create = (typeId: string) => start(newWork(typeId));
 
   // A zip may be a banner or a header bar made with this tool.
   const open = async (file: File) => {
@@ -86,6 +90,33 @@ export function App() {
     writePage(page);
   }, [page]);
 
+  // The address follows the app, so it can be copied and sent. A new place is a new history entry (Back works);
+  // changing only the language replaces the entry.
+  const placeKey = useRef<string | null>(null);
+  useEffect(() => {
+    const search = buildSearch(page, tool, tab, lang);
+    const key = `${page}/${tool}/${tab}`;
+    if (search !== location.search) history[placeKey.current === null || placeKey.current === key ? "replaceState" : "pushState"](null, "", search);
+    placeKey.current = key;
+  }, [page, tool, tab, lang]);
+
+  // Back and Forward buttons of the browser.
+  useEffect(() => {
+    const onPop = () => {
+      const r = parseRoute(location.search);
+      if (workRef.current) saveWork(workRef.current);
+      setSaved(savedInfo());
+      edited.current = false;
+      setWork(null);
+      setPage(r.page ?? "content");
+      setTool(r.tool);
+      setTab(r.tab);
+      if (r.lang && r.lang !== getLang()) setLang(r.lang);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
   const close = () => {
     if (workRef.current) saveWork(workRef.current);
     setSaved(savedInfo());
@@ -122,7 +153,7 @@ export function App() {
               <ContentMarketingHome onCreate={create} onUpload={open} saved={saved} onContinue={resume} onDiscard={discard} />
             ))}
           {page === "tools" && (tool === "image-cropper" ? <ImageCropper onBack={() => setTool(null)} /> : tool === "movie-banner" ? <MovieBanner onBack={() => setTool(null)} /> : <ToolsHome onOpen={setTool} />)}
-          {page === "brand" && <BrandManual />}
+          {page === "brand" && <BrandManual tab={tab} onTab={setTab} />}
         </AppShell>
         <Dialog open={notes.length > 0} onOpenChange={(o) => !o && setNotes([])}>
           <DialogContent>
