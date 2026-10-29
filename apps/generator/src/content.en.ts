@@ -249,7 +249,7 @@ export const brandManual = {
   tabColours: "Colours",
   tabLogos: "Logos",
   tabFonts: "Fonts",
-  fontsIntro: "Three fonts, each with its own job. All are free to use (SIL Open Font License). The zip has the TTF files of the brand weights and the license: unzip and install.",
+  fontsIntro: "Three fonts, each with its own job. All are free to use (SIL Open Font License). The cards show the brand weights; each zip (about 4 MB) holds the whole family: every weight, upright and italic, static and variable files, plus the license. Unzip and install.",
   fontRoles: { "fira-sans": "Primary", "fira-sans-condensed": "Secondary", inter: "Text and interface" } as Record<string, string>,
   fontUse: {
     "fira-sans": "Headlines, titles and pull quotes. The voice of the brand.",

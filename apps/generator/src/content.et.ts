@@ -226,7 +226,7 @@ export const brandManual: typeof En.brandManual = {
   tabColours: "Värvid",
   tabLogos: "Logod",
   tabFonts: "Fondid",
-  fontsIntro: "Kolm fonti, igaühel oma ülesanne. Kõik on vabalt kasutatavad (SIL Open Font License). Zip-failis on brändi paksuste TTF-failid ja litsents: paki lahti ja installi.",
+  fontsIntro: "Kolm fonti, igaühel oma ülesanne. Kõik on vabalt kasutatavad (SIL Open Font License). Kaardid näitavad brändi paksusi; igas zip-failis (umbes 4 MB) on terve perekond: kõik paksused, püstine ja kursiiv, staatilised ja muutuvad (variable) failid ning litsents. Paki lahti ja installi.",
   fontRoles: { "fira-sans": "Põhifont", "fira-sans-condensed": "Lisafont", inter: "Tekst ja liides" },
   fontUse: {
     "fira-sans": "Pealkirjad, jaotuste nimed ja esiletõstetud tsitaadid. Brändi hääl.",
