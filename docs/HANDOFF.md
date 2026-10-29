@@ -41,7 +41,7 @@ Doc status: all `docs/*.md`, package READMEs and the generator README were check
 1. (Decided) Old banner headers have text baked in: the header option "The picture already has the text on it" is ticked on import; new banners never show it.
 2. Static-ad banner (#35): which side, what size, and the mobile rule. Needs the Figma link.
 3. Cloudflare account and domain for Phase 2.
-4. IT: where `dist/` is hosted; whether branch protection is available on the private repo (issue #3).
+4. IT: where `dist/` is hosted; branch protection can now be switched on (the repo is public, so it is free; issue #3).
 
 ## Next steps
 

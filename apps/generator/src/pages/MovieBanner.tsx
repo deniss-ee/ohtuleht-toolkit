@@ -44,6 +44,7 @@ export function MovieBanner({ onBack }: { onBack: () => void }) {
     if (!file.type.startsWith("image/")) return void toast.error(t.notImage);
     try {
       const p = await readPicture(file);
+      if (d[key].url) URL.revokeObjectURL(d[key].url); // free the previous picture
       setD((s) => ({ ...s, [key]: { ...s[key], file, ...p } }));
       setShown(key);
     } catch (e) {
@@ -53,6 +54,7 @@ export function MovieBanner({ onBack }: { onBack: () => void }) {
   const pickVideo = (file: File | undefined) => {
     if (!file) return;
     if (!/^video\/(mp4|webm)$/.test(file.type)) return void toast.error(t.notVideo);
+    if (d.videoUrl) URL.revokeObjectURL(d.videoUrl);
     setD((s) => ({ ...s, video: file, videoUrl: URL.createObjectURL(file) }));
   };
   const setVersion = (key: VersionKey, patch: Partial<MovieDraft["a"]>) => setD((s) => ({ ...s, [key]: { ...s[key], ...patch } }));

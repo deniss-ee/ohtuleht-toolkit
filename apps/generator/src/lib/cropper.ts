@@ -54,8 +54,22 @@ export function makeBlur(img: CanvasImageSource & { width: number; height: numbe
   const scale = Math.max(CANVAS_W / img.width, CANVAS_H / img.height) * 1.1;
   const w = img.width * scale;
   const h = img.height * scale;
-  ctx.filter = "blur(48px) brightness(0.75)";
-  ctx.drawImage(img, (CANVAS_W - w) / 2, (CANVAS_H - h) / 2, w, h);
+  if (typeof (ctx as { filter?: string }).filter === "string") {
+    ctx.filter = "blur(48px) brightness(0.75)";
+    ctx.drawImage(img, (CANVAS_W - w) / 2, (CANVAS_H - h) / 2, w, h);
+  } else {
+    // Browsers without canvas filters (older Safari): shrink the picture, stretch it back (soft) and darken it.
+    const tiny = document.createElement("canvas");
+    tiny.width = 48;
+    tiny.height = Math.round((48 * CANVAS_H) / CANVAS_W);
+    const t = tiny.getContext("2d")!;
+    t.imageSmoothingQuality = "high";
+    t.drawImage(img, (tiny.width - (w * tiny.width) / CANVAS_W) / 2, (tiny.height - (h * tiny.height) / CANVAS_H) / 2, (w * tiny.width) / CANVAS_W, (h * tiny.height) / CANVAS_H);
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(tiny, 0, 0, CANVAS_W, CANVAS_H);
+    ctx.fillStyle = "rgba(0,0,0,0.25)";
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+  }
   return c;
 }
 

@@ -37,7 +37,7 @@ Short advice for working on the toolkit. Follow it unless you have a reason not 
 
 - Never commit `.env`, keys or tokens.
 - Never put secrets in browser code; use the Worker.
-- The repository is private; still treat content as if it could leak.
+- The repository is public: never commit keys, customer material or real campaign data.
 
 ## Review checklist
 

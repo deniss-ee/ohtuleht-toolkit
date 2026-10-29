@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Copy, Download, FileArchive, Palette, Shapes } from "lucide-react";
+import { Copy, Download, FileArchive, Info, Palette, Shapes } from "lucide-react";
 import { toast } from "sonner";
 import { brand, contrastRatio, formatColor, safeZone, textOnStep, tokensCss, tokensJson, tokensTailwind, wcagLevel, type ColorFormat, type LogoVariant } from "@ohtuleht/brand";
 import { IconChip } from "@/components/editor/IconChip";
 import { PageHeader } from "@/components/editor/PageHeader";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -191,7 +190,7 @@ function LogoCard({ logo, withSafeZone, pixelWidth, background }: { logo: LogoVa
         <CardTitle>{t.logoNames[logo.id] ?? logo.name}</CardTitle>
         <CardDescription className="min-h-[4.5rem]">{t.logoUsage[logo.id] ?? logo.usage}</CardDescription>
       </CardHeader>
-      <CardContent className="px-4 pt-2">
+      <CardContent className="px-4 pb-4 pt-2">
         <p className="text-xs text-muted-foreground">
           {t.sizeInfo(logo.width, logo.height)}
           {withSafeZone && ` · ${t.safeZonePad(safeZone(logo))}`}
@@ -275,9 +274,10 @@ function Logos() {
           </div>
         </section>
       ))}
-      <Badge variant="outline" className="whitespace-normal py-1 text-xs font-normal">
+      <p className="flex items-start gap-2 text-sm text-muted-foreground">
+        <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
         {t.clearSpaceNote}
-      </Badge>
+      </p>
     </div>
   );
 }

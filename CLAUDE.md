@@ -4,7 +4,7 @@ Read this first in every new session. Then read `docs/HANDOFF.md` (state, next s
 
 ## The project
 
-Internal toolkit for the Õhtuleht newsroom and ad sales. Modules so far: banner generator (Content marketing), header bar tool, brand manual. Planned: Cloudflare Worker article API, hosted banners and login, task tracker. Repo: `github.com/deniss-ee/ohtuleht-toolkit` (private). Full plan: `docs/ROADMAP.md`.
+Internal toolkit for the Õhtuleht newsroom and ad sales. Modules so far: banner generator (Content marketing), header bar tool, brand manual. Planned: Cloudflare Worker article API, hosted banners and login, task tracker. Repo: `github.com/deniss-ee/ohtuleht-toolkit` (public; live site on GitHub Pages, see `docs/DEPLOY.md`). Full plan: `docs/ROADMAP.md`.
 
 ## The user
 

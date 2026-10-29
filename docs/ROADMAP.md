@@ -15,7 +15,7 @@ Each phase ends in something usable. Work is tracked as GitHub issues grouped in
 
 ## Phase 0: Foundation and documentation (M0)
 
-- Private repository, `develop` integration branch, `main` release branch.
+- Repository (now public), `develop` integration branch, `main` release branch.
 - Labels, milestones, issue and PR templates.
 - Documentation set in this repo (this folder).
 - Yarn workspace scaffold, lint, format, type check.
@@ -92,6 +92,6 @@ A unified brief for banner and campaign requests across three departments: banne
 3. Header: v1 uses an uploaded image or a solid colour per campaign. Generated headers from logo + name later.
 4. Bookmarklet distribution: a hosted loader may be blocked by the site's content security policy.
 5. Cloudflare account, Worker domain, and who owns them.
-6. Branch protection on a private repository may need a paid GitHub plan.
+6. ~~Branch protection on a private repository may need a paid GitHub plan.~~ The repository is public now, so protection is free (issue #3).
 7. Figma library link and Figma MCP authorisation for the brand manual.
 8. Which fonts are final (list is provisional and lives in `brand.json`).
