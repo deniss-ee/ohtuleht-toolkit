@@ -35,9 +35,12 @@ export type Header =
   | { type: "image"; src: string; href: string; avg?: string; textInPicture?: boolean } // src is a file name inside the zip; avg = average colour of the picture, used to pick a readable text colour
   | { type: "color"; href: string; textInPicture?: boolean };
 
+// articles-1250x400: desktop slider. articles-mobile: phone banner, 360 px wide, cards 267x400 with the next card peeking in, dots below.
+export type ArticlesFormat = "articles-1250x400" | "articles-mobile";
+
 export interface ArticlesBannerConfig {
   v: 1;
-  format: "articles-1250x400";
+  format: ArticlesFormat;
   campaign: string;
   primary: string; // main campaign colour: header, arrows and default label colour
   header: Header;

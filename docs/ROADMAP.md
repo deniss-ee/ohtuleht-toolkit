@@ -8,7 +8,7 @@ Each phase ends in something usable. Work is tracked as GitHub issues grouped in
 |---|---|
 | 0 Foundation | Done except lint, format, tests, CI (#5, #6), release process (#8), branch protection check (#3), podcast bundle flag (#7) |
 | 0b Brand manual | Colours and logos **built**. Typography and ad formats open (#18), scattered assets open (#11) |
-| 1 Static generator | Articles 1250x400, runtime, bookmarklet v2, header bar tool **built**. Old zip import (#34) **built**. Open: static ad (#35), image slider (#36), mobile 600x500 (#37), header font options (#64), accessibility pass (#38), IT README (#39) |
+| 1 Static generator | Articles 1250x400, runtime, bookmarklet v2, header bar tool **built**. Old zip import (#34) and mobile articles (#37) **built**. Open: static ad (#35), image slider (#36), header font options (#64), accessibility pass (#38), IT README (#39) |
 | 2 Worker | Not started (#40 to #43) |
 | 3 Hosted and login | Not started (#44 to #47) |
 | 4 Task tracker | Spec only (#50 to #58) |
@@ -48,7 +48,7 @@ No backend. Output is a zip an ad-server accepts.
 5. Bookmarklet v2 (JSON snippet). **Built.**
 6. Open old Swiper zips (#34). **Built.**
 7. Further templates: 1250x400 with static ad (#35), image slider with client background and 600x500 images; slide, fade, cube transitions (#36).
-8. Mobile 600x500 article template once the new Figma design exists (#37).
+8. Mobile articles template (#37). **Built.**
 
 Done when: ad sales can produce a correct 1250x400 banner zip alone, in under five minutes, with no code edits.
 

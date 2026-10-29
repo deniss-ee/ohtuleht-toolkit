@@ -1,9 +1,17 @@
 import { useEffect, useRef, useState, type DependencyList } from "react";
 import { editor as t } from "@/content";
 
+// Each frame keeps the size it was built for, so an old frame is not stretched to a new size while the new one loads.
+export interface Geometry {
+  width: number | string;
+  height: number;
+}
+
 interface Frame {
   id: number;
   html: string;
+  geom: Geometry;
+  fade: boolean; // size changed (e.g. desktop to mobile): fade the new frame in
 }
 
 // Runs inside a preview frame: tells the app when fonts, images and the page itself are ready,
@@ -45,6 +53,7 @@ function PreviewFrame({
       height={height}
       tabIndex={hidden ? -1 : undefined}
       aria-hidden={hidden}
+      className={frame.fade && !hidden ? "ol-fade-in" : undefined}
       style={{
         border: 0,
         transform: scale === 1 ? undefined : `scale(${scale})`,
@@ -68,14 +77,16 @@ export function SwapFrame({
   deps,
   width,
   height,
-  scale = 1,
+  scaleFor = () => 1,
+  onShown,
   title = "Preview",
 }: {
   build: (id: number) => string;
   deps: DependencyList;
   width: number | string;
   height: number;
-  scale?: number;
+  scaleFor?: (width: number) => number; // scale that fits a frame of this width into the preview area (default: full size)
+  onShown?: (g: Geometry) => void; // a new frame is now visible
   title?: string;
 }) {
   const [current, setCurrent] = useState<Frame | null>(null);
@@ -88,7 +99,7 @@ export function SwapFrame({
   useEffect(() => {
     const timer = setTimeout(() => {
       const id = ++counter.current;
-      setPending({ id, html: buildRef.current(id) });
+      setPending({ id, html: buildRef.current(id), geom: { width, height }, fade: false });
     }, 300);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -97,8 +108,10 @@ export function SwapFrame({
   useEffect(() => {
     if (!pending) return;
     const swap = () => {
-      setCurrent(pending);
+      const changed = !!current && (current.geom.width !== pending.geom.width || current.geom.height !== pending.geom.height);
+      setCurrent({ ...pending, fade: changed });
       setPending(null);
+      onShown?.(pending.geom);
     };
     const onMessage = (e: MessageEvent) => {
       if (e.source === pendingFrame.current?.contentWindow && (e.data as { olPreview?: number } | null)?.olPreview === pending.id) swap();
@@ -114,8 +127,8 @@ export function SwapFrame({
   return (
     <>
       {!current && <div className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">{t.previewLoading}</div>}
-      {current && <PreviewFrame key={current.id} frame={current} width={width} height={height} scale={scale} title={title} />}
-      {pending && <PreviewFrame key={pending.id} frame={pending} width={width} height={height} scale={scale} title={title} hidden frameRef={(el) => (pendingFrame.current = el)} />}
+      {current && <PreviewFrame key={current.id} frame={current} width={current.geom.width} height={current.geom.height} scale={typeof current.geom.width === "number" ? scaleFor(current.geom.width) : 1} title={title} />}
+      {pending && <PreviewFrame key={pending.id} frame={pending} width={pending.geom.width} height={pending.geom.height} scale={typeof pending.geom.width === "number" ? scaleFor(pending.geom.width) : 1} title={title} hidden frameRef={(el) => (pendingFrame.current = el)} />}
     </>
   );
 }

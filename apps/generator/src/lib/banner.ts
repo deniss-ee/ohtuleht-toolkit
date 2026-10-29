@@ -1,5 +1,5 @@
-import { renderArticles1250x400, validate } from "@ohtuleht/templates";
-import type { ArticleItem, ArticlesBannerConfig, Problem, ThemeColors } from "@ohtuleht/templates";
+import { renderArticles1250x400, renderArticlesMobile, validate } from "@ohtuleht/templates";
+import type { ArticleItem, ArticlesBannerConfig, ArticlesFormat, Problem, ThemeColors } from "@ohtuleht/templates";
 import runtimeJs from "../../../../packages/banner-runtime/dist/runtime.js?raw";
 import exampleHeader from "@/assets/example-header.svg";
 import { readySignal } from "@/components/editor/SwapFrame";
@@ -26,40 +26,59 @@ export interface Draft {
 const light: ThemeColors = { bg: "#ffffff", text: "#272727", hover: "#e3000f" };
 const dark: ThemeColors = { bg: "#0f0f0f", text: "#ffffff", hover: "#e3000f" };
 
-export function newDraft(): Draft {
+// Preview frame size and name of each format. The mobile banner is 499 px high and fills the width of the phone;
+// its preview frame is 8 px taller above and below so the dots at the very bottom are never cut by the frame edge.
+export const FORMATS: Record<ArticlesFormat, { label: string; width: number; height: number; suffix: string; darkBg: string }> = {
+  "articles-1250x400": { label: "1250x400", width: 1250, height: 400, suffix: "1250x400", darkBg: "#0f0f0f" },
+  "articles-mobile": { label: "Mobile", width: 376, height: 515, suffix: "mobile", darkBg: "#1c1c1c" },
+};
+
+// Same banner, other size: everything is kept (campaign, header, articles, colours, behaviour).
+// The dark background follows the new format unless it was changed by hand.
+export function switchFormat(draft: Draft, format: ArticlesFormat): Draft {
+  const c = draft.config;
+  if (c.format === format) return draft;
+  const dark = c.theme.dark.bg === FORMATS[c.format].darkBg ? { ...c.theme.dark, bg: FORMATS[format].darkBg } : c.theme.dark;
+  return { ...draft, config: { ...c, format, theme: { ...c.theme, dark } } };
+}
+
+const render = (c: ArticlesBannerConfig, assets: Parameters<typeof renderArticles1250x400>[1]) => (c.format === "articles-mobile" ? renderArticlesMobile(c, assets) : renderArticles1250x400(c, assets));
+
+export function newDraft(format: ArticlesFormat = "articles-1250x400"): Draft {
   return {
     headerFile: null,
     config: {
       v: 1,
-      format: "articles-1250x400",
+      format,
       campaign: "",
       primary: "#f50000", // brand red (Primary Red 600)
       header: { type: "color", href: "" },
       badge: "Sisuturundus",
-      theme: { light: { ...light }, dark: { ...dark } },
+      theme: { light: { ...light }, dark: { ...dark, bg: FORMATS[format].darkBg } },
       behavior: { shuffle: true, autoplay: true, delayMs: 2500, speedMs: 250, loop: true },
       articles: [],
     },
   };
 }
 
-// Filled-in sample (with a real header image) so the form can be tried without collecting anything first.
-export async function exampleDraft(): Promise<Draft> {
-  const d = newDraft();
-  const img = (p: string) => `https://p.ohtuleht.ee/webp/54/i/${p}`;
+// Filled-in sample so the form can be tried without collecting anything first.
+// Made-up texts, example.com links and random placeholder pictures: no real company or article.
+export async function exampleDraft(format: ArticlesFormat = "articles-1250x400"): Promise<Draft> {
+  const d = newDraft(format);
+  const img = (seed: string) => `https://picsum.photos/seed/${seed}/800/1000`;
   d.config.campaign = "Example campaign";
   const bytes = new Uint8Array(await (await fetch(exampleHeader)).arrayBuffer());
   const dataUrl = toDataUrl(bytes, "header.svg");
   const avg = await averageColor(dataUrl);
   d.headerFile = { name: "header.svg", bytes, dataUrl, avg };
-  d.config.header = { type: "image", src: "header.svg", href: "https://www.ohtuleht.ee/teemalehed/kultuurisundmused2026-st", avg };
+  d.config.header = { type: "image", src: "header.svg", href: "https://example.com/campaign", avg };
   d.config.articles = [
-    { url: "https://www.ohtuleht.ee/1169772/", image: img("2026/10/26/t1ovwidw.aju.jpg"), title: "Kaks komöödiat, üks kindel lubadus: rohkesti naeru, äratundmist ja ootamatuid pöördeid!" },
-    { url: "https://www.ohtuleht.ee/1169357/", image: img("2026/10/21/ljqh0wyf.zk2.jpg"), title: "Novembrimaagia: Sinatrale pühendatud galaõhtu viib kuulaja aega, mil muusika oli elegantne ja õhk täis romantikat" },
-    { url: "https://www.ohtuleht.ee/1169358/", image: img("2026/10/21/i4kotj21.a5u.jpg"), title: "Muhedad jõulukontserdid: Koit Toome ja Karl-Erik Taukar lubavad kauneid duette ja põnevaid muusikalisi valikuid", badge: "Kontsert", badgeColor: "#0a7a3d" },
-    { url: "https://www.ohtuleht.ee/1169360/", image: img("2026/10/21/ikgyfay1.0d4.jpg"), title: "Huumor ja kaunis jõulumuusika – just seda pakuvad Suured Tüdrukud ja Reigo Tamm!" },
-    { url: "https://www.ohtuleht.ee/1169361/", image: img("2026/10/21/uhkpo021.vhi.jpg"), title: "Hispaania tenorite trio Les Bohèmes toob publikuni maailmakuulsa ooperimuusika – tõeliselt elegantses võtmes" },
-    { url: "https://www.ohtuleht.ee/1169362/", image: img("2026/10/20/0ba3iixt.ati.jpg"), title: "Ines astub jõuluajal taas lavale! Õhtu, mil ei pea kuhugi kiirustama ja võib nautida jõuluaja maagiat..." },
+    { url: "https://example.com/article-1", image: img("ol-example-1"), title: "Näidisartikkel: lühike pealkiri" },
+    { url: "https://example.com/article-2", image: img("ol-example-2"), title: "Siia tuleb artikli pealkiri, mis on kahe rea pikkune ja näitab, kuidas tekst kaardil murdub" },
+    { url: "https://example.com/article-3", image: img("ol-example-3"), title: "Kolmas näide: pikem pealkiri, mis jätkub veel natuke, et näha mitme rea paigutust ja kaardi alumist osa", badge: "Näide", badgeColor: "#0a7a3d" },
+    { url: "https://example.com/article-4", image: img("ol-example-4"), title: "Neljas näidisartikkel ilma pikema jututa" },
+    { url: "https://example.com/article-5", image: img("ol-example-5"), title: "Viies näide: mõned sõnad, mis täidavad pealkirja ja näitavad kaardi ilmet" },
+    { url: "https://example.com/article-6", image: img("ol-example-6"), title: "Kuues ja viimane näidisartikkel, et libistamine ja täpid oleks näha" },
   ];
   return d;
 }
@@ -78,7 +97,7 @@ export function renderPreview(draft: Draft, theme: "light" | "dark", id: number)
   const c = draft.config;
   const header = draft.headerFile && c.header.type === "image" ? { ...c.header, src: draft.headerFile.dataUrl } : c.header;
   const colors = theme === "dark" ? c.theme.dark : c.theme.light;
-  const html = renderArticles1250x400({ ...c, header, behavior: { ...c.behavior, shuffle: false }, theme: { light: colors, dark: colors } }, { runtimeJs, sliderCss });
+  const html = render({ ...c, header, behavior: { ...c.behavior, shuffle: false }, theme: { light: colors, dark: colors } }, { runtimeJs, sliderCss });
   return html.replace("</body>", readySignal(id) + "</body>");
 }
 
@@ -86,7 +105,7 @@ export function renderPreview(draft: Draft, theme: "light" | "dark", id: number)
 export function renderExport(draft: Draft): string {
   const c = draft.config;
   const header = c.header.type === "image" && draft.headerFile ? { ...c.header, src: draft.headerFile.name } : c.header;
-  return renderArticles1250x400({ ...c, header }, { runtimeJs, sliderCss });
+  return render({ ...c, header }, { runtimeJs, sliderCss });
 }
 
 const encoder = new TextEncoder();
@@ -103,5 +122,5 @@ export function slug(text: string): string {
 }
 
 export function zipName(draft: Draft): string {
-  return `${slug(draft.config.campaign)}_1250x400.zip`;
+  return `${slug(draft.config.campaign)}_${FORMATS[draft.config.format].suffix}.zip`;
 }

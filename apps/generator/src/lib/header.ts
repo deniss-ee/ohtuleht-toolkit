@@ -20,7 +20,7 @@ export function newHeaderDraft(): HeaderDraft {
 // Real values of a live header (b.ohtuleht.ee/html5/Ohtuleht/paised_uus/vallatud_joulud/), for trying the tool.
 export function exampleHeaderDraft(): HeaderDraft {
   return {
-    config: { v: 1, format: "header-bar", label: "Vallatud jõulud", href: "https://www.ohtuleht.ee/teemalehed/vallatud-joulud-st", primary: "#99e300" },
+    config: { v: 1, format: "header-bar", label: "Näidiskampaania", href: "https://example.com/campaign", primary: "#99e300" },
     picture: null,
     embedUrl: "https://b.ohtuleht.ee/html5/Ohtuleht/paised_uus/vallatud_joulud/",
   };

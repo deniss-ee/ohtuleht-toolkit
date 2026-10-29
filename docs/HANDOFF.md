@@ -15,7 +15,7 @@ Built and merged into `develop`:
 | **Brand manual** | 33 colour swatches (copy as HEX/RGB/HSL/CSS/Tailwind, contrast, token export), 6 logo variants as SVG/PNG, safe zone, sizes, zip | `docs/BRAND-MANUAL.md` |
 | Bookmarklet v2 | Copies an article as a JSON snippet (title, link, picture, label) | `docs/BOOKMARKLET.md` |
 
-Not built yet (GitHub issues, milestones M0 to M4): 1250x400 with static ad (#35), image slider (#36), mobile 600x500 (#37), header font and size options (#64), brand typography and ad formats (#18), lint/format/CI (#5, #6), accessibility pass (#38), IT handoff README (#39), Cloudflare Worker (M2), hosted banners and login (M3), task tracker (M4, spec in `docs/TASK-TRACKER.md`).
+Not built yet (GitHub issues, milestones M0 to M4): 1250x400 with static ad (#35), image slider (#36), header font and size options (#64), brand typography and ad formats (#18), lint/format/CI (#5, #6), accessibility pass (#38), IT handoff README (#39), Cloudflare Worker (M2), hosted banners and login (M3), task tracker (M4, spec in `docs/TASK-TRACKER.md`).
 
 Doc status: all `docs/*.md`, package READMEs and the generator README were checked against the code on 2026-10-29. Issues #9 (brand.json schema) and #11 (scattered assets) are open on GitHub although their core work is done; close or keep them when the user decides.
 
@@ -41,7 +41,7 @@ Doc status: all `docs/*.md`, package READMEs and the generator README were check
 
 1. Lint, format, tests and CI (issues #5, #6): see the start prompt below.
 2. Static-ad banner (#35): needs the Figma link for the ad side and size.
-3. Image slider (#36), mobile 600x500 (#37), header font options (#64), brand typography (#18).
+3. Image slider (#36), mobile image slider, header font options (#64), brand typography (#18).
 
 Old banner import is built (`apps/generator/src/lib/legacy.ts`). Its fixtures are in `content-marketing/`; there are no automated tests yet, so add Vitest tests for `legacy.ts` with the #5/#6 work (the Vite dev server rewrites CSS when fetched, so test with real files, not through the browser).
 

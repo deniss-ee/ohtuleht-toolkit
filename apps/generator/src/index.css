@@ -193,3 +193,21 @@
     min-height: 2.75rem;
   }
 }
+
+/* Preview frame that changed size (desktop to mobile): fades in while the area resizes. */
+@keyframes ol-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.ol-fade-in {
+  animation: ol-fade-in 0.25s ease both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ol-fade-in {
+    animation: none;
+  }
+}

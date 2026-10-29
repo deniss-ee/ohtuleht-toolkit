@@ -4,6 +4,7 @@
 //     button.ol-prev
 //     .ol-viewport > .ol-track > .ol-slide*
 //     button.ol-next
+//     .ol-dots > button.ol-dot*   (optional pagination, one dot per slide)
 
 interface Options {
   visible: number;
@@ -113,7 +114,12 @@ export function initSlider(root: HTMLElement): void {
     track.style.transition = animate && speed ? `transform ${speed}ms ease` : "none";
     track.style.transform = `translate3d(${x}px,0,0)`;
   };
-  const render = (animate: boolean) => place(-index * step, animate);
+  const dots = Array.from(root.querySelectorAll<HTMLElement>(".ol-dot"));
+  const render = (animate: boolean) => {
+    place(-index * step, animate);
+    const real = (((index - pad) % n) + n) % n; // position among the real slides, copies excluded
+    dots.forEach((d, i) => d.classList.toggle("ol-on", i === real));
+  };
   const updateArrows = () => {
     if (o.loop) return;
     if (prevBtn) prevBtn.disabled = index <= 0;
@@ -176,6 +182,12 @@ export function initSlider(root: HTMLElement): void {
     move(1);
     start();
   });
+  dots.forEach((d, i) =>
+    d.addEventListener("click", () => {
+      go(pad + i);
+      start();
+    }),
+  );
   viewport.tabIndex = 0;
   root.addEventListener("keydown", (e) => {
     if (e.key === "ArrowLeft") move(-1);
