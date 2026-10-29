@@ -12,6 +12,7 @@ const ICONS: Record<string, LucideIcon> = {
   "articles-1250x400": Newspaper,
   "articles-ad-1250x400": Newspaper,
   "image-slider-1250x400": Images,
+  "articles-mobile": Smartphone,
   "articles-600x500": Smartphone,
   "image-slider-600x500": Smartphone,
 };

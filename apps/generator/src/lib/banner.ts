@@ -1,5 +1,5 @@
-import { renderArticles1250x400, validate } from "@ohtuleht/templates";
-import type { ArticleItem, ArticlesBannerConfig, Problem, ThemeColors } from "@ohtuleht/templates";
+import { renderArticles1250x400, renderArticlesMobile, validate } from "@ohtuleht/templates";
+import type { ArticleItem, ArticlesBannerConfig, ArticlesFormat, Problem, ThemeColors } from "@ohtuleht/templates";
 import runtimeJs from "../../../../packages/banner-runtime/dist/runtime.js?raw";
 import exampleHeader from "@/assets/example-header.svg";
 import { readySignal } from "@/components/editor/SwapFrame";
@@ -26,17 +26,25 @@ export interface Draft {
 const light: ThemeColors = { bg: "#ffffff", text: "#272727", hover: "#e3000f" };
 const dark: ThemeColors = { bg: "#0f0f0f", text: "#ffffff", hover: "#e3000f" };
 
-export function newDraft(): Draft {
+// Preview frame size and name of each format. The mobile banner fills the width of the phone: the frame is the Figma frame (376 wide, 8 px margins).
+export const FORMATS: Record<ArticlesFormat, { label: string; width: number; height: number; suffix: string }> = {
+  "articles-1250x400": { label: "1250x400", width: 1250, height: 400, suffix: "1250x400" },
+  "articles-mobile": { label: "Mobile", width: 376, height: 499, suffix: "mobile" },
+};
+
+const render = (c: ArticlesBannerConfig, assets: Parameters<typeof renderArticles1250x400>[1]) => (c.format === "articles-mobile" ? renderArticlesMobile(c, assets) : renderArticles1250x400(c, assets));
+
+export function newDraft(format: ArticlesFormat = "articles-1250x400"): Draft {
   return {
     headerFile: null,
     config: {
       v: 1,
-      format: "articles-1250x400",
+      format,
       campaign: "",
       primary: "#f50000", // brand red (Primary Red 600)
       header: { type: "color", href: "" },
       badge: "Sisuturundus",
-      theme: { light: { ...light }, dark: { ...dark } },
+      theme: { light: { ...light }, dark: { ...dark, ...(format === "articles-mobile" ? { bg: "#1c1c1c" } : {}) } },
       behavior: { shuffle: true, autoplay: true, delayMs: 2500, speedMs: 250, loop: true },
       articles: [],
     },
@@ -44,8 +52,8 @@ export function newDraft(): Draft {
 }
 
 // Filled-in sample (with a real header image) so the form can be tried without collecting anything first.
-export async function exampleDraft(): Promise<Draft> {
-  const d = newDraft();
+export async function exampleDraft(format: ArticlesFormat = "articles-1250x400"): Promise<Draft> {
+  const d = newDraft(format);
   const img = (p: string) => `https://p.ohtuleht.ee/webp/54/i/${p}`;
   d.config.campaign = "Example campaign";
   const bytes = new Uint8Array(await (await fetch(exampleHeader)).arrayBuffer());
@@ -78,7 +86,7 @@ export function renderPreview(draft: Draft, theme: "light" | "dark", id: number)
   const c = draft.config;
   const header = draft.headerFile && c.header.type === "image" ? { ...c.header, src: draft.headerFile.dataUrl } : c.header;
   const colors = theme === "dark" ? c.theme.dark : c.theme.light;
-  const html = renderArticles1250x400({ ...c, header, behavior: { ...c.behavior, shuffle: false }, theme: { light: colors, dark: colors } }, { runtimeJs, sliderCss });
+  const html = render({ ...c, header, behavior: { ...c.behavior, shuffle: false }, theme: { light: colors, dark: colors } }, { runtimeJs, sliderCss });
   return html.replace("</body>", readySignal(id) + "</body>");
 }
 
@@ -86,7 +94,7 @@ export function renderPreview(draft: Draft, theme: "light" | "dark", id: number)
 export function renderExport(draft: Draft): string {
   const c = draft.config;
   const header = c.header.type === "image" && draft.headerFile ? { ...c.header, src: draft.headerFile.name } : c.header;
-  return renderArticles1250x400({ ...c, header }, { runtimeJs, sliderCss });
+  return render({ ...c, header }, { runtimeJs, sliderCss });
 }
 
 const encoder = new TextEncoder();
@@ -103,5 +111,5 @@ export function slug(text: string): string {
 }
 
 export function zipName(draft: Draft): string {
-  return `${slug(draft.config.campaign)}_1250x400.zip`;
+  return `${slug(draft.config.campaign)}_${FORMATS[draft.config.format].suffix}.zip`;
 }

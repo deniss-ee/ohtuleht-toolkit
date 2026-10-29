@@ -30,7 +30,7 @@ export const bannerTypes: BannerType[] = [
   { id: "articles-1250x400", name: "Articles", size: "1250x400", device: "Desktop", description: "Header and a slider of article cards.", ready: true },
   { id: "articles-ad-1250x400", name: "Articles with static ad", size: "1250x400", device: "Desktop", description: "Fixed ad next to a slider of three articles.", ready: false },
   { id: "image-slider-1250x400", name: "Image slider", size: "1250x400", device: "Desktop", description: "Client background with a slider of images.", ready: false },
-  { id: "articles-600x500", name: "Articles", size: "600x500", device: "Mobile", description: "Full-width article slider.", ready: false },
+  { id: "articles-mobile", name: "Articles", size: "Full width x 499", device: "Mobile", description: "Header and swipeable article cards with dots, as wide as the phone.", ready: true },
   { id: "image-slider-600x500", name: "Image slider", size: "600x500", device: "Mobile", description: "Client images with slide, fade or cube transition.", ready: false },
 ];
 
@@ -63,10 +63,12 @@ export const editor = {
   toFixHelp: "Click one to jump to it.",
   allGood: "All done. You can download your banner.",
   sizeHelp: "How big the banner file is, without the article pictures. Smaller is better. Try to stay under 100 KB.",
+  phoneWidth: "Phone width",
   previewTitle: "Preview",
   previewLoading: "Loading preview…",
-  previewScaled: (pct: number) => `Shown at ${pct}% to fit your screen. The real banner is 1250x400.`,
-  previewFull: "Shown at full size, 1250x400.",
+  previewScaled: (pct: number, size: string) => `Shown at ${pct}% to fit your screen. The real banner is ${size}.`,
+  previewFull: (size: string) => `Shown at full size, ${size}.`,
+  previewMobile: (w: number) => `Shown on a ${w} px wide phone. The banner always fills the width of the phone.`,
   pin: "Keep preview in view",
   light: "Light",
   dark: "Dark",

@@ -4,10 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { editor as t } from "@/content";
 import { SwapFrame } from "@/components/editor/SwapFrame";
-import { renderPreview, type Draft } from "@/lib/banner";
+import { FORMATS, renderPreview, type Draft } from "@/lib/banner";
 
-const W = 1250;
-const H = 400;
+// Common phone widths (CSS pixels).
+const PHONES = [
+  { name: "SE 375", w: 375 },
+  { name: "390", w: 390 },
+  { name: "Max 430", w: 430 },
+];
 
 // Shown instead of the banner until there is something to show: tells a new person what to do.
 function EmptyGuide({ onAddArticles, onTryExample, onOpenBookmark }: { onAddArticles: () => void; onTryExample: () => void; onOpenBookmark: () => void }) {
@@ -61,6 +65,10 @@ export function Preview({
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const box = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  const mobile = draft.config.format === "articles-mobile";
+  const [phone, setPhone] = useState(375); // phones differ in width: the wider the phone, the more of the next card shows
+  const { height: H } = FORMATS[draft.config.format];
+  const W = mobile ? phone : FORMATS[draft.config.format].width;
   const empty = draft.config.articles.length === 0;
 
   useEffect(() => {
@@ -69,7 +77,7 @@ export function Preview({
     const ro = new ResizeObserver(() => setScale(Math.min(1, el.clientWidth / W)));
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [W]);
 
   const pct = Math.round(scale * 100);
   return (
@@ -77,13 +85,24 @@ export function Preview({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-baseline gap-3">
           <span className="text-sm font-semibold">{t.previewTitle}</span>
-          {!empty && <span className="text-xs text-muted-foreground">{pct < 100 ? t.previewScaled(pct) : t.previewFull}</span>}
+          {!empty && <span className="text-xs text-muted-foreground">{mobile ? t.previewMobile(W) : pct < 100 ? t.previewScaled(pct, FORMATS[draft.config.format].label) : t.previewFull(FORMATS[draft.config.format].label)}</span>}
         </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" className="gap-1.5" aria-pressed={pinned} onClick={() => onPin(!pinned)}>
             {pinned ? <Pin className="size-4" /> : <PinOff className="size-4" />}
             {t.pin}
           </Button>
+          {mobile && (
+            <Tabs value={String(phone)} onValueChange={(v) => setPhone(Number(v))}>
+              <TabsList aria-label={t.phoneWidth}>
+                {PHONES.map((p) => (
+                  <TabsTrigger key={p.w} value={String(p.w)}>
+                    {p.name}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          )}
           <Tabs value={theme} onValueChange={(v) => setTheme(v as "light" | "dark")}>
             <TabsList>
               <TabsTrigger value="light">{t.light}</TabsTrigger>
@@ -93,11 +112,14 @@ export function Preview({
         </div>
       </div>
       <div ref={box} className={empty ? "relative w-full overflow-hidden rounded-xl border border-dashed" : "relative w-full overflow-hidden"} style={{ height: Math.max(H * scale, empty ? 300 : 0) }}>
+        {/* The phone banner is narrow: keep it in the middle of the wide preview area. */}
+        <div className="absolute inset-y-0 left-1/2 -translate-x-1/2" style={{ width: mobile && !empty ? W * scale : "100%" }}>
         {empty ? (
           <EmptyGuide onAddArticles={onAddArticles} onTryExample={onTryExample} onOpenBookmark={onOpenBookmark} />
         ) : (
           <SwapFrame build={(id) => renderPreview(draft, theme, id)} deps={[draft, theme]} width={W} height={H} scale={scale} title="Banner preview" />
         )}
+        </div>
       </div>
     </div>
   );

@@ -44,7 +44,7 @@ export async function importZip(file: File): Promise<{ draft: Draft; notes: stri
   const json = doc.getElementById("ol-banner")?.textContent;
   if (!json) return importLegacy(zip, doc, file.name.replace(/\.zip$/i, ""));
   const config = JSON.parse(json) as ArticlesBannerConfig;
-  if (config.v !== 1 || config.format !== "articles-1250x400") throw new Error("Unsupported banner version or format.");
+  if (config.v !== 1 || (config.format !== "articles-1250x400" && config.format !== "articles-mobile")) throw new Error("Unsupported banner version or format.");
   // Banners made before the main colour existed: take it from their label or header colour.
   config.primary ??= config.theme.light.badge ?? config.theme.light.headerBg ?? "#9500b2";
   let headerFile: HeaderFile | null = null;

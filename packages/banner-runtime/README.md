@@ -33,6 +33,8 @@ Nothing on its own. The templates inline `dist/runtime.js` and `src/slider.css` 
 </div>
 ```
 
+Optional pagination (used by the mobile banner, which has no arrows): `<div class="ol-dots"><button class="ol-dot"></button>...</div>` with one dot per slide. The runtime marks the current one with `ol-on` and a click on a dot goes to that slide.
+
 | Attribute | Default | Meaning |
 |---|---|---|
 | `data-visible` | 4 | Slides in view |

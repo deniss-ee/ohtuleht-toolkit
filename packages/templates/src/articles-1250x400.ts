@@ -7,21 +7,36 @@ import type { ArticlesBannerConfig, ResolvedTheme, RuntimeAssets } from "./types
 const VISIBLE = 4;
 const GAP = 16;
 
-const FONTS_URL = "https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@700&family=Roboto:wght@700&display=swap";
+export const FONTS_URL = "https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@700&family=Roboto:wght@700&display=swap";
 
 // White chevrons; the square behind them takes the main campaign colour.
 const ARROW_LEFT = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 42 42'%3E%3Cpath fill='%23fff' d='M17.2 21l9.2 9.2-2.8 2.8-12-12 12-12 2.8 2.8z'/%3E%3C/svg%3E";
 const ARROW_RIGHT = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 42 42'%3E%3Cpath fill='%23fff' d='M24.8 21l-9.2-9.2 2.8-2.8 12 12-12 12-2.8-2.8z'/%3E%3C/svg%3E";
 
-function themeVars(t: ResolvedTheme): string {
+export function themeVars(t: ResolvedTheme): string {
   return `--bg:${t.bg};--text:${t.text};--primary:${t.primary};--badge:${t.badge};--hover:${t.hover};--header-bg:${t.headerBg};--header-text:${t.headerText}`;
 }
 
-function css(config: ArticlesBannerConfig): string {
+// Header bar (shared with the mobile banner): campaign name on a colour or a picture.
+export function headerCss(config: ArticlesBannerConfig): string {
   const header =
     config.header.type === "image"
       ? `background:var(--header-bg) url("${config.header.src}") center/cover no-repeat` // picture fills the bar; main colour shows while it loads
       : "background:var(--header-bg)";
+  return (
+    `.header{display:flex;align-items:center;height:46px;padding:0 16px;border-radius:6px;overflow:hidden;${header};cursor:pointer}` +
+    // Header (design: Figma "ikea-header-for-claude"): campaign name on a colour or a picture, Fira Sans Condensed Bold 16/16, uppercase, 16 px from the left.
+    '.header-title{overflow:hidden;color:var(--header-text);font:700 16px/16px "Fira Sans Condensed",sans-serif;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap}'
+  );
+}
+
+export function headerHtml(config: ArticlesBannerConfig): string {
+  // Old pictures have the text baked in: no campaign name on top, the link keeps its label for screen readers.
+  const showName = !(config.header.type === "image" && config.header.textInPicture);
+  return `<a class="header" role="link" tabindex="0" aria-label="${escapeHtml(config.campaign)}" onclick="${clickAttr(escapeJsInAttr(config.header.href))}">${showName ? `<span class="header-title">${escapeHtml(config.campaign)}</span>` : ""}</a>`;
+}
+
+function css(config: ArticlesBannerConfig): string {
   return (
     `:root{${themeVars(resolveTheme(config, "light"))};color-scheme:light dark}` +
     `@media(prefers-color-scheme:dark){:root{${themeVars(resolveTheme(config, "dark"))}}}` +
@@ -30,9 +45,8 @@ function css(config: ArticlesBannerConfig): string {
     'html,body{min-width:1248px;overflow:hidden;background:var(--bg);font-family:"Roboto",sans-serif;-webkit-font-smoothing:antialiased}' +
     // Fills the 1250 px ad frame; never narrower than 1248 px.
     ".banner{position:relative;width:100%;min-width:1248px;max-width:1250px}" +
-    `.header{display:flex;align-items:center;height:46px;margin-bottom:${GAP}px;padding:0 16px;border-radius:6px;overflow:hidden;${header};cursor:pointer}` +
-    // Header (design: Figma "ikea-header-for-claude"): campaign name on a colour or a picture, Fira Sans Condensed Bold 16/16, uppercase, 16 px from the left.
-    '.header-title{overflow:hidden;color:var(--header-text);font:700 16px/16px "Fira Sans Condensed",sans-serif;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap}' +
+    headerCss(config) +
+    `.header{margin-bottom:${GAP}px}` +
     ".article{width:100%}" +
     ".img{position:relative;height:215px;border-radius:6px;background-position:center;background-size:cover}" +
     ".badge{position:absolute;bottom:-2px;left:0;padding:7px 5px 0 0;background:var(--bg);color:var(--badge);font-size:12px;font-weight:700;line-height:1;text-transform:capitalize}" +
@@ -61,9 +75,7 @@ function slide(a: ArticlesBannerConfig["articles"][number], defaultBadge: string
 export function renderArticles1250x400(config: ArticlesBannerConfig, assets: RuntimeAssets): string {
   const b = config.behavior;
   const delay = b.autoplay ? b.delayMs : 0;
-  // Old pictures have the text baked in: no campaign name on top, the link keeps its label for screen readers.
-  const showName = !(config.header.type === "image" && config.header.textInPicture);
-  const header = `<a class="header" role="link" tabindex="0" aria-label="${escapeHtml(config.campaign)}" onclick="${clickAttr(escapeJsInAttr(config.header.href))}">${showName ? `<span class="header-title">${escapeHtml(config.campaign)}</span>` : ""}</a>`;
+  const header = headerHtml(config);
   return (
     '<!doctype html><html lang="et"><head><meta charset="utf-8">' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +

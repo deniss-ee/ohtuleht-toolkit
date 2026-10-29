@@ -68,7 +68,7 @@ Upload the old zip (for example `content-marketing/st_KultuurSygis_2710-1250x400
 
 After opening, a dialog lists what to check (campaign name, colours, shuffle off like the old banner, header picture, ad skipped, visible count).
 
-Not opened yet: mobile 600x500 banners (#37) and image sliders (#36); the tool says so. Static-ad banners open but the ad picture is left out until format 2 exists (#35).
+Not opened yet: old mobile banners and image sliders (#36); the tool says so. Static-ad banners open but the ad picture is left out until format 2 exists (#35).
 
 ## Format 2: Articles 1250x400 with static ad (not built, #35)
 
@@ -88,12 +88,18 @@ Reference: `content-marketing/dacia_ol-1250x400-noswiper`.
 - Transition: `slide` (default), `fade`, `cube` (CSS 3D, about 1 KB).
 - Drag and touch supported; arrows optional.
 
-## Format 4: Articles 600x500 mobile (not built, #37)
+## Format 4: Articles mobile (built, #37)
 
-Design is changing; build after the new Figma exists.
+Design: Figma "Õhtuleht - Brand hub", frame "Mobile Content". Format id `articles-mobile`.
 
-- Full-bleed image, bottom gradient, white badge and title, arrows.
-- Fonts per brand manual (Inter proposed for mobile; provisional).
+- **Width is not fixed.** The banner fills the page (8 px margin each side). A narrow phone (iPhone SE, 375 px) shows a sliver of the next card, a wide one shows more.
+- **Everything inside has a fixed size:** header 46 px, 17 px gap, cards 267x400 (about 2:3) with 8 px between, 28 px gap, dots 8 px. Height is 499 px. The banner is centred vertically in the page.
+- Card: picture, black gradient behind the title (216 px), title in Fira Sans Condensed Bold 18/23, white. No label, no hover colour.
+- Pagination: 6 dots in the design, one per article here; the active one is solid, the others 30 %. Black on light, white on dark. Dots are clickable (16 px touch area).
+- Swipe, drag, autoplay, loop and shuffle as in the desktop banner. No arrows.
+- Theme: light background white, dark background `#1c1c1c`. Header colour and picture work as on desktop. Title and label colours do not apply, so the editor hides them.
+- The editor preview has a phone width switch (375, 390, 430).
+- Open: best header picture size for mobile (the hint still names the desktop size), 1 px line height rounding (18 x 1.3 = 23.4 is 23 px).
 
 ## Figma to banner handoff
 

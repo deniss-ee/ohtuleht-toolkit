@@ -19,7 +19,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { editor as t } from "@/content";
 import { ThemeToggle } from "@/layout/AppShell";
-import { bytesOf, exampleDraft, problems, renderExport, type Draft } from "@/lib/banner";
+import { bytesOf, exampleDraft, FORMATS, problems, renderExport, type Draft } from "@/lib/banner";
 import { downloadZip, fileToHeader } from "@/lib/zip";
 
 const BUDGET_KB = 100;
@@ -70,6 +70,7 @@ function SwitchRow({ id, label, checked, onChange }: { id: string; label: string
 }
 
 function ColorSet({ title, mode, config, onChange }: { title: string; mode: "light" | "dark"; config: ArticlesBannerConfig; onChange: (c: ThemeColors) => void }) {
+  const mobile = config.format === "articles-mobile"; // cards have white titles on the picture and no labels: only background and header apply
   const colors = config.theme[mode];
   const resolved = resolveTheme(config, mode);
   const set = (key: keyof ThemeColors) => (hex: string) => onChange({ ...colors, [key]: hex });
@@ -82,9 +83,9 @@ function ColorSet({ title, mode, config, onChange }: { title: string; mode: "lig
     <div className="space-y-3">
       <h3 className="text-sm font-semibold">{title}</h3>
       <ColorField label={t.colorBg} value={colors.bg} onChange={set("bg")} />
-      <ColorField label={t.colorText} value={colors.text} onChange={set("text")} />
-      <ColorField label={t.colorHover} value={colors.hover} onChange={set("hover")} />
-      <AutoColorField label={t.colorBadge} value={resolved.badge} custom={colors.badge !== undefined} onChange={set("badge")} onReset={reset("badge")} />
+      {!mobile && <ColorField label={t.colorText} value={colors.text} onChange={set("text")} />}
+      {!mobile && <ColorField label={t.colorHover} value={colors.hover} onChange={set("hover")} />}
+      {!mobile && <AutoColorField label={t.colorBadge} value={resolved.badge} custom={colors.badge !== undefined} onChange={set("badge")} onReset={reset("badge")} />}
       <AutoColorField label={t.colorHeader} value={resolved.headerBg} custom={colors.headerBg !== undefined} onChange={set("headerBg")} onReset={reset("headerBg")} />
       <AutoColorField label={t.colorHeaderText} value={resolved.headerText} custom={colors.headerText !== undefined} onChange={set("headerText")} onReset={reset("headerText")} />
     </div>
@@ -118,7 +119,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
   };
 
   const loadExample = async () => {
-    onChange(await exampleDraft());
+    onChange(await exampleDraft(c.format));
     toast.success(t.exampleLoaded);
   };
 
@@ -140,7 +141,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
         </Button>
         <div className="min-w-0 flex-1">
           <div className="truncate font-semibold leading-tight">{c.campaign.trim() || t.untitled}</div>
-          <div className="text-xs text-muted-foreground">{t.heading} · 1250x400</div>
+          <div className="text-xs text-muted-foreground">{t.heading} · {FORMATS[c.format].label}</div>
         </div>
         <div className="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:flex-nowrap lg:gap-3">
         <HoverPill
@@ -223,11 +224,13 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                   <Input id="campaign" value={c.campaign} onChange={(e) => set({ campaign: e.target.value })} />
                   <p className="text-xs text-muted-foreground">{t.campaignHint}</p>
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="badge">{t.badge}</Label>
-                  <Input id="badge" value={c.badge} onChange={(e) => set({ badge: e.target.value })} />
-                  <p className="text-xs text-muted-foreground">{t.badgeHint}</p>
-                </div>
+                {c.format !== "articles-mobile" && (
+                  <div className="space-y-1.5">
+                    <Label htmlFor="badge">{t.badge}</Label>
+                    <Input id="badge" value={c.badge} onChange={(e) => set({ badge: e.target.value })} />
+                    <p className="text-xs text-muted-foreground">{t.badgeHint}</p>
+                  </div>
+                )}
                 <div className="space-y-1.5">
                   <ColorField label={t.mainColor} value={c.primary} onChange={(primary) => set({ primary })} />
                   <p className="text-xs text-muted-foreground">{t.mainColorHint}</p>
@@ -275,7 +278,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
               </Section>
             </div>
 
-            <ArticleList articles={c.articles} defaultBadge={c.badge} defaultColor={resolveTheme(c, "light").badge} onChange={(articles) => set({ articles })} onOpenBookmark={() => setBookmarkOpen(true)} />
+            <ArticleList articles={c.articles} defaultBadge={c.badge} defaultColor={resolveTheme(c, "light").badge} showBadge={c.format !== "articles-mobile"} onChange={(articles) => set({ articles })} onOpenBookmark={() => setBookmarkOpen(true)} />
 
             <BookmarkletDialog open={bookmarkOpen} onOpenChange={setBookmarkOpen} />
 

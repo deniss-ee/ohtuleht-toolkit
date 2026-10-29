@@ -23,7 +23,7 @@ export function App() {
   const [work, setWork] = useState<Work>(null);
   const [notes, setNotes] = useState<string[]>([]); // things to check after opening an old banner
 
-  const create = (typeId: string) => setWork(typeId === "header-bar" ? { kind: "header", draft: newHeaderDraft() } : { kind: "banner", draft: newDraft() });
+  const create = (typeId: string) => setWork(typeId === "header-bar" ? { kind: "header", draft: newHeaderDraft() } : { kind: "banner", draft: newDraft(typeId === "articles-mobile" ? "articles-mobile" : "articles-1250x400") });
 
   // A zip may be a banner or a header bar made with this tool.
   const open = async (file: File) => {
