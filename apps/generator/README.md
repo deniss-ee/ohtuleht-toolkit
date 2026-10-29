@@ -1,6 +1,6 @@
-# Banner generator (Content marketing)
+# Toolkit web app (generator)
 
-Web app of the toolkit. Today it has three tools: **Articles 1250x400** banners and the **Header bar** (both under Content marketing), and the **Brand manual** (colours and logos). Other banner types are listed on the start screen as "Coming soon".
+Web app of the toolkit, in English and Estonian (EN/ET switch). Sections: **Content marketing** (Articles 1250x400, Articles mobile, Header bar), **Tools** (Image cropper, Movie banner) and **Brand manual** (colours and logos). Other banner types are listed on the start screen as "Coming soon".
 
 ## Run locally
 
@@ -29,7 +29,7 @@ The contents of `apps/generator/dist/` to a static host.
 4. Check the live preview (light/dark) and the file weight meter.
 5. **Download zip**. The button enables when there are no problems listed.
 
-The Header bar and Brand manual work the same way; see [HEADER-BAR.md](../../docs/HEADER-BAR.md) and [BRAND-MANUAL.md](../../docs/BRAND-MANUAL.md).
+The Header bar, Image cropper, Movie banner and Brand manual work the same way; see [HEADER-BAR.md](../../docs/HEADER-BAR.md), [IMAGE-CROPPER.md](../../docs/IMAGE-CROPPER.md), [MOVIE-BANNER.md](../../docs/MOVIE-BANNER.md) and [BRAND-MANUAL.md](../../docs/BRAND-MANUAL.md). Interface text: [LANGUAGES.md](../../docs/LANGUAGES.md).
 
 **Load example** fills a sample campaign for trying things out.
 
@@ -47,4 +47,4 @@ HTTPS. No CORS needs; the app is fully static. Article images are loaded from `p
 - Fetching an article by URL needs the Phase 2 Worker.
 - Other banner types: static ad (#35), image slider (#36).
 - Header font and size options (#64). Brand typography and ad formats pages (#18).
-- Interface is English only; Estonian comes with Phase 3.
+- The Estonian wording is a first draft: a native speaker should read it.

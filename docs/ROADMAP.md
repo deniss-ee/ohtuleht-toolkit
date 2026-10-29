@@ -8,7 +8,7 @@ Each phase ends in something usable. Work is tracked as GitHub issues grouped in
 |---|---|
 | 0 Foundation | Done except lint, format, tests, CI (#5, #6), release process (#8), branch protection check (#3), podcast bundle flag (#7) |
 | 0b Brand manual | Colours and logos **built**. Typography and ad formats open (#18), scattered assets open (#11) |
-| 1 Static generator | Articles 1250x400, runtime, bookmarklet v2, header bar tool **built**. Old zip import (#34) and mobile articles (#37) **built**. Tools section: image cropper **built** (#91), movie banner **built** (#92). Open: static ad (#35), image slider (#36), header font options (#64), accessibility pass (#38), IT README (#39) |
+| 1 Static generator | Articles 1250x400, runtime, bookmarklet v2, header bar tool **built**. Old zip import (#34) and mobile articles (#37) **built**. Tools section: image cropper **built** (#91), movie banner **built** (#92). Estonian interface with EN/ET switch **built** (#95). Open: static ad (#35), image slider (#36), header font options (#64), accessibility pass (#38), IT README (#39) |
 | 2 Worker | Not started (#40 to #43) |
 | 3 Hosted and login | Not started (#44 to #47) |
 | 4 Task tracker | Spec only (#50 to #58) |
@@ -64,7 +64,7 @@ Done when: ad sales can produce a correct 1250x400 banner zip alone, in under fi
 - Banners served by URL (ad servers accept URL tags), articles refreshed automatically, with embedded fallback articles if the API is unreachable.
 - Campaign storage.
 - Microsoft login (Entra ID; Cloudflare Access is the lowest-code route).
-- Estonian interface.
+- Microsoft login for the whole toolkit (the Estonian interface is already built, #95).
 
 ## Phase 4: Task tracker (M4)
 
@@ -78,8 +78,8 @@ A unified brief for banner and campaign requests across three departments: banne
 |---|---|
 | Category / theme headers | Existing `category/rubriik-4dimensioon` generalised into a generator |
 | Story split builder | Existing `tools/two article generator` |
-| Image resizer | Existing `tools/image cropper` |
-| Video banner / ZIP packager | Existing `tools/video html generator`, `tools/movie banner generator` |
+| Image resizer | **Built** in the Tools section (#91); the old `tools/image cropper` is kept |
+| Video banner / ZIP packager | Movie banner **built** (#92); `tools/video html generator` still to migrate |
 | CapCut template generator | Existing `tools/capcut template generator` |
 | Banner QA checker | Upload a zip, report size, clickTag usage, console errors, dark mode |
 | Campaign report | Impressions/clicks from ad server export |
