@@ -15,6 +15,10 @@ Specification for every banner format the generator produces.
 | Accessibility | Arrows are `<button>` with labels, keyboard focus visible. Autoplay ignores the OS "reduce motion" setting by default (as existing banners do); `respectMotion` and `pauseOnHover` are opt-in switches |
 | Dark mode | Supported through `prefers-color-scheme: dark` |
 
+## Unfinished work is kept
+
+The banner or header bar being edited is saved in the browser (`localStorage`, key `ol-work`, one slot) a moment after every change and when you press Back. The start screen of Content marketing then shows **Continue where you left off** with Continue and Discard. A header picture is kept too (if it is too big for the browser's storage, the text work is kept without it). Closing the tab with changes that were not downloaded asks for confirmation. **Ctrl+S** downloads the zip when the top bar says it is ready. The app also remembers the last section you used.
+
 ## Format 1: Articles 1250x400 (built)
 
 Rebuilt without Swiper, light and dark. Template: `packages/templates/src/articles-1250x400.ts`.

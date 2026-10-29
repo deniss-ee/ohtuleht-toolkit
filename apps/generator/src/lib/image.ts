@@ -20,7 +20,12 @@ export async function averageColor(dataUrl: string): Promise<string | undefined>
   try {
     const img = new Image();
     img.src = dataUrl;
-    await img.decode();
+    // Wait for the load event (decode() can stall while the tab is in the background); give up after 3 s.
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error("image"));
+      setTimeout(() => reject(new Error("timeout")), 3000);
+    });
     const cols = 32;
     const rows = 4;
     const canvas = document.createElement("canvas");

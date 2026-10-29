@@ -1,11 +1,12 @@
 import { useRef } from "react";
-import { ChevronRight, FileUp, LayoutTemplate, Images, Newspaper, PanelTop, Smartphone, type LucideIcon } from "lucide-react";
+import { ChevronRight, FileUp, History, LayoutTemplate, Images, Newspaper, PanelTop, Smartphone, type LucideIcon } from "lucide-react";
 import { PageHeader } from "@/components/editor/PageHeader";
 import { IconChip } from "@/components/editor/IconChip";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { bannerTypes, contentMarketing as t } from "@/content";
+import { bannerTypes, contentMarketing as t, editor, getLang, headerBar } from "@/content";
+import type { SavedInfo } from "@/lib/storage";
 
 // One icon per banner type (picked by id so new types only need an entry here).
 const ICONS: Record<string, LucideIcon> = {
@@ -20,11 +21,23 @@ const ICONS: Record<string, LucideIcon> = {
 
 // Start screen of the category: pick a banner type or open an existing zip.
 // Every card is built the same way (title, details, button at the bottom) so rows line up.
-export function ContentMarketingHome({ onCreate, onUpload }: { onCreate: (typeId: string) => void; onUpload: (file: File) => void }) {
+export function ContentMarketingHome({ onCreate, onUpload, saved, onContinue, onDiscard }: { onCreate: (typeId: string) => void; onUpload: (file: File) => void; saved: SavedInfo | null; onContinue: () => void; onDiscard: () => void }) {
   const input = useRef<HTMLInputElement>(null);
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <PageHeader icon={LayoutTemplate} title={t.title} intro={t.intro} />
+
+      {saved && (
+        <div role="region" aria-label={t.continueTitle} className="flex flex-wrap items-center gap-3 rounded-xl border border-primary/40 bg-primary/5 p-4">
+          <IconChip icon={History} tone="red" />
+          <div className="min-w-0 flex-1">
+            <div className="font-medium">{t.continueTitle}</div>
+            <div className="truncate text-sm text-muted-foreground">{t.continueText(saved.kind === "header" ? t.continueHeader : t.continueBanner, saved.name.trim() || (saved.kind === "header" ? headerBar.untitled : editor.untitled), new Date(saved.savedAt).toLocaleString(getLang() === "et" ? "et-EE" : "en-GB", { dateStyle: "medium", timeStyle: "short" }))}</div>
+          </div>
+          <Button onClick={onContinue}>{t.continueButton}</Button>
+          <Button variant="outline" onClick={onDiscard}>{t.continueDiscard}</Button>
+        </div>
+      )}
 
       <ol className="flex flex-col gap-3 rounded-xl border border-dashed bg-muted/50 p-4 sm:flex-row sm:items-stretch sm:gap-2">
         {t.steps.map((s, i) => (

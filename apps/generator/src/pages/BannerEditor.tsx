@@ -20,6 +20,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { editor as t, ui } from "@/content";
 import { Toggles } from "@/layout/AppShell";
 import { bytesOf, exampleDraft, FORMATS, problems, renderExport, switchFormat, type Draft } from "@/lib/banner";
+import { useSaveShortcut } from "@/components/editor/useSaveShortcut";
 import { downloadZip, fileToHeader } from "@/lib/zip";
 
 const BUDGET_KB = 100;
@@ -132,6 +133,8 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
     }
   };
 
+  useSaveShortcut(download, issues.length === 0 && !busy);
+
   return (
     <div className="fixed inset-0 z-40 flex flex-col bg-background">
       <header className="flex shrink-0 flex-wrap items-center gap-x-2 gap-y-2 border-b px-3 py-2 lg:h-14 lg:flex-nowrap lg:gap-3 lg:px-4 lg:py-0">
@@ -218,7 +221,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
           <span className="hidden md:inline">{t.loadExample}</span>
         </Button>
         <Toggles />
-        <Button className="ml-auto gap-2 sm:ml-0" disabled={issues.length > 0 || busy} onClick={download}>
+        <Button className="ml-auto gap-2 sm:ml-0" disabled={issues.length > 0 || busy} onClick={download} title="Ctrl+S">
           <Download className="size-4" /> {busy ? t.downloading : (<>{ui.downloadWord}<span className="hidden sm:inline"> {ui.suffixZip}</span></>)}
         </Button>
         </div>

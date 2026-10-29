@@ -10,10 +10,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { movieBanner as t, ui } from "@/content";
+import { read, write } from "@/lib/storage";
 import { downloadMovieZips, movieProblems, newMovieDraft, readPicture, renderMoviePreview, VERSIONS, type MovieDraft, type VersionKey } from "@/lib/movie";
 import type { VideoPosition } from "@ohtuleht/templates";
 
 const size = (bytes: number) => (bytes >= 1048576 ? `${(bytes / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`);
+
+const SETTINGS_KEY = "ol-movie";
+const WARN_BYTES = 5 * 1048576; // soft limit: ad servers often have one
+const HTML_BYTES = 3 * 1024;
 
 // Width of an element, kept up to date, so the preview can be scaled to fit.
 function useWidth() {
@@ -30,9 +35,20 @@ function useWidth() {
   return [ref, w] as const;
 }
 
+// Rough size of one zip: picture + video + page (the files are already compressed).
+const weight = (d: MovieDraft, key: VersionKey) => (d[key].file?.size ?? 0) + (d.video?.size ?? 0) + HTML_BYTES;
+
 // Tool: video on a background picture, two zips for the ad server.
 export function MovieBanner({ onBack }: { onBack: () => void }) {
-  const [d, setD] = useState<MovieDraft>(newMovieDraft);
+  // Video height, position and distance are remembered for the next time.
+  const [d, setD] = useState<MovieDraft>(() => {
+    const s = read<Pick<MovieDraft, "videoHeight" | "position" | "offset">>(SETTINGS_KEY);
+    const base = newMovieDraft();
+    return s && typeof s.videoHeight === "number" && typeof s.offset === "number" && ["left", "center", "right"].includes(s.position) ? { ...base, videoHeight: s.videoHeight, position: s.position, offset: s.offset } : base;
+  });
+  useEffect(() => {
+    write(SETTINGS_KEY, { videoHeight: d.videoHeight, position: d.position, offset: d.offset });
+  }, [d.videoHeight, d.position, d.offset]);
   const [shown, setShown] = useState<VersionKey>("a");
   const [busy, setBusy] = useState(false);
   const [box, boxWidth] = useWidth();
@@ -175,10 +191,16 @@ export function MovieBanner({ onBack }: { onBack: () => void }) {
                   onFile={(f) => pickPicture(x.key, f)}
                   icon={<ImagePlus className="size-4" />}
                 />
+                {d[x.key].file && d.video && (
+                  <p className={`text-xs ${weight(d, x.key) > WARN_BYTES ? "font-medium text-yellow-700 dark:text-yellow-400" : "text-muted-foreground"}`}>
+                    {t.weight(size(weight(d, x.key)))}
+                    {weight(d, x.key) > WARN_BYTES && ` ${t.weightBig}`}
+                  </p>
+                )}
                 <div className="space-y-1.5">
-                  <Label htmlFor={`mv-link-${x.key}`}>{t.link}</Label>
-                  <Input id={`mv-link-${x.key}`} type="url" placeholder={t.linkPlaceholder} value={d[x.key].href} onChange={(e) => setVersion(x.key, { href: e.target.value })} />
-                  <p className="text-xs text-muted-foreground">{t.linkHint}</p>
+                  <Label htmlFor={`mv-link-${x.key}`}>{x.key === "a" ? t.link : t.linkOther}</Label>
+                  <Input id={`mv-link-${x.key}`} type="url" placeholder={x.key === "a" ? t.linkPlaceholder : d.a.href.trim() || t.linkPlaceholder} value={d[x.key].href} onChange={(e) => setVersion(x.key, { href: e.target.value })} />
+                  <p className="text-xs text-muted-foreground">{x.key === "a" ? t.linkHint : t.linkOtherHint}</p>
                 </div>
               </CardContent>
             </Card>
@@ -194,13 +216,27 @@ export function MovieBanner({ onBack }: { onBack: () => void }) {
 // A button that opens the file chooser and shows the chosen file name under it.
 function FileButton({ id, accept, label, name, onFile, icon }: { id: string; accept: string; label: string; name: string; onFile: (f: File | undefined) => void; icon: React.ReactNode }) {
   const input = useRef<HTMLInputElement>(null);
+  const [over, setOver] = useState(false);
   return (
-    <div className="space-y-1">
+    <div
+      className={`space-y-1 rounded-lg border border-dashed p-2 ${over ? "border-primary bg-primary/5" : "border-transparent"}`}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setOver(true);
+      }}
+      onDragLeave={() => setOver(false)}
+      onDrop={(e) => {
+        e.preventDefault();
+        setOver(false);
+        onFile(e.dataTransfer.files[0]);
+      }}
+    >
       <input ref={input} type="file" accept={accept} className="sr-only" tabIndex={-1} aria-hidden onChange={(e) => { onFile(e.target.files?.[0]); e.target.value = ""; }} />
       <Button id={id} type="button" variant="outline" className="gap-2" onClick={() => input.current?.click()}>
         {icon} {label}
       </Button>
       <p className="truncate text-xs text-muted-foreground">{name}</p>
+      <p className="text-xs text-muted-foreground">{t.dropHere}</p>
     </div>
   );
 }

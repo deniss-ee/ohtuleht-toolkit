@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { headerBar as t, ui } from "@/content";
 import { Toggles } from "@/layout/AppShell";
+import { useSaveShortcut } from "@/components/editor/useSaveShortcut";
 import { downloadHeaderZip, exampleHeaderDraft, fileToPicture, headerEmbedCode, headerProblems, renderHeaderPreview, type HeaderDraft } from "@/lib/header";
 
 // The bar is fluid (100% wide), so it is previewed at three real widths.
@@ -46,6 +47,8 @@ export function HeaderBarEditor({ draft, onChange, onBack }: { draft: HeaderDraf
       setBusy(false);
     }
   };
+
+  useSaveShortcut(download, issues.length === 0 && !busy);
 
   return (
     <div className="fixed inset-0 z-40 flex flex-col bg-background">
@@ -108,7 +111,7 @@ export function HeaderBarEditor({ draft, onChange, onBack }: { draft: HeaderDraf
             <span className="hidden md:inline">{t.tryExample}</span>
           </Button>
           <Toggles />
-          <Button className="ml-auto gap-2 sm:ml-0" disabled={issues.length > 0 || busy} onClick={download}>
+          <Button className="ml-auto gap-2 sm:ml-0" disabled={issues.length > 0 || busy} onClick={download} title="Ctrl+S">
             <Download className="size-4" /> {busy ? ui.building : <>{ui.downloadWord}<span className="hidden sm:inline"> {ui.suffixZip}</span></>}
           </Button>
         </div>

@@ -46,8 +46,12 @@ export function readPicture(file: File): Promise<{ width: number; height: number
   });
 }
 
-function config(d: MovieDraft, v: Version, background: string, video: string): MovieBannerConfig {
-  return { title: "Video banner", width: v.width, height: v.height, background, video, videoHeight: d.videoHeight, position: d.position, offset: d.offset, href: v.href.trim() };
+// The first link is always needed. The second version uses it too, unless a different one is typed.
+export const hrefOf = (d: MovieDraft, key: VersionKey) => (key === "b" ? d.b.href.trim() || d.a.href.trim() : d.a.href.trim());
+
+function config(d: MovieDraft, key: VersionKey, background: string, video: string): MovieBannerConfig {
+  const v = d[key];
+  return { title: "Video banner", width: v.width, height: v.height, background, video, videoHeight: d.videoHeight, position: d.position, offset: d.offset, href: hrefOf(d, key) };
 }
 
 export interface MovieProblem {
@@ -61,7 +65,8 @@ export function movieProblems(d: MovieDraft): MovieProblem[] {
   for (const { key, label } of VERSIONS) {
     if (!d[key].file) out.push({ field: `mv-bg-${key}`, message: t.needBackground(label) });
     const href = d[key].href.trim();
-    if (href && !/^https?:\/\/\S+$/i.test(href)) out.push({ field: `mv-link-${key}`, message: t.badLink(label) });
+    if (key === "a" && !href) out.push({ field: "mv-link-a", message: t.needLink });
+    else if (href && !/^https?:\/\/\S+$/i.test(href)) out.push({ field: `mv-link-${key}`, message: t.badLink(label) });
   }
   if (!(d.videoHeight >= 50 && d.videoHeight <= 1000)) out.push({ field: "mv-height", message: t.badHeight });
   return out;
@@ -70,7 +75,7 @@ export function movieProblems(d: MovieDraft): MovieProblem[] {
 // Preview html: the zip's file names are swapped for in-browser addresses.
 export function renderMoviePreview(d: MovieDraft, key: VersionKey, id: number): string {
   const v = d[key];
-  const html = renderMovieBanner(config(d, v, v.url, d.videoUrl));
+  const html = renderMovieBanner(config(d, key, v.url, d.videoUrl));
   return html.replace("</body>", readySignal(id) + "</body>");
 }
 
@@ -79,7 +84,7 @@ export async function buildMovieZip(d: MovieDraft, key: VersionKey): Promise<Blo
   const bg = backgroundName(v);
   const vid = videoName(d);
   const zip = new JSZip();
-  zip.file("index.html", renderMovieBanner(config(d, v, bg, vid)));
+  zip.file("index.html", renderMovieBanner(config(d, key, bg, vid)));
   zip.file(bg, v.file!);
   zip.file(vid, d.video!);
   // The picture and the video are already compressed, so only the html is deflated.
