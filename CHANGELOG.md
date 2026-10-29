@@ -8,6 +8,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 - The custom "Publish to GitHub Pages" workflow (it failed on every push). The site is served from the `gh-pages` branch by GitHub's own Pages job.
 
 ### Added
+- Fonts tab polish (issue #111): rules on top in a highlighted box, direct font downloads (zip with TTF files and license), cards aligned on shared rows, the comparison and example blocks removed.
 - Brand manual: **Fonts** tab (issue #109) with Fira Sans, Fira Sans Condensed and Inter: samples, weights, Estonian letters, copyable CSS, a narrow-column comparison, a news card in use and rules of thumb. Fira Sans Condensed is added to the app (`@fontsource/fira-sans-condensed`).
 - Direct links (issue #105): the address follows the section, tool, brand tab and language (`?section=tools&tool=movie-banner&lang=et`); a link can open a new banner of a given type; browser Back and Forward work. See README, "Direct links".
 - Interface helpers (issue #103): unfinished banner or header bar is kept in the browser with "Continue where you left off" and a warning before leaving; Ctrl+S downloads; the last section is remembered. Image cropper: paste with Ctrl+V, wheel/pinch/slider zoom, JPG size on the button. Movie banner: drop files, zip size check, remembered settings, **pause button** next to mute, and the banner link is now required (the second version may have its own).

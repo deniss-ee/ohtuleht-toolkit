@@ -42,7 +42,9 @@ The SVG is the only stored source; PNGs are generated.
 
 ## Fonts (built, part of issue #18)
 
-The **Fonts** tab shows the three brand fonts: **Fira Sans** (primary, headlines), **Fira Sans Condensed** (secondary, narrow titles where space is tight, banner headers) and **Inter** (text and interface, the font of the website). Each card has a big sample, the weights with a sample line, all letters and numbers, the Estonian letters (Õ Ä Ö Ü Š Ž), the CSS `font-family` line with a copy button and a link to Google Fonts (all three are free, SIL Open Font License). Below: the same headline in a narrow column in both Fira families (why the condensed one exists), a news card showing the fonts in use, and three rules of thumb. Direct link: `?section=brand&tab=fonts`.
+The **Fonts** tab starts with a highlighted box "Which font to use": headlines and titles use **Fira Sans** (primary), narrow places (titles over pictures, banner headers, tight columns and tables) use **Fira Sans Condensed** (secondary), text and interface use **Inter** (the font of the website); at most two of them in one design. Below, one card per font with a big sample, the weights, all letters and numbers, the Estonian letters (Õ Ä Ö Ü Š Ž), the CSS `font-family` line with a copy button and a **Download font (zip)** button. The three cards share rows, so they line up. Direct link: `?section=brand&tab=fonts`.
+
+Downloads: `apps/generator/public/fonts/<id>.zip` (`fira-sans`, `fira-sans-condensed`, `inter`). Each zip holds the TTF files of the brand weights (Inter is one variable font) and `OFL.txt`, taken from the official `google/fonts` repository (SIL Open Font License, free to redistribute). To change them, replace the zip in that folder.
 
 Data: `fonts` in `packages/brand/brand.json` (`stack` = CSS font-family, `url` = download page; the toolkit's own code font DM Mono has `inManual: false`). Texts: `brandManual` in `content.en.ts` and `content.et.ts`. Font files come from `@fontsource` packages (`index.css`). Font sizes and line heights are not defined yet because the brand hub does not define them.
 
