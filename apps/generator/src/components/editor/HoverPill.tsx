@@ -32,6 +32,10 @@ export function HoverPill({ icon, label, tone, children }: { icon: ReactNode; la
 export function goTo(id: string) {
   const el = document.getElementById(id);
   if (!el) return;
-  el.scrollIntoView({ block: "center", behavior: "smooth" });
-  setTimeout(() => el.focus({ preventScroll: true }), 350);
+  // A field inside a closed article: the list opens that article first.
+  window.dispatchEvent(new CustomEvent("ol-reveal", { detail: id }));
+  setTimeout(() => {
+    el.scrollIntoView({ block: "center", behavior: "smooth" });
+    setTimeout(() => el.focus({ preventScroll: true }), 350);
+  }, 80);
 }

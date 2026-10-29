@@ -102,6 +102,8 @@ export const editor = {
   addArticle: "Add an article by hand",
   emptyArticles: "No articles yet. Paste snippets above or add one by hand.",
   article: (n: number) => `Article ${n}`,
+  untitledArticle: "New article",
+  articleIncomplete: "Something is missing in this article",
   titleField: "Title",
   articleUrl: "Article link",
   imageUrl: "Picture address",

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Bookmark, ChevronDown, ChevronUp, ClipboardPaste, ImageOff, Newspaper, Plus, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Bookmark, ChevronDown, ChevronRight, ChevronUp, ClipboardPaste, ImageOff, Newspaper, Plus, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import type { ArticleItem } from "@ohtuleht/templates";
 import { MIN_ARTICLES } from "@ohtuleht/templates";
@@ -40,12 +40,27 @@ function Thumb({ src, badge, badgeColor }: { src: string; badge: string; badgeCo
   );
 }
 
+// Small picture for the closed row.
+function MiniThumb({ src }: { src: string }) {
+  const [failed, setFailed] = useState<string | null>(null);
+  const bad = !src || failed === src;
+  return (
+    <div className="flex h-10 w-14 shrink-0 items-center justify-center overflow-hidden rounded bg-muted">
+      {bad ? <ImageOff className="size-4 text-muted-foreground" /> : <img src={src} alt="" className="h-full w-full object-cover" onError={() => setFailed(src)} />}
+    </div>
+  );
+}
+
+// One article. Closed: a single line (picture, number, title, buttons). Open: the whole form.
+// The form stays in the page while closed (hidden), so "to fix" links can find its fields.
 function ArticleRow({
   index,
   total,
   article,
   defaultBadge,
   defaultColor,
+  open,
+  onToggle,
   onPatch,
   onMove,
   onRemove,
@@ -55,17 +70,26 @@ function ArticleRow({
   article: ArticleItem;
   defaultBadge: string;
   defaultColor: string;
+  open: boolean;
+  onToggle: () => void;
   onPatch: (patch: Partial<ArticleItem>) => void;
   onMove: (dir: -1 | 1) => void;
   onRemove: () => void;
 }) {
   const id = `a${index}`;
   const shownBadge = article.badge?.trim() || defaultBadge;
+  const incomplete = !article.title.trim() || !article.url.trim() || !article.image.trim();
   return (
-    <li className="rounded-lg border bg-card p-3 sm:p-4">
-      <div className="mb-3 flex items-center justify-between">
-        <span className="text-sm font-semibold">{t.article(index + 1)}</span>
-        <div className="flex gap-1">
+    <li className="rounded-lg border bg-card">
+      <div className="flex items-center gap-1 p-1.5">
+        <button type="button" aria-expanded={open} aria-controls={`${id}-body`} className="flex min-w-0 flex-1 items-center gap-3 rounded-md p-1 text-left hover:bg-muted/60" onClick={onToggle}>
+          <MiniThumb src={article.image} />
+          <span className="w-5 shrink-0 text-xs font-semibold text-muted-foreground">{index + 1}</span>
+          <span className="min-w-0 flex-1 truncate text-sm font-medium">{article.title.trim() || t.untitledArticle}</span>
+          {incomplete && <TriangleAlert className="size-4 shrink-0 text-yellow-600" aria-label={t.articleIncomplete} />}
+          <ChevronRight className={"size-4 shrink-0 text-muted-foreground transition-transform" + (open ? " rotate-90" : "")} />
+        </button>
+        <div className="flex shrink-0">
           <Button variant="ghost" size="icon" aria-label={t.moveUp} disabled={index === 0} onClick={() => onMove(-1)}>
             <ChevronUp className="size-4" />
           </Button>
@@ -77,6 +101,7 @@ function ArticleRow({
           </Button>
         </div>
       </div>
+      <div id={`${id}-body`} hidden={!open} className="border-t p-3 sm:p-4">
       <div className="flex flex-col gap-4 sm:flex-row">
         <Thumb src={article.image} badge={shownBadge} badgeColor={article.badgeColor || defaultColor} />
         <div className="grid flex-1 gap-3">
@@ -111,6 +136,7 @@ function ArticleRow({
           </div>
         </div>
       </div>
+      </div>
     </li>
   );
 }
@@ -129,6 +155,17 @@ export function ArticleList({
   onOpenBookmark: () => void;
 }) {
   const [paste, setPaste] = useState("");
+  const [open, setOpen] = useState<number | null>(null); // one article open at a time keeps the list short
+
+  // "To fix" links jump to a field inside a closed article: open it first.
+  useEffect(() => {
+    const reveal = (e: Event) => {
+      const m = /^a(\d+)-/.exec((e as CustomEvent<string>).detail);
+      if (m) setOpen(Number(m[1]));
+    };
+    window.addEventListener("ol-reveal", reveal);
+    return () => window.removeEventListener("ol-reveal", reveal);
+  }, []);
 
   const patch = (i: number, p: Partial<ArticleItem>) =>
     onChange(
@@ -147,6 +184,8 @@ export function ArticleList({
     const next = articles.slice();
     [next[i], next[j]] = [next[j]!, next[i]!];
     onChange(next);
+    if (open === i) setOpen(j);
+    else if (open === j) setOpen(i);
   };
   const addSnippets = () => {
     const { articles: found, skipped } = parseSnippets(paste);
@@ -193,7 +232,7 @@ export function ArticleList({
         {articles.length === 0 ? (
           <p className="py-6 text-center text-sm text-muted-foreground">{t.emptyArticles}</p>
         ) : (
-          <ol className="space-y-3">
+          <ol className="space-y-2 lg:max-h-[70vh] lg:overflow-y-auto lg:pr-1">
             {articles.map((a, i) => (
               <ArticleRow
                 key={i}
@@ -202,14 +241,26 @@ export function ArticleList({
                 article={a}
                 defaultBadge={defaultBadge}
                 defaultColor={defaultColor}
+                open={open === i}
+                onToggle={() => setOpen(open === i ? null : i)}
                 onPatch={(p) => patch(i, p)}
                 onMove={(d) => move(i, d)}
-                onRemove={() => onChange(articles.filter((_, j) => j !== i))}
+                onRemove={() => {
+                  onChange(articles.filter((_, j) => j !== i));
+                  setOpen(open === null || open === i ? null : open > i ? open - 1 : open);
+                }}
               />
             ))}
           </ol>
         )}
-        <Button variant="outline" className="gap-2" onClick={() => onChange([...articles, emptyArticle()])}>
+        <Button
+          variant="outline"
+          className="gap-2"
+          onClick={() => {
+            onChange([...articles, emptyArticle()]);
+            setOpen(articles.length);
+          }}
+        >
           <Plus className="size-4" /> {t.addArticle}
         </Button>
       </CardContent>

@@ -106,6 +106,7 @@ Start -> [Upload zip | New banner] -> Form -> Articles -> Preview -> Download zi
 ```
 
 - Form: campaign, format, header (image or colour, link), badge text and colours, behaviour toggles.
+- Layout: below 1024 px one column (campaign, header, articles, advanced). From 1024 px two columns: articles left (list scrolls in its own box, one article open at a time), settings right. "To fix" links open the article that holds the field (`ol-reveal` event, see `goTo`).
 - Articles: paste snippets, paste URLs (Phase 2), manual add, reorder, remove.
 - Preview: iframe with desktop/mobile sizes and light/dark switch.
 - Weight meter: shows total size against the roughly 100 KB budget (images excluded).
