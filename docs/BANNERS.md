@@ -53,7 +53,7 @@ Badge colour (and per-article badge colour), hover colour (red `#e3000f` by defa
 
 ### Opening old Swiper banners
 
-Upload the old zip (for example `content-marketing/st_KultuurSygis_2710-1250x400`) in the same place as new zips. Needs `index.html`, `style.css` and the header picture; Swiper files are ignored.
+Upload the old zip (for example `content-marketing/st_KultuurSygis_2710-1250x400`) in the same place as new zips. Needs `index.html`, `style.css` and the header picture; Swiper files are ignored. The files may be at the top of the zip or inside a folder (or two): the shallowest `index.html` is used. This works for every zip the tool opens (banners and header bars).
 
 | Read from | Becomes |
 |---|---|

@@ -3,6 +3,7 @@ import type { ArticlesBannerConfig } from "@ohtuleht/templates";
 import { renderExport, zipName, type Draft, type HeaderFile } from "@/lib/banner";
 import { averageColor, toDataUrl } from "@/lib/image";
 import { importLegacy } from "@/lib/legacy";
+import { openZip } from "@/lib/openzip";
 
 export async function buildZip(draft: Draft): Promise<Blob> {
   const zip = new JSZip();
@@ -36,9 +37,9 @@ export async function fileToHeader(file: File): Promise<{ headerFile: HeaderFile
 // Reads a banner: made by this toolkit (config embedded in index.html) or an old Swiper banner (read by importLegacy).
 // notes = things the person should check after opening an old banner.
 export async function importZip(file: File): Promise<{ draft: Draft; notes: string[] }> {
-  const zip = await JSZip.loadAsync(file);
-  const index = zip.file("index.html");
-  if (!index) throw new Error("This zip has no index.html.");
+  const zip = await openZip(file);
+  const index = zip?.file("index.html");
+  if (!zip || !index) throw new Error("This zip has no index.html, so it is not a banner.");
   const doc = new DOMParser().parseFromString(await index.async("string"), "text/html");
   const json = doc.getElementById("ol-banner")?.textContent;
   if (!json) return importLegacy(zip, doc, file.name.replace(/\.zip$/i, ""));
