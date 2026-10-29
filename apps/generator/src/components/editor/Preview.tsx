@@ -124,7 +124,7 @@ export function Preview({
         {empty ? (
           <EmptyGuide onAddArticles={onAddArticles} onTryExample={onTryExample} onOpenBookmark={onOpenBookmark} />
         ) : (
-          <SwapFrame build={(id) => renderPreview(draft, theme, id)} deps={[draft, theme]} width={W} height={H} scaleFor={scaleFor} onShown={setShown} title="Banner preview" />
+          <SwapFrame build={(id) => renderPreview(draft, theme, id)} deps={[draft, theme, W, H]} width={W} height={H} scaleFor={scaleFor} onShown={setShown} title="Banner preview" />
         )}
         </div>
       </div>

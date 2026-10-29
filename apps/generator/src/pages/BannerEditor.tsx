@@ -70,7 +70,7 @@ function SwitchRow({ id, label, checked, onChange }: { id: string; label: string
 }
 
 function ColorSet({ title, mode, config, onChange }: { title: string; mode: "light" | "dark"; config: ArticlesBannerConfig; onChange: (c: ThemeColors) => void }) {
-  const mobile = config.format === "articles-mobile"; // cards have white titles on the picture and no labels: only background and header apply
+  const mobile = config.format === "articles-mobile"; // titles are white on the picture: no title or hover colour. The label colour is the label's background there.
   const colors = config.theme[mode];
   const resolved = resolveTheme(config, mode);
   const set = (key: keyof ThemeColors) => (hex: string) => onChange({ ...colors, [key]: hex });
@@ -85,7 +85,7 @@ function ColorSet({ title, mode, config, onChange }: { title: string; mode: "lig
       <ColorField label={t.colorBg} value={colors.bg} onChange={set("bg")} />
       {!mobile && <ColorField label={t.colorText} value={colors.text} onChange={set("text")} />}
       {!mobile && <ColorField label={t.colorHover} value={colors.hover} onChange={set("hover")} />}
-      {!mobile && <AutoColorField label={t.colorBadge} value={resolved.badge} custom={colors.badge !== undefined} onChange={set("badge")} onReset={reset("badge")} />}
+      <AutoColorField label={t.colorBadge} value={mobile ? (colors.badge ?? config.primary) : resolved.badge} custom={colors.badge !== undefined} onChange={set("badge")} onReset={reset("badge")} />
       <AutoColorField label={t.colorHeader} value={resolved.headerBg} custom={colors.headerBg !== undefined} onChange={set("headerBg")} onReset={reset("headerBg")} />
       <AutoColorField label={t.colorHeaderText} value={resolved.headerText} custom={colors.headerText !== undefined} onChange={set("headerText")} onReset={reset("headerText")} />
     </div>
@@ -237,13 +237,11 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                   <Input id="campaign" value={c.campaign} onChange={(e) => set({ campaign: e.target.value })} />
                   <p className="text-xs text-muted-foreground">{t.campaignHint}</p>
                 </div>
-                {c.format !== "articles-mobile" && (
-                  <div className="space-y-1.5">
-                    <Label htmlFor="badge">{t.badge}</Label>
-                    <Input id="badge" value={c.badge} onChange={(e) => set({ badge: e.target.value })} />
-                    <p className="text-xs text-muted-foreground">{t.badgeHint}</p>
-                  </div>
-                )}
+                <div className="space-y-1.5">
+                  <Label htmlFor="badge">{t.badge}</Label>
+                  <Input id="badge" value={c.badge} onChange={(e) => set({ badge: e.target.value })} />
+                  <p className="text-xs text-muted-foreground">{t.badgeHint}</p>
+                </div>
                 <div className="space-y-1.5">
                   <ColorField label={t.mainColor} value={c.primary} onChange={(primary) => set({ primary })} />
                   <p className="text-xs text-muted-foreground">{t.mainColorHint}</p>
@@ -291,7 +289,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
               </Section>
             </div>
 
-            <ArticleList articles={c.articles} defaultBadge={c.badge} defaultColor={resolveTheme(c, "light").badge} showBadge={c.format !== "articles-mobile"} onChange={(articles) => set({ articles })} onOpenBookmark={() => setBookmarkOpen(true)} />
+            <ArticleList articles={c.articles} defaultBadge={c.badge} defaultColor={c.format === "articles-mobile" ? (c.theme.light.badge ?? c.primary) : resolveTheme(c, "light").badge} onChange={(articles) => set({ articles })} onOpenBookmark={() => setBookmarkOpen(true)} />
 
             <BookmarkletDialog open={bookmarkOpen} onOpenChange={setBookmarkOpen} />
 

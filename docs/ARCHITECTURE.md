@@ -25,7 +25,7 @@ docs/               Documentation
 
 Planned, not created yet: `apps/api` (Cloudflare Worker, Phase 2/3). The old plan had `packages/core` and `apps/brand`; types and validation live in `packages/templates`, and the brand manual is a page of the generator.
 
-`format` is `articles-1250x400` or `articles-mobile`; both share one config shape (the mobile template ignores labels and the title and hover colours). `apps/generator/src/lib/banner.ts` picks the template by `format`.
+`format` is `articles-1250x400` or `articles-mobile`; both share one config shape (the mobile template ignores the title and hover colours). `apps/generator/src/lib/banner.ts` picks the template by `format`.
 
 ## Banner zip format
 

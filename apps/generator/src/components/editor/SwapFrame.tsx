@@ -22,7 +22,7 @@ export const readySignal = (id: number) =>
   ',sent=false;function send(){if(sent)return;sent=true;parent.postMessage({olPreview:id},"*")}' +
   'var link=document.querySelector("link[media]");' +
   'var sheet=new Promise(function(r){if(!link||link.media==="all")r();else link.addEventListener("load",r)});' +
-  'var fonts=sheet.then(function(){return Promise.all([document.fonts.load(\'700 20px "Fira Sans Condensed"\'),document.fonts.load("700 12px Roboto")])});' +
+  'var fonts=sheet.then(function(){return Promise.all([document.fonts.load(\'700 20px "Fira Sans Condensed"\'),document.fonts.load("700 12px Roboto"),document.fonts.load("700 12px Inter")])});' +
   'var loaded=new Promise(function(r){if(document.readyState==="complete")r();else window.addEventListener("load",r)});' +
   "Promise.all([fonts,loaded]).then(send,send);setTimeout(send,2500)})();</script>";
 
