@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Copy, Download, FileArchive, Info, Palette, Shapes, Type } from "lucide-react";
 import { toast } from "sonner";
 import { brand, contrastRatio, formatColor, safeZone, textOnStep, tokensCss, tokensJson, tokensTailwind, wcagLevel, type ColorFormat, type LogoVariant } from "@ohtuleht/brand";
-import { IconChip } from "@/components/editor/IconChip";
 import { PageHeader } from "@/components/editor/PageHeader";
 import { Fonts } from "@/pages/BrandFonts";
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { brandManual as t } from "@/content";
 import { logoBox, logoFileName, logoPng, logoSvg, logoZip, svgDataUrl } from "@/lib/logos";
 import type { BrandTab } from "@/lib/route";
+import { copyText } from "@/lib/clipboard";
 import { download } from "@/lib/zip";
 
 const FORMAT_KEY = "ol-color-format";
@@ -48,10 +48,7 @@ function Segmented<T extends string | number>({ label, options, value, onChange 
   );
 }
 
-async function copy(text: string) {
-  await navigator.clipboard.writeText(text);
-  toast.success(t.copied(text));
-}
+const copy = (text: string) => copyText(text, t.copied(text));
 
 // ---------- Colours ----------
 

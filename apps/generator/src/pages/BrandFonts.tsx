@@ -1,9 +1,9 @@
 import { Copy, Download, ListChecks } from "lucide-react";
-import { toast } from "sonner";
 import { brand } from "@ohtuleht/brand";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { brandManual as t } from "@/content";
+import { copyText } from "@/lib/clipboard";
 
 type Font = (typeof brand.fonts)[number];
 
@@ -17,11 +17,6 @@ const stackOf = (f: Font) => (f.id === "inter" ? `"Inter Variable", ${f.stack}` 
 
 // Fonts are in public/fonts/<id>.zip (TTF files of the brand weights and the license).
 const zipOf = (f: Font) => `./fonts/${f.id}.zip`;
-
-async function copy(text: string) {
-  await navigator.clipboard.writeText(text);
-  toast.success(t.copied(text));
-}
 
 // When to use which font: the first thing on the page, because it is what people come for.
 function Rules() {
@@ -130,7 +125,7 @@ function FontCard({ font }: { font: Font }) {
             <Download className="size-4" /> {t.fontDownload}
           </a>
         </Button>
-        <Button size="sm" variant="outline" className="gap-2" onClick={() => copy(cssFor(font))}>
+        <Button size="sm" variant="outline" className="gap-2" onClick={() => copyText(cssFor(font), t.copied(cssFor(font)))}>
           <Copy className="size-4" /> {t.fontCopyCss}
         </Button>
       </div>

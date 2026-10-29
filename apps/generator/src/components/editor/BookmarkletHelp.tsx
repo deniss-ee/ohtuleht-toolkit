@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import { Bookmark, Copy } from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { copyText } from "@/lib/clipboard";
 import { editor as t } from "@/content";
 import { bookmarkletHref, bookmarkletText } from "@/lib/bookmarklet";
 
@@ -40,10 +40,7 @@ export function BookmarkletDialog({ open, onOpenChange }: { open: boolean; onOpe
                 variant="outline"
                 size="sm"
                 className="gap-2"
-                onClick={async () => {
-                  await navigator.clipboard.writeText(bookmarkletText);
-                  toast.success(t.bookmarkCopied);
-                }}
+                onClick={() => copyText(bookmarkletText, t.bookmarkCopied)}
               >
                 <Copy className="size-4" /> {t.bookmarkCopyCode}
               </Button>
