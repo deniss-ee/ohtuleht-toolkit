@@ -46,7 +46,7 @@ export function PictureConverter({ onBack, onBrand, embedded }: { onBack?: () =>
 
       <div className="space-y-2">
         <Label htmlFor="picture-links">{t.converterInput}</Label>
-        <Textarea id="picture-links" rows={4} value={text} placeholder={t.converterPlaceholder} spellCheck={false} onChange={(e) => setText(e.target.value)} />
+        <Textarea id="picture-links" autoFocus={!embedded} rows={4} value={text} placeholder={t.converterPlaceholder} spellCheck={false} onChange={(e) => setText(e.target.value)} />
         {rows.filter((r) => !r.desktop).map((r) => (
           <p key={r.n} className="text-sm text-destructive" role="alert">
             {t.converterBadLine(r.n)}

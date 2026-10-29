@@ -4,6 +4,7 @@ import { brand } from "@ohtuleht/brand";
 import { contrast } from "@ohtuleht/templates";
 import { toast } from "sonner";
 import { ColorField } from "@/components/editor/ColorField";
+import { useSaveShortcut } from "@/components/editor/useSaveShortcut";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { brandEye as t } from "@/content";
@@ -110,10 +111,19 @@ export function BrandEye() {
     drag.current = null;
     pending.current = null;
   };
+  // Arrow keys on the picture move the letter (Shift = bigger steps), for people who do not use a mouse.
+  const onViewKey = (e: KeyboardEvent) => {
+    if (e.target !== e.currentTarget) return;
+    const step = e.shiftKey ? 0.05 : 0.01;
+    const move = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[e.key];
+    if (!move) return;
+    e.preventDefault();
+    setEye((cur) => ({ ...cur, fx: cur.fx + move[0]!, fy: cur.fy + move[1]! }));
+  };
   const onTurnKey = (e: KeyboardEvent) => {
     const step = e.shiftKey ? 15 : 5;
-    if (e.key === "ArrowRight" || e.key === "ArrowUp") change({ ...eye, angle: wrapAngle(eye.angle + step) });
-    else if (e.key === "ArrowLeft" || e.key === "ArrowDown") change({ ...eye, angle: wrapAngle(eye.angle - step) });
+    if (e.key === "ArrowRight" || e.key === "ArrowUp") setEye((cur) => ({ ...cur, angle: wrapAngle(cur.angle + step) }));
+    else if (e.key === "ArrowLeft" || e.key === "ArrowDown") setEye((cur) => ({ ...cur, angle: wrapAngle(cur.angle - step) }));
     else return;
     e.preventDefault();
   };
@@ -136,6 +146,7 @@ export function BrandEye() {
       toast.error(t.pngFailed);
     }
   };
+  useSaveShortcut(savePng, safety.ok); // Ctrl+S saves the PNG
   const saveSvg = () => {
     if (!safety.ok) return;
     const name = file("svg");
@@ -165,6 +176,8 @@ export function BrandEye() {
           onPointerMove={onMove}
           onPointerUp={onUp}
           onPointerCancel={onUp}
+          tabIndex={0}
+          onKeyDown={onViewKey}
         >
           <div className="pointer-events-none absolute inset-0 select-none [&>svg]:size-full" dangerouslySetInnerHTML={{ __html: svg }} />
           {!safety.ok && (

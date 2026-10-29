@@ -15,7 +15,7 @@ export function ToolsHome({ onOpen }: { onOpen: (id: ToolInfo["id"]) => void }) 
       <PageHeader icon={Wrench} title={t.title} intro={t.intro} />
       <div className="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {t.items.map((i) => (
-          <Card key={i.id} className={i.ready ? "h-full" : "h-full opacity-60"}>
+          <Card key={i.id} className={i.ready ? "h-full cursor-pointer transition-colors hover:bg-muted/40" : "h-full opacity-60"} onClick={i.ready ? () => onOpen(i.id) : undefined}>
             <CardHeader>
               <div className="flex items-center gap-3">
                 <IconChip icon={ICONS[i.id]} tone={i.ready ? "red" : "ink"} />
@@ -29,7 +29,7 @@ export function ToolsHome({ onOpen }: { onOpen: (id: ToolInfo["id"]) => void }) 
               <Badge variant="secondary">{i.tag}</Badge>
             </CardContent>
             <CardFooter className="mt-auto">
-              <Button variant={i.ready ? "default" : "secondary"} disabled={!i.ready} onClick={() => onOpen(i.id)}>
+              <Button className="px-8" variant={i.ready ? "default" : "secondary"} disabled={!i.ready}>
                 {i.ready ? t.open : t.soon}
               </Button>
             </CardFooter>

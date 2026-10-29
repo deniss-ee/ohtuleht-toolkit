@@ -11,6 +11,7 @@ Brand manual tab **Eye** (`?section=brand&tab=eye`). Makes the eye in the letter
 | Turn, size, position | Turn: drag the round button on the preview (or arrow keys), or the slider. Size slider. Move: drag the letter. Exact position sliders are under More options |
 | Where the eye looks | Drag the dark part of the eye (sliders under More options). The iris always keeps a gap of white to the edge of the eye (`IRIS_GAP` in `eye.ts`) |
 | More options (closed) | Picture shape (default 1:1; also 4:3, 3:4, 16:9, 9:16), background (default transparent), exact position and look sliders |
+| Keyboard | Arrow keys on the picture move the letter (Shift: bigger steps); arrow keys on the round button turn it; Ctrl+S saves the PNG |
 | Download | SVG, or PNG at 512, 1024 or 2048 px wide. PNG and SVG keep a transparent background unless one is chosen |
 
 ## Safety rules
