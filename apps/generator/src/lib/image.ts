@@ -56,8 +56,10 @@ export async function averageColor(dataUrl: string): Promise<string | undefined>
 
 // Õhtuleht picture links carry a size number: https://p.ohtuleht.ee/webp/54/i/2026/10/26/x.jpg
 // 54 suits the desktop banner, 48 the (cropped, sharper) mobile banner; the CMS gives other numbers.
+// Both forms exist and both are accepted: /webp/53/i/... (site) and /53/i/... (CMS). The result is always the /webp/NN/ form.
 // Returns null when the link has no size number.
 export function withPictureSize(url: string, size: number): string | null {
   const text = url.trim();
-  return /\/webp\/\d+\//.test(text) ? text.replace(/\/webp\/\d+\//, `/webp/${size}/`) : null;
+  const sized = /\/(?:webp\/)?\d{1,3}\/(?=i\/)/;
+  return sized.test(text) ? text.replace(sized, `/webp/${size}/`) : null;
 }

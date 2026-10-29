@@ -383,7 +383,7 @@ export const marketing = {
   converterPlaceholder: "https://p.ohtuleht.ee/webp/59/i/2026/10/26/example.jpg",
   converterDesktop: "Desktop banner (54)",
   converterMobile: "Mobile banner (48)",
-  converterBadLine: (n: number) => `Line ${n} is not an Õhtuleht picture link (it has no /webp/number/ part).`,
+  converterBadLine: (n: number) => `Line ${n} is not an Õhtuleht picture link (it has no size number such as /webp/54/ or /54/).`,
   converterEmpty: "Paste a link above and the converted links appear here.",
   converterCopyAll: "Copy all",
   brandTitle: "Brand manual",

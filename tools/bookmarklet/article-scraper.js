@@ -25,7 +25,7 @@
     t: pick(['meta[property="og:title"]', 'meta[name="twitter:title"]']) || document.title.trim(),
     l: lead ? lead.textContent.trim() : "",
     u: id ? "https://www.ohtuleht.ee/" + id + "/" : pick(['meta[property="og:url"]', 'link[rel="canonical"]']) || location.href,
-    i: pick(['meta[property="og:image"]', 'meta[name="twitter:image"]']).replace(new RegExp("/webp/[0-9]+/"), "/webp/54/"),
+    i: pick(['meta[property="og:image"]', 'meta[name="twitter:image"]']).replace(new RegExp("/(webp/)?[0-9]{1,3}/(?=i/)"), "/webp/54/"),
     b: pick(['meta[name="articleSection"]']),
   };
   // Text to URL-safe base64 (works with Estonian letters).

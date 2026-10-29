@@ -350,7 +350,7 @@ export const marketing: typeof En.marketing = {
   converterPlaceholder: "https://p.ohtuleht.ee/webp/59/i/2026/10/26/example.jpg",
   converterDesktop: "Töölauabänner (54)",
   converterMobile: "Mobiilibänner (48)",
-  converterBadLine: (n: number) => `Rida ${n} ei ole Õhtulehe pildi link (selles pole osa /webp/number/).`,
+  converterBadLine: (n: number) => `Rida ${n} ei ole Õhtulehe pildi link (selles pole suuruse numbrit, näiteks /webp/54/ või /54/).`,
   converterEmpty: "Kleebi ülal link ja muudetud lingid ilmuvad siia.",
   converterCopyAll: "Kopeeri kõik",
   brandTitle: "Brändiraamat",
