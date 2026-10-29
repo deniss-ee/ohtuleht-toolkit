@@ -1,6 +1,7 @@
 import { renderArticles1250x400, renderArticlesMobile, validate } from "@ohtuleht/templates";
 import type { ArticleItem, ArticlesBannerConfig, ArticlesFormat, Problem, ThemeColors } from "@ohtuleht/templates";
 import runtimeJs from "../../../../packages/banner-runtime/dist/runtime.js?raw";
+import { getLang } from "@/content";
 import { readySignal } from "@/components/editor/SwapFrame";
 import sliderCssRaw from "../../../../packages/banner-runtime/src/slider.css?raw";
 
@@ -83,7 +84,7 @@ export function emptyArticle(): ArticleItem {
 }
 
 export function problems(draft: Draft): Problem[] {
-  return validate(draft.config);
+  return validate(draft.config, getLang());
 }
 
 // The preview passes the chosen theme's colours as both themes, so no browser setting is needed.

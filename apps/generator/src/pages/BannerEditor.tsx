@@ -17,8 +17,8 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
-import { editor as t } from "@/content";
-import { ThemeToggle } from "@/layout/AppShell";
+import { editor as t, ui } from "@/content";
+import { Toggles } from "@/layout/AppShell";
 import { bytesOf, exampleDraft, FORMATS, problems, renderExport, switchFormat, type Draft } from "@/lib/banner";
 import { downloadZip, fileToHeader } from "@/lib/zip";
 
@@ -217,9 +217,9 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
           <FlaskConical className="size-4" />
           <span className="hidden md:inline">{t.loadExample}</span>
         </Button>
-        <ThemeToggle />
+        <Toggles />
         <Button className="ml-auto gap-2 sm:ml-0" disabled={issues.length > 0 || busy} onClick={download}>
-          <Download className="size-4" /> {busy ? t.downloading : (<>Download<span className="hidden sm:inline"> zip</span></>)}
+          <Download className="size-4" /> {busy ? t.downloading : (<>{ui.downloadWord}<span className="hidden sm:inline"> {ui.suffixZip}</span></>)}
         </Button>
         </div>
       </header>

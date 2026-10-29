@@ -1,5 +1,6 @@
 import JSZip from "jszip";
 import type { ArticlesBannerConfig } from "@ohtuleht/templates";
+import { ui } from "@/content";
 import { renderExport, zipName, type Draft, type HeaderFile } from "@/lib/banner";
 import { averageColor, toDataUrl } from "@/lib/image";
 import { importLegacy } from "@/lib/legacy";
@@ -39,12 +40,12 @@ export async function fileToHeader(file: File): Promise<{ headerFile: HeaderFile
 export async function importZip(file: File): Promise<{ draft: Draft; notes: string[] }> {
   const zip = await openZip(file);
   const index = zip?.file("index.html");
-  if (!zip || !index) throw new Error("This zip has no index.html, so it is not a banner.");
+  if (!zip || !index) throw new Error(ui.errNoIndex);
   const doc = new DOMParser().parseFromString(await index.async("string"), "text/html");
   const json = doc.getElementById("ol-banner")?.textContent;
   if (!json) return importLegacy(zip, doc, file.name.replace(/\.zip$/i, ""));
   const config = JSON.parse(json) as ArticlesBannerConfig;
-  if (config.v !== 1 || (config.format !== "articles-1250x400" && config.format !== "articles-mobile")) throw new Error("Unsupported banner version or format.");
+  if (config.v !== 1 || (config.format !== "articles-1250x400" && config.format !== "articles-mobile")) throw new Error(ui.errBannerVersion);
   // Banners made before the main colour existed: take it from their label or header colour.
   config.primary ??= config.theme.light.badge ?? config.theme.light.headerBg ?? "#9500b2";
   let headerFile: HeaderFile | null = null;

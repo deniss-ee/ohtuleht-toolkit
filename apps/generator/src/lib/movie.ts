@@ -1,5 +1,6 @@
 import JSZip from "jszip";
 import { renderMovieBanner, type MovieBannerConfig, type VideoPosition } from "@ohtuleht/templates";
+import { movieBanner as t } from "@/content";
 import { readySignal } from "@/components/editor/SwapFrame";
 import { download } from "@/lib/zip";
 
@@ -40,7 +41,7 @@ export function readPicture(file: File): Promise<{ width: number; height: number
     const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight, url });
-    img.onerror = () => reject(new Error("The picture could not be opened."));
+    img.onerror = () => reject(new Error(t.pictureFailed));
     img.src = url;
   });
 }
@@ -56,13 +57,13 @@ export interface MovieProblem {
 
 export function movieProblems(d: MovieDraft): MovieProblem[] {
   const out: MovieProblem[] = [];
-  if (!d.video) out.push({ field: "mv-video", message: "Choose the video." });
+  if (!d.video) out.push({ field: "mv-video", message: t.needVideo });
   for (const { key, label } of VERSIONS) {
-    if (!d[key].file) out.push({ field: `mv-bg-${key}`, message: `Choose the ${label} background picture.` });
+    if (!d[key].file) out.push({ field: `mv-bg-${key}`, message: t.needBackground(label) });
     const href = d[key].href.trim();
-    if (href && !/^https?:\/\/\S+$/i.test(href)) out.push({ field: `mv-link-${key}`, message: `The ${label} link must start with https://` });
+    if (href && !/^https?:\/\/\S+$/i.test(href)) out.push({ field: `mv-link-${key}`, message: t.badLink(label) });
   }
-  if (!(d.videoHeight >= 50 && d.videoHeight <= 1000)) out.push({ field: "mv-height", message: "Video height must be between 50 and 1000 px." });
+  if (!(d.videoHeight >= 50 && d.videoHeight <= 1000)) out.push({ field: "mv-height", message: t.badHeight });
   return out;
 }
 

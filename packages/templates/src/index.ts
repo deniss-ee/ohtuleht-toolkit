@@ -9,3 +9,4 @@ export { renderHeaderBar, validateHeaderBar, headerTextColor, iframeCode } from 
 export type { HeaderBarConfig, HeaderBarFiles } from "./header-bar.ts";
 export { renderMovieBanner } from "./movie-banner.ts";
 export type { MovieBannerConfig, VideoPosition } from "./movie-banner.ts";
+export type { Lang } from "./messages.ts";

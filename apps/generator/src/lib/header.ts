@@ -2,6 +2,7 @@ import JSZip from "jszip";
 import { openZip } from "@/lib/openzip";
 import { iframeCode, renderHeaderBar, validateHeaderBar } from "@ohtuleht/templates";
 import type { HeaderBarConfig, Problem } from "@ohtuleht/templates";
+import { getLang, ui } from "@/content";
 import { readySignal } from "@/components/editor/SwapFrame";
 import { download } from "@/lib/zip";
 import { averageColor, toDataUrl } from "@/lib/image";
@@ -26,7 +27,7 @@ export function exampleHeaderDraft(): HeaderDraft {
   };
 }
 
-export const headerProblems = (d: HeaderDraft): Problem[] => validateHeaderBar(d.config);
+export const headerProblems = (d: HeaderDraft): Problem[] => validateHeaderBar(d.config, getLang());
 export const headerEmbedCode = (d: HeaderDraft) => iframeCode(d.embedUrl);
 export const headerZipName = (d: HeaderDraft) => `header_${slug(d.config.label)}.zip`;
 
@@ -74,7 +75,7 @@ export async function importHeaderZip(file: File): Promise<HeaderDraft | null> {
   const json = new DOMParser().parseFromString(await index.async("string"), "text/html").getElementById("ol-header")?.textContent;
   if (!json) return null;
   const config = JSON.parse(json) as HeaderBarConfig;
-  if (config.v !== 1 || config.format !== "header-bar") throw new Error("Unsupported header version.");
+  if (config.v !== 1 || config.format !== "header-bar") throw new Error(ui.errHeaderVersion);
   let picture: HeaderFile | null = null;
   if (config.picture) {
     const entry = zip.file(config.picture.src);

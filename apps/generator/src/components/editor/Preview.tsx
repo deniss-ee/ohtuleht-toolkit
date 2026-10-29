@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Bookmark, FlaskConical, Pin, PinOff, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { editor as t } from "@/content";
+import { editor as t, ui } from "@/content";
 import { SwapFrame, type Geometry } from "@/components/editor/SwapFrame";
 import { FORMATS, renderPreview, type Draft } from "@/lib/banner";
 
@@ -124,7 +124,7 @@ export function Preview({
         {empty ? (
           <EmptyGuide onAddArticles={onAddArticles} onTryExample={onTryExample} onOpenBookmark={onOpenBookmark} />
         ) : (
-          <SwapFrame build={(id) => renderPreview(draft, theme, id)} deps={[draft, theme, W, H]} width={W} height={H} scaleFor={scaleFor} onShown={setShown} title="Banner preview" />
+          <SwapFrame build={(id) => renderPreview(draft, theme, id)} deps={[draft, theme, W, H]} width={W} height={H} scaleFor={scaleFor} onShown={setShown} title={ui.bannerPreview} />
         )}
         </div>
       </div>

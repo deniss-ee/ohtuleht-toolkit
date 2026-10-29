@@ -10,12 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { headerBar as t } from "@/content";
-import { ThemeToggle } from "@/layout/AppShell";
+import { headerBar as t, ui } from "@/content";
+import { Toggles } from "@/layout/AppShell";
 import { downloadHeaderZip, exampleHeaderDraft, fileToPicture, headerEmbedCode, headerProblems, renderHeaderPreview, type HeaderDraft } from "@/lib/header";
 
 // The bar is fluid (100% wide), so it is previewed at three real widths.
-const WIDTHS = [
+const widths = () => [
   { label: t.desktop, width: 1248 },
   { label: t.tablet, width: 768 },
   { label: t.phone, width: 375 },
@@ -52,7 +52,7 @@ export function HeaderBarEditor({ draft, onChange, onBack }: { draft: HeaderDraf
       <header className="flex shrink-0 flex-wrap items-center gap-x-2 gap-y-2 border-b px-3 py-2 lg:h-14 lg:flex-nowrap lg:gap-3 lg:px-4 lg:py-0">
         <Button variant="ghost" size="sm" className="gap-2" onClick={onBack}>
           <ArrowLeft className="size-4" />
-          <span className="hidden sm:inline">Back</span>
+          <span className="hidden sm:inline">{ui.back}</span>
         </Button>
         <div className="min-w-0 flex-1">
           <div className="truncate font-semibold leading-tight">{c.label.trim() || t.untitled}</div>
@@ -64,17 +64,17 @@ export function HeaderBarEditor({ draft, onChange, onBack }: { draft: HeaderDraf
             icon={issues.length === 0 ? <CheckCircle2 className="size-3.5 text-green-600" /> : <TriangleAlert className="size-3.5 text-yellow-600" />}
             label={
               <>
-                <span className="hidden sm:inline">{issues.length === 0 ? t.ready : `${issues.length} thing${issues.length === 1 ? "" : "s"} left to do`}</span>
+                <span className="hidden sm:inline">{issues.length === 0 ? t.ready : ui.toFix(issues.length)}</span>
                 <span className="sm:hidden">{issues.length === 0 ? "" : issues.length}</span>
               </>
             }
           >
             {(close) =>
               issues.length === 0 ? (
-                <p className="text-sm">All done. You can download your header bar.</p>
+                <p className="text-sm">{t.doneText}</p>
               ) : (
                 <div className="space-y-2">
-                  <p className="text-sm font-medium">Still to do before you can download</p>
+                  <p className="text-sm font-medium">{ui.toFixTitle}</p>
                   <ul className="space-y-1">
                     {issues.map((p) => (
                       <li key={p.field}>
@@ -107,9 +107,9 @@ export function HeaderBarEditor({ draft, onChange, onBack }: { draft: HeaderDraf
             <FlaskConical className="size-4" />
             <span className="hidden md:inline">{t.tryExample}</span>
           </Button>
-          <ThemeToggle />
+          <Toggles />
           <Button className="ml-auto gap-2 sm:ml-0" disabled={issues.length > 0 || busy} onClick={download}>
-            <Download className="size-4" /> {busy ? "Building..." : <>Download<span className="hidden sm:inline"> zip</span></>}
+            <Download className="size-4" /> {busy ? ui.building : <>{ui.downloadWord}<span className="hidden sm:inline"> {ui.suffixZip}</span></>}
           </Button>
         </div>
       </header>
@@ -121,7 +121,7 @@ export function HeaderBarEditor({ draft, onChange, onBack }: { draft: HeaderDraf
               <h2 className="text-sm font-semibold">{t.previewTitle}</h2>
               <p className="text-xs text-muted-foreground">{t.previewNote}</p>
             </div>
-            {WIDTHS.map((w) => (
+            {widths().map((w) => (
               <div key={w.width} className="space-y-1">
                 <div className="text-xs text-muted-foreground">{w.label}</div>
                 <div className="relative overflow-hidden" style={{ width: `min(100%, ${w.width}px)`, height: 46 }}>
@@ -185,7 +185,7 @@ export function HeaderBarEditor({ draft, onChange, onBack }: { draft: HeaderDraf
                   <IconChip icon={Link2} tone="yellow" />
                   <div>
                     <CardTitle>{t.embedTitle}</CardTitle>
-                    <CardDescription>The bar sits on the site inside an iframe.</CardDescription>
+                    <CardDescription>{t.embedHint}</CardDescription>
                   </div>
                 </div>
               </CardHeader>
