@@ -10,11 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { movieBanner as t, ui } from "@/content";
+import { formatSize } from "@/lib/format";
 import { read, write } from "@/lib/storage";
 import { downloadMovieZips, movieProblems, newMovieDraft, readPicture, renderMoviePreview, VERSIONS, type MovieDraft, type VersionKey } from "@/lib/movie";
 import type { VideoPosition } from "@ohtuleht/templates";
 
-const size = (bytes: number) => (bytes >= 1048576 ? `${(bytes / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`);
 
 const SETTINGS_KEY = "ol-movie";
 const WARN_BYTES = 5 * 1048576; // soft limit: ad servers often have one
@@ -79,7 +79,7 @@ export function MovieBanner({ onBack }: { onBack: () => void }) {
     setBusy(true);
     try {
       const [a, b] = await downloadMovieZips(d);
-      toast.success(t.saved(size(a), size(b)), { description: t.allowDownloads });
+      toast.success(t.saved(formatSize(a), formatSize(b)), { description: t.allowDownloads });
     } finally {
       setBusy(false);
     }
@@ -146,7 +146,7 @@ export function MovieBanner({ onBack }: { onBack: () => void }) {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <FileButton id="mv-video" accept="video/mp4,video/webm" label={d.video ? t.videoChange : t.videoChoose} name={d.video ? `${d.video.name} (${size(d.video.size)})` : t.noFile} onFile={pickVideo} icon={<Clapperboard className="size-4" />} />
+              <FileButton id="mv-video" accept="video/mp4,video/webm" label={d.video ? t.videoChange : t.videoChoose} name={d.video ? `${d.video.name} (${formatSize(d.video.size)})` : t.noFile} onFile={pickVideo} icon={<Clapperboard className="size-4" />} />
               <div className="space-y-1.5">
                 <Label htmlFor="mv-height">{t.videoHeight}</Label>
                 <Input id="mv-height" type="number" inputMode="numeric" min={50} max={1000} value={d.videoHeight} onChange={(e) => setD({ ...d, videoHeight: Number(e.target.value) })} />
@@ -187,13 +187,13 @@ export function MovieBanner({ onBack }: { onBack: () => void }) {
                   id={`mv-bg-${x.key}`}
                   accept="image/*"
                   label={d[x.key].file ? t.backgroundChange : t.backgroundChoose}
-                  name={d[x.key].file ? `${d[x.key].file!.name} (${size(d[x.key].file!.size)})` : t.noFile}
+                  name={d[x.key].file ? `${d[x.key].file!.name} (${formatSize(d[x.key].file!.size)})` : t.noFile}
                   onFile={(f) => pickPicture(x.key, f)}
                   icon={<ImagePlus className="size-4" />}
                 />
                 {d[x.key].file && d.video && (
                   <p className={`text-xs ${weight(d, x.key) > WARN_BYTES ? "font-medium text-yellow-700 dark:text-yellow-400" : "text-muted-foreground"}`}>
-                    {t.weight(size(weight(d, x.key)))}
+                    {t.weight(formatSize(weight(d, x.key)))}
                     {weight(d, x.key) > WARN_BYTES && ` ${t.weightBig}`}
                   </p>
                 )}

@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { headerBar as t, ui } from "@/content";
 import { Toggles } from "@/layout/AppShell";
 import { useSaveShortcut } from "@/components/editor/useSaveShortcut";
+import { copyText } from "@/lib/clipboard";
 import { downloadHeaderZip, exampleHeaderDraft, fileToPicture, headerEmbedCode, headerProblems, renderHeaderPreview, type HeaderDraft } from "@/lib/header";
 
 // The bar is fluid (100% wide), so it is previewed at three real widths.
@@ -212,10 +213,7 @@ export function HeaderBarEditor({ draft, onChange, onBack }: { draft: HeaderDraf
                     variant="outline"
                     size="sm"
                     className="gap-2"
-                    onClick={async () => {
-                      await navigator.clipboard.writeText(embed);
-                      toast.success(t.copied);
-                    }}
+                    onClick={() => copyText(embed, t.copied)}
                   >
                     <Copy className="size-4" /> {t.copy}
                   </Button>

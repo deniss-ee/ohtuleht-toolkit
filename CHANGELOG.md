@@ -31,6 +31,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 - Legacy banners and tools imported unchanged.
 
 ### Changed
+- Final review: unused import and unused texts removed, shared helpers for file sizes and copying, the compiler now rejects unused code (`noUnusedLocals`, `noUnusedParameters`).
 - Editor stays short with many articles: each article is one line until opened (one open at a time); on wide screens the articles sit on the left and the campaign, header and advanced settings on the right, and the article list scrolls inside its own box.
 - Example banner is now as plain as possible (solid colour header, default labels). Default slide time is 3 seconds.
 - Automatic header text colour: brand rule on brand colours; other colours get white unless they are light (luminance above 0.55 or HSL lightness above 0.78).
