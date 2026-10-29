@@ -28,7 +28,7 @@ Internal toolkit for the Õhtuleht newsroom and ad sales. Modules so far: banner
 
 ```
 apps/generator/            React + Vite + Tailwind v4 + shadcn/ui (port 5173)
-  src/pages/               Home, ContentMarketingHome, BannerEditor, HeaderBarEditor, ToolsHome, ImageCropper, MovieBanner, ArticleScraper, PictureConverter, BrandManual, BrandFonts
+  src/pages/               Home, ContentMarketingHome, BannerEditor, HeaderBarEditor, ToolsHome, ImageCropper, MovieBanner, ArticleScraper, PictureConverter, BrandManual, BrandFonts, BrandEye
   src/components/editor/   ArticleList, Preview, SwapFrame, ColorPicker, HoverPill ...
   src/lib/                 banner.ts, header.ts, movie.ts, cropper.ts, zip.ts, storage.ts (saved drafts), route.ts (direct links), logos.ts, snippets.ts, image.ts, format.ts, clipboard.ts
   src/content.*.ts         every UI string (en, et) + content.ts picker
@@ -37,7 +37,7 @@ packages/templates/        banner and header-bar HTML/CSS templates, colour logi
 packages/brand/            brand.json (colours, logos, fonts, clear space) + optimised logo SVGs
 tools/bookmarklet/         article-snippet.js (bookmarklet v2)
 tools/, category/   legacy tools, kept as they are
-docs/                      ROADMAP, WORKFLOW, ARCHITECTURE, BANNERS, HEADER-BAR, IMAGE-CROPPER, MOVIE-BANNER, MARKETING-TOOLS, BRAND-MANUAL, LANGUAGES, DEPLOY, BOOKMARKLET, HANDOFF
+docs/                      ROADMAP, WORKFLOW, ARCHITECTURE, BANNERS, HEADER-BAR, IMAGE-CROPPER, MOVIE-BANNER, MARKETING-TOOLS, BRAND-EYE, BRAND-MANUAL, LANGUAGES, DEPLOY, BOOKMARKLET, HANDOFF
 ```
 
 ## Commands

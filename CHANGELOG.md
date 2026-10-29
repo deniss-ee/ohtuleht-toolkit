@@ -4,6 +4,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+- Brand manual: **Eye** tab, a generator for the brand eye (filled or outline, looks, turns, peeking, PNG and SVG, safety rules). (#121)
+
 - Tools: **Article scraper** (bookmark gives title, lead, link and picture link with Copy buttons) and **Picture link converter** (CMS picture links to /54/ and /48/), with a Brand manual strip. New Marketing group on Home. (#117, #118)
 
 ### Removed
