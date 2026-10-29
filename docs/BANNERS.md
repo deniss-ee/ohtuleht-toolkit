@@ -44,7 +44,7 @@ Bar 1248x46 with 6 px corners, filled with the main colour or with a background 
 | More than 4 | Arrows appear; slider with autoplay and infinite loop |
 | 4 or fewer | Static row; the cards share the full width (2 articles = two wide cards); no arrows, no autoplay |
 | Shuffle | On by default (checkbox in generator). Runs in the banner on each view |
-| Autoplay | Default delay 2500 ms, speed 250 ms; editable |
+| Autoplay | Default delay 3000 ms, speed 250 ms; editable |
 | Click | Whole card opens the article via ClickTag; header opens the header link |
 
 **Per-campaign colours (all editable, light and dark)**

@@ -61,7 +61,7 @@ Older Swiper zips have no such block. `apps/generator/src/lib/legacy.ts` reads t
     "dark":  { "bg": "#0f0f0f", "text": "#ffffff", "hover": "#e3000f" }
   },
   "badge": "Sisuturundus",
-  "behavior": { "shuffle": true, "autoplay": true, "delayMs": 2500, "speedMs": 250, "loop": true },
+  "behavior": { "shuffle": true, "autoplay": true, "delayMs": 3000, "speedMs": 250, "loop": true },
   "articles": [
     { "url": "https://www.ohtuleht.ee/1169772/", "title": "...", "image": "https://p.ohtuleht.ee/webp/54/i/2026/10/26/t1ovwidw.aju.jpg", "badge": "Kontsert", "badgeColor": "#0a7a3d" }
   ]

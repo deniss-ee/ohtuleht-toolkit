@@ -309,7 +309,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
                   <Label htmlFor="delay">{t.delay}</Label>
-                  <Input id="delay" type="number" min={1} step={0.5} value={c.behavior.delayMs / 1000} onChange={(e) => setBehavior({ delayMs: Math.max(500, Math.round((Number(e.target.value) || 2.5) * 1000)) })} />
+                  <Input id="delay" type="number" min={1} step={0.5} value={c.behavior.delayMs / 1000} onChange={(e) => setBehavior({ delayMs: Math.max(500, Math.round((Number(e.target.value) || 3) * 1000)) })} />
                 </div>
                 <div className="space-y-1.5">
                   <Label>{t.speed}</Label>

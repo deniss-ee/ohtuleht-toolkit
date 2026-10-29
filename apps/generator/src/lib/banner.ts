@@ -1,9 +1,7 @@
 import { renderArticles1250x400, renderArticlesMobile, validate } from "@ohtuleht/templates";
 import type { ArticleItem, ArticlesBannerConfig, ArticlesFormat, Problem, ThemeColors } from "@ohtuleht/templates";
 import runtimeJs from "../../../../packages/banner-runtime/dist/runtime.js?raw";
-import exampleHeader from "@/assets/example-header.svg";
 import { readySignal } from "@/components/editor/SwapFrame";
-import { averageColor, toDataUrl } from "@/lib/image";
 import sliderCssRaw from "../../../../packages/banner-runtime/src/slider.css?raw";
 
 const sliderCss = sliderCssRaw.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, " ");
@@ -55,27 +53,24 @@ export function newDraft(format: ArticlesFormat = "articles-1250x400"): Draft {
       header: { type: "color", href: "" },
       badge: "Sisuturundus",
       theme: { light: { ...light }, dark: { ...dark, bg: FORMATS[format].darkBg } },
-      behavior: { shuffle: true, autoplay: true, delayMs: 2500, speedMs: 250, loop: true },
+      behavior: { shuffle: true, autoplay: true, delayMs: 3000, speedMs: 250, loop: true },
       articles: [],
     },
   };
 }
 
-// Filled-in sample so the form can be tried without collecting anything first.
-// Made-up texts, example.com links and random placeholder pictures: no real company or article.
+// Filled-in sample so the form can be tried without collecting anything first. As plain as possible:
+// solid colour header, every label and colour left at its default, made-up texts, example.com links
+// and random placeholder pictures (no real company or article). The person changes whatever they need.
 export async function exampleDraft(format: ArticlesFormat = "articles-1250x400"): Promise<Draft> {
   const d = newDraft(format);
   const img = (seed: string) => `https://picsum.photos/seed/${seed}/800/1000`;
   d.config.campaign = "Example campaign";
-  const bytes = new Uint8Array(await (await fetch(exampleHeader)).arrayBuffer());
-  const dataUrl = toDataUrl(bytes, "header.svg");
-  const avg = await averageColor(dataUrl);
-  d.headerFile = { name: "header.svg", bytes, dataUrl, avg };
-  d.config.header = { type: "image", src: "header.svg", href: "https://example.com/campaign", avg };
+  d.config.header = { type: "color", href: "https://example.com/campaign" };
   d.config.articles = [
     { url: "https://example.com/article-1", image: img("ol-example-1"), title: "Näidisartikkel: lühike pealkiri" },
     { url: "https://example.com/article-2", image: img("ol-example-2"), title: "Siia tuleb artikli pealkiri, mis on kahe rea pikkune ja näitab, kuidas tekst kaardil murdub" },
-    { url: "https://example.com/article-3", image: img("ol-example-3"), title: "Kolmas näide: pikem pealkiri, mis jätkub veel natuke, et näha mitme rea paigutust ja kaardi alumist osa", badge: "Näide", badgeColor: "#0a7a3d" },
+    { url: "https://example.com/article-3", image: img("ol-example-3"), title: "Kolmas näide: pikem pealkiri, mis jätkub veel natuke, et näha mitme rea paigutust ja kaardi alumist osa" },
     { url: "https://example.com/article-4", image: img("ol-example-4"), title: "Neljas näidisartikkel ilma pikema jututa" },
     { url: "https://example.com/article-5", image: img("ol-example-5"), title: "Viies näide: mõned sõnad, mis täidavad pealkirja ja näitavad kaardi ilmet" },
     { url: "https://example.com/article-6", image: img("ol-example-6"), title: "Kuues ja viimane näidisartikkel, et libistamine ja täpid oleks näha" },
