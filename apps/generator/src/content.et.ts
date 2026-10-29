@@ -2,6 +2,7 @@
 import type * as En from "./content.en";
 
 export const nav: En.NavItem[] = [
+  { id: "home", label: "Avaleht", ready: true },
   { id: "content", label: "Sisuturundus", ready: true },
   { id: "tools", label: "Tööriistad", ready: true },
   { id: "brand", label: "Brändiraamat", ready: true },
@@ -426,4 +427,48 @@ export const ui: typeof En.ui = {
   bannerPreview: "Bänneri eelvaade",
   brandColours: "Brändivärvid",
   chooseColour: (label) => `${label}: vali värv`,
+};
+
+export const home: typeof En.home = {
+  title: "Õhtuleht Toolkit",
+  intro: "Bännerid, pildid ja bränd ühes kohas. Vali, mida soovid teha.",
+  open: "Ava",
+  groups: [
+    {
+      id: "banners",
+      title: "Tee bänner",
+      text: "Saad zip-failid reklaamiserveri jaoks.",
+      items: [
+        { id: "articles-1250x400", name: "Artiklibänner, arvuti", text: "1250x400, päis ja artiklikaartide slaider." },
+        { id: "articles-mobile", name: "Artiklibänner, telefon", text: "Pühitavad artiklikaardid, telefoni laiused." },
+        { id: "header-bar", name: "Päiseriba", text: "Teemalehe ülaosas olev riba." },
+      ],
+    },
+    {
+      id: "pictures",
+      title: "Video ja pildid",
+      text: "",
+      items: [
+        { id: "movie-banner", name: "Filmibänner", text: "Video pildi peal. Kaks zip-faili: 1250 ja 1280." },
+        { id: "image-cropper", name: "Pildilõikur", text: "Mis tahes pilt 1920x1080 JPG-ks." },
+      ],
+    },
+    {
+      id: "brand",
+      title: "Leia bränd",
+      text: "Õhtuleht värvid, logod ja fondid, valmis kopeerimiseks või allalaadimiseks.",
+      items: [
+        { id: "colours", name: "Värvid", text: "Kopeeri iga värv kujul HEX, RGB, CSS või Tailwind." },
+        { id: "logos", name: "Logod", text: "SVG ja PNG, kaitsetsooniga." },
+        { id: "fonts", name: "Fondid", text: "Millist fonti kasutada ja fondifailid allalaadimiseks." },
+      ],
+    },
+  ],
+  tipsTitle: "Hea teada",
+  tips: [
+    "Pooleli bänner salvestatakse selles brauseris. Tule tagasi ja vajuta „Jätka“.",
+    "Paremal üleval olev EN / ET lüliti vahetab keelt.",
+    "Ctrl+S laadib faili alla, kui ülariba ütleb, et kõik on valmis.",
+    "Igal lehel on oma aadress. Kopeeri see aadressiribalt, et saata leht kolleegile.",
+  ],
 };

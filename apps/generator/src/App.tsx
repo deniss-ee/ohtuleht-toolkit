@@ -9,13 +9,14 @@ import { contentMarketing, editor, getLang, setLang, subscribeLang, type PageId,
 import { AppShell } from "@/layout/AppShell";
 import { newDraft } from "@/lib/banner";
 import { importHeaderZip, newHeaderDraft } from "@/lib/header";
-import { buildSearch, PAGES, parseRoute, type BrandTab } from "@/lib/route";
-import { clearWork, loadWork, readPage, savedInfo, saveWork, writePage, type SavedInfo, type Work } from "@/lib/storage";
+import { buildSearch, parseRoute, type BrandTab } from "@/lib/route";
+import { clearWork, loadWork, savedInfo, saveWork, type SavedInfo, type Work } from "@/lib/storage";
 import { importZip } from "@/lib/zip";
 import { BannerEditor } from "@/pages/BannerEditor";
 import { BrandManual } from "@/pages/BrandManual";
 import { ContentMarketingHome } from "@/pages/ContentMarketingHome";
 import { HeaderBarEditor } from "@/pages/HeaderBarEditor";
+import { Home, type Destination } from "@/pages/Home";
 import { ImageCropper } from "@/pages/ImageCropper";
 import { MovieBanner } from "@/pages/MovieBanner";
 import { ToolsHome } from "@/pages/ToolsHome";
@@ -25,8 +26,8 @@ const newWork = (typeId: string): Work => (typeId === "header-bar" ? { kind: "he
 export function App() {
   const lang = useSyncExternalStore(subscribeLang, getLang); // render everything again when the language changes
   const link = useRef(parseRoute(location.search)).current; // where the address says to start
-  // The address wins; without one, the section used last time.
-  const [page, setPage] = useState<PageId>(() => link.page ?? PAGES.find((p) => p === readPage()) ?? "content");
+  // The address says where to start; a plain address opens the Home page.
+  const [page, setPage] = useState<PageId>(() => link.page ?? "home");
   const [tab, setTab] = useState<BrandTab>(link.tab);
   const [work, setWork] = useState<Work>(() => (link.make ? newWork(link.make) : null)); // what is being edited: nothing (start screen), an articles banner or a header bar
   const [saved, setSaved] = useState<SavedInfo | null>(savedInfo); // unfinished work from an earlier visit
@@ -86,10 +87,6 @@ export function App() {
     };
   }, []);
 
-  useEffect(() => {
-    writePage(page);
-  }, [page]);
-
   // The address follows the app, so it can be copied and sent. A new place is a new history entry (Back works);
   // changing only the language replaces the entry.
   const placeKey = useRef<string | null>(null);
@@ -108,7 +105,7 @@ export function App() {
       setSaved(savedInfo());
       edited.current = false;
       setWork(null);
-      setPage(r.page ?? "content");
+      setPage(r.page ?? "home");
       setTool(r.tool);
       setTab(r.tab);
       if (r.lang && r.lang !== getLang()) setLang(r.lang);
@@ -126,7 +123,20 @@ export function App() {
 
   const resume = () => {
     const w = loadWork();
-    if (w) start(w);
+    if (!w) return;
+    setPage("content");
+    setTool(null);
+    start(w);
+  };
+  // A card on the Home page: open that section, tool, tab or a new banner.
+  const go = (to: Destination) => {
+    if (workRef.current) saveWork(workRef.current);
+    setSaved(savedInfo());
+    setPage(to.page);
+    setTool(to.tool ?? null);
+    if (to.tab) setTab(to.tab);
+    start(to.make ? newWork(to.make) : null);
+    window.scrollTo(0, 0);
   };
   const discard = () => {
     clearWork();
@@ -144,6 +154,7 @@ export function App() {
             setTool(null);
           }}
         >
+          {page === "home" && <Home saved={saved} onContinue={resume} onDiscard={discard} onGo={go} />}
           {page === "content" &&
             (work?.kind === "banner" ? (
               <BannerEditor draft={work.draft} onChange={(draft) => change({ kind: "banner", draft })} onBack={close} />

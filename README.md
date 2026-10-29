@@ -6,6 +6,7 @@ A modular set of internal tools for the Õhtuleht newsroom and ad sales. Each to
 
 | Section | What it makes |
 |---|---|
+| **Home** | The first page: short intro, cards for every banner, tool and brand page, tips, and "Continue where you left off" |
 | **Content marketing** | Article banners (desktop 1250x400 and mobile) and the header bar for theme pages, as zips for the ad server |
 | **Tools** | **Image cropper** (any picture to a 1920x1080 JPG) and **Movie banner** (video on a picture, two zips) |
 | **Brand manual** | Brand colours (copy in many formats) and logos (SVG, PNG) |
@@ -41,6 +42,7 @@ The address after the `?` follows the app, so any place can be sent to a colleag
 
 | Link | Opens |
 |---|---|
+| *(nothing, or `?section=home`)* | The Home page: what is here, one click to everything |
 | `?section=content` | Content marketing |
 | `?section=content&make=header-bar` | A new header bar (also `articles-1250x400`, `articles-mobile`) |
 | `?section=tools` | Tools |
