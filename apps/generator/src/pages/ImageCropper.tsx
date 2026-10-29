@@ -21,7 +21,10 @@ function loadImage(file: File): Promise<Loaded> {
     if (!file.type.startsWith("image/")) return reject(new Error(t.notImage));
     const url = URL.createObjectURL(file);
     const img = new Image();
-    img.onload = () => resolve({ img, name: file.name.replace(/\.[^.]+$/, "") });
+    img.onload = () => {
+      URL.revokeObjectURL(url); // the picture is decoded, the address is not needed any more
+      resolve({ img, name: file.name.replace(/\.[^.]+$/, "") });
+    };
     img.onerror = () => reject(new Error(t.loadFailed));
     img.src = url;
   });
