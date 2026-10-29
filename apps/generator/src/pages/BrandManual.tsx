@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { brandManual as t } from "@/content";
 import { logoBox, logoFileName, logoPng, logoSvg, logoZip, svgDataUrl } from "@/lib/logos";
+import type { BrandTab } from "@/lib/route";
 import { download } from "@/lib/zip";
 
 const FORMAT_KEY = "ol-color-format";
@@ -282,11 +283,11 @@ function Logos() {
   );
 }
 
-export function BrandManual() {
+export function BrandManual({ tab, onTab }: { tab: BrandTab; onTab: (t: BrandTab) => void }) {
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <PageHeader icon={Palette} title={t.title} intro={t.intro} />
-      <Tabs defaultValue="colours">
+      <Tabs value={tab} onValueChange={(v) => onTab(v as BrandTab)}>
         <TabsList>
           <TabsTrigger value="colours" className="gap-2">
             <Palette className="size-4" /> {t.tabColours}
