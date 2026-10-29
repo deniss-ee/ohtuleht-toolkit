@@ -325,7 +325,6 @@ export const marketing: typeof En.marketing = {
   installTitle: "Seadista ühe korra",
   installStep1: "Lohista see nupp brauseri järjehoidjate ribale (riba nägemiseks vajuta Ctrl+Shift+B).",
   installName: "Võta artikli andmed",
-  installLocal: "Oled tööriistakomplekti testkoopias (localhost). See järjehoidja avaks selle testkoopia. Tee see hoopis päris saidilt.",
   installStep2: "Ava artikkel ohtuleht.ee-s ja klõpsa järjehoidjal. Siin avaneb leht selle artikliga.",
   installCopyCode: "Kopeeri hoopis kood",
   installCopyHint: "Kui lohistamine ei tööta: loo järjehoidja käsitsi ja kleebi see kood selle aadressiks.",

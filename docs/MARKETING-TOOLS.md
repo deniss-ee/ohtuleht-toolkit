@@ -15,7 +15,7 @@ Two helpers in the **Tools** section for the marketing team. Direct links: `?sec
 | Article link | `https://www.ohtuleht.ee/<id>/` from the first 6+ digit part of the path, else `og:url` / canonical |
 | Picture link | `og:image` / `twitter:image`, size number replaced by `/webp/54/` |
 
-How it works: the bookmark (`tools/bookmarklet/article-scraper.js`) packs the fields into the address after `#a=` and opens the toolkit. The part after `#` is never sent to a server. The bookmark carries the address of the toolkit it was made on (localhost or the live site), so make it again on the live site for daily use.
+How it works: the bookmark (`tools/bookmarklet/article-scraper.js`) packs the fields into the address after `#a=` and opens the toolkit. The part after `#` is never sent to a server. The bookmark always opens the live site, `https://deniss-ee.github.io/ohtuleht-toolkit/` (`LIVE_URL` in `apps/generator/src/lib/bookmarklet.ts`; change it if the site moves). It works only once the version with the scraper is published.
 
 The **Article number** field is a placeholder: fetching an article by its number needs a Cloudflare Worker (issue #119), because ohtuleht.ee does not allow browser pages to read it.
 

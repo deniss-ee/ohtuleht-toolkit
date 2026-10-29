@@ -12,8 +12,6 @@ import { copyText } from "@/lib/clipboard";
 import { readScraped } from "@/lib/scraped";
 import type { BrandTab } from "@/lib/route";
 
-const isLocal = ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname);
-
 // Tool: the marketing scraper. The bookmark on an article page opens this page with the article in the address (#a=...).
 export function ArticleScraper({ onBack, onBrand }: { onBack: () => void; onBrand: (tab: BrandTab) => void }) {
   const [article] = useState(() => readScraped(location.hash)); // read once; the hash is removed below
@@ -71,11 +69,6 @@ export function ArticleScraper({ onBack, onBrand }: { onBack: () => void; onBran
         <h2 id="install" className="text-lg font-semibold">
           {t.installTitle}
         </h2>
-        {isLocal && (
-          <p role="alert" className="rounded-md border border-yellow-500/50 bg-yellow-300/20 p-3 text-sm">
-            {t.installLocal}
-          </p>
-        )}
         <ol className="list-decimal space-y-3 pl-5 text-sm">
           <li className="space-y-2">
             <p>{t.installStep1}</p>

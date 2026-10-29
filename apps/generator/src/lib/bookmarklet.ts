@@ -13,7 +13,9 @@ const snippet = oneLine(snippetSource);
 export const bookmarkletText = "javascript:" + snippet;
 export const bookmarkletHref = "javascript:" + encodeURIComponent(snippet);
 
-// Marketing scraper bookmark: it opens this toolkit, so it carries the address it was made on (localhost or the live site).
-const scraper = oneLine(scraperSource).replace("__APP__", location.origin + location.pathname);
+// Marketing scraper bookmark: it always opens the live site (GitHub Pages), wherever it was made.
+// Change this address if the site moves (for example to the company domain).
+export const LIVE_URL = "https://deniss-ee.github.io/ohtuleht-toolkit/";
+const scraper = oneLine(scraperSource).replace("__APP__", LIVE_URL);
 export const scraperText = "javascript:" + scraper;
 export const scraperHref = "javascript:" + encodeURIComponent(scraper);
