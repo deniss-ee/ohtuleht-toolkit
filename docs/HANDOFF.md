@@ -16,6 +16,8 @@ Built and merged into `develop`:
 
 Not built yet (GitHub issues, milestones M0 to M4): old Swiper zip import (#34), 1250x400 with static ad (#35), image slider (#36), mobile 600x500 (#37), header font and size options (#64), brand typography and ad formats (#18), lint/format/CI (#5, #6), accessibility pass (#38), IT handoff README (#39), Cloudflare Worker (M2), hosted banners and login (M3), task tracker (M4, spec in `docs/TASK-TRACKER.md`).
 
+Doc status: all `docs/*.md`, package READMEs and the generator README were checked against the code on 2026-10-29. Issues #9 (brand.json schema) and #11 (scattered assets) are open on GitHub although their core work is done; close or keep them when the user decides.
+
 ## Decisions already made (do not re-ask)
 
 - English interface now; Estonian and Microsoft login come with Phase 3. Static feed and zip are always the fallback.

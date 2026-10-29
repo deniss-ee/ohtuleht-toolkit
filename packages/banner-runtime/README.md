@@ -1,6 +1,6 @@
 # Banner runtime
 
-Dependency-free slider script that replaces Swiper in banners. Builds to one file, `dist/runtime.js` (about 1.5 KB gzip, budget 3 KB).
+Dependency-free slider script that replaces Swiper in banners. Builds to one file, `dist/runtime.js` (about 1.7 KB gzip, budget 3 KB).
 
 ## Run locally
 

@@ -4,15 +4,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
-### Added (2026-10-29)
-- Banner generator for Articles 1250x400, runtime without Swiper, bookmarklet v2, header bar tool, brand manual (colours and logos), brand fonts and colours in the interface.
-- `CLAUDE.md` and `docs/HANDOFF.md`: rules, state, next steps, start prompts and a new-computer checklist.
-
-### Changed
-- Automatic header text colour: brand rule on brand colours; white on other colours unless they are light.
-
 ### Added
+- Banner generator for Articles 1250x400, dependency-free runtime without Swiper (1.7 KB gzip), bookmarklet v2.
+- Header bar tool: 100% x 46 px bar for theme pages, preview at three widths, iframe code, zip re-open.
+- Brand manual: 33 colour swatches (copy, contrast, token export) and 6 logo variants (SVG, PNG, safe zone, zip).
+- Brand fonts and colours in the interface; light and dark theme; own colour picker.
+- `CLAUDE.md` and `docs/HANDOFF.md`: rules, state, next steps, start prompts, new-computer checklist, compact instructions.
 - Task tracker module spec and roadmap Phase 4.
-- Documentation set: README, roadmap, workflow, architecture, banner specs, brand manual spec, bookmarklet guide, recommendations.
+- Documentation set: README, roadmap, workflow, architecture, banner specs, brand manual, header bar, bookmarklet guide, recommendations.
 - Issue and pull request templates.
 - Legacy banners and tools imported unchanged.
+
+### Changed
+- Automatic header text colour: brand rule on brand colours; other colours get white unless they are light (luminance above 0.55 or HSL lightness above 0.78).
+- Documentation brought in line with the built state (2026-10-29).

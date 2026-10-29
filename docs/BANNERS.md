@@ -15,16 +15,16 @@ Specification for every banner format the generator produces.
 | Accessibility | Arrows are `<button>` with labels, keyboard focus visible. Autoplay ignores the OS "reduce motion" setting by default (as existing banners do); `respectMotion` and `pauseOnHover` are opt-in switches |
 | Dark mode | Supported through `prefers-color-scheme: dark` |
 
-## Format 1: Articles 1250x400 (first to build)
+## Format 1: Articles 1250x400 (built)
 
-Reference: `content-marketing/st_KultuurSygis_2710-1250x400`, rebuilt without Swiper, light and dark.
+Reference: `content-marketing/st_KultuurSygis_2710-1250x400`, rebuilt without Swiper, light and dark. Template: `packages/templates/src/articles-1250x400.ts`.
 
 **Layout**
 
 | Part | Value |
 |---|---|
 | Banner width | Fixed 1248 px content in a 1250 px banner; never shrinks when the window is narrower |
-| Header | 46 px high, 6 px rounded corners, links to a campaign URL. Today: image or solid colour. Planned: text in a chosen font on a colour or image, picked in the generator |
+| Header | 46 px high, 6 px rounded corners, links to a campaign URL. A colour or a picture, with the campaign name always written on it (see below). Font and size options are planned (issue #64) |
 | Gap under header | 16 px |
 | Card image | 215 px high, 6 px radius, cover |
 | Badge | Over the image bottom-left. Campaign default text (usually "Sisuturundus") and colour; each article can override both |
@@ -51,7 +51,7 @@ Bar 1248x46 with 6 px corners, filled with the main colour or with a background 
 
 Badge colour (and per-article badge colour), hover colour (red `#e3000f` by default: titles always turn red on hover), header background (image or colour), title colour, page background. The Kultuurisügis values (`#9500b2`, `#e3000f`, `#003784`) are only this campaign's preset.
 
-## Format 2: Articles 1250x400 with static ad
+## Format 2: Articles 1250x400 with static ad (not built, #35)
 
 Reference: `content-marketing/st_Autopay0810_1250x400`.
 
@@ -59,7 +59,7 @@ Reference: `content-marketing/st_Autopay0810_1250x400`.
 - Side and size of the ad: from Figma (open question).
 - Mobile: every Nth slide is the ad (N to be decided).
 
-## Format 3: Image slider (client banners)
+## Format 3: Image slider (client banners) (not built, #36)
 
 Reference: `content-marketing/dacia_ol-1250x400-noswiper`.
 
@@ -69,7 +69,7 @@ Reference: `content-marketing/dacia_ol-1250x400-noswiper`.
 - Transition: `slide` (default), `fade`, `cube` (CSS 3D, about 1 KB).
 - Drag and touch supported; arrows optional.
 
-## Format 4: Articles 600x500 mobile
+## Format 4: Articles 600x500 mobile (not built, #37)
 
 Design is changing; build after the new Figma exists.
 

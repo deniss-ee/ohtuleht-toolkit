@@ -20,7 +20,7 @@ issue  ->  branch  ->  commits  ->  pull request  ->  develop  ->  release  ->  
 2. One issue = one branch = one pull request (PR).
 3. Never commit directly to `develop` or `main`.
 4. Keep PRs small: one idea, reviewable in 10 minutes.
-5. CI must be green before merge.
+5. CI must be green before merge (CI is not set up yet, issue #6; until then run `yarn typecheck` and `yarn build` yourself).
 
 ## Step by step
 
@@ -117,7 +117,7 @@ yarn build          # production build
 
 Never use `npm` or `npx`. Never create `package-lock.json`. Always commit `yarn.lock`.
 
-## What CI checks
+## What CI checks (planned, issues #5 and #6)
 
 | Check | Meaning |
 |---|---|

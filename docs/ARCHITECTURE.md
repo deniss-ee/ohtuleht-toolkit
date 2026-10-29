@@ -8,26 +8,23 @@
 4. **Static first, dynamic later.** Every dynamic feature has a static fallback.
 5. **Yarn only.**
 
-## Planned layout
+## Layout
 
 ```
 apps/
-  generator/        React + Vite + Tailwind v4 + TypeScript, static dist/
-  brand/            Brand manual (static)
-  api/              Cloudflare Worker (Phase 2/3)
+  generator/        React + Vite + Tailwind v4 + shadcn/ui: banners, header bar, brand manual (one app, static dist/)
 packages/
-  banner-runtime/   Vanilla TS compiled to one small script
-  templates/        HTML/CSS template functions per banner format
-  core/             Types, banner.json schema, zip build and parse
-  brand/            brand.json, SVG logos, tokens
-examples/           Legacy banners used as test fixtures
-tools/              Existing standalone tools (migrated gradually)
-category/           Existing category header
-content-marketing/  Existing banners (moved to examples/ later)
+  banner-runtime/   Vanilla TS compiled to one small script (slider)
+  templates/        Banner and header-bar HTML/CSS templates, colour logic, validation, types
+  brand/            brand.json (colours, logos, fonts, clear space), optimised logo SVGs, helpers
+tools/bookmarklet/  Article bookmarklet v2 (source)
+tools/              Older standalone tools (migrated gradually)
+category/           Older category header (reference for the header bar)
+content-marketing/  Older banners, kept as test fixtures for the zip importer (#34)
 docs/               Documentation
 ```
 
-Today only `tools/`, `category/`, `content-marketing/` and `docs/` exist.
+Planned, not created yet: `apps/api` (Cloudflare Worker, Phase 2/3). The old plan had `packages/core` and `apps/brand`; types and validation live in `packages/templates`, and the brand manual is a page of the generator.
 
 ## Banner zip format
 
@@ -44,9 +41,11 @@ my-campaign-1250x400.zip
 <script type="application/json" id="ol-banner">{ ...banner config... }</script>
 ```
 
-Uploading the zip into the generator reads this block and restores the form exactly. Older Swiper zips have no such block; the importer reads their slides, links, images and header by DOM heuristics.
+Uploading the zip into the generator reads this block and restores the form exactly. Header bar zips carry the same kind of block with id `ol-header`.
 
-## `banner` config (draft)
+Older Swiper zips have no such block. The importer that reads their slides, links, images and header by DOM heuristics is not built yet (issue #34).
+
+## `banner` config
 
 ```json
 {
@@ -67,7 +66,7 @@ Uploading the zip into the generator reads this block and restores the form exac
 }
 ```
 
-The main colour `primary` drives the header, the arrows and the default label colour. In each theme, `badge` (label colour) and `headerBg` are optional overrides; when empty, the label colour is the main colour automatically lightened or darkened until it is readable on that theme's background (contrast 4.5:1), and the header is the main colour. Each article may carry its own `badge` text and `badgeColor`; without them the campaign `badge` and theme colour apply. Colours are per campaign. The values above are only the Kultuurisügis preset. Fields are validated by a schema in `packages/core`.
+The main colour `primary` drives the header, the arrows and the default label colour. In each theme, `badge` (label colour) and `headerBg` are optional overrides; when empty, the label colour is the main colour automatically lightened or darkened until it is readable on that theme's background (contrast 4.5:1), and the header is the main colour. Each article may carry its own `badge` text and `badgeColor`; without them the campaign `badge` and theme colour apply. Colours are per campaign. The values above are only the Kultuurisügis preset. Fields are validated by `packages/templates/src/validate.ts`, which returns plain-language problems with the field they belong to.
 
 ## ClickTag
 
