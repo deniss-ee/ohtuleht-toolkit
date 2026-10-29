@@ -8,7 +8,7 @@ A modular set of internal tools for the Õhtuleht newsroom and ad sales. Each to
 |---|---|
 | **Home** | The first page: short intro, cards for every banner, tool and brand page, tips, and "Continue where you left off" |
 | **Content marketing** | Article banners (desktop 1250x400 and mobile) and the header bar for theme pages, as zips for the ad server |
-| **Tools** | **Image cropper** (any picture to a 1920x1080 JPG) and **Movie banner** (video on a picture, two zips) |
+| **Tools** | **Image cropper** (any picture to a 1920x1080 JPG), **Movie banner** (video on a picture, two zips), and for marketing **Article scraper** and **Picture link converter** |
 | **Brand manual** | Brand colours (copy in many formats) and logos (SVG, PNG) |
 
 Try it: run it locally (below) or open the published site once it is set up ([docs/DEPLOY.md](docs/DEPLOY.md)).
@@ -32,6 +32,7 @@ Try it: run it locally (below) or open the published site once it is set up ([do
 | Article API (Cloudflare Worker) | Fetch article title and picture from a URL | Planned, Phase 2 |
 | Hosted banners + login | Banners served by URL, Microsoft login | Planned, Phase 3 |
 | Task tracker | Unified briefs for banner requests, optional Outlook sync | Planned, Phase 4 ([spec](docs/TASK-TRACKER.md)) |
+| Tools: Article scraper, Picture link converter | Marketing: article title, lead, link and picture link by bookmark; CMS picture links to /54/ and /48/ | **Built** ([docs](docs/MARKETING-TOOLS.md)) |
 | Legacy tools | Two-article story generator, CapCut template, video ZIP, podcast story, article scrapper | Exist in `tools/`, migrated one by one. The image cropper and movie banner are rebuilt in the toolkit (their old folders stay as reference) |
 
 Full plan: [docs/ROADMAP.md](docs/ROADMAP.md).
@@ -46,7 +47,7 @@ The address after the `?` follows the app, so any place can be sent to a colleag
 | `?section=content` | Content marketing |
 | `?section=content&make=header-bar` | A new header bar (also `articles-1250x400`, `articles-mobile`) |
 | `?section=tools` | Tools |
-| `?section=tools&tool=image-cropper` | Image cropper (also `movie-banner`) |
+| `?section=tools&tool=image-cropper` | Image cropper (also `movie-banner`, `article-scraper`, `picture-converter`) |
 | `?section=brand&tab=colours` | Brand manual, colours (or `tab=logos`, `tab=fonts`) |
 | add `&lang=et` | Estonian for that visit (`lang=en` for English) |
 
@@ -65,6 +66,7 @@ Example: `?section=tools&tool=movie-banner&lang=et`. The address changes by itse
 | [docs/BRAND-MANUAL.md](docs/BRAND-MANUAL.md) | See the brand manual, the colour and logo rules, and `brand.json` |
 | [docs/LANGUAGES.md](docs/LANGUAGES.md) | Add or change interface text in English and Estonian |
 | [docs/IMAGE-CROPPER.md](docs/IMAGE-CROPPER.md) | Use the image cropper (1920x1080 JPG) |
+| [docs/MARKETING-TOOLS.md](docs/MARKETING-TOOLS.md) | Article scraper and picture link converter for marketing |
 | [docs/MOVIE-BANNER.md](docs/MOVIE-BANNER.md) | Make the movie banner (video on a picture, two zips) |
 | [docs/DEPLOY.md](docs/DEPLOY.md) | Publish the toolkit online with GitHub Pages |
 | [docs/BOOKMARKLET.md](docs/BOOKMARKLET.md) | Install and use the article bookmarklet |

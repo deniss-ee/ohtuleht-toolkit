@@ -4,6 +4,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+- Tools: **Article scraper** (bookmark gives title, lead, link and picture link with Copy buttons) and **Picture link converter** (CMS picture links to /54/ and /48/), with a Brand manual strip. New Marketing group on Home. (#117, #118)
+
 ### Removed
 - The custom "Publish to GitHub Pages" workflow (it failed on every push). The site is served from the `gh-pages` branch by GitHub's own Pages job.
 

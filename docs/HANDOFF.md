@@ -17,12 +17,13 @@ Built and merged into `develop`:
 | **Brand manual** | 33 colour swatches (copy as HEX/RGB/HSL/CSS/Tailwind, contrast, token export), 6 logo variants as SVG/PNG, safe zone, sizes, zip | `docs/BRAND-MANUAL.md` |
 | **Tools: Image cropper** | Picture onto 1920x1080, 4 modes, drag, blur or colour background, JPG | `docs/IMAGE-CROPPER.md` |
 | **Tools: Movie banner** | Video on a picture, two zips, preview | `docs/MOVIE-BANNER.md` |
+| **Tools: Article scraper, Picture link converter** | Marketing: article title, lead, link, picture link by bookmark; CMS picture links to /54/ and /48/ | `docs/MARKETING-TOOLS.md` |
 | **Home page** | Intro with cards to everything; plain address opens it | `README.md` (Direct links) |
 | **Estonian interface** | EN/ET switch in every top bar; all text in `content.en.ts` and `content.et.ts` | `docs/LANGUAGES.md` |
 | **GitHub Pages site** | Live from the `gh-pages` branch; republished by hand | `docs/DEPLOY.md` |
 | Bookmarklet v2 | Copies an article as a JSON snippet (title, link, picture, label) | `docs/BOOKMARKLET.md` |
 
-Not built yet (GitHub issues, milestones M0 to M4): 1250x400 with static ad (#35), image slider (#36), header font and size options (#64), brand typography and ad formats (#18), lint/format/CI (#5, #6), accessibility pass (#38), IT handoff README (#39), Cloudflare Worker (M2), hosted banners and login (M3), task tracker (M4, spec in `docs/TASK-TRACKER.md`).
+Not built yet (GitHub issues, milestones M0 to M4): Worker for article by number (#119), 1250x400 with static ad (#35), image slider (#36), header font and size options (#64), brand typography and ad formats (#18), lint/format/CI (#5, #6), accessibility pass (#38), IT handoff README (#39), Cloudflare Worker (M2), hosted banners and login (M3), task tracker (M4, spec in `docs/TASK-TRACKER.md`).
 
 Doc status: all `docs/*.md`, package READMEs and the generator README were checked against the code on 2026-10-29. Issues #9 (brand.json schema) and #11 (scattered assets) are open on GitHub although their core work is done; close or keep them when the user decides.
 

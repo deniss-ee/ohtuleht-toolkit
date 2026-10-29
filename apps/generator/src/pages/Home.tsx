@@ -1,4 +1,4 @@
-import { Clapperboard, Crop, FileText, House, Lightbulb, Newspaper, Palette, PanelTop, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
+import { Clapperboard, Crop, FileSearch, FileText, House, Lightbulb, Newspaper, Palette, PanelTop, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
 import { ContinueCard } from "@/components/editor/ContinueCard";
 import { IconChip } from "@/components/editor/IconChip";
 import { PageHeader } from "@/components/editor/PageHeader";
@@ -22,6 +22,8 @@ const ITEMS: Record<string, { icon: LucideIcon; to: Destination }> = {
   "header-bar": { icon: PanelTop, to: { page: "content", make: "header-bar" } },
   "movie-banner": { icon: Clapperboard, to: { page: "tools", tool: "movie-banner" } },
   "image-cropper": { icon: Crop, to: { page: "tools", tool: "image-cropper" } },
+  "article-scraper": { icon: FileSearch, to: { page: "tools", tool: "article-scraper" } },
+  "picture-converter": { icon: Replace, to: { page: "tools", tool: "picture-converter" } },
   colours: { icon: Palette, to: { page: "brand", tab: "colours" } },
   logos: { icon: Shapes, to: { page: "brand", tab: "logos" } },
   fonts: { icon: Type, to: { page: "brand", tab: "fonts" } },

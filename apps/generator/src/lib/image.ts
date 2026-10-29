@@ -53,3 +53,15 @@ export async function averageColor(dataUrl: string): Promise<string | undefined>
     return undefined;
   }
 }
+
+// Õhtuleht picture links carry a size number: https://p.ohtuleht.ee/webp/54/i/2026/10/26/x.jpg
+// 54 suits the desktop banner, 48 the (cropped, sharper) mobile banner; the CMS gives other numbers.
+// Both forms exist and both are accepted: /webp/53/i/... (site) and /53/i/... (CMS). The result is always the /webp/NN/ form.
+// A link with no size at all (https://p.ohtuleht.ee/i/...) gets one. Returns null for anything else.
+export function withPictureSize(url: string, size: number): string | null {
+  const text = url.trim();
+  const sized = /\/(?:webp\/)?\d{1,3}\/(?=i\/)/;
+  if (sized.test(text)) return text.replace(sized, `/webp/${size}/`);
+  const bare = /^(https?:\/\/p\.ohtuleht\.ee)\/(?=i\/)/;
+  return bare.test(text) ? text.replace(bare, `$1/webp/${size}/`) : null;
+}

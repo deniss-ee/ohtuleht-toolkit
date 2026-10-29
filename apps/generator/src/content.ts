@@ -69,5 +69,6 @@ export const brandManual = section("brandManual");
 export const tools = section("tools");
 export const imageCropper = section("imageCropper");
 export const movieBanner = section("movieBanner");
+export const marketing = section("marketing");
 export const ui = section("ui");
 export const home = section("home");

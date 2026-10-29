@@ -1,6 +1,6 @@
 // Direct links. The address after the "?" says where the app is, so a link can be sent to a colleague:
 //   ?section=home | content | tools | brand   (no section = home)
-//   &tool=image-cropper | movie-banner       (with section=tools)
+//   &tool=image-cropper | movie-banner | article-scraper | picture-converter       (with section=tools)
 //   &tab=colours | logos | fonts                     (with section=brand)
 //   &make=header-bar | articles-1250x400 | articles-mobile   (with section=content: opens a new banner of that type)
 //   &lang=en | et
@@ -8,7 +8,7 @@ import type { Lang, PageId, ToolInfo } from "@/content";
 
 export type BrandTab = "colours" | "logos" | "fonts";
 export const PAGES: PageId[] = ["home", "content", "tools", "brand"];
-export const TOOL_IDS: ToolInfo["id"][] = ["image-cropper", "movie-banner"];
+export const TOOL_IDS: ToolInfo["id"][] = ["image-cropper", "movie-banner", "article-scraper", "picture-converter"];
 export const MAKE_IDS = ["header-bar", "articles-1250x400", "articles-mobile"];
 
 export interface Route {
