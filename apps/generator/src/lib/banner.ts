@@ -61,23 +61,24 @@ export function newDraft(format: ArticlesFormat = "articles-1250x400"): Draft {
   };
 }
 
-// Filled-in sample (with a real header image) so the form can be tried without collecting anything first.
+// Filled-in sample so the form can be tried without collecting anything first.
+// Made-up texts, example.com links and random placeholder pictures: no real company or article.
 export async function exampleDraft(format: ArticlesFormat = "articles-1250x400"): Promise<Draft> {
   const d = newDraft(format);
-  const img = (p: string) => `https://p.ohtuleht.ee/webp/54/i/${p}`;
+  const img = (seed: string) => `https://picsum.photos/seed/${seed}/800/1000`;
   d.config.campaign = "Example campaign";
   const bytes = new Uint8Array(await (await fetch(exampleHeader)).arrayBuffer());
   const dataUrl = toDataUrl(bytes, "header.svg");
   const avg = await averageColor(dataUrl);
   d.headerFile = { name: "header.svg", bytes, dataUrl, avg };
-  d.config.header = { type: "image", src: "header.svg", href: "https://www.ohtuleht.ee/teemalehed/kultuurisundmused2026-st", avg };
+  d.config.header = { type: "image", src: "header.svg", href: "https://example.com/campaign", avg };
   d.config.articles = [
-    { url: "https://www.ohtuleht.ee/1169772/", image: img("2026/10/26/t1ovwidw.aju.jpg"), title: "Kaks komöödiat, üks kindel lubadus: rohkesti naeru, äratundmist ja ootamatuid pöördeid!" },
-    { url: "https://www.ohtuleht.ee/1169357/", image: img("2026/10/21/ljqh0wyf.zk2.jpg"), title: "Novembrimaagia: Sinatrale pühendatud galaõhtu viib kuulaja aega, mil muusika oli elegantne ja õhk täis romantikat" },
-    { url: "https://www.ohtuleht.ee/1169358/", image: img("2026/10/21/i4kotj21.a5u.jpg"), title: "Muhedad jõulukontserdid: Koit Toome ja Karl-Erik Taukar lubavad kauneid duette ja põnevaid muusikalisi valikuid", badge: "Kontsert", badgeColor: "#0a7a3d" },
-    { url: "https://www.ohtuleht.ee/1169360/", image: img("2026/10/21/ikgyfay1.0d4.jpg"), title: "Huumor ja kaunis jõulumuusika – just seda pakuvad Suured Tüdrukud ja Reigo Tamm!" },
-    { url: "https://www.ohtuleht.ee/1169361/", image: img("2026/10/21/uhkpo021.vhi.jpg"), title: "Hispaania tenorite trio Les Bohèmes toob publikuni maailmakuulsa ooperimuusika – tõeliselt elegantses võtmes" },
-    { url: "https://www.ohtuleht.ee/1169362/", image: img("2026/10/20/0ba3iixt.ati.jpg"), title: "Ines astub jõuluajal taas lavale! Õhtu, mil ei pea kuhugi kiirustama ja võib nautida jõuluaja maagiat..." },
+    { url: "https://example.com/article-1", image: img("ol-example-1"), title: "Näidisartikkel: lühike pealkiri" },
+    { url: "https://example.com/article-2", image: img("ol-example-2"), title: "Siia tuleb artikli pealkiri, mis on kahe rea pikkune ja näitab, kuidas tekst kaardil murdub" },
+    { url: "https://example.com/article-3", image: img("ol-example-3"), title: "Kolmas näide: pikem pealkiri, mis jätkub veel natuke, et näha mitme rea paigutust ja kaardi alumist osa", badge: "Näide", badgeColor: "#0a7a3d" },
+    { url: "https://example.com/article-4", image: img("ol-example-4"), title: "Neljas näidisartikkel ilma pikema jututa" },
+    { url: "https://example.com/article-5", image: img("ol-example-5"), title: "Viies näide: mõned sõnad, mis täidavad pealkirja ja näitavad kaardi ilmet" },
+    { url: "https://example.com/article-6", image: img("ol-example-6"), title: "Kuues ja viimane näidisartikkel, et libistamine ja täpid oleks näha" },
   ];
   return d;
 }

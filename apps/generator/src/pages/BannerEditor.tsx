@@ -103,7 +103,7 @@ const nearestSpeed = (ms: number) => SPEEDS.reduce((best, s) => (Math.abs(s.ms -
 export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChange: (d: Draft) => void; onBack: () => void }) {
   const [busy, setBusy] = useState(false);
   const [bookmarkOpen, setBookmarkOpen] = useState(false);
-  const [pinned, setPinned] = useState(() => window.innerHeight >= 800 && window.innerWidth >= 1000);
+  const [pinned, setPinned] = useState(false); // "Keep preview in view" is always off to start with; the person turns it on
   const fileInput = useRef<HTMLInputElement>(null);
   const c = draft.config;
   const set = (patch: Partial<Draft["config"]>) => onChange({ ...draft, config: { ...c, ...patch } });

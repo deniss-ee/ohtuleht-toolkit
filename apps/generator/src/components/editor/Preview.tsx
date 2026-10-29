@@ -3,7 +3,7 @@ import { Bookmark, FlaskConical, Pin, PinOff, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { editor as t } from "@/content";
-import { SwapFrame } from "@/components/editor/SwapFrame";
+import { SwapFrame, type Geometry } from "@/components/editor/SwapFrame";
 import { FORMATS, renderPreview, type Draft } from "@/lib/banner";
 
 // Common phone widths (CSS pixels).
@@ -64,20 +64,27 @@ export function Preview({
 }) {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const box = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
+  const [boxW, setBoxW] = useState(1250);
   const mobile = draft.config.format === "articles-mobile";
   const [phone, setPhone] = useState(375); // phones differ in width: the wider the phone, the more of the next card shows
   const { height: H } = FORMATS[draft.config.format];
   const W = mobile ? phone : FORMATS[draft.config.format].width;
   const empty = draft.config.articles.length === 0;
+  // The size of the frame on screen. It follows a change (desktop/mobile, phone width) only when the new frame is ready,
+  // so the area never shows the old banner in the new size.
+  const [shown, setShown] = useState<Geometry>({ width: W, height: H });
+  const scaleFor = (w: number) => Math.min(1, boxW / w);
+  const shownW = Number(shown.width);
+  const scale = scaleFor(shownW);
+  const shownMobile = shownW !== FORMATS["articles-1250x400"].width;
 
   useEffect(() => {
     const el = box.current;
     if (!el) return;
-    const ro = new ResizeObserver(() => setScale(Math.min(1, el.clientWidth / W)));
+    const ro = new ResizeObserver(() => setBoxW(el.clientWidth));
     ro.observe(el);
     return () => ro.disconnect();
-  }, [W]);
+  }, []);
 
   const pct = Math.round(scale * 100);
   return (
@@ -85,7 +92,7 @@ export function Preview({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-baseline gap-3">
           <span className="text-sm font-semibold">{t.previewTitle}</span>
-          {!empty && <span className="text-xs text-muted-foreground">{mobile ? t.previewMobile(W) : pct < 100 ? t.previewScaled(pct, FORMATS[draft.config.format].label) : t.previewFull(FORMATS[draft.config.format].label)}</span>}
+          {!empty && <span className="text-xs text-muted-foreground">{shownMobile ? t.previewMobile(shownW) : pct < 100 ? t.previewScaled(pct, FORMATS[draft.config.format].label) : t.previewFull(FORMATS[draft.config.format].label)}</span>}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="ghost" size="sm" className="gap-1.5" aria-pressed={pinned} onClick={() => onPin(!pinned)}>
@@ -111,13 +118,13 @@ export function Preview({
           </Tabs>
         </div>
       </div>
-      <div ref={box} className={empty ? "relative w-full overflow-hidden rounded-xl border border-dashed" : "relative w-full overflow-hidden"} style={{ height: Math.max(H * scale, empty ? 300 : 0) }}>
+      <div ref={box} className={empty ? "relative w-full overflow-hidden rounded-xl border border-dashed" : "relative w-full overflow-hidden"} style={{ height: Math.max(shown.height * scale, empty ? 300 : 0), transition: "height .25s ease" }}>
         {/* The phone banner is narrow: keep it in the middle of the wide preview area. */}
-        <div className="absolute inset-y-0 left-1/2 -translate-x-1/2" style={{ width: mobile && !empty ? W * scale : "100%" }}>
+        <div className="absolute inset-y-0 left-1/2 -translate-x-1/2" style={{ width: shownMobile && !empty ? shownW * scale : "100%", transition: "width .25s ease" }}>
         {empty ? (
           <EmptyGuide onAddArticles={onAddArticles} onTryExample={onTryExample} onOpenBookmark={onOpenBookmark} />
         ) : (
-          <SwapFrame build={(id) => renderPreview(draft, theme, id)} deps={[draft, theme]} width={W} height={H} scale={scale} title="Banner preview" />
+          <SwapFrame build={(id) => renderPreview(draft, theme, id)} deps={[draft, theme]} width={W} height={H} scaleFor={scaleFor} onShown={setShown} title="Banner preview" />
         )}
         </div>
       </div>
