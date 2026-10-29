@@ -328,6 +328,11 @@
   resolved "https://registry.yarnpkg.com/@fontsource/dm-mono/-/dm-mono-5.3.0.tgz#031cc45595b96c85582c7e2faf01518f6c1e3666"
   integrity sha512-OINjI8C1S/wpchhQxl7njZdMn4+hnDCpQ4YtvvOpKNARo+0J8O1x1IcrChxNjHOhfVv1by8C/FQoy3hXK+C1Ug==
 
+"@fontsource/fira-sans-condensed@^5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@fontsource/fira-sans-condensed/-/fira-sans-condensed-5.3.0.tgz#9b9f1214a3292f194bcadc48299c817ae99eb869"
+  integrity sha512-aYiPJnAwfvhHW1Yra+YPGdFvhvJhQax1wHb6aa6979ixPe51CspvxgZTJ8JNfIs3Gu7UcclUl6d2MuDnw1wsdg==
+
 "@fontsource/fira-sans@^5.3.0":
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/@fontsource/fira-sans/-/fira-sans-5.3.0.tgz#b3c8f83028bf5a8b85792b50f2f0c65976e665cc"

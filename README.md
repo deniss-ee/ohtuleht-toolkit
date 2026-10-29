@@ -23,7 +23,7 @@ Try it: run it locally (below) or open the published site once it is set up ([do
 | Banner generator: other formats | Static ad, image slider | Planned (issues #35, #36) |
 | Old Swiper zip import | Open banners made before this tool (articles type), edit, export without Swiper | **Built** ([docs](docs/BANNERS.md#opening-old-swiper-banners)) |
 | Header bar | The 100% wide, 46 px bar for theme pages (iframe): html + css zip, iframe code | **Built** ([docs](docs/HEADER-BAR.md)) |
-| Brand manual | Colours (copy as HEX/RGB/HSL/CSS/Tailwind, contrast, token export) and 6 logo variants (SVG, PNG, safe zone, sizes) | **Colours and logos built** ([docs](docs/BRAND-MANUAL.md)); typography and ad formats planned (#18) |
+| Brand manual | Colours (copy as HEX/RGB/HSL/CSS/Tailwind, contrast, token export), 6 logo variants (SVG, PNG, safe zone, sizes) and the 3 brand fonts (samples, weights, Estonian letters, CSS) | **Colours, logos and fonts built** ([docs](docs/BRAND-MANUAL.md)); ad formats planned (#18) |
 | Tools: Image cropper | Any picture onto a 1920x1080 canvas (fit, fill, original, custom width, blurred or colour background), JPG | **Built** ([docs](docs/IMAGE-CROPPER.md)) |
 | Tools: Movie banner | Video on a background picture, two zips (1250 and 1280) for the ad server | **Built** ([docs](docs/MOVIE-BANNER.md)) |
 | Interface languages | English and Estonian, EN/ET switch in every top bar | **Built** ([docs](docs/LANGUAGES.md)) |
@@ -45,7 +45,7 @@ The address after the `?` follows the app, so any place can be sent to a colleag
 | `?section=content&make=header-bar` | A new header bar (also `articles-1250x400`, `articles-mobile`) |
 | `?section=tools` | Tools |
 | `?section=tools&tool=image-cropper` | Image cropper (also `movie-banner`) |
-| `?section=brand&tab=colours` | Brand manual, colours (or `tab=logos`) |
+| `?section=brand&tab=colours` | Brand manual, colours (or `tab=logos`, `tab=fonts`) |
 | add `&lang=et` | Estonian for that visit (`lang=en` for English) |
 
 Example: `?section=tools&tool=movie-banner&lang=et`. The address changes by itself while you click around, so you can also just copy it from the address bar. The browser Back button works.

@@ -24,7 +24,7 @@ export interface Brand {
   colors: ColorScale[];
   clearSpace: { ratio: number; note: string };
   logos: LogoVariant[];
-  fonts: { family: string; role: string; weights: number[] }[];
+  fonts: { id: string; family: string; role: string; weights: number[]; stack: string; url: string; inManual?: boolean }[];
 }
 
 export const brand = brandData as Brand;

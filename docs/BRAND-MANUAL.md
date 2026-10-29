@@ -14,8 +14,9 @@ Colours and fonts come from the Figma file **Õhtuleht - Brand hub** (frame `212
 
 | Role | Font | Weights |
 |---|---|---|
-| Display: headlines, titles, pull quotes | Fira Sans | 500, 600 (400 for H3) |
-| Interface: body, labels, navigation, meta | Inter | 400, 500, 700 |
+| Primary: headlines, titles, pull quotes | Fira Sans | 400, 500, 600 |
+| Secondary: narrow titles, banner headers | Fira Sans Condensed | 400, 500, 600, 700 |
+| Text and interface: body, labels, navigation, the website | Inter | 400, 500, 700 |
 | Code, tokens, HEX values | DM Mono | 400, 500 |
 
 **Text on colours (brand rule):** on every scale, steps 50 to 500 take black text and steps 600 and up take white text. The Brand manual swatches, the interface buttons (white on red 600), the generated banner header and the header bar all follow it. For colours that are not brand colours, the text colour is picked automatically for contrast.
@@ -39,9 +40,11 @@ Banners keep their own font (Fira Sans Condensed) until the banner design says o
 
 The SVG is the only stored source; PNGs are generated.
 
-## Typography (not built, issue #18)
+## Fonts (built, part of issue #18)
 
-Fonts are already in `brand.json` and used by the interface: Fira Sans, Inter, DM Mono (table above). A page with sizes, line heights and copyable CSS is still to do, once the hub defines sizes. Banners keep Fira Sans Condensed until the banner design changes.
+The **Fonts** tab shows the three brand fonts: **Fira Sans** (primary, headlines), **Fira Sans Condensed** (secondary, narrow titles where space is tight, banner headers) and **Inter** (text and interface, the font of the website). Each card has a big sample, the weights with a sample line, all letters and numbers, the Estonian letters (Õ Ä Ö Ü Š Ž), the CSS `font-family` line with a copy button and a link to Google Fonts (all three are free, SIL Open Font License). Below: the same headline in a narrow column in both Fira families (why the condensed one exists), a news card showing the fonts in use, and three rules of thumb. Direct link: `?section=brand&tab=fonts`.
+
+Data: `fonts` in `packages/brand/brand.json` (`stack` = CSS font-family, `url` = download page; the toolkit's own code font DM Mono has `inManual: false`). Texts: `brandManual` in `content.en.ts` and `content.et.ts`. Font files come from `@fontsource` packages (`index.css`). Font sizes and line heights are not defined yet because the brand hub does not define them.
 
 ## Ad formats reference (not built, issue #18)
 

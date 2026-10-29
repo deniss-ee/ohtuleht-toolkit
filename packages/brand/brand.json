@@ -119,8 +119,9 @@
     }
   ],
   "fonts": [
-    { "family": "Fira Sans", "role": "Display: headlines, titles, pull quotes", "weights": [400, 500, 600] },
-    { "family": "Inter", "role": "Interface: body, labels, navigation, meta", "weights": [400, 500, 700] },
-    { "family": "DM Mono", "role": "Code, tokens, HEX values", "weights": [400, 500] }
+    { "id": "fira-sans", "family": "Fira Sans", "role": "Primary: headlines, titles, pull quotes", "weights": [400, 500, 600], "stack": "'Fira Sans', system-ui, sans-serif", "url": "https://fonts.google.com/specimen/Fira+Sans" },
+    { "id": "fira-sans-condensed", "family": "Fira Sans Condensed", "role": "Secondary: narrow titles, banner headers", "weights": [400, 500, 600, 700], "stack": "'Fira Sans Condensed', 'Arial Narrow', sans-serif", "url": "https://fonts.google.com/specimen/Fira+Sans+Condensed" },
+    { "id": "inter", "family": "Inter", "role": "Text and interface: body, labels, navigation, the website", "weights": [400, 500, 700], "stack": "Inter, system-ui, sans-serif", "url": "https://fonts.google.com/specimen/Inter" },
+    { "id": "dm-mono", "family": "DM Mono", "role": "Code, tokens, HEX values (used inside this toolkit only)", "weights": [400, 500], "stack": "'DM Mono', ui-monospace, monospace", "url": "https://fonts.google.com/specimen/DM+Mono", "inManual": false }
   ]
 }
