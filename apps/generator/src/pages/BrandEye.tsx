@@ -158,13 +158,19 @@ export function BrandEye() {
             <h2 className="text-sm font-semibold">{t.safety}</h2>
             <span className="text-xs text-muted-foreground">{t.safetyIntro}</span>
           </div>
-          <ul className="grid gap-x-4 gap-y-1 text-sm sm:grid-cols-2">
+          <ul className="grid gap-2 text-sm sm:grid-cols-2">
             {RULES.map((id) => {
               const ok = !safety.broken.includes(id);
               const Icon = ok ? Check : X;
               return (
-                <li key={id} className="flex items-start gap-2" title={`${Math.round(safety.shares[id] * 100)}% / ${Math.round(LIMITS[id] * 100)}%`}>
-                  <Icon className={`mt-0.5 size-4 shrink-0 ${ok ? "text-green-600" : "text-destructive"}`} aria-hidden />
+                <li
+                  key={id}
+                  title={`${Math.round(safety.shares[id] * 100)}% / ${Math.round(LIMITS[id] * 100)}%`}
+                  className={`flex items-center gap-2.5 rounded-lg border px-3 py-2 ${ok ? "border-green-600/40 bg-green-600/10" : "border-red-600/60 bg-red-600/15 font-medium text-red-700 dark:text-red-300"}`}
+                >
+                  <span className={`flex size-5 shrink-0 items-center justify-center rounded-full text-white ${ok ? "bg-green-600" : "bg-red-600"}`}>
+                    <Icon className="size-3.5" strokeWidth={3} aria-hidden />
+                  </span>
                   <span>{t.rules[id]}</span>
                 </li>
               );
@@ -187,9 +193,9 @@ export function BrandEye() {
           <div className="pointer-events-none absolute inset-0 select-none [&>svg]:size-full" dangerouslySetInnerHTML={{ __html: svg }} />
           {!safety.ok && (
             <>
+              <div className="pointer-events-none absolute inset-0 rounded-xl ring-4 ring-inset ring-red-600/85" aria-hidden />
               <svg className="pointer-events-none absolute inset-0 size-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-                <path d="M0 0L100 100M100 0L0 100" stroke="#e00000" strokeWidth="1.2" vectorEffect="non-scaling-stroke" opacity=".75" />
-                <rect x="0" y="0" width="100" height="100" fill="none" stroke="#e00000" strokeWidth="6" vectorEffect="non-scaling-stroke" opacity=".85" />
+                <path d="M8 8L92 92M92 8L8 92" stroke="#e00000" strokeWidth="1.2" strokeLinecap="round" vectorEffect="non-scaling-stroke" opacity=".75" />
               </svg>
               <p role="status" className="pointer-events-none absolute inset-x-2 bottom-2 flex items-start gap-2 rounded-md border border-red-600 bg-red-50/95 p-2 text-xs text-black shadow">
                 <TriangleAlert className="mt-0.5 size-3.5 shrink-0 text-red-600" aria-hidden /> {t.unsafe(t.rules[safety.broken[0]!]!, safety.broken.length - 1)}
