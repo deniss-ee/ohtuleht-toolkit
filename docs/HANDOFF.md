@@ -4,7 +4,7 @@ For a new session or a new computer. Claude reads `CLAUDE.md` automatically; thi
 
 ## Where we are (2026-10-29)
 
-All pull requests so far (#93, #94, #96, #98 and the docs clean-up with the GitHub Pages workflow) are merged into `develop`. The GitHub Pages site still needs the one-time setup in [DEPLOY.md](DEPLOY.md).
+All pull requests so far (#93, #94, #96, #98 and the docs clean-up) are merged into `develop`. The site is live on GitHub Pages and is updated by hand, see [DEPLOY.md](DEPLOY.md).
 
 Built and merged into `develop`:
 
@@ -18,7 +18,7 @@ Built and merged into `develop`:
 | **Tools: Image cropper** | Picture onto 1920x1080, 4 modes, drag, blur or colour background, JPG | `docs/IMAGE-CROPPER.md` |
 | **Tools: Movie banner** | Video on a picture, two zips, preview | `docs/MOVIE-BANNER.md` |
 | **Estonian interface** | EN/ET switch in every top bar; all text in `content.en.ts` and `content.et.ts` | `docs/LANGUAGES.md` |
-| **GitHub Pages workflow** | Publishes `apps/generator/dist`; needs a one-time setup by the repository owner | `docs/DEPLOY.md` |
+| **GitHub Pages site** | Live from the `gh-pages` branch; republished by hand | `docs/DEPLOY.md` |
 | Bookmarklet v2 | Copies an article as a JSON snippet (title, link, picture, label) | `docs/BOOKMARKLET.md` |
 
 Not built yet (GitHub issues, milestones M0 to M4): 1250x400 with static ad (#35), image slider (#36), header font and size options (#64), brand typography and ad formats (#18), lint/format/CI (#5, #6), accessibility pass (#38), IT handoff README (#39), Cloudflare Worker (M2), hosted banners and login (M3), task tracker (M4, spec in `docs/TASK-TRACKER.md`).
