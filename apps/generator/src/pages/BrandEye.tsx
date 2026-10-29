@@ -166,7 +166,7 @@ export function BrandEye() {
                 <li
                   key={id}
                   title={`${Math.round(safety.shares[id] * 100)}% / ${Math.round(LIMITS[id] * 100)}%`}
-                  className={`flex items-center gap-2.5 rounded-lg border px-3 py-2 ${ok ? "border-green-600/40 bg-green-600/10" : "border-red-600/60 bg-red-600/15 font-medium text-red-700 dark:text-red-300"}`}
+                  className={`flex items-center gap-2.5 rounded-lg border px-3 py-2 ${ok ? "border-green-600/40 bg-green-600/10" : "border-red-600/60 bg-red-600/15 text-red-700 dark:text-red-300"}`}
                 >
                   <span className={`flex size-5 shrink-0 items-center justify-center rounded-full text-white ${ok ? "bg-green-600" : "bg-red-600"}`}>
                     <Icon className="size-3.5" strokeWidth={3} aria-hidden />
