@@ -2,6 +2,8 @@ import JSZip from "jszip";
 import type { ArticlesBannerConfig } from "@ohtuleht/templates";
 import { renderExport, zipName, type Draft, type HeaderFile } from "@/lib/banner";
 import { averageColor, toDataUrl } from "@/lib/image";
+import { importLegacy } from "@/lib/legacy";
+import { openZip } from "@/lib/openzip";
 
 export async function buildZip(draft: Draft): Promise<Blob> {
   const zip = new JSZip();
@@ -32,14 +34,15 @@ export async function fileToHeader(file: File): Promise<{ headerFile: HeaderFile
   return { headerFile: { name, bytes, dataUrl, avg }, avg };
 }
 
-// Reads a banner made by this toolkit: the config is embedded in index.html.
-export async function importZip(file: File): Promise<Draft> {
-  const zip = await JSZip.loadAsync(file);
-  const index = zip.file("index.html");
-  if (!index) throw new Error("This zip has no index.html.");
+// Reads a banner: made by this toolkit (config embedded in index.html) or an old Swiper banner (read by importLegacy).
+// notes = things the person should check after opening an old banner.
+export async function importZip(file: File): Promise<{ draft: Draft; notes: string[] }> {
+  const zip = await openZip(file);
+  const index = zip?.file("index.html");
+  if (!zip || !index) throw new Error("This zip has no index.html, so it is not a banner.");
   const doc = new DOMParser().parseFromString(await index.async("string"), "text/html");
   const json = doc.getElementById("ol-banner")?.textContent;
-  if (!json) throw new Error("This banner was not made with the toolkit, so it cannot be opened yet.");
+  if (!json) return importLegacy(zip, doc, file.name.replace(/\.zip$/i, ""));
   const config = JSON.parse(json) as ArticlesBannerConfig;
   if (config.v !== 1 || config.format !== "articles-1250x400") throw new Error("Unsupported banner version or format.");
   // Banners made before the main colour existed: take it from their label or header colour.
@@ -52,5 +55,5 @@ export async function importZip(file: File): Promise<Draft> {
       headerFile = { name: config.header.src, bytes, dataUrl: toDataUrl(bytes, config.header.src), avg: config.header.avg };
     }
   }
-  return { config, headerFile };
+  return { draft: { config, headerFile }, notes: [] };
 }

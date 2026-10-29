@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 import { editor as t } from "@/content";
 import { ThemeToggle } from "@/layout/AppShell";
 import { bytesOf, exampleDraft, problems, renderExport, type Draft } from "@/lib/banner";
@@ -235,7 +236,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
 
               <Section title={t.headerTitle} description={t.headerHint} icon={PanelTop} tone="ink">
                 <HeaderThumb draft={draft} />
-                <Tabs value={c.header.type} onValueChange={(v) => set({ header: v === "image" ? { type: "image", src: draft.headerFile?.name ?? "", href: c.header.href, avg: draft.headerFile?.avg } : { type: "color", href: c.header.href } })}>
+                <Tabs value={c.header.type} onValueChange={(v) => set({ header: v === "image" ? { type: "image", src: draft.headerFile?.name ?? "", href: c.header.href, avg: draft.headerFile?.avg, textInPicture: c.header.textInPicture } : { type: "color", href: c.header.href, textInPicture: c.header.textInPicture } })}>
                   <TabsList>
                     <TabsTrigger value="image">{t.headerImage}</TabsTrigger>
                     <TabsTrigger value="color">{t.headerColor}</TabsTrigger>
@@ -257,6 +258,15 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                   <p className="text-xs text-muted-foreground">{t.headerUsesMain}</p>
                 )}
                 </div>
+                {c.header.type === "image" && c.header.textInPicture !== undefined && (
+                  <div className="flex items-start gap-3">
+                    <Checkbox id="header-text-in-picture" className="mt-0.5" checked={c.header.textInPicture} onCheckedChange={(v) => set({ header: { ...c.header, textInPicture: v === true } })} />
+                    <div className="space-y-0.5">
+                      <Label htmlFor="header-text-in-picture">{t.headerTextInPicture}</Label>
+                      <p className="text-xs text-muted-foreground">{t.headerTextInPictureHint}</p>
+                    </div>
+                  </div>
+                )}
                 <div className="space-y-1.5">
                   <Label htmlFor="header-href">{t.headerLink}</Label>
                   <Input id="header-href" placeholder="https://" value={c.header.href} onChange={(e) => set({ header: { ...c.header, href: e.target.value } })} />

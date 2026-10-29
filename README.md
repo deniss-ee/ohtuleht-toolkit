@@ -10,7 +10,7 @@ A modular set of internal tools for the Õhtuleht newsroom and ad sales: banner 
 |---|---|---|
 | Banner generator: Articles 1250x400 | Form, live preview, article cards, zip export and re-open. Slider without Swiper | **Built** ([docs](docs/BANNERS.md)) |
 | Banner generator: other formats | Static ad, image slider, mobile 600x500 | Planned (issues #35, #36, #37) |
-| Old Swiper zip import | Open banners made before this tool | Next (issue #34) |
+| Old Swiper zip import | Open banners made before this tool (articles type), edit, export without Swiper | **Built** ([docs](docs/BANNERS.md#opening-old-swiper-banners)) |
 | Header bar | The 100% wide, 46 px bar for theme pages (iframe): html + css zip, iframe code | **Built** ([docs](docs/HEADER-BAR.md)) |
 | Brand manual | Colours (copy as HEX/RGB/HSL/CSS/Tailwind, contrast, token export) and 6 logo variants (SVG, PNG, safe zone, sizes) | **Colours and logos built** ([docs](docs/BRAND-MANUAL.md)); typography and ad formats planned (#18) |
 | Article bookmarklet v2 | Copy an article as a snippet from the live site | **Built** ([docs](docs/BOOKMARKLET.md)) |

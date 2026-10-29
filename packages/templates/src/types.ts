@@ -29,9 +29,11 @@ export interface ArticleItem {
   badgeColor?: string; // overrides the badge colour for this article (hex)
 }
 
+// textInPicture: the picture already contains the campaign name (banners made before this tool), so the name is not written on top.
+// Only banners opened from old zips carry it; new banners leave it out.
 export type Header =
-  | { type: "image"; src: string; href: string; avg?: string } // src is a file name inside the zip; avg = average colour of the picture, used to pick a readable text colour
-  | { type: "color"; href: string };
+  | { type: "image"; src: string; href: string; avg?: string; textInPicture?: boolean } // src is a file name inside the zip; avg = average colour of the picture, used to pick a readable text colour
+  | { type: "color"; href: string; textInPicture?: boolean };
 
 export interface ArticlesBannerConfig {
   v: 1;

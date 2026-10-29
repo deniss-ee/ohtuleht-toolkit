@@ -61,7 +61,9 @@ function slide(a: ArticlesBannerConfig["articles"][number], defaultBadge: string
 export function renderArticles1250x400(config: ArticlesBannerConfig, assets: RuntimeAssets): string {
   const b = config.behavior;
   const delay = b.autoplay ? b.delayMs : 0;
-  const header = `<a class="header" role="link" tabindex="0" aria-label="${escapeHtml(config.campaign)}" onclick="${clickAttr(escapeJsInAttr(config.header.href))}"><span class="header-title">${escapeHtml(config.campaign)}</span></a>`;
+  // Old pictures have the text baked in: no campaign name on top, the link keeps its label for screen readers.
+  const showName = !(config.header.type === "image" && config.header.textInPicture);
+  const header = `<a class="header" role="link" tabindex="0" aria-label="${escapeHtml(config.campaign)}" onclick="${clickAttr(escapeJsInAttr(config.header.href))}">${showName ? `<span class="header-title">${escapeHtml(config.campaign)}</span>` : ""}</a>`;
   return (
     '<!doctype html><html lang="et"><head><meta charset="utf-8">' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +

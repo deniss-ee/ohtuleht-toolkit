@@ -1,4 +1,5 @@
 import JSZip from "jszip";
+import { openZip } from "@/lib/openzip";
 import { iframeCode, renderHeaderBar, validateHeaderBar } from "@ohtuleht/templates";
 import type { HeaderBarConfig, Problem } from "@ohtuleht/templates";
 import { readySignal } from "@/components/editor/SwapFrame";
@@ -67,9 +68,9 @@ export const downloadHeaderZip = async (d: HeaderDraft) => download(await buildH
 
 // Reads a header made by this tool (config is embedded in index.html). Returns null when the zip is something else.
 export async function importHeaderZip(file: File): Promise<HeaderDraft | null> {
-  const zip = await JSZip.loadAsync(file);
-  const index = zip.file("index.html");
-  if (!index) return null;
+  const zip = await openZip(file);
+  const index = zip?.file("index.html");
+  if (!zip || !index) return null;
   const json = new DOMParser().parseFromString(await index.async("string"), "text/html").getElementById("ol-header")?.textContent;
   if (!json) return null;
   const config = JSON.parse(json) as HeaderBarConfig;

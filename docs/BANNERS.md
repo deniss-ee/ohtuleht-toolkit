@@ -51,6 +51,25 @@ Bar 1248x46 with 6 px corners, filled with the main colour or with a background 
 
 Badge colour (and per-article badge colour), hover colour (red `#e3000f` by default: titles always turn red on hover), header background (image or colour), title colour, page background. The Kultuurisügis values (`#9500b2`, `#e3000f`, `#003784`) are only this campaign's preset.
 
+### Opening old Swiper banners
+
+Upload the old zip (for example `content-marketing/st_KultuurSygis_2710-1250x400`) in the same place as new zips. Needs `index.html`, `style.css` and the header picture; Swiper files are ignored. The files may be at the top of the zip or inside a folder (or two): the shallowest `index.html` is used. This works for every zip the tool opens (banners and header bars).
+
+| Read from | Becomes |
+|---|---|
+| `.swiper-slide` items: `getClickTag('URL')`, `.img` background, `p.badge`, `p.title` | Articles (link, picture, label, title). The most common label becomes the campaign label |
+| `.badge` colour in `style.css` | Main colour. A different dark-mode colour becomes the dark label colour |
+| `.header` background colour and `.header` picture | Header colour (shown behind the picture) and header picture |
+| `.article:hover .title`, `.title`, dark block (`--bg-color`, `--text-color`) | Hover, title, dark background and text colours |
+| `delay`, `speed`, `loop`, `autoplay`, `slidesPerView` in the inline script | Slider settings (visible count above 4 is shortened to 4 by the new template) |
+| Page `<title>` without its size | Campaign name (checked by the person) |
+
+**Header text.** Old header pictures have the campaign name baked in. They open with the header option **The picture already has the text on it** ticked, so the name is not written again. Untick it to write the name on top. The option is stored in the zip (`header.textInPicture`) and is shown only for banners opened this way, never for new ones.
+
+After opening, a dialog lists what to check (campaign name, colours, shuffle off like the old banner, header picture, ad skipped, visible count).
+
+Not opened yet: mobile 600x500 banners (#37) and image sliders (#36); the tool says so. Static-ad banners open but the ad picture is left out until format 2 exists (#35).
+
 ## Format 2: Articles 1250x400 with static ad (not built, #35)
 
 Reference: `content-marketing/st_Autopay0810_1250x400`.
