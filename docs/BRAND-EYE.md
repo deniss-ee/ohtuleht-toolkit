@@ -15,7 +15,7 @@ Brand manual tab **Eye** (`?section=brand&tab=eye`). Makes the eye in the letter
 
 ## Safety rules
 
-Checked live on sample points of each shape (a fraction of a millisecond, so dragging stays smooth) (`checkSafety` in `apps/generator/src/lib/eye.ts`). A control stops where a rule would break, and says which.
+Checked live on sample points of each shape (a fraction of a millisecond, so dragging stays smooth) (`checkSafety` in `apps/generator/src/lib/eye.ts`). The letter moves freely. When a rule is broken, a red cross is drawn over the picture and names the broken rule, and the PNG and SVG download is blocked until all four rules are met. (The iris is the exception: it cannot leave the eye, because of its gap.)
 
 | Rule | Limit |
 |---|---|

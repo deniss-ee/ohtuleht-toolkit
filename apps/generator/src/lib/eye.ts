@@ -204,29 +204,6 @@ export function clampIris(want: { x: number; y: number }): { x: number; y: numbe
   return { x: home.x + (want.x - home.x) * lo, y: home.y + (want.y - home.y) * lo };
 }
 
-// ---------- Moving the letter safely ----------
-
-// Goes from a safe picture toward a wanted one and stops where a rule would break.
-export function approach(from: EyeState, to: EyeState): { state: EyeState; stopped: RuleId | null } {
-  const at = (t: number): EyeState => ({
-    ...to,
-    angle: from.angle + (to.angle - from.angle) * t,
-    size: from.size + (to.size - from.size) * t,
-    fx: from.fx + (to.fx - from.fx) * t,
-    fy: from.fy + (to.fy - from.fy) * t,
-  });
-  const wanted = checkSafety(to);
-  if (wanted.ok) return { state: to, stopped: null };
-  let lo = 0;
-  let hi = 1;
-  for (let i = 0; i < 14; i++) {
-    const mid = (lo + hi) / 2;
-    if (checkSafety(at(mid)).ok) lo = mid;
-    else hi = mid;
-  }
-  return { state: at(lo), stopped: wanted.broken[0] ?? null };
-}
-
 // ---------- Ready-made looks (from the Figma page) ----------
 
 export interface EyePreset {

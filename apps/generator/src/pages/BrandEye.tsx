@@ -7,7 +7,7 @@ import { ColorField } from "@/components/editor/ColorField";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { brandEye as t } from "@/content";
-import { applyPreset, approach, canvasOf, checkSafety, clampIris, eyePng, eyeSvg, IRIS_R, LIMITS, newEye, PRESETS, RATIOS, toGlyph, type EyeState, type RuleId } from "@/lib/eye";
+import { applyPreset, canvasOf, checkSafety, clampIris, eyePng, eyeSvg, IRIS_R, LIMITS, newEye, PRESETS, RATIOS, toGlyph, type EyeState, type RuleId } from "@/lib/eye";
 import { download } from "@/lib/zip";
 
 const RULES: RuleId[] = ["iris", "cap", "eye", "letter"];
@@ -48,7 +48,6 @@ export function BrandEye() {
   const [pngWidth, setPngWidth] = useState(1024);
   const [custom, setCustom] = useState(false);
   const [customColor, setCustomColor] = useState("#F5F0E6");
-  const [stopped, setStopped] = useState<RuleId | null>(null);
   const view = useRef<HTMLDivElement>(null);
   const drag = useRef<{ kind: "iris" | "letter" | "turn"; dx: number; dy: number } | null>(null);
   const pending = useRef<{ x: number; y: number } | null>(null); // latest pointer position, handled once per frame
@@ -60,24 +59,14 @@ export function BrandEye() {
   const safety = useMemo(() => checkSafety(eye), [eye]);
   const { w, h } = canvasOf(eye.ratio);
 
-  // Every change of the letter goes through the safety rules: it stops where a rule would break.
-  const change = (next: EyeState) => {
-    const r = approach(eyeRef.current, next);
-    setStopped(r.stopped);
-    setEye(r.state);
-  };
+  // The letter moves freely. A broken safety rule shows a red cross on the picture and blocks the download.
+  const change = (next: EyeState) => setEye(next);
   // A new picture shape may make the current place unsafe: go back to the middle then.
   const setRatio = (ratio: [number, number]) => {
     const next = { ...eye, ratio };
     setEye(checkSafety(next).ok ? next : { ...next, angle: 0, fx: 0.5, fy: 0.5, size: 1 });
-    setStopped(null);
   };
 
-  useEffect(() => {
-    if (!stopped) return;
-    const id = setTimeout(() => setStopped(null), 4000);
-    return () => clearTimeout(id);
-  }, [stopped]);
   useEffect(() => () => cancelAnimationFrame(frame.current), []);
 
   const point = (clientX: number, clientY: number) => {
@@ -138,6 +127,7 @@ export function BrandEye() {
   const badOutline = eye.style === "outline" && !!background && contrast(background, "#FFFFFF") < 3;
   const file = (ext: string, extra = "") => `ohtuleht-eye-${eye.style}${background ? "" : "-transparent"}${extra}.${ext}`;
   const savePng = async () => {
+    if (!safety.ok) return;
     try {
       const name = file("png", `-${pngWidth}px`);
       download(await eyePng(eye, pngWidth), name);
@@ -147,6 +137,7 @@ export function BrandEye() {
     }
   };
   const saveSvg = () => {
+    if (!safety.ok) return;
     const name = file("svg");
     download(new Blob([svg], { type: "image/svg+xml" }), name);
     toast.success(t.pngDone(name));
@@ -181,7 +172,7 @@ export function BrandEye() {
           </ul>
         </section>
 
-        {/* The picture fits the screen height, so the controls beside it stay in view. Notes are drawn on top of it, so nothing around it moves. */}
+        {/* The picture fits the screen height, so the controls beside it stay in view. Notes and the red cross are drawn on top of it, so nothing around it moves. */}
         <div
           ref={view}
           role="img"
@@ -194,9 +185,20 @@ export function BrandEye() {
           onPointerCancel={onUp}
         >
           <div className="pointer-events-none absolute inset-0 select-none [&>svg]:size-full" dangerouslySetInnerHTML={{ __html: svg }} />
-          {(stopped || badOutline) && (
+          {!safety.ok && (
+            <>
+              <svg className="pointer-events-none absolute inset-0 size-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+                <path d="M0 0L100 100M100 0L0 100" stroke="#e00000" strokeWidth="1.2" vectorEffect="non-scaling-stroke" opacity=".75" />
+                <rect x="0" y="0" width="100" height="100" fill="none" stroke="#e00000" strokeWidth="6" vectorEffect="non-scaling-stroke" opacity=".85" />
+              </svg>
+              <p role="status" className="pointer-events-none absolute inset-x-2 bottom-2 flex items-start gap-2 rounded-md border border-red-600 bg-red-50/95 p-2 text-xs text-black shadow">
+                <TriangleAlert className="mt-0.5 size-3.5 shrink-0 text-red-600" aria-hidden /> {t.unsafe(t.rules[safety.broken[0]!]!, safety.broken.length - 1)}
+              </p>
+            </>
+          )}
+          {safety.ok && badOutline && (
             <p role="status" className="pointer-events-none absolute inset-x-2 bottom-2 flex items-start gap-2 rounded-md border border-yellow-500/60 bg-yellow-100/95 p-2 text-xs text-black shadow">
-              <TriangleAlert className="mt-0.5 size-3.5 shrink-0" aria-hidden /> {stopped ? t.stopped(t.rules[stopped]!) : t.outlineWarning}
+              <TriangleAlert className="mt-0.5 size-3.5 shrink-0" aria-hidden /> {t.outlineWarning}
             </p>
           )}
           <button
@@ -234,7 +236,7 @@ export function BrandEye() {
           <h3 className="text-sm font-medium">{t.presets}</h3>
           <div className="flex flex-wrap gap-1.5">
             {PRESETS.map((p) => (
-              <Button key={p.id} variant="outline" size="sm" onClick={() => (setEye(applyPreset(eye, p)), setStopped(null))}>
+              <Button key={p.id} variant="outline" size="sm" onClick={() => setEye(applyPreset(eye, p))}>
                 {t.presetNames[p.id]}
               </Button>
             ))}
@@ -244,7 +246,7 @@ export function BrandEye() {
         <section className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-medium">{t.adjust}</h3>
-            <Button variant="ghost" size="sm" className="gap-2" onClick={() => (setEye({ ...newEye(eye.style), ratio: eye.ratio, background: eye.background }), setStopped(null))}>
+            <Button variant="ghost" size="sm" className="gap-2" onClick={() => setEye({ ...newEye(eye.style), ratio: eye.ratio, background: eye.background })}>
               <RotateCcw className="size-4" /> {t.reset}
             </Button>
           </div>
@@ -269,13 +271,14 @@ export function BrandEye() {
             </Tabs>
           </div>
           <div className="flex gap-2">
-            <Button className="flex-1 gap-2" onClick={savePng}>
+            <Button className="flex-1 gap-2" disabled={!safety.ok} onClick={savePng}>
               <Download className="size-4" /> {t.png}
             </Button>
-            <Button className="flex-1 gap-2" variant="outline" onClick={saveSvg}>
+            <Button className="flex-1 gap-2" variant="outline" disabled={!safety.ok} onClick={saveSvg}>
               <Download className="size-4" /> {t.svg}
             </Button>
           </div>
+          {!safety.ok && <p className="text-xs text-destructive">{t.cannotDownload}</p>}
         </section>
 
         <details className="group rounded-xl border bg-card">
