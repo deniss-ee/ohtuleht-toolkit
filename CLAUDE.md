@@ -36,7 +36,7 @@ packages/banner-runtime/   vanilla slider script, 1.7 KB gzip (budget 3 KB); tes
 packages/templates/        banner and header-bar HTML/CSS templates, colour logic, validation
 packages/brand/            brand.json (colours, logos, clear space) + optimised logo SVGs
 tools/bookmarklet/         article-snippet.js (bookmarklet v2)
-content-marketing/, tools/, category/   legacy banners and tools, kept as fixtures
+tools/, category/   legacy tools, kept as they are
 docs/                      ROADMAP, WORKFLOW, ARCHITECTURE, BANNERS, HEADER-BAR, BRAND-MANUAL, BOOKMARKLET, HANDOFF
 ```
 

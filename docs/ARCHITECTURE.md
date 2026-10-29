@@ -20,7 +20,6 @@ packages/
 tools/bookmarklet/  Article bookmarklet v2 (source)
 tools/              Older standalone tools (migrated gradually)
 category/           Older category header (reference for the header bar)
-content-marketing/  Older banners, kept as test fixtures for the old-zip importer
 docs/               Documentation
 ```
 

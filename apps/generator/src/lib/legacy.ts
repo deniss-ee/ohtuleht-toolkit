@@ -7,7 +7,6 @@ import { averageColor, toDataUrl } from "@/lib/image";
 // Reads an old Swiper banner (made by hand before this toolkit) into the same Draft the editor uses.
 // Reads the slides from index.html, the colours from style.css and the slider options from the inline script.
 // Everything it could not carry over is returned as `notes` in plain words.
-// Reference banners: content-marketing/st_KultuurSygis_2710-1250x400 and st_Autopay0810_1250x400.
 
 const DEFAULTS = { light: { bg: "#ffffff", text: "#272727", hover: "#e3000f" }, dark: { bg: "#0f0f0f", text: "#ffffff", hover: "#e3000f" }, primary: "#f50000" };
 

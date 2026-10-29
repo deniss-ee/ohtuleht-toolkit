@@ -17,7 +17,7 @@ Specification for every banner format the generator produces.
 
 ## Format 1: Articles 1250x400 (built)
 
-Reference: `content-marketing/st_KultuurSygis_2710-1250x400`, rebuilt without Swiper, light and dark. Template: `packages/templates/src/articles-1250x400.ts`.
+Rebuilt without Swiper, light and dark. Template: `packages/templates/src/articles-1250x400.ts`.
 
 **Layout**
 
@@ -53,7 +53,7 @@ Badge colour (and per-article badge colour), hover colour (red `#e3000f` by defa
 
 ### Opening old Swiper banners
 
-Upload the old zip (for example `content-marketing/st_KultuurSygis_2710-1250x400`) in the same place as new zips. Needs `index.html`, `style.css` and the header picture; Swiper files are ignored. The files may be at the top of the zip or inside a folder (or two): the shallowest `index.html` is used. This works for every zip the tool opens (banners and header bars).
+Upload the old zip in the same place as new zips. Needs `index.html`, `style.css` and the header picture; Swiper files are ignored. The files may be at the top of the zip or inside a folder (or two): the shallowest `index.html` is used. This works for every zip the tool opens (banners and header bars).
 
 | Read from | Becomes |
 |---|---|
@@ -72,15 +72,11 @@ Not opened yet: old mobile banners and image sliders (#36); the tool says so. St
 
 ## Format 2: Articles 1250x400 with static ad (not built, #35)
 
-Reference: `content-marketing/st_Autopay0810_1250x400`.
-
 - A fixed ad image with its own ClickTag URL next to a slider of 3 visible articles (instead of 4).
 - Side and size of the ad: from Figma (open question).
 - Mobile: every Nth slide is the ad (N to be decided).
 
 ## Format 3: Image slider (client banners) (not built, #36)
-
-Reference: `content-marketing/dacia_ol-1250x400-noswiper`.
 
 - Client background image plus a set of slide images (desktop example: 300x250 on a 1250x400 canvas; mobile: 600x500).
 - Each slide has its own URL; the background has its own URL.

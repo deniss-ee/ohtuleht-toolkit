@@ -46,7 +46,7 @@ packages/banner-runtime/   slider script for banners (about 1.7 KB gzip)
 packages/templates/        banner and header-bar templates, colour logic
 packages/brand/            brand.json and the logo SVGs
 tools/bookmarklet/         the article bookmarklet
-content-marketing/, tools/, category/   legacy banners and tools (kept as test fixtures)
+tools/, category/   legacy tools (kept as they are)
 docs/                      documentation
 ```
 

@@ -43,7 +43,7 @@ Doc status: all `docs/*.md`, package READMEs and the generator README were check
 2. Static-ad banner (#35): needs the Figma link for the ad side and size.
 3. Image slider (#36), mobile image slider, header font options (#64), brand typography (#18).
 
-Old banner import is built (`apps/generator/src/lib/legacy.ts`). Its fixtures are in `content-marketing/`; there are no automated tests yet, so add Vitest tests for `legacy.ts` with the #5/#6 work (the Vite dev server rewrites CSS when fetched, so test with real files, not through the browser).
+Old banner import is built (`apps/generator/src/lib/legacy.ts`). The old banner folders (`content-marketing/`) were removed from the repo; they are still in git history (before the commit that removed them). There are no automated tests yet: when adding Vitest tests for `legacy.ts` with the #5/#6 work, take a real old zip from the user as a sample (the Vite dev server rewrites CSS when fetched, so test with real files, not through the browser).
 
 ## Start prompts (paste into a new session)
 
