@@ -1,5 +1,5 @@
 // English interface text (the base: content.et.ts must have the same names and shapes).
-export type PageId = "content" | "tools" | "brand" | "tasks";
+export type PageId = "home" | "content" | "tools" | "brand" | "tasks";
 
 export interface NavItem {
   id: PageId;
@@ -8,6 +8,7 @@ export interface NavItem {
 }
 
 export const nav: NavItem[] = [
+  { id: "home", label: "Home", ready: true },
   { id: "content", label: "Content marketing", ready: true },
   { id: "tools", label: "Tools", ready: true },
   { id: "brand", label: "Brand manual", ready: true },
@@ -460,4 +461,49 @@ export const ui = {
   bannerPreview: "Banner preview",
   brandColours: "Brand colours",
   chooseColour: (label: string) => `${label}: choose colour`,
+};
+
+// The first screen.
+export const home = {
+  title: "Õhtuleht Toolkit",
+  intro: "Banners, pictures and the brand in one place. Pick what you want to do.",
+  open: "Open",
+  groups: [
+    {
+      id: "banners",
+      title: "Make a banner",
+      text: "You get zip files for the ad server.",
+      items: [
+        { id: "articles-1250x400", name: "Articles banner, desktop", text: "1250x400, a header and a slider of article cards." },
+        { id: "articles-mobile", name: "Articles banner, mobile", text: "Swipeable article cards, as wide as the phone." },
+        { id: "header-bar", name: "Header bar", text: "The bar at the top of a theme page." },
+      ],
+    },
+    {
+      id: "pictures",
+      title: "Video and pictures",
+      text: "",
+      items: [
+        { id: "movie-banner", name: "Movie banner", text: "A video on a picture. Two zips: 1250 and 1280." },
+        { id: "image-cropper", name: "Image cropper", text: "Any picture to a 1920x1080 JPG." },
+      ],
+    },
+    {
+      id: "brand",
+      title: "Find the brand",
+      text: "Colours, logos and fonts of Õhtuleht, ready to copy or download.",
+      items: [
+        { id: "colours", name: "Colours", text: "Copy any colour as HEX, RGB, CSS or Tailwind." },
+        { id: "logos", name: "Logos", text: "SVG and PNG, with the safe zone." },
+        { id: "fonts", name: "Fonts", text: "Which font to use, and the font files to download." },
+      ],
+    },
+  ],
+  tipsTitle: "Good to know",
+  tips: [
+    "An unfinished banner is saved in this browser. Come back and press Continue.",
+    "The EN / ET switch at the top right changes the language.",
+    "Ctrl+S downloads the file when the top bar says it is ready.",
+    "Every page has its own address. Copy it from the address bar to send a page to a colleague.",
+  ],
 };

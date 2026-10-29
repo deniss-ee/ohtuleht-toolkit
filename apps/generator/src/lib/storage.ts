@@ -95,9 +95,3 @@ export function loadWork(): Work {
   if (s.kind === "banner") return { kind: "banner", draft: { config: s.config, headerFile: unpack(s.file) } };
   return { kind: "header", draft: { config: s.config, picture: unpack(s.file), embedUrl: s.embedUrl ?? "" } };
 }
-
-// ---- Last section ----
-
-const PAGE_KEY = "ol-page";
-export const readPage = () => read<string>(PAGE_KEY);
-export const writePage = (id: string) => write(PAGE_KEY, id);

@@ -28,7 +28,7 @@ Internal toolkit for the Õhtuleht newsroom and ad sales. Modules so far: banner
 
 ```
 apps/generator/            React + Vite + Tailwind v4 + shadcn/ui (port 5173)
-  src/pages/               ContentMarketingHome, BannerEditor, HeaderBarEditor, ToolsHome, ImageCropper, MovieBanner, BrandManual, BrandFonts
+  src/pages/               Home, ContentMarketingHome, BannerEditor, HeaderBarEditor, ToolsHome, ImageCropper, MovieBanner, BrandManual, BrandFonts
   src/components/editor/   ArticleList, Preview, SwapFrame, ColorPicker, HoverPill ...
   src/lib/                 banner.ts, header.ts, movie.ts, cropper.ts, zip.ts, storage.ts (saved drafts), route.ts (direct links), logos.ts, snippets.ts, image.ts, format.ts, clipboard.ts
   src/content.*.ts         every UI string (en, et) + content.ts picker

@@ -1,5 +1,5 @@
 // Direct links. The address after the "?" says where the app is, so a link can be sent to a colleague:
-//   ?section=content | tools | brand
+//   ?section=home | content | tools | brand   (no section = home)
 //   &tool=image-cropper | movie-banner       (with section=tools)
 //   &tab=colours | logos | fonts                     (with section=brand)
 //   &make=header-bar | articles-1250x400 | articles-mobile   (with section=content: opens a new banner of that type)
@@ -7,12 +7,12 @@
 import type { Lang, PageId, ToolInfo } from "@/content";
 
 export type BrandTab = "colours" | "logos" | "fonts";
-export const PAGES: PageId[] = ["content", "tools", "brand"];
+export const PAGES: PageId[] = ["home", "content", "tools", "brand"];
 export const TOOL_IDS: ToolInfo["id"][] = ["image-cropper", "movie-banner"];
 export const MAKE_IDS = ["header-bar", "articles-1250x400", "articles-mobile"];
 
 export interface Route {
-  page: PageId | null; // null = not in the link (use the last section)
+  page: PageId | null; // null = not in the link (the home page opens)
   tool: ToolInfo["id"] | null;
   tab: BrandTab;
   make: string | null;
@@ -34,7 +34,7 @@ export function parseRoute(search: string): Route {
 // Address for the current place. Order is always the same, so equal places give equal addresses.
 export function buildSearch(page: PageId, tool: Route["tool"], tab: BrandTab, lang: Lang): string {
   const q = new URLSearchParams();
-  q.set("section", page);
+  if (page !== "home") q.set("section", page);
   if (page === "tools" && tool) q.set("tool", tool);
   if (page === "brand") q.set("tab", tab);
   q.set("lang", lang);
