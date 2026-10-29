@@ -181,13 +181,7 @@ export function BrandEye() {
           </ul>
         </section>
 
-        {(stopped || badOutline) && (
-          <p role="status" className="flex items-start gap-2 rounded-md border border-yellow-500/50 bg-yellow-300/20 p-2 text-sm">
-            <TriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden /> {stopped ? t.stopped(t.rules[stopped]!) : t.outlineWarning}
-          </p>
-        )}
-
-        {/* The picture fits the screen height, so the controls beside it stay in view. */}
+        {/* The picture fits the screen height, so the controls beside it stay in view. Notes are drawn on top of it, so nothing around it moves. */}
         <div
           ref={view}
           role="img"
@@ -200,6 +194,11 @@ export function BrandEye() {
           onPointerCancel={onUp}
         >
           <div className="pointer-events-none absolute inset-0 select-none [&>svg]:size-full" dangerouslySetInnerHTML={{ __html: svg }} />
+          {(stopped || badOutline) && (
+            <p role="status" className="pointer-events-none absolute inset-x-2 bottom-2 flex items-start gap-2 rounded-md border border-yellow-500/60 bg-yellow-100/95 p-2 text-xs text-black shadow">
+              <TriangleAlert className="mt-0.5 size-3.5 shrink-0" aria-hidden /> {stopped ? t.stopped(t.rules[stopped]!) : t.outlineWarning}
+            </p>
+          )}
           <button
             type="button"
             aria-label={t.turnHandle}
