@@ -7,10 +7,14 @@
 @import "@fontsource/fira-sans/400.css";
 @import "@fontsource/fira-sans/500.css";
 @import "@fontsource/fira-sans/600.css";
-@import "@fontsource/fira-sans-condensed/400.css";
-@import "@fontsource/fira-sans-condensed/500.css";
-@import "@fontsource/fira-sans-condensed/600.css";
-@import "@fontsource/fira-sans-condensed/700.css";
+@import "@fontsource/fira-sans-condensed/latin-400.css";
+@import "@fontsource/fira-sans-condensed/latin-ext-400.css";
+@import "@fontsource/fira-sans-condensed/latin-500.css";
+@import "@fontsource/fira-sans-condensed/latin-ext-500.css";
+@import "@fontsource/fira-sans-condensed/latin-600.css";
+@import "@fontsource/fira-sans-condensed/latin-ext-600.css";
+@import "@fontsource/fira-sans-condensed/latin-700.css";
+@import "@fontsource/fira-sans-condensed/latin-ext-700.css";
 @import "@fontsource/dm-mono/400.css";
 @import "@fontsource/dm-mono/500.css";
 
