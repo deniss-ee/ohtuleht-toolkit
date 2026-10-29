@@ -127,6 +127,8 @@ export const editor = {
   headerChange: "Change picture",
   headerFileHint: "This is the background. The campaign name is written on top of it, so use a picture without text. Best size 2496x92 px (shown at 1248x46).",
   headerNone: "No picture chosen yet.",
+  headerTextInPicture: "The picture already has the text on it",
+  headerTextInPictureHint: "Tick this for old banners: the campaign name is not written on top of the picture again.",
   headerLink: "Where the header leads",
   headerLinkHint: "Link opened when someone clicks the header.",
 
@@ -166,6 +168,21 @@ export const editor = {
   emptyGoArticles: "Add articles",
   emptyTryExample: "Not sure? Try an example",
   imported: "Banner loaded.",
+
+  // Opening a banner made before this tool (old Swiper zips)
+  legacyTitle: "Old banner opened",
+  legacyIntro: "This banner was made before the toolkit. Please check these things:",
+  legacyDone: "Got it",
+  legacyNotMobile: "This is the mobile 600x500 banner. The toolkit cannot open that type yet.",
+  legacyNotSlider: "This is an image slider banner. The toolkit cannot open that type yet.",
+  legacyNoSlides: "No articles were found in this zip, so it cannot be opened.",
+  legacyHeaderText: "The header picture has the text baked in, so the campaign name is not written on it. Untick “The picture already has the text on it” to write the name on top.",
+  legacyNoHeaderPicture: "The header picture was not found in the zip. The header is a plain colour now: choose the picture again.",
+  legacyName: (name: string) => `The campaign name is “${name}”, taken from the page title. Please check it.`,
+  legacyAd: "This banner also has a fixed ad picture. That format does not exist yet, so the ad was left out.",
+  legacyVisible: (n: number) => `The old banner showed ${n} articles at once. The new one shows up to 4.`,
+  legacyShuffle: "Shuffle is off, as in the old banner. You can switch it on under Slider settings.",
+  legacyColors: "The colours were read from the old style sheet. Please check them under Colours.",
   exampleLoaded: "Example loaded.",
 };
 

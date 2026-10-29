@@ -5,6 +5,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 ## [Unreleased]
 
 ### Added
+- Opening old Swiper banner zips (issue #34): slides, colours, header and slider options are read; a dialog lists what to check; header option "The picture already has the text on it" for pictures with baked-in text.
 - Banner generator for Articles 1250x400, dependency-free runtime without Swiper (1.7 KB gzip), bookmarklet v2.
 - Header bar tool: 100% x 46 px bar for theme pages, preview at three widths, iframe code, zip re-open.
 - Brand manual: 33 colour swatches (copy, contrast, token export) and 6 logo variants (SVG, PNG, safe zone, zip).

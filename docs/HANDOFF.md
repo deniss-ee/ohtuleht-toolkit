@@ -10,11 +10,12 @@ Built and merged into `develop`:
 |---|---|---|
 | Banner generator, **Articles 1250x400** | Form, live preview (light/dark), article cards with pictures, bookmarklet snippets, per-article label, main colour, header (picture or colour, campaign name on top), zip export and re-open | `docs/BANNERS.md` |
 | Banner runtime | Slider without Swiper: loop, arrows, autoplay, drag, keys, shuffle, 4 or fewer articles share the width | `packages/banner-runtime/README.md` |
+| **Old banner import** | Upload an old Swiper zip (articles type): form filled from its slides, colours, header and slider options; a dialog lists what to check; checkbox for header pictures with baked-in text | `docs/BANNERS.md` |
 | **Header bar** tool | 100% x 46 px bar for theme pages (index.html + style.css), preview at 3 widths, iframe code | `docs/HEADER-BAR.md` |
 | **Brand manual** | 33 colour swatches (copy as HEX/RGB/HSL/CSS/Tailwind, contrast, token export), 6 logo variants as SVG/PNG, safe zone, sizes, zip | `docs/BRAND-MANUAL.md` |
 | Bookmarklet v2 | Copies an article as a JSON snippet (title, link, picture, label) | `docs/BOOKMARKLET.md` |
 
-Not built yet (GitHub issues, milestones M0 to M4): old Swiper zip import (#34), 1250x400 with static ad (#35), image slider (#36), mobile 600x500 (#37), header font and size options (#64), brand typography and ad formats (#18), lint/format/CI (#5, #6), accessibility pass (#38), IT handoff README (#39), Cloudflare Worker (M2), hosted banners and login (M3), task tracker (M4, spec in `docs/TASK-TRACKER.md`).
+Not built yet (GitHub issues, milestones M0 to M4): 1250x400 with static ad (#35), image slider (#36), mobile 600x500 (#37), header font and size options (#64), brand typography and ad formats (#18), lint/format/CI (#5, #6), accessibility pass (#38), IT handoff README (#39), Cloudflare Worker (M2), hosted banners and login (M3), task tracker (M4, spec in `docs/TASK-TRACKER.md`).
 
 Doc status: all `docs/*.md`, package READMEs and the generator README were checked against the code on 2026-10-29. Issues #9 (brand.json schema) and #11 (scattered assets) are open on GitHub although their core work is done; close or keep them when the user decides.
 
@@ -31,25 +32,18 @@ Doc status: all `docs/*.md`, package READMEs and the generator README were check
 
 ## Open questions for the user
 
-1. Old banner headers (`header.png`) contain baked-in text. On import, keep the picture and also write the campaign name (double text), or ask for a text-free picture? (Needed for issue #34.)
+1. (Decided) Old banner headers have text baked in: the header option "The picture already has the text on it" is ticked on import; new banners never show it.
 2. Static-ad banner (#35): which side, what size, and the mobile rule. Needs the Figma link.
 3. Cloudflare account and domain for Phase 2.
 4. IT: where `dist/` is hosted; whether branch protection is available on the private repo (issue #3).
 
-## Next: issue #34, import old Swiper zips (tomorrow)
+## Next steps
 
-Goal: upload an old banner zip, get the form filled in, edit, export a new zip without Swiper.
+1. Lint, format, tests and CI (issues #5, #6): see the start prompt below.
+2. Static-ad banner (#35): needs the Figma link for the ad side and size.
+3. Image slider (#36), mobile 600x500 (#37), header font options (#64), brand typography (#18).
 
-Legacy fixtures are in the repo (zip them on the fly in tests):
-
-| Folder | Type | How to read it |
-|---|---|---|
-| `content-marketing/st_KultuurSygis_2710-1250x400` | Articles 1250x400 | `<a class="header" href>`; slides `.swiper-slide[onclick]` with `olBanner.getClickTag('URL')`; `.img` `background-image: url(&quot;...&quot;)`; `p.badge`; `p.title`; Swiper options in the inline script (`slidesPerView`, `autoplay.delay`, `speed`); colours in `style.css` (`.badge` colour, `.article:hover .title`, `.header` background, dark mode block) |
-| `content-marketing/st_Autopay0810_1250x400` | Articles + static ad | same slides (3 visible); the ad is `img.banner-img[onclick]` with `banner.jpg`. The static-ad format does not exist yet (#35): import the articles, warn that the ad is skipped |
-| `content-marketing/st_KultuurSygis_2710-600x500` | Mobile articles | `.swiper-slide > .st-wrapper[style=background-image] > .st-text > p.badge + p.header`. No mobile template yet (#37): detect and say it is not supported yet |
-| `content-marketing/dacia_ol-1250x400-noswiper` | Image slider | different module (#36), not an article banner |
-
-Suggested steps: (1) a detector in `apps/generator/src/lib/zip.ts` (look for `#ol-banner`, then `#ol-header`, then legacy markers); (2) a pure parser `lib/legacy.ts` returning a `Draft` plus warnings, using `DOMParser`; (3) map the badge colour to the main colour, the first badge text to the campaign label, the header link and picture to the header; (4) show warnings in a dialog after opening; (5) tests: add Vitest with the issue #5/#6 work, or verify in the browser with the three fixtures; (6) update `docs/BANNERS.md`, close #34.
+Old banner import is built (`apps/generator/src/lib/legacy.ts`). Its fixtures are in `content-marketing/`; there are no automated tests yet, so add Vitest tests for `legacy.ts` with the #5/#6 work (the Vite dev server rewrites CSS when fetched, so test with real files, not through the browser).
 
 ## Start prompts (paste into a new session)
 
@@ -57,12 +51,6 @@ Suggested steps: (1) a detector in `apps/generator/src/lib/zip.ts` (look for `#o
 
 ```
 Read CLAUDE.md and docs/HANDOFF.md in this repo, then run `git status`, `git pull` on develop and `gh issue list --state open --limit 30`. Tell me in 5 lines where we are and propose the next step. Do not start building until I answer.
-```
-
-**Tomorrow: old Swiper zip import**
-
-```
-Read CLAUDE.md and docs/HANDOFF.md. Work on issue #34 (open old Swiper banner zips). Start with the plan in HANDOFF ("Next: issue #34"). First ask me the one open question about baked-in header text. Make a branch feat/34-legacy-import from develop, keep the dev server running for me to test, and open a PR when done. Do not merge until I say so.
 ```
 
 **Lint, format and CI first**

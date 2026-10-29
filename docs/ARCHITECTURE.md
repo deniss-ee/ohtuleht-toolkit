@@ -20,7 +20,7 @@ packages/
 tools/bookmarklet/  Article bookmarklet v2 (source)
 tools/              Older standalone tools (migrated gradually)
 category/           Older category header (reference for the header bar)
-content-marketing/  Older banners, kept as test fixtures for the zip importer (#34)
+content-marketing/  Older banners, kept as test fixtures for the old-zip importer
 docs/               Documentation
 ```
 
@@ -43,7 +43,7 @@ my-campaign-1250x400.zip
 
 Uploading the zip into the generator reads this block and restores the form exactly. Header bar zips carry the same kind of block with id `ol-header`.
 
-Older Swiper zips have no such block. The importer that reads their slides, links, images and header by DOM heuristics is not built yet (issue #34).
+Older Swiper zips have no such block. `apps/generator/src/lib/legacy.ts` reads their slides, links, images, colours and slider options from `index.html`, `style.css` and the inline script, and returns a draft plus notes for the person to check. See [BANNERS.md](BANNERS.md#opening-old-swiper-banners).
 
 ## `banner` config
 
@@ -65,6 +65,8 @@ Older Swiper zips have no such block. The importer that reads their slides, link
   ]
 }
 ```
+
+`header.textInPicture` (optional, picture headers only) means the picture already has the campaign name on it, so the template does not write the name again. Only banners opened from old zips have it; new banners leave it out and the editor shows its checkbox only when it exists.
 
 The main colour `primary` drives the header, the arrows and the default label colour. In each theme, `badge` (label colour) and `headerBg` are optional overrides; when empty, the label colour is the main colour automatically lightened or darkened until it is readable on that theme's background (contrast 4.5:1), and the header is the main colour. Each article may carry its own `badge` text and `badgeColor`; without them the campaign `badge` and theme colour apply. Colours are per campaign. The values above are only the Kultuurisügis preset. Fields are validated by `packages/templates/src/validate.ts`, which returns plain-language problems with the field they belong to.
 

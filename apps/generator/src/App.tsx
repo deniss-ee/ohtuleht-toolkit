@@ -3,6 +3,8 @@ import { toast } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { contentMarketing, editor, type PageId } from "@/content";
 import { AppShell } from "@/layout/AppShell";
 import { newDraft, type Draft } from "@/lib/banner";
@@ -19,6 +21,7 @@ type Work = { kind: "banner"; draft: Draft } | { kind: "header"; draft: HeaderDr
 export function App() {
   const [page, setPage] = useState<PageId>("content");
   const [work, setWork] = useState<Work>(null);
+  const [notes, setNotes] = useState<string[]>([]); // things to check after opening an old banner
 
   const create = (typeId: string) => setWork(typeId === "header-bar" ? { kind: "header", draft: newHeaderDraft() } : { kind: "banner", draft: newDraft() });
 
@@ -26,8 +29,15 @@ export function App() {
   const open = async (file: File) => {
     try {
       const header = await importHeaderZip(file);
-      setWork(header ? { kind: "header", draft: header } : { kind: "banner", draft: await importZip(file) });
-      toast.success(editor.imported);
+      if (header) {
+        setWork({ kind: "header", draft: header });
+        toast.success(editor.imported);
+      } else {
+        const opened = await importZip(file);
+        setWork({ kind: "banner", draft: opened.draft });
+        if (opened.notes.length) setNotes(opened.notes);
+        else toast.success(editor.imported);
+      }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : contentMarketing.uploadFailed);
     }
@@ -55,6 +65,22 @@ export function App() {
             ))}
           {page === "brand" && <BrandManual />}
         </AppShell>
+        <Dialog open={notes.length > 0} onOpenChange={(o) => !o && setNotes([])}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{editor.legacyTitle}</DialogTitle>
+              <DialogDescription>{editor.legacyIntro}</DialogDescription>
+            </DialogHeader>
+            <ul className="list-disc space-y-2 pl-5 text-sm">
+              {notes.map((n) => (
+                <li key={n}>{n}</li>
+              ))}
+            </ul>
+            <DialogFooter>
+              <Button onClick={() => setNotes([])}>{editor.legacyDone}</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
         <Toaster />
       </TooltipProvider>
     </ThemeProvider>

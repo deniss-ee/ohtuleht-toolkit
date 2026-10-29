@@ -43,7 +43,7 @@ HTTPS. No CORS needs; the app is fully static. Article images are loaded from `p
 
 ## Open items
 
-- Legacy Swiper zips (made before this tool) cannot be opened yet (issue #34).
+- Old Swiper banners open (articles type). Mobile 600x500 and image sliders do not yet (#37, #36); a static ad on an old banner is left out (#35).
 - Fetching an article by URL needs the Phase 2 Worker.
 - Other banner types: static ad (#35), image slider (#36), mobile 600x500 (#37).
 - Header font and size options (#64). Brand typography and ad formats pages (#18).
