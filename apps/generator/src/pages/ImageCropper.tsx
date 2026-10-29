@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
-import { ArrowLeft, Crosshair, Download, ImageUp, RefreshCw } from "lucide-react";
+import { Crosshair, Download, ImageUp, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { ColorField } from "@/components/editor/ColorField";
+import { ToolShell } from "@/components/editor/ToolShell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { imageCropper as t, tools } from "@/content";
+import { imageCropper as t } from "@/content";
 import { canMove, CANVAS_H, CANVAS_W, clampOffset, draw, makeBlur, MAX_WIDTH, MIN_WIDTH, newCropState, type CropState, type FitMode } from "@/lib/cropper";
 import { download } from "@/lib/zip";
 
@@ -94,16 +95,22 @@ export function ImageCropper({ onBack }: { onBack: () => void }) {
   const cursor = !pic ? "pointer" : movable ? (drag.current ? "grabbing" : "grab") : "default";
 
   return (
-    <div className="mx-auto max-w-6xl space-y-4">
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="sm" className="gap-2" onClick={onBack}>
-          <ArrowLeft className="size-4" /> {tools.back}
-        </Button>
-      </div>
-      <div>
-        <h1 className="text-2xl font-semibold">{t.title}</h1>
-        <p className="text-muted-foreground">{t.intro}</p>
-      </div>
+    <ToolShell
+      title={t.title}
+      subtitle={t.subtitle}
+      problems={pic ? [] : [{ field: "crop-choose", message: t.choosePicture }]}
+      readyText="Ready to download"
+      doneText={t.doneText}
+      onDownload={save}
+      onBack={onBack}
+      downloadLabel={
+        <>
+          <Download className="size-4" /> <>Download<span className="hidden sm:inline"> JPG</span></>
+        </>
+      }
+    >
+    <div className="mx-auto w-full max-w-6xl space-y-4 px-4 pb-24 pt-4">
+      <p className="text-muted-foreground">{t.intro}</p>
 
       <input ref={input} type="file" accept="image/*" className="sr-only" tabIndex={-1} aria-hidden onChange={(e) => { open(e.target.files?.[0]); e.target.value = ""; }} />
 
@@ -130,7 +137,7 @@ export function ImageCropper({ onBack }: { onBack: () => void }) {
             onKeyDown={onKey}
           />
           {!pic && (
-            <button type="button" className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-muted-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none" onClick={() => input.current?.click()}>
+            <button id="crop-choose" type="button" className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-muted-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none" onClick={() => input.current?.click()}>
               <ImageUp className="size-12" />
               <span className="text-lg font-semibold text-foreground">{t.dropTitle}</span>
               <span className="text-sm">{t.dropHint}</span>
@@ -197,9 +204,6 @@ export function ImageCropper({ onBack }: { onBack: () => void }) {
             </p>
           )}
           <div className="flex flex-wrap gap-2">
-            <Button className="gap-2" disabled={!pic} onClick={save}>
-              <Download className="size-4" /> {t.download}
-            </Button>
             <Button variant="outline" className="gap-2" disabled={!pic || !movable} onClick={() => update({ ox: 0, oy: 0 })}>
               <Crosshair className="size-4" /> {t.centre}
             </Button>
@@ -210,5 +214,6 @@ export function ImageCropper({ onBack }: { onBack: () => void }) {
         </div>
       </div>
     </div>
+    </ToolShell>
   );
 }

@@ -15,6 +15,7 @@ import { BrandManual } from "@/pages/BrandManual";
 import { ContentMarketingHome } from "@/pages/ContentMarketingHome";
 import { HeaderBarEditor } from "@/pages/HeaderBarEditor";
 import { ImageCropper } from "@/pages/ImageCropper";
+import { MovieBanner } from "@/pages/MovieBanner";
 import { ToolsHome } from "@/pages/ToolsHome";
 
 // What is being edited right now: nothing (start screen), an articles banner, or a header bar.
@@ -67,7 +68,7 @@ export function App() {
             ) : (
               <ContentMarketingHome onCreate={create} onUpload={open} />
             ))}
-          {page === "tools" && (tool === "image-cropper" ? <ImageCropper onBack={() => setTool(null)} /> : <ToolsHome onOpen={setTool} />)}
+          {page === "tools" && (tool === "image-cropper" ? <ImageCropper onBack={() => setTool(null)} /> : tool === "movie-banner" ? <MovieBanner onBack={() => setTool(null)} /> : <ToolsHome onOpen={setTool} />)}
           {page === "brand" && <BrandManual />}
         </AppShell>
         <Dialog open={notes.length > 0} onOpenChange={(o) => !o && setNotes([])}>

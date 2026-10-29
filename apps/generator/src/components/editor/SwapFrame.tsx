@@ -34,6 +34,7 @@ function PreviewFrame({
   title,
   hidden,
   frameRef,
+  sameOrigin,
 }: {
   frame: Frame;
   width: number | string;
@@ -42,6 +43,7 @@ function PreviewFrame({
   title: string;
   hidden?: boolean;
   frameRef?: (el: HTMLIFrameElement | null) => void;
+  sameOrigin?: boolean;
 }) {
   return (
     <iframe
@@ -49,7 +51,7 @@ function PreviewFrame({
       title={title}
       srcDoc={frame.html}
       // A link clicked in the banner opens as a normal page: without allow-popups-to-escape-sandbox the new tab inherits this sandbox (no cookies or storage) and the site breaks.
-      sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
+      sandbox={`allow-scripts allow-popups allow-popups-to-escape-sandbox${sameOrigin ? " allow-same-origin" : ""}`}
       width={width}
       height={height}
       tabIndex={hidden ? -1 : undefined}
@@ -81,6 +83,7 @@ export function SwapFrame({
   scaleFor = () => 1,
   onShown,
   title = "Preview",
+  sameOrigin,
 }: {
   build: (id: number) => string;
   deps: DependencyList;
@@ -89,6 +92,7 @@ export function SwapFrame({
   scaleFor?: (width: number) => number; // scale that fits a frame of this width into the preview area (default: full size)
   onShown?: (g: Geometry) => void; // a new frame is now visible
   title?: string;
+  sameOrigin?: boolean; // only for pages built from the person's own local files (picture and video blob addresses need it)
 }) {
   const [current, setCurrent] = useState<Frame | null>(null);
   const [pending, setPending] = useState<Frame | null>(null);
@@ -128,8 +132,8 @@ export function SwapFrame({
   return (
     <>
       {!current && <div className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">{t.previewLoading}</div>}
-      {current && <PreviewFrame key={current.id} frame={current} width={current.geom.width} height={current.geom.height} scale={typeof current.geom.width === "number" ? scaleFor(current.geom.width) : 1} title={title} />}
-      {pending && <PreviewFrame key={pending.id} frame={pending} width={pending.geom.width} height={pending.geom.height} scale={typeof pending.geom.width === "number" ? scaleFor(pending.geom.width) : 1} title={title} hidden frameRef={(el) => (pendingFrame.current = el)} />}
+      {current && <PreviewFrame key={current.id} frame={current} width={current.geom.width} height={current.geom.height} scale={typeof current.geom.width === "number" ? scaleFor(current.geom.width) : 1} title={title} sameOrigin={sameOrigin} />}
+      {pending && <PreviewFrame key={pending.id} frame={pending} width={pending.geom.width} height={pending.geom.height} scale={typeof pending.geom.width === "number" ? scaleFor(pending.geom.width) : 1} title={title} sameOrigin={sameOrigin} hidden frameRef={(el) => (pendingFrame.current = el)} />}
     </>
   );
 }
