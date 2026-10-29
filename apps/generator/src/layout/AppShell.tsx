@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
-import { LayoutTemplate, ListChecks, Moon, Palette, Sun } from "lucide-react";
+import { LayoutTemplate, ListChecks, Moon, Palette, Sun, Wrench } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { nav, type NavItem, type PageId } from "@/content";
 
-const icons = { content: LayoutTemplate, brand: Palette, tasks: ListChecks } satisfies Record<PageId, unknown>;
+const icons = { content: LayoutTemplate, tools: Wrench, brand: Palette, tasks: ListChecks } satisfies Record<PageId, unknown>;
 
 function NavButton({ item, active, onSelect }: { item: NavItem; active: boolean; onSelect: (id: PageId) => void }) {
   const Icon = icons[item.id];

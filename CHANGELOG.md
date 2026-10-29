@@ -5,6 +5,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 ## [Unreleased]
 
 ### Added
+- Tools section in the side navigation. Image cropper (issue #91): picture onto 1920x1080 with 4 modes, drag, blurred or colour background, JPG download. Replaces `tools/image cropper` (old folder kept).
 - Mobile articles banner (issue #37): full-width page, fixed 267x400 cards with the next card peeking in, pagination dots, light and dark; phone width switch in the preview; Desktop/Mobile switch in the editor keeps all content. Runtime gains optional dots. Category label on every card, as on desktop.
 - Opening old Swiper banner zips (issue #34): slides, colours, header and slider options are read; a dialog lists what to check; header option "The picture already has the text on it" for pictures with baked-in text.
 - Banner generator for Articles 1250x400, dependency-free runtime without Swiper (1.7 KB gzip), bookmarklet v2.
