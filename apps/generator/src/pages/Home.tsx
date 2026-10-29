@@ -51,7 +51,7 @@ export function Home({ saved, onContinue, onDiscard, onGo }: { saved: SavedInfo 
               const item = ITEMS[i.id];
               if (!item) return null;
               return (
-                <div key={i.id} className="flex flex-col gap-3 rounded-xl border bg-card p-4">
+                <div key={i.id} className="flex cursor-pointer flex-col gap-3 rounded-xl border bg-card p-4 transition-colors hover:bg-muted/40" onClick={() => onGo(item.to)}>
                   <div className="flex items-start gap-3">
                     <IconChip icon={item.icon} tone="red" />
                     <div className="min-w-0">
@@ -59,7 +59,7 @@ export function Home({ saved, onContinue, onDiscard, onGo }: { saved: SavedInfo 
                       <p className="text-sm text-muted-foreground">{i.text}</p>
                     </div>
                   </div>
-                  <Button className="mt-auto self-start" variant="outline" size="sm" onClick={() => onGo(item.to)}>
+                  <Button className="mt-auto self-start px-6" variant="outline" size="sm">
                     {t.open}
                   </Button>
                 </div>

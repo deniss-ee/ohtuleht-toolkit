@@ -397,7 +397,7 @@ export const brandEye: typeof En.brandEye = {
   custom: "Muu värv",
   customLabel: "Tausta värv",
   previewTitle: "Eelvaade",
-  previewHint: "Tähe liigutamiseks lohista seda. Lohista silma tumedat osa, et muuta vaatamissuunda. Tähe pööramiseks lohista ümmargust nuppu.",
+  previewHint: "Tähe liigutamiseks lohista seda. Lohista silma tumedat osa, et muuta vaatamissuunda. Tähe pööramiseks lohista ümmargust nuppu. Nooleklahvid liigutavad seda, Ctrl+S salvestab PNG.",
   turnHandle: "Pööra tähte (lohista või kasuta nooleklahve)",
   moreOptions: "Rohkem valikuid",
   moreHint: "Pildi kuju, taust, täpne asukoht ja silma vaatamissuund.",

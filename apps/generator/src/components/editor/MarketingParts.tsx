@@ -33,8 +33,8 @@ export function BrandStrip({ onGo }: { onGo: (tab: BrandTab) => void }) {
     { tab: "fonts", label: t.brandFonts, icon: Type },
   ];
   return (
-    <section aria-label={t.brandTitle} className="flex flex-wrap items-center gap-3 rounded-xl border border-dashed bg-muted/50 p-4">
-      <div className="min-w-0 flex-1">
+    <section aria-label={t.brandTitle} className="flex flex-col gap-3 rounded-xl border border-dashed bg-muted/50 p-4 sm:flex-row sm:items-center">
+      <div className="min-w-0 sm:flex-1">
         <h2 className="font-semibold">{t.brandTitle}</h2>
         <p className="text-sm text-muted-foreground">{t.brandText}</p>
       </div>

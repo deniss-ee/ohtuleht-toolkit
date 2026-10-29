@@ -430,7 +430,7 @@ export const brandEye = {
   custom: "Other colour",
   customLabel: "Background colour",
   previewTitle: "Preview",
-  previewHint: "Drag the letter to move it. Drag the dark part of the eye to change where it looks. Drag the round button to turn the letter.",
+  previewHint: "Drag the letter to move it. Drag the dark part of the eye to change where it looks. Drag the round button to turn the letter. Arrow keys move it, Ctrl+S saves the PNG.",
   turnHandle: "Turn the letter (drag, or use the arrow keys)",
   moreOptions: "More options",
   moreHint: "Picture shape, background, exact position and where the eye looks.",
