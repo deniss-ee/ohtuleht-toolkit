@@ -8,7 +8,7 @@ Tools section of the generator. A looping video on top of a background picture, 
 2. Choose the video (MP4 or WebM).
 3. Set video height (default 360), where it sits (left, centre, right) and the distance from the edge.
 4. For each version choose the background picture. The banner is exactly as big as the picture.
-5. Optional: a link per version. Empty means the address the ad server gives (`clickTag`).
+5. Write the link of the banner (**required**). The second version uses the same link; type a different one in its own field only when it must differ.
 6. Check the preview (tabs switch between the versions), then **Download both zips**.
 
 If only one zip arrives, the browser blocked the second download: allow multiple downloads for the site.
@@ -23,8 +23,14 @@ If only one zip arrives, the browser blocked the second download: allow multiple
 ```
 
 - Whole banner is one click area (ClickTag, same fixed helper as every banner).
-- Video: autoplay, loop, muted, plays inline. A speaker button (top right) turns sound on and off without triggering the click.
+- Video: autoplay, loop, muted, plays inline. Two buttons (top right): **pause / play** and **sound on / off**. Neither triggers the banner click.
 - Zip name = background picture name plus `_1250` or `_1280`, as in the old tool.
+
+## Helpers
+
+- Drop the video and the pictures on their fields instead of using the buttons.
+- Each version shows its expected zip size and a warning above 5 MB (soft limit; check your ad server).
+- Video height, position and distance are remembered in the browser for the next time.
 
 ## Weight
 

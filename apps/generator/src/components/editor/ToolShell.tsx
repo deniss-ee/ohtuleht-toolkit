@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { ArrowLeft, CheckCircle2, TriangleAlert } from "lucide-react";
 import { goTo, HoverPill } from "@/components/editor/HoverPill";
 import { Button } from "@/components/ui/button";
+import { useSaveShortcut } from "@/components/editor/useSaveShortcut";
 import { ui } from "@/content";
 import { Toggles } from "@/layout/AppShell";
 
@@ -38,6 +39,7 @@ export function ToolShell({
   children: ReactNode;
 }) {
   const n = problems.length;
+  useSaveShortcut(onDownload, n === 0 && !busy);
   return (
     <div className="fixed inset-0 z-40 flex flex-col bg-background">
       <header className="flex shrink-0 flex-wrap items-center gap-x-2 gap-y-2 border-b px-3 py-2 lg:h-14 lg:flex-nowrap lg:gap-3 lg:px-4 lg:py-0">
@@ -88,7 +90,7 @@ export function ToolShell({
           </HoverPill>
           {extra}
           <Toggles />
-          <Button className="ml-auto gap-2 sm:ml-0" disabled={n > 0 || busy} onClick={onDownload}>
+          <Button className="ml-auto gap-2 sm:ml-0" disabled={n > 0 || busy} onClick={onDownload} title="Ctrl+S">
             {downloadLabel}
           </Button>
         </div>

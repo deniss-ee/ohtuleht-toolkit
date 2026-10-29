@@ -5,6 +5,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 ## [Unreleased]
 
 ### Added
+- Interface helpers (issue #103): unfinished banner or header bar is kept in the browser with "Continue where you left off" and a warning before leaving; Ctrl+S downloads; the last section is remembered. Image cropper: paste with Ctrl+V, wheel/pinch/slider zoom, JPG size on the button. Movie banner: drop files, zip size check, remembered settings, **pause button** next to mute, and the banner link is now required (the second version may have its own).
 - Brand manual: logo cards have room under the size line; the clear-space note is plain text (issue #101). Blurred background of the image cropper also works in browsers without canvas filters. Pages publishing by hand (`docs/DEPLOY.md`).
 - Same page header (icon, title, intro) on Content marketing, Tools and Brand manual; the three steps on Content marketing sit in their own band (issue #97).
 - GitHub Pages workflow and `docs/DEPLOY.md` (needs a one-time setup by the repository owner).

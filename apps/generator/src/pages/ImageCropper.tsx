@@ -8,8 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { imageCropper as t, ui } from "@/content";
-import { canMove, CANVAS_H, CANVAS_W, clampOffset, draw, makeBlur, MAX_WIDTH, MIN_WIDTH, newCropState, type CropState, type FitMode } from "@/lib/cropper";
+import { canMove, CANVAS_H, CANVAS_W, clampOffset, draw, makeBlur, MAX_WIDTH, MAX_ZOOM, MIN_WIDTH, newCropState, type CropState, type FitMode } from "@/lib/cropper";
 import { download } from "@/lib/zip";
+
+const JPG_QUALITY = 0.95;
+const size = (b: number) => (b >= 1048576 ? `${(b / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`);
 
 interface Loaded {
   img: HTMLImageElement;
@@ -42,11 +45,52 @@ export function ImageCropper({ onBack }: { onBack: () => void }) {
   // The blur is slow to make, so it is made once per picture.
   const blur = useMemo(() => (pic ? makeBlur(pic.img) : null), [pic]);
   const movable = pic ? canMove(pic.img, state) : false;
+  const modeRef = useRef(state.mode);
+  modeRef.current = state.mode;
 
   useEffect(() => {
     const ctx = canvas.current?.getContext("2d");
     if (ctx && pic) draw(ctx, pic.img, state, blur);
   }, [pic, state, blur]);
+
+  // Ctrl+V: a picture from the clipboard (a screenshot, or "copy image" in a browser).
+  const openRef = useRef<(f: File | undefined) => void>(() => {});
+  useEffect(() => {
+    const onPaste = (e: ClipboardEvent) => {
+      const file = [...(e.clipboardData?.items ?? [])].find((i) => i.type.startsWith("image/"))?.getAsFile();
+      if (!file) return;
+      e.preventDefault();
+      openRef.current(file);
+    };
+    window.addEventListener("paste", onPaste);
+    return () => window.removeEventListener("paste", onPaste);
+  }, []);
+
+  // Mouse wheel and pinch zoom the picture (fill and custom width only; other modes leave the page scrolling).
+  const picRef = useRef(pic);
+  picRef.current = pic;
+  useEffect(() => {
+    const el = canvas.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      const p = picRef.current;
+      if (!p) return;
+      const factor = Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0015));
+      setState((s) => {
+        if (s.mode === "cover") {
+          return clampOffset(p.img, { ...s, zoom: Math.min(MAX_ZOOM, Math.max(1, s.zoom * factor)) });
+        }
+        if (s.mode === "custom") {
+          return clampOffset(p.img, { ...s, width: Math.round(Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, (s.width || MIN_WIDTH) * factor))) });
+        }
+        return s;
+      });
+      // Only these two modes zoom, so only there the page must not scroll.
+      if (modeRef.current === "cover" || modeRef.current === "custom") e.preventDefault();
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
 
   const open = async (file: File | undefined) => {
     if (!file) return;
@@ -57,6 +101,16 @@ export function ImageCropper({ onBack }: { onBack: () => void }) {
       toast.error(e instanceof Error ? e.message : t.loadFailed);
     }
   };
+
+  openRef.current = open;
+
+  // Estimated size of the file, so nobody downloads a 5 MB picture by surprise. Made a moment after the last change.
+  const [bytes, setBytes] = useState<number | null>(null);
+  useEffect(() => {
+    if (!pic) return void setBytes(null);
+    const timer = setTimeout(() => canvas.current?.toBlob((b) => setBytes(b ? b.size : null), "image/jpeg", JPG_QUALITY), 500);
+    return () => clearTimeout(timer);
+  }, [pic, state, blur]);
 
   // Changing a setting also keeps the picture inside the allowed area.
   const update = (patch: Partial<CropState>) => setState((s) => (pic ? clampOffset(pic.img, { ...s, ...patch }) : { ...s, ...patch }));
@@ -76,6 +130,14 @@ export function ImageCropper({ onBack }: { onBack: () => void }) {
   const onKey = (e: KeyboardEvent<HTMLCanvasElement>) => {
     const step = e.shiftKey ? 100 : 20;
     const keys: Record<string, [number, number]> = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] };
+    if ((e.key === "+" || e.key === "=" || e.key === "-") && pic) {
+      const up = e.key !== "-";
+      if (state.mode === "cover") update({ zoom: Math.min(MAX_ZOOM, Math.max(1, state.zoom * (up ? 1.1 : 1 / 1.1))) });
+      else if (state.mode === "custom") update({ width: Math.round(Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, state.width * (up ? 1.1 : 1 / 1.1)))) });
+      else return;
+      e.preventDefault();
+      return;
+    }
     const k = keys[e.key];
     if (!k || !movable) return;
     e.preventDefault();
@@ -91,7 +153,7 @@ export function ImageCropper({ onBack }: { onBack: () => void }) {
         toast.success(t.downloaded);
       },
       "image/jpeg",
-      0.95,
+      JPG_QUALITY,
     );
   };
 
@@ -108,7 +170,7 @@ export function ImageCropper({ onBack }: { onBack: () => void }) {
       onBack={onBack}
       downloadLabel={
         <>
-          <Download className="size-4" /> <>{ui.downloadWord}<span className="hidden sm:inline"> {ui.suffixJpg}</span></>
+          <Download className="size-4" /> <>{ui.downloadWord}<span className="hidden sm:inline"> {ui.suffixJpg}</span>{bytes !== null && <span className="hidden text-xs font-normal opacity-80 md:inline"> · {size(bytes)}</span>}</>
         </>
       }
     >
@@ -144,6 +206,7 @@ export function ImageCropper({ onBack }: { onBack: () => void }) {
               <ImageUp className="size-12" />
               <span className="text-lg font-semibold text-foreground">{t.dropTitle}</span>
               <span className="text-sm">{t.dropHint}</span>
+              <span className="text-sm">{t.pasteHint}</span>
             </button>
           )}
         </div>
@@ -157,7 +220,7 @@ export function ImageCropper({ onBack }: { onBack: () => void }) {
               <div role="radiogroup" aria-label={t.modeTitle} className="space-y-2">
                 {t.modes.map((m) => (
                   <label key={m.id} className="flex cursor-pointer items-start gap-3 rounded-lg border p-3 has-checked:border-primary has-checked:bg-primary/5 has-focus-visible:ring-3 has-focus-visible:ring-ring/50">
-                    <input type="radio" name="fitmode" className="mt-1 accent-primary" checked={state.mode === m.id} onChange={() => update({ mode: m.id as FitMode, ox: 0, oy: 0 })} />
+                    <input type="radio" name="fitmode" className="mt-1 accent-primary" checked={state.mode === m.id} onChange={() => update({ mode: m.id as FitMode, zoom: 1, ox: 0, oy: 0 })} />
                     <span>
                       <span className="block text-sm font-medium">{m.name}</span>
                       <span className="block text-xs text-muted-foreground">{m.hint}</span>
@@ -165,11 +228,18 @@ export function ImageCropper({ onBack }: { onBack: () => void }) {
                   </label>
                 ))}
               </div>
+              {state.mode === "cover" && (
+                <div className="mt-3 space-y-1.5">
+                  <Label htmlFor="crop-zoom">{t.zoom}: {Math.round(state.zoom * 100)}%</Label>
+                  <input id="crop-zoom" type="range" min={100} max={MAX_ZOOM * 100} step={5} value={Math.round(state.zoom * 100)} onChange={(e) => update({ zoom: Number(e.target.value) / 100 })} className="w-full accent-primary" />
+                  <p className="text-xs text-muted-foreground">{t.zoomHint}</p>
+                </div>
+              )}
               {state.mode === "custom" && (
                 <div className="mt-3 space-y-1.5">
                   <Label htmlFor="crop-width">{t.width}</Label>
                   <Input id="crop-width" type="number" inputMode="numeric" min={MIN_WIDTH} max={MAX_WIDTH} value={state.width} onChange={(e) => update({ width: Number(e.target.value) })} />
-                  <p className="text-xs text-muted-foreground">{t.widthHint}</p>
+                  <p className="text-xs text-muted-foreground">{t.widthHint} {t.zoomHint}</p>
                 </div>
               )}
             </CardContent>

@@ -9,20 +9,22 @@ export interface CropState {
   mode: FitMode;
   width: number; // used by "custom"
   background: Background;
+  zoom: number; // 1 to MAX_ZOOM, used by "cover"
   ox: number; // picture centre, offset from the canvas centre (canvas px)
   oy: number;
 }
 
-export const newCropState = (): CropState => ({ mode: "fit", width: 1650, background: { type: "blur" }, ox: 0, oy: 0 });
+export const newCropState = (): CropState => ({ mode: "fit", width: 1650, background: { type: "blur" }, zoom: 1, ox: 0, oy: 0 });
 
 export const MIN_WIDTH = 100;
 export const MAX_WIDTH = 3000;
+export const MAX_ZOOM = 4;
 
 // Size the picture is drawn at, per mode.
 export function drawnSize(img: { width: number; height: number }, s: CropState): { w: number; h: number } {
   let scale = 1;
   if (s.mode === "fit") scale = Math.min(CANVAS_W / img.width, CANVAS_H / img.height);
-  else if (s.mode === "cover") scale = Math.max(CANVAS_W / img.width, CANVAS_H / img.height);
+  else if (s.mode === "cover") scale = Math.max(CANVAS_W / img.width, CANVAS_H / img.height) * Math.min(Math.max(s.zoom || 1, 1), MAX_ZOOM);
   else if (s.mode === "custom") scale = Math.min(Math.max(s.width || MIN_WIDTH, MIN_WIDTH), MAX_WIDTH) / img.width;
   return { w: img.width * scale, h: img.height * scale };
 }

@@ -26,6 +26,12 @@ The picture can never leave a gap on an axis where it is bigger than the canvas.
 - **Blurred picture** (default): the picture enlarged to fill the canvas, blurred (48 px) and darkened 25%. Same as the old tool.
 - **One colour**: white by default, any colour via the toolkit colour picker (new; the old tool only had white).
 
+## Helpers
+
+- **Ctrl+V** pastes a picture from the clipboard (a screenshot, or "copy image" in a browser).
+- **Zoom**: in "Fill the canvas" the mouse wheel, pinch, the slider or the `+` / `-` keys zoom (100% to 400%); in "Custom width" they change the width.
+- The Download button shows the expected size of the JPG.
+
 ## Output
 
 JPG, 1920x1080, quality 95. Weight depends on the picture; typical photos are 300 KB to 1 MB.

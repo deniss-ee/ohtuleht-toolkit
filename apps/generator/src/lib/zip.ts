@@ -22,6 +22,7 @@ export function download(blob: Blob, name: string) {
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+  window.dispatchEvent(new Event("ol-downloaded")); // the app stops warning about unsaved work
 }
 
 export const downloadZip = async (draft: Draft) => download(await buildZip(draft), zipName(draft));
