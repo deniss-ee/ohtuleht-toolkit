@@ -1,5 +1,6 @@
 import { useRef } from "react";
-import { FileUp, Images, Newspaper, PanelTop, Smartphone, type LucideIcon } from "lucide-react";
+import { ChevronRight, FileUp, LayoutTemplate, Images, Newspaper, PanelTop, Smartphone, type LucideIcon } from "lucide-react";
+import { PageHeader } from "@/components/editor/PageHeader";
 import { IconChip } from "@/components/editor/IconChip";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,14 +24,12 @@ export function ContentMarketingHome({ onCreate, onUpload }: { onCreate: (typeId
   const input = useRef<HTMLInputElement>(null);
   return (
     <div className="mx-auto max-w-5xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">{t.title}</h1>
-        <p className="text-muted-foreground">{t.intro}</p>
-      </div>
+      <PageHeader icon={LayoutTemplate} title={t.title} intro={t.intro} />
 
-      <ol className="grid gap-3 sm:grid-cols-3">
+      <ol className="flex flex-col gap-3 rounded-xl border border-dashed bg-muted/50 p-4 sm:flex-row sm:items-stretch sm:gap-2">
         {t.steps.map((s, i) => (
-          <li key={s.title} className="flex items-start gap-3 rounded-xl border p-4">
+          <li key={s.title} className="flex flex-1 items-start gap-3 sm:items-center">
+            {i > 0 && <ChevronRight className="hidden size-5 shrink-0 text-muted-foreground sm:block" aria-hidden />}
             <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">{i + 1}</span>
             <div>
               <div className="font-medium">{s.title}</div>
