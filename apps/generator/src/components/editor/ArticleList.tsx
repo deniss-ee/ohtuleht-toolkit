@@ -13,10 +13,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { editor as t } from "@/content";
 import { emptyArticle } from "@/lib/banner";
 import { parseSnippets } from "@/lib/snippets";
+import { readableOn } from "@ohtuleht/templates";
+import { useTheme } from "@/components/theme-provider";
 
 // Thumbnail of the article image so people can see what they are adding.
 function Thumb({ src, badge, badgeColor }: { src: string; badge: string; badgeColor?: string }) {
   const [failed, setFailed] = useState<string | null>(null);
+  const { resolvedTheme } = useTheme();
   const bad = !src || failed === src;
   return (
     <div className="relative aspect-[300/215] w-full self-start overflow-hidden rounded-md bg-muted sm:w-56 sm:shrink-0">
@@ -29,7 +32,7 @@ function Thumb({ src, badge, badgeColor }: { src: string; badge: string; badgeCo
         <img src={src} alt="" className="h-full w-full object-cover" onError={() => setFailed(src)} />
       )}
       {badge && (
-        <span className="absolute bottom-0 left-0 bg-background px-1.5 pt-1 text-[11px] font-bold leading-none" style={{ color: badgeColor || "var(--foreground)" }}>
+        <span className="absolute bottom-0 left-0 bg-background px-1.5 pt-1 text-[11px] font-bold leading-none" style={{ color: badgeColor ? readableOn(badgeColor, resolvedTheme === "dark" ? "#111113" : "#ffffff") : "var(--foreground)" }}>
           {badge}
         </span>
       )}
