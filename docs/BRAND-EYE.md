@@ -37,5 +37,5 @@ White outline on a light or transparent background shows a warning (contrast und
 
 ## Open items
 
-- `brand.json` red 600 is `#F50000`; the Figma eye is bound to a variable whose value is `#F20312` (iris `#520005`, brand.json has `#520000`). The tool uses brand.json.
+- Colours follow the brand manual (`brand.json`): red 600 `#F50000` for the body and cap, red 950 `#520000` for the iris. Decided by the user; the Figma file variable reads slightly differently (`#F20312`), the manual wins.
 - Custom canvas size in pixels.
