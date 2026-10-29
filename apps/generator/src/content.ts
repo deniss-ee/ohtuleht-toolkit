@@ -1,5 +1,5 @@
 // All interface text and navigation in one place (language files come later).
-export type PageId = "content" | "brand" | "tasks";
+export type PageId = "content" | "tools" | "brand" | "tasks";
 
 export interface NavItem {
   id: PageId;
@@ -9,6 +9,7 @@ export interface NavItem {
 
 export const nav: NavItem[] = [
   { id: "content", label: "Content marketing", ready: true },
+  { id: "tools", label: "Tools", ready: true },
   { id: "brand", label: "Brand manual", ready: true },
   { id: "tasks", label: "Task tracker", ready: false },
 ];
@@ -267,4 +268,55 @@ export const brandManual = {
   sizeInfo: (w: number, h: number) => `Artwork ${w} × ${h}`,
   safeZonePad: (p: number) => `safe zone ${p} on each side`,
   pngFailed: "Could not create the picture.",
+};
+
+// Tools section: small stand-alone helpers (not banners made from articles).
+export interface ToolInfo {
+  id: "image-cropper" | "movie-banner";
+  name: string;
+  description: string;
+  tag: string;
+  ready: boolean;
+}
+
+export const tools = {
+  title: "Tools",
+  intro: "Small helpers for everyday work. Pick one.",
+  open: "Open",
+  soon: "Soon",
+  back: "Back to Tools",
+  items: [
+    { id: "image-cropper", name: "Image cropper", description: "Put any picture on a 1920x1080 canvas and download it as a JPG.", tag: "1920x1080", ready: true },
+    { id: "movie-banner", name: "Movie banner", description: "Banner with a video on a background picture. Makes two zips for the ad server.", tag: "1250 and 1280", ready: false },
+  ] satisfies ToolInfo[],
+};
+
+export const imageCropper = {
+  title: "Image cropper",
+  intro: "Put a picture on a 1920x1080 canvas. Drag it to move it, then download.",
+  dropTitle: "Drop a picture here",
+  dropHint: "or click to choose one (JPG, PNG, WebP, GIF)",
+  notImage: "That file is not a picture.",
+  loadFailed: "The picture could not be opened.",
+  canvasLabel: "Preview of the 1920x1080 picture. Drag it, or use the arrow keys, to move the picture.",
+  modeTitle: "How the picture fits",
+  modes: [
+    { id: "fit", name: "Fit completely", hint: "The whole picture is visible. Empty space is filled with the background." },
+    { id: "cover", name: "Fill the canvas", hint: "No empty space. The edges are cut off. Drag to choose what stays." },
+    { id: "original", name: "Original size", hint: "No scaling. Big pictures can be dragged." },
+    { id: "custom", name: "Custom width", hint: "You choose the width of the picture." },
+  ],
+  width: "Width (px)",
+  widthHint: "Between 100 and 3000.",
+  backgroundTitle: "Background",
+  backgroundBlur: "Blurred picture",
+  backgroundColour: "One colour",
+  colour: "Background colour",
+  moveHint: "Drag the picture in the preview, or click it and use the arrow keys.",
+  noMove: "In this mode the picture cannot be moved.",
+  centre: "Centre picture",
+  other: "Choose another picture",
+  download: "Download JPG",
+  downloaded: "Picture saved.",
+  size: (w: number, h: number) => `Original picture: ${w} x ${h} px`,
 };

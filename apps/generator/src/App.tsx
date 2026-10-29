@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { contentMarketing, editor, type PageId } from "@/content";
+import { contentMarketing, editor, type PageId, type ToolInfo } from "@/content";
 import { AppShell } from "@/layout/AppShell";
 import { newDraft, type Draft } from "@/lib/banner";
 import { importHeaderZip, newHeaderDraft, type HeaderDraft } from "@/lib/header";
@@ -14,6 +14,8 @@ import { BannerEditor } from "@/pages/BannerEditor";
 import { BrandManual } from "@/pages/BrandManual";
 import { ContentMarketingHome } from "@/pages/ContentMarketingHome";
 import { HeaderBarEditor } from "@/pages/HeaderBarEditor";
+import { ImageCropper } from "@/pages/ImageCropper";
+import { ToolsHome } from "@/pages/ToolsHome";
 
 // What is being edited right now: nothing (start screen), an articles banner, or a header bar.
 type Work = { kind: "banner"; draft: Draft } | { kind: "header"; draft: HeaderDraft } | null;
@@ -21,6 +23,7 @@ type Work = { kind: "banner"; draft: Draft } | { kind: "header"; draft: HeaderDr
 export function App() {
   const [page, setPage] = useState<PageId>("content");
   const [work, setWork] = useState<Work>(null);
+  const [tool, setTool] = useState<ToolInfo["id"] | null>(null); // open tool in the Tools section
   const [notes, setNotes] = useState<string[]>([]); // things to check after opening an old banner
 
   const create = (typeId: string) => setWork(typeId === "header-bar" ? { kind: "header", draft: newHeaderDraft() } : { kind: "banner", draft: newDraft(typeId === "articles-mobile" ? "articles-mobile" : "articles-1250x400") });
@@ -53,6 +56,7 @@ export function App() {
           onNavigate={(p) => {
             setPage(p);
             close();
+            setTool(null);
           }}
         >
           {page === "content" &&
@@ -63,6 +67,7 @@ export function App() {
             ) : (
               <ContentMarketingHome onCreate={create} onUpload={open} />
             ))}
+          {page === "tools" && (tool === "image-cropper" ? <ImageCropper onBack={() => setTool(null)} /> : <ToolsHome onOpen={setTool} />)}
           {page === "brand" && <BrandManual />}
         </AppShell>
         <Dialog open={notes.length > 0} onOpenChange={(o) => !o && setNotes([])}>

@@ -14,6 +14,8 @@ A modular set of internal tools for the Õhtuleht newsroom and ad sales: banner 
 | Old Swiper zip import | Open banners made before this tool (articles type), edit, export without Swiper | **Built** ([docs](docs/BANNERS.md#opening-old-swiper-banners)) |
 | Header bar | The 100% wide, 46 px bar for theme pages (iframe): html + css zip, iframe code | **Built** ([docs](docs/HEADER-BAR.md)) |
 | Brand manual | Colours (copy as HEX/RGB/HSL/CSS/Tailwind, contrast, token export) and 6 logo variants (SVG, PNG, safe zone, sizes) | **Colours and logos built** ([docs](docs/BRAND-MANUAL.md)); typography and ad formats planned (#18) |
+| Tools: Image cropper | Any picture onto a 1920x1080 canvas (fit, fill, original, custom width, blurred or colour background), JPG | **Built** ([docs](docs/IMAGE-CROPPER.md)) |
+| Tools: Movie banner | Video on a background picture, two zips (1250 and 1280) for the ad server | In progress (#92) |
 | Article bookmarklet v2 | Copy an article as a snippet from the live site | **Built** ([docs](docs/BOOKMARKLET.md)) |
 | Article API (Cloudflare Worker) | Fetch article title and picture from a URL | Planned, Phase 2 |
 | Hosted banners + login | Banners served by URL, Microsoft login, Estonian UI | Planned, Phase 3 |
@@ -33,6 +35,7 @@ Full plan: [docs/ROADMAP.md](docs/ROADMAP.md).
 | [docs/BANNERS.md](docs/BANNERS.md) | See each banner format's rules, sizes, weight limits, ad-server notes |
 | [docs/HEADER-BAR.md](docs/HEADER-BAR.md) | Make the header bar for theme pages and get its iframe code |
 | [docs/BRAND-MANUAL.md](docs/BRAND-MANUAL.md) | See the brand manual, the colour and logo rules, and `brand.json` |
+| [docs/IMAGE-CROPPER.md](docs/IMAGE-CROPPER.md) | Use the image cropper (1920x1080 JPG) |
 | [docs/BOOKMARKLET.md](docs/BOOKMARKLET.md) | Install and use the article bookmarklet |
 | [docs/RECOMMENDATIONS.md](docs/RECOMMENDATIONS.md) | Follow working advice and checklists |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Know the rules for changes and reviews |
