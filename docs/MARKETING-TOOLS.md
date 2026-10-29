@@ -21,7 +21,7 @@ The **Article number** field is a placeholder: fetching an article by its number
 
 ## Picture link converter
 
-Paste picture links from the CMS (one per line). Both forms are accepted: `/webp/53/i/...` (site) and `/53/i/...` (CMS). The tool gives the same links with `/webp/54/` (desktop banner) and `/webp/48/` (mobile banner). The result is always the `/webp/54/` and `/webp/48/` form. A line without a size number is reported by its line number and skipped. The rule lives in `withPictureSize` in `apps/generator/src/lib/image.ts`.
+Paste picture links from the CMS (one per line). Both forms are accepted: `/webp/53/i/...` (site) and `/53/i/...` (CMS). The tool gives the same links with `/webp/54/` (desktop banner) and `/webp/48/` (mobile banner). The result is always the `/webp/54/` and `/webp/48/` form. A link with no size at all (`https://p.ohtuleht.ee/i/...`) gets one. Any other line is reported by its line number and skipped. The rule lives in `withPictureSize` in `apps/generator/src/lib/image.ts`.
 
 ## Open items
 
