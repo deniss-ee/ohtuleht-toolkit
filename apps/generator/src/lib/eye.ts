@@ -100,7 +100,7 @@ export async function eyePng(s: EyeState, pixelWidth: number): Promise<Blob> {
 
 export type RuleId = "iris" | "cap" | "eye" | "letter";
 // Shares of each part that must stay inside the picture.
-export const LIMITS: Record<RuleId, number> = { iris: 1, cap: 1, eye: 0.85, letter: 0.55 };
+export const LIMITS: Record<RuleId, number> = { iris: 1, cap: 1, eye: 0.8, letter: 0.55 };
 // Shares are counted on sample points, so a small slack is allowed (the cap and iris get almost none).
 const SLACK: Record<RuleId, number> = { iris: 0.002, cap: 0.002, eye: 0.01, letter: 0.01 };
 
