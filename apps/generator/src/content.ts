@@ -287,7 +287,7 @@ export const tools = {
   back: "Back to Tools",
   items: [
     { id: "image-cropper", name: "Image cropper", description: "Put any picture on a 1920x1080 canvas and download it as a JPG.", tag: "1920x1080", ready: true },
-    { id: "movie-banner", name: "Movie banner", description: "Banner with a video on a background picture. Makes two zips for the ad server.", tag: "1250 and 1280", ready: false },
+    { id: "movie-banner", name: "Movie banner", description: "Banner with a video on a background picture. Makes two zips for the ad server.", tag: "1250 and 1280", ready: true },
   ] satisfies ToolInfo[],
 };
 
@@ -319,4 +319,41 @@ export const imageCropper = {
   download: "Download JPG",
   downloaded: "Picture saved.",
   size: (w: number, h: number) => `Original picture: ${w} x ${h} px`,
+};
+
+export const movieBanner = {
+  title: "Movie banner",
+  intro: "A video on top of a background picture. You get two zips, one for each picture size the client sent.",
+  previewTitle: "How it looks",
+  previewEmpty: "Choose a background picture to see the banner.",
+  previewScaled: (pct: number, size: string) => `Shown at ${pct}% to fit your screen. The real banner is ${size}.`,
+  previewFull: (size: string) => `Shown at full size, ${size}.`,
+  videoTitle: "Video",
+  videoChoose: "Choose video",
+  videoChange: "Change video",
+  videoHint: "MP4 or WebM. It plays on a loop, without sound. Viewers can turn the sound on.",
+  videoHeight: "Video height (px)",
+  position: "Where the video sits",
+  positions: [
+    { id: "left", label: "Left" },
+    { id: "center", label: "Centre" },
+    { id: "right", label: "Right" },
+  ],
+  offset: "Distance from the edge (px)",
+  versionTitle: (label: string) => `Version ${label}`,
+  backgroundChoose: "Choose background picture",
+  backgroundChange: "Change background picture",
+  backgroundHint: (w: number, h: number) => `The banner is as big as the picture: ${w} x ${h} px.`,
+  link: "Link (optional)",
+  linkHint: "Where a click goes. Empty = the address the ad server gives.",
+  linkPlaceholder: "https://example.com",
+  noFile: "Nothing chosen yet",
+  notVideo: "That file is not a video (use MP4 or WebM).",
+  notImage: "That file is not a picture.",
+  download: "Download both zips",
+  building: "Building...",
+  ready: "Ready to download",
+  toFix: (n: number) => `${n} thing${n === 1 ? "" : "s"} left to do`,
+  saved: (a: string, b: string) => `Two zips saved: ${a} and ${b}.`,
+  allowDownloads: "If only one zip arrives, allow multiple downloads for this site in your browser.",
 };
