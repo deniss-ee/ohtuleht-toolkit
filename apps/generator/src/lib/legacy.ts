@@ -132,7 +132,7 @@ export async function importLegacy(zip: JSZip, doc: Document, zipName: string): 
     header: config,
     badge: campaignBadge || "Sisuturundus",
     theme: { light, dark: darkTheme },
-    behavior: { shuffle: false, autoplay, delayMs: delay ?? 2500, speedMs: speed ?? 250, loop },
+    behavior: { shuffle: false, autoplay, delayMs: delay ?? 3000, speedMs: speed ?? 250, loop },
     articles,
   };
   return { draft: { config: cfg, headerFile }, notes };

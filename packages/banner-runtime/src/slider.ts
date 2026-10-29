@@ -32,7 +32,7 @@ function readOptions(el: HTMLElement): Options {
   return {
     visible: Math.max(1, num("visible", 4)),
     gap: num("gap", 16),
-    delay: num("delay", 2500),
+    delay: num("delay", 3000),
     speed: num("speed", 250),
     shuffle: num("shuffle", 1) === 1,
     loop: num("loop", 1) === 1,

@@ -24,7 +24,7 @@ Nothing on its own. The templates inline `dist/runtime.js` and `src/slider.css` 
 ## Markup
 
 ```html
-<div class="ol-slider" data-visible="4" data-gap="16" data-delay="2500" data-speed="250" data-shuffle="1" data-loop="1">
+<div class="ol-slider" data-visible="4" data-gap="16" data-delay="3000" data-speed="250" data-shuffle="1" data-loop="1">
   <button class="ol-prev" aria-label="Previous"></button>
   <div class="ol-viewport"><div class="ol-track">
     <div class="ol-slide" onclick="...">...</div>
@@ -39,7 +39,7 @@ Optional pagination (used by the mobile banner, which has no arrows): `<div clas
 |---|---|---|
 | `data-visible` | 4 | Slides in view |
 | `data-gap` | 16 | Gap in px |
-| `data-delay` | 2500 | Autoplay delay in ms, 0 = off |
+| `data-delay` | 3000 | Autoplay delay in ms, 0 = off |
 | `data-speed` | 250 | Transition time in ms |
 | `data-shuffle` | 1 | Shuffle slides on load |
 | `data-loop` | 1 | Endless loop |
