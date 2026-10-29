@@ -19,7 +19,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { editor as t } from "@/content";
 import { ThemeToggle } from "@/layout/AppShell";
-import { bytesOf, exampleDraft, FORMATS, problems, renderExport, type Draft } from "@/lib/banner";
+import { bytesOf, exampleDraft, FORMATS, problems, renderExport, switchFormat, type Draft } from "@/lib/banner";
 import { downloadZip, fileToHeader } from "@/lib/zip";
 
 const BUDGET_KB = 100;
@@ -143,6 +143,19 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
           <div className="truncate font-semibold leading-tight">{c.campaign.trim() || t.untitled}</div>
           <div className="text-xs text-muted-foreground">{t.heading} · {FORMATS[c.format].label}</div>
         </div>
+        <Tabs
+          value={c.format}
+          onValueChange={(v) => {
+            const format = v as ArticlesBannerConfig["format"];
+            onChange(switchFormat(draft, format));
+            toast.success(t.versionSwitched(format === "articles-mobile" ? t.versionMobile : t.versionDesktop));
+          }}
+        >
+          <TabsList aria-label={t.versionLabel}>
+            <TabsTrigger value="articles-1250x400">{t.versionDesktop} 1250x400</TabsTrigger>
+            <TabsTrigger value="articles-mobile">{t.versionMobile}</TabsTrigger>
+          </TabsList>
+        </Tabs>
         <div className="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:flex-nowrap lg:gap-3">
         <HoverPill
           tone="plain"

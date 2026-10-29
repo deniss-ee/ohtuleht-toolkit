@@ -99,6 +99,8 @@ Design: Figma "Õhtuleht - Brand hub", frame "Mobile Content". Format id `articl
 - Swipe, drag, autoplay, loop and shuffle as in the desktop banner. No arrows.
 - Theme: light background white, dark background `#1c1c1c`. Header colour and picture work as on desktop. Title and label colours do not apply, so the editor hides them.
 - The editor preview has a phone width switch (375, 390, 430).
+- **Desktop and mobile are one campaign.** The editor has a Desktop 1250x400 / Mobile switch at the top: one click turns the banner into the other size and keeps everything (campaign, header, articles, colours, behaviour). Download each size separately. The dark background follows the format unless it was changed by hand.
+- The preview frame is 515 px high (8 px above and below the 499 px banner) so the dots are never cut by the frame edge. In the ad system give the slot at least 499 px.
 - Open: best header picture size for mobile (the hint still names the desktop size), 1 px line height rounding (18 x 1.3 = 23.4 is 23 px).
 
 ## Figma to banner handoff

@@ -26,11 +26,21 @@ export interface Draft {
 const light: ThemeColors = { bg: "#ffffff", text: "#272727", hover: "#e3000f" };
 const dark: ThemeColors = { bg: "#0f0f0f", text: "#ffffff", hover: "#e3000f" };
 
-// Preview frame size and name of each format. The mobile banner fills the width of the phone: the frame is the Figma frame (376 wide, 8 px margins).
-export const FORMATS: Record<ArticlesFormat, { label: string; width: number; height: number; suffix: string }> = {
-  "articles-1250x400": { label: "1250x400", width: 1250, height: 400, suffix: "1250x400" },
-  "articles-mobile": { label: "Mobile", width: 376, height: 499, suffix: "mobile" },
+// Preview frame size and name of each format. The mobile banner is 499 px high and fills the width of the phone;
+// its preview frame is 8 px taller above and below so the dots at the very bottom are never cut by the frame edge.
+export const FORMATS: Record<ArticlesFormat, { label: string; width: number; height: number; suffix: string; darkBg: string }> = {
+  "articles-1250x400": { label: "1250x400", width: 1250, height: 400, suffix: "1250x400", darkBg: "#0f0f0f" },
+  "articles-mobile": { label: "Mobile", width: 376, height: 515, suffix: "mobile", darkBg: "#1c1c1c" },
 };
+
+// Same banner, other size: everything is kept (campaign, header, articles, colours, behaviour).
+// The dark background follows the new format unless it was changed by hand.
+export function switchFormat(draft: Draft, format: ArticlesFormat): Draft {
+  const c = draft.config;
+  if (c.format === format) return draft;
+  const dark = c.theme.dark.bg === FORMATS[c.format].darkBg ? { ...c.theme.dark, bg: FORMATS[format].darkBg } : c.theme.dark;
+  return { ...draft, config: { ...c, format, theme: { ...c.theme, dark } } };
+}
 
 const render = (c: ArticlesBannerConfig, assets: Parameters<typeof renderArticles1250x400>[1]) => (c.format === "articles-mobile" ? renderArticlesMobile(c, assets) : renderArticles1250x400(c, assets));
 
@@ -44,7 +54,7 @@ export function newDraft(format: ArticlesFormat = "articles-1250x400"): Draft {
       primary: "#f50000", // brand red (Primary Red 600)
       header: { type: "color", href: "" },
       badge: "Sisuturundus",
-      theme: { light: { ...light }, dark: { ...dark, ...(format === "articles-mobile" ? { bg: "#1c1c1c" } : {}) } },
+      theme: { light: { ...light }, dark: { ...dark, bg: FORMATS[format].darkBg } },
       behavior: { shuffle: true, autoplay: true, delayMs: 2500, speedMs: 250, loop: true },
       articles: [],
     },
