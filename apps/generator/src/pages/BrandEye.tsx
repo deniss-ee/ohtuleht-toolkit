@@ -153,30 +153,6 @@ export function BrandEye() {
   return (
     <div className="grid gap-x-6 gap-y-4 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div className="min-w-0 space-y-3">
-        <section aria-label={t.safety} className="rounded-xl border bg-card p-2">
-          <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-x-3 px-1">
-            <h2 className="text-sm font-semibold">{t.safety}</h2>
-            <span className="text-xs text-muted-foreground [@media(min-width:640px)_and_(max-height:860px)]:hidden">{t.safetyIntro}</span>
-          </div>
-          <ul className="grid grid-cols-2 gap-1.5 text-xs sm:text-sm xl:grid-cols-4">
-            {RULES.map((id) => {
-              const ok = !safety.broken.includes(id);
-              const Icon = ok ? Check : X;
-              return (
-                <li
-                  key={id}
-                  title={`${t.rules[id]} (${Math.round(safety.shares[id] * 100)}% / ${Math.round(LIMITS[id] * 100)}%)`}
-                  className={`flex items-center gap-2 rounded-lg border px-2 py-1.5 ${ok ? "border-green-600/40 bg-green-600/10" : "border-red-600/60 bg-red-600/15 text-red-700 dark:text-red-300"}`}
-                >
-                  <span className={`flex size-5 shrink-0 items-center justify-center rounded-full text-white ${ok ? "bg-green-600" : "bg-red-600"}`}>
-                    <Icon className="size-3.5" strokeWidth={3} aria-hidden />
-                  </span>
-                  <span className="leading-tight">{t.rulesShort[id]}</span>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
 
         {/* The picture fits the screen height, so the controls beside it stay in view. Notes and the red cross are drawn on top of it, so nothing around it moves. */}
         <div
@@ -184,7 +160,7 @@ export function BrandEye() {
           role="img"
           aria-label={t.previewLabel}
           className="relative mx-auto cursor-grab touch-none overflow-hidden rounded-xl border active:cursor-grabbing"
-          style={{ aspectRatio: `${w} / ${h}`, width: `min(100%, calc((100vh - 19rem) * ${w / h}))`, minWidth: "min(100%, 240px)", ...checker, backgroundColor: background ?? undefined }}
+          style={{ aspectRatio: `${w} / ${h}`, width: `min(100%, calc((100vh - 12rem) * ${w / h}))`, minWidth: "min(100%, 240px)", ...checker, backgroundColor: background ?? undefined }}
           onPointerDown={onDown}
           onPointerMove={onMove}
           onPointerUp={onUp}
@@ -222,7 +198,32 @@ export function BrandEye() {
         <p className="text-center text-xs text-muted-foreground">{t.previewHint}</p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
+        <section aria-label={t.safety} className="rounded-xl border bg-card p-2">
+          <div className="mb-1 px-1">
+            <h2 className="text-sm font-semibold">{t.safety}</h2>
+            <p className="text-xs text-muted-foreground [@media(min-width:640px)_and_(max-height:860px)]:hidden">{t.safetyIntro}</p>
+          </div>
+          <ul className="space-y-1 text-xs">
+            {RULES.map((id) => {
+              const ok = !safety.broken.includes(id);
+              const Icon = ok ? Check : X;
+              return (
+                <li
+                  key={id}
+                  title={`${t.rules[id]} (${Math.round(safety.shares[id] * 100)}% / ${Math.round(LIMITS[id] * 100)}%)`}
+                  className={`flex items-center gap-2 rounded-md border px-2 py-1 ${ok ? "border-green-600/40 bg-green-600/10" : "border-red-600/60 bg-red-600/15 text-red-700 dark:text-red-300"}`}
+                >
+                  <span className={`flex size-4 shrink-0 items-center justify-center rounded-full text-white ${ok ? "bg-green-600" : "bg-red-600"}`}>
+                    <Icon className="size-3" strokeWidth={3} aria-hidden />
+                  </span>
+                  <span className="leading-tight">{t.rulesShort[id]}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+
         <section className="space-y-2">
           <h3 className="text-sm font-medium">{t.style}</h3>
           <Tabs value={eye.style} onValueChange={(v) => setEye({ ...eye, style: v as EyeState["style"] })}>
@@ -249,16 +250,6 @@ export function BrandEye() {
           </div>
         </section>
 
-        <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium">{t.adjust}</h3>
-            <Button variant="ghost" size="sm" className="gap-2" onClick={() => setEye({ ...newEye(eye.style), ratio: eye.ratio, background: eye.background })}>
-              <RotateCcw className="size-4" /> {t.reset}
-            </Button>
-          </div>
-          <Slider label={t.rotation} value={eye.angle} min={-180} max={180} unit="°" onChange={(v) => change({ ...eye, angle: v })} />
-          <Slider label={t.size} value={eye.size * 100} min={40} max={220} unit="%" onChange={(v) => change({ ...eye, size: v / 100 })} />
-        </section>
 
         <section className="space-y-3 rounded-xl border bg-card p-3">
           <div className="flex items-center gap-3">
@@ -285,6 +276,17 @@ export function BrandEye() {
             </Button>
           </div>
           {!safety.ok && <p className="text-xs text-destructive">{t.cannotDownload}</p>}
+        </section>
+
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-medium">{t.adjust}</h3>
+            <Button variant="ghost" size="sm" className="gap-2" onClick={() => setEye({ ...newEye(eye.style), ratio: eye.ratio, background: eye.background })}>
+              <RotateCcw className="size-4" /> {t.reset}
+            </Button>
+          </div>
+          <Slider label={t.rotation} value={eye.angle} min={-180} max={180} unit="°" onChange={(v) => change({ ...eye, angle: v })} />
+          <Slider label={t.size} value={eye.size * 100} min={40} max={220} unit="%" onChange={(v) => change({ ...eye, size: v / 100 })} />
         </section>
 
         <details className="group rounded-xl border bg-card">
