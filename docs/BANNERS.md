@@ -49,7 +49,7 @@ Bar 1248x46 with 6 px corners, filled with the main colour or with a background 
 
 **Per-campaign colours (all editable, light and dark)**
 
-Badge colour (and per-article badge colour), hover colour (red `#e3000f` by default: titles always turn red on hover), header background (image or colour), title colour, page background. The Kultuurisügis values (`#9500b2`, `#e3000f`, `#003784`) are only this campaign's preset.
+Badge colour (and per-article badge colour), hover colour (red `#e3000f` by default: titles always turn red on hover), header background (image or colour), title colour, page background. These values are only starting points: every campaign sets its own.
 
 ### Opening old Swiper banners
 

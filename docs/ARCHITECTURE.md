@@ -52,9 +52,9 @@ Older Swiper zips have no such block. `apps/generator/src/lib/legacy.ts` reads t
 {
   "v": 1,
   "format": "articles-1250x400",
-  "campaign": "Kultuurisügis 2710",
-  "primary": "#9500b2",
-  "header": { "type": "image", "src": "header.webp", "avg": "#8a0aa6", "href": "https://www.ohtuleht.ee/teemalehed/..." },
+  "campaign": "Example campaign",
+  "primary": "#f50000",
+  "header": { "type": "image", "src": "header.webp", "avg": "#8a0aa6", "href": "https://example.com/campaign" },
   "theme": {
     "light": { "bg": "#ffffff", "text": "#272727", "hover": "#e3000f" },
     "dark":  { "bg": "#0f0f0f", "text": "#ffffff", "hover": "#e3000f" }
@@ -69,7 +69,7 @@ Older Swiper zips have no such block. `apps/generator/src/lib/legacy.ts` reads t
 
 `header.textInPicture` (optional, picture headers only) means the picture already has the campaign name on it, so the template does not write the name again. Only banners opened from old zips have it; new banners leave it out and the editor shows its checkbox only when it exists.
 
-The main colour `primary` drives the header, the arrows and the default label colour. In each theme, `badge` (label colour) and `headerBg` are optional overrides; when empty, the label colour is the main colour automatically lightened or darkened until it is readable on that theme's background (contrast 4.5:1), and the header is the main colour. Each article may carry its own `badge` text and `badgeColor`; without them the campaign `badge` and theme colour apply. Colours are per campaign. The values above are only the Kultuurisügis preset. Fields are validated by `packages/templates/src/validate.ts`, which returns plain-language problems with the field they belong to.
+The main colour `primary` drives the header, the arrows and the default label colour. In each theme, `badge` (label colour) and `headerBg` are optional overrides; when empty, the label colour is the main colour automatically lightened or darkened until it is readable on that theme's background (contrast 4.5:1), and the header is the main colour. Each article may carry its own `badge` text and `badgeColor`; without them the campaign `badge` and theme colour apply. Colours are per campaign. The values above are only an example. Fields are validated by `packages/templates/src/validate.ts`, which returns plain-language problems with the field they belong to.
 
 ## ClickTag
 

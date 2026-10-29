@@ -1,53 +1,56 @@
-// Renders the Kultuurisügis example (articles taken from the legacy banner) into example-output/.
+// Renders a plain example banner (desktop and mobile) into example-output/.
+// Made-up texts, example.com links, placeholder pictures, solid colour header, default labels and colours.
 // Run: yarn workspace @ohtuleht/templates example   (build banner-runtime first)
-import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { gzipSync } from "node:zlib";
-import { renderArticles1250x400, validate } from "../src/index.ts";
+import { renderArticles1250x400, renderArticlesMobile, validate } from "../src/index.ts";
 import type { ArticlesBannerConfig } from "../src/index.ts";
 
 const root = new URL("../../../", import.meta.url);
 const out = new URL("../example-output/", import.meta.url);
 
-const img = (path: string) => `https://p.ohtuleht.ee/webp/54/i/${path}`;
-const articles: ArticlesBannerConfig["articles"] = [
-  { url: "https://www.ohtuleht.ee/1169772/", image: img("2026/10/26/t1ovwidw.aju.jpg"), title: "Kaks komöödiat, üks kindel lubadus: rohkesti naeru, äratundmist ja ootamatuid pöördeid!" },
-  { url: "https://www.ohtuleht.ee/1169357/", image: img("2026/10/21/ljqh0wyf.zk2.jpg"), title: "Novembrimaagia: Sinatrale pühendatud galaõhtu viib kuulaja aega, mil muusika oli elegantne ja õhk täis romantikat" },
-  { url: "https://www.ohtuleht.ee/1169358/", image: img("2026/10/21/i4kotj21.a5u.jpg"), title: "Muhedad jõulukontserdid: Koit Toome ja Karl-Erik Taukar lubavad kauneid duette ja põnevaid muusikalisi valikuid" },
-  { url: "https://www.ohtuleht.ee/1169360/", image: img("2026/10/21/ikgyfay1.0d4.jpg"), title: "Huumor ja kaunis jõulumuusika – just seda pakuvad Suured Tüdrukud ja Reigo Tamm!" },
-  { url: "https://www.ohtuleht.ee/1169361/", image: img("2026/10/21/uhkpo021.vhi.jpg"), title: "Hispaania tenorite trio Les Bohèmes toob publikuni maailmakuulsa ooperimuusika – tõeliselt elegantses võtmes" },
-  { url: "https://www.ohtuleht.ee/1169362/", image: img("2026/10/20/0ba3iixt.ati.jpg"), title: "Ines astub jõuluajal taas lavale! Õhtu, mil ei pea kuhugi kiirustama ja võib nautida jõuluaja maagiat..." },
-  { url: "https://www.ohtuleht.ee/1156030/", image: img("2026/4/21/oz3s4yvd.zdl.jpg"), title: "Palju äratundmist, aga ka magusvalusaid hetki – just seda pakub Vabamu näitus „Ilmaküla eestlased“" },
-  { url: "https://www.ohtuleht.ee/1168830/", image: img("2026/10/12/vbwbsn5w.yyz.jpg"), title: "INGER kirjutas armastuskirja suvele. Lühialbumi „SUWE“ esitluskontsert toimub 12. novembril Telliskivis!" },
+const img = (seed: string) => `https://picsum.photos/seed/${seed}/800/1000`;
+const titles = [
+  "Näidisartikkel: lühike pealkiri",
+  "Siia tuleb artikli pealkiri, mis on kahe rea pikkune ja näitab, kuidas tekst kaardil murdub",
+  "Kolmas näide: pikem pealkiri, mis jätkub veel natuke, et näha mitme rea paigutust ja kaardi alumist osa",
+  "Neljas näidisartikkel ilma pikema jututa",
+  "Viies näide: mõned sõnad, mis täidavad pealkirja ja näitavad kaardi ilmet",
+  "Kuues ja viimane näidisartikkel, et libistamine ja täpid oleks näha",
 ];
+const articles: ArticlesBannerConfig["articles"] = titles.map((title, i) => ({ url: `https://example.com/article-${i + 1}`, image: img(`ol-example-${i + 1}`), title }));
 
-// Colours of this one campaign; other campaigns pick their own.
-const config: ArticlesBannerConfig = {
+const base: ArticlesBannerConfig = {
   v: 1,
   format: "articles-1250x400",
-  campaign: "Kultuurisügis 2710",
-  header: { type: "image", src: "header.svg", avg: "#8a0aa6", href: "https://www.ohtuleht.ee/teemalehed/kultuurisundmused2026-st" },
+  campaign: "Example campaign",
+  header: { type: "color", href: "https://example.com/campaign" },
   badge: "Sisuturundus",
-  primary: "#9500b2",
+  primary: "#f50000",
   theme: {
     light: { bg: "#ffffff", text: "#272727", hover: "#e3000f" },
     dark: { bg: "#0f0f0f", text: "#ffffff", hover: "#e3000f" },
   },
-  behavior: { shuffle: true, autoplay: true, delayMs: 2500, speedMs: 250, loop: true },
+  behavior: { shuffle: true, autoplay: true, delayMs: 3000, speedMs: 250, loop: true },
   articles,
 };
+const mobile: ArticlesBannerConfig = { ...base, format: "articles-mobile", theme: { ...base.theme, dark: { ...base.theme.dark, bg: "#1c1c1c" } } };
 
-const problems = validate(config);
-if (problems.length) throw new Error(problems.map((p) => p.message).join("\n"));
+for (const c of [base, mobile]) {
+  const problems = validate(c);
+  if (problems.length) throw new Error(problems.map((p) => p.message).join("\n"));
+}
 
 const assets = {
   runtimeJs: readFileSync(new URL("packages/banner-runtime/dist/runtime.js", root), "utf8"),
   sliderCss: readFileSync(new URL("packages/banner-runtime/src/slider.css", root), "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, " "),
 };
-const html = renderArticles1250x400(config, assets);
 
 mkdirSync(out, { recursive: true });
-writeFileSync(new URL("index.html", out), html);
-copyFileSync(new URL("apps/generator/src/assets/example-header.svg", root), new URL("header.svg", out));
-
-const header = readFileSync(new URL("header.svg", out)).length;
-console.log(`index.html ${html.length} B (gzip ${gzipSync(html).length} B), header.png ${header} B, total without article images ${html.length + header} B`);
+for (const [file, html] of [
+  ["index.html", renderArticles1250x400(base, assets)],
+  ["mobile.html", renderArticlesMobile(mobile, assets)],
+] as const) {
+  writeFileSync(new URL(file, out), html);
+  console.log(`${file} ${html.length} B (gzip ${gzipSync(html).length} B), no pictures`);
+}

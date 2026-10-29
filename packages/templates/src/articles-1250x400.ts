@@ -1,4 +1,4 @@
-// Template: articles 1250x400. Rebuild of the Kultuurisügis banner without Swiper.
+// Template: articles 1250x400. Desktop article slider, no Swiper.
 import { clickAttr, CLICKTAG_JS } from "./clicktag.ts";
 import { escapeCssUrlInAttr, escapeHtml, escapeJsInAttr, jsonForScript } from "./escape.ts";
 import { resolveTheme } from "./colors.ts";
