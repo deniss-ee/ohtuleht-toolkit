@@ -35,6 +35,7 @@ Full plan: [docs/ROADMAP.md](docs/ROADMAP.md).
 | [docs/BANNERS.md](docs/BANNERS.md) | See each banner format's rules, sizes, weight limits, ad-server notes |
 | [docs/HEADER-BAR.md](docs/HEADER-BAR.md) | Make the header bar for theme pages and get its iframe code |
 | [docs/BRAND-MANUAL.md](docs/BRAND-MANUAL.md) | See the brand manual, the colour and logo rules, and `brand.json` |
+| [docs/LANGUAGES.md](docs/LANGUAGES.md) | Add or change interface text in English and Estonian |
 | [docs/IMAGE-CROPPER.md](docs/IMAGE-CROPPER.md) | Use the image cropper (1920x1080 JPG) |
 | [docs/MOVIE-BANNER.md](docs/MOVIE-BANNER.md) | Make the movie banner (video on a picture, two zips) |
 | [docs/BOOKMARKLET.md](docs/BOOKMARKLET.md) | Install and use the article bookmarklet |

@@ -15,18 +15,18 @@ import { logoBox, logoFileName, logoPng, logoSvg, logoZip, svgDataUrl } from "@/
 import { download } from "@/lib/zip";
 
 const FORMAT_KEY = "ol-color-format";
-const FORMATS: { id: ColorFormat; label: string }[] = [
+const formats = (): { id: ColorFormat; label: string }[] => [
   { id: "hex", label: "HEX" },
   { id: "rgb", label: "RGB" },
   { id: "hsl", label: "HSL" },
-  { id: "css", label: "CSS variable" },
+  { id: "css", label: t.cssVariable },
   { id: "tailwind", label: "Tailwind" },
 ];
 
 function readFormat(): ColorFormat {
   try {
     const v = localStorage.getItem(FORMAT_KEY);
-    if (FORMATS.some((f) => f.id === v)) return v as ColorFormat;
+    if (formats().some((f) => f.id === v)) return v as ColorFormat;
   } catch {
     // storage blocked: use the default
   }
@@ -105,7 +105,7 @@ function Colours() {
           <div className="text-sm font-medium">{t.formatLabel}</div>
           <div className="text-xs text-muted-foreground">{t.formatHint}</div>
         </div>
-        <Segmented label={t.formatLabel} options={FORMATS} value={format} onChange={pick} />
+        <Segmented label={t.formatLabel} options={formats()} value={format} onChange={pick} />
         <div className="flex flex-wrap gap-2 pt-1">
           <Button variant="outline" size="sm" className="gap-2" onClick={() => save(tokensCss(), "ohtuleht-colors.css", "text/css")}>
             <Download className="size-4" /> {t.exportCss}
@@ -122,8 +122,8 @@ function Colours() {
       {brand.colors.map((scale) => (
         <section key={scale.id} className="space-y-3">
           <div>
-            <h2 className="text-lg font-semibold">{scale.name}</h2>
-            <p className="text-sm text-muted-foreground">{scale.role}</p>
+            <h2 className="text-lg font-semibold">{t.scaleNames[scale.id] ?? scale.name}</h2>
+            <p className="text-sm text-muted-foreground">{t.scaleRoles[scale.id] ?? scale.role}</p>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {Object.entries(scale.steps).map(([step, hex]) => (
@@ -150,7 +150,7 @@ const PREVIEW_BG: Record<string, string> = {
 };
 
 const SIZES = [128, 256, 512, 1024, 2048].map((w) => ({ id: w, label: `${w} px` }));
-const BACKGROUNDS = [
+const backgrounds = () => [
   { id: "transparent", label: t.bgTransparent },
   { id: "white", label: t.bgWhite },
   { id: "black", label: t.bgBlack },
@@ -181,14 +181,14 @@ function LogoCard({ logo, withSafeZone, pixelWidth, background }: { logo: LogoVa
       <div className="m-3 mb-0 flex h-44 items-center justify-center overflow-hidden rounded-lg border p-4" style={{ background: PREVIEW_BG[logo.id] ?? "#fff" }}>
         <img
           src={svgDataUrl(logoSvg(logo, o))}
-          alt={logo.name}
+          alt={t.logoNames[logo.id] ?? logo.name}
           className={withSafeZone ? "outline outline-1 outline-dashed outline-red-500" : undefined}
           style={{ maxWidth: "100%", maxHeight: "100%", width: "auto", height: "auto", objectFit: "contain" }}
         />
       </div>
       <CardHeader className="px-4 pt-4">
-        <CardTitle>{logo.name}</CardTitle>
-        <CardDescription className="min-h-[4.5rem]">{logo.usage}</CardDescription>
+        <CardTitle>{t.logoNames[logo.id] ?? logo.name}</CardTitle>
+        <CardDescription className="min-h-[4.5rem]">{t.logoUsage[logo.id] ?? logo.usage}</CardDescription>
       </CardHeader>
       <CardContent className="px-4 pt-2">
         <p className="text-xs text-muted-foreground">
@@ -253,7 +253,7 @@ function Logos() {
           </div>
           <div className="space-y-2">
             <div className="text-sm font-medium">{t.pngBackground}</div>
-            <Segmented label={t.pngBackground} options={BACKGROUNDS} value={background} onChange={setBackground} />
+            <Segmented label={t.pngBackground} options={backgrounds()} value={background} onChange={setBackground} />
           </div>
           <Button variant="outline" className="gap-2" disabled={busy} onClick={zipAll}>
             <FileArchive className="size-4" /> {busy ? t.building : t.downloadAll}
@@ -275,7 +275,7 @@ function Logos() {
         </section>
       ))}
       <Badge variant="outline" className="whitespace-normal py-1 text-xs font-normal">
-        {brand.clearSpace.note}
+        {t.clearSpaceNote}
       </Badge>
     </div>
   );

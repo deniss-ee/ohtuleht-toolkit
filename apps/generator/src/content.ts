@@ -1,364 +1,69 @@
-// All interface text and navigation in one place (language files come later).
-export type PageId = "content" | "tools" | "brand" | "tasks";
+// All interface text, in two languages. English is in content.en.ts, Estonian in content.et.ts
+// (same names, same shapes: the compiler checks that Estonian misses nothing).
+// Components import from here as before; the objects below always return the text of the language chosen now.
+// When the language changes, App renders again, so every component picks up the new text.
+import * as en from "./content.en";
+import * as et from "./content.et";
 
-export interface NavItem {
-  id: PageId;
-  label: string;
-  ready: boolean;
-}
+export type { Device, BannerType, NavItem, PageId, ToolInfo } from "./content.en";
 
-export const nav: NavItem[] = [
-  { id: "content", label: "Content marketing", ready: true },
-  { id: "tools", label: "Tools", ready: true },
-  { id: "brand", label: "Brand manual", ready: true },
-  { id: "tasks", label: "Task tracker", ready: false },
+export type Lang = "en" | "et";
+export const LANGS: { id: Lang; label: string; name: string }[] = [
+  { id: "en", label: "EN", name: "English" },
+  { id: "et", label: "ET", name: "Eesti" },
 ];
 
-export type Device = "Desktop" | "Mobile" | "All screens";
+const KEY = "ol-lang";
+const sets = { en, et };
 
-export interface BannerType {
-  id: string;
-  name: string;
-  size: string;
-  device: Device;
-  description: string;
-  ready: boolean;
+function readLang(): Lang {
+  try {
+    const v = localStorage.getItem(KEY);
+    if (v === "en" || v === "et") return v;
+  } catch {
+    // storage blocked: use English
+  }
+  return "en";
 }
 
-// Every banner type the category can build. Add new templates here.
-export const bannerTypes: BannerType[] = [
-  { id: "header-bar", name: "Header bar", size: "100% x 46", device: "All screens", description: "The bar at the top of a theme page, shown on the site in an iframe.", ready: true },
-  { id: "articles-1250x400", name: "Articles", size: "1250x400", device: "Desktop", description: "Header and a slider of article cards.", ready: true },
-  { id: "articles-mobile", name: "Articles", size: "Full width x 498", device: "Mobile", description: "Header and swipeable article cards with dots, as wide as the phone.", ready: true },
-  { id: "articles-ad-1250x400", name: "Articles with static ad", size: "1250x400", device: "Desktop", description: "Fixed ad next to a slider of three articles.", ready: false },
-  { id: "image-slider-1250x400", name: "Image slider", size: "1250x400", device: "Desktop", description: "Client background with a slider of images.", ready: false },
-  { id: "image-slider-600x500", name: "Image slider", size: "600x500", device: "Mobile", description: "Client images with slide, fade or cube transition.", ready: false },
-];
+let current: Lang = readLang();
+const listeners = new Set<() => void>();
+if (typeof document !== "undefined") document.documentElement.lang = current;
 
-export const contentMarketing = {
-  title: "Content marketing banners",
-  intro: "Make a banner in three easy steps.",
-  steps: [
-    { title: "Pick a banner", text: "Choose the size you need below." },
-    { title: "Fill it in", text: "Add your articles and the campaign name. You see the banner while you type." },
-    { title: "Download", text: "Press Download zip and give the file to the ad system." },
-  ],
-  soon: "Coming soon",
-  uploadTitle: "Open a banner you made before",
-  uploadText: "Choose the zip file you downloaded last time and keep editing.",
-  uploadButton: "Choose zip file",
-  uploadFailed: "Could not open that zip.",
-  create: "Make this banner",
+export const getLang = () => current;
+export const subscribeLang = (fn: () => void) => {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
 };
-
-export const editor = {
-  back: "Back",
-  heading: "Articles banner",
-  untitled: "New banner",
-  loadExample: "Try an example",
-  download: "Download zip",
-  downloading: "Building...",
-  ready: "Ready to download",
-  toFix: (n: number) => `${n} thing${n === 1 ? "" : "s"} left to do`,
-  toFixTitle: "Still to do before you can download",
-  toFixHelp: "Click one to jump to it.",
-  allGood: "All done. You can download your banner.",
-  sizeHelp: "How big the banner file is, without the article pictures. Smaller is better. Try to stay under 100 KB.",
-  versionLabel: "Version",
-  versionDesktop: "Desktop",
-  versionMobile: "Mobile",
-  versionSwitched: (name: string) => `Now the ${name} version. Everything you filled in is kept.`,
-  phoneWidth: "Phone width",
-  previewTitle: "Preview",
-  previewLoading: "Loading preview…",
-  previewScaled: (pct: number, size: string) => `Shown at ${pct}% to fit your screen. The real banner is ${size}.`,
-  previewFull: (size: string) => `Shown at full size, ${size}.`,
-  previewMobile: (w: number) => `Shown on a ${w} px wide phone. The banner always fills the width of the phone.`,
-  pin: "Keep preview in view",
-  light: "Light",
-  dark: "Dark",
-  weight: "File size",
-
-  // 1 Articles
-  articlesTitle: "Articles",
-  articlesHint: (min: number) => `Add at least ${min}. Up to 4 show at once; with more, arrows and automatic sliding appear.`,
-  pasteLabel: "Paste what the bookmark copied",
-  pastePlaceholder: "Click here, then press Ctrl+V. You can paste many articles at once.",
-  pasteButton: "Add articles",
-  pasteHelp: "",
-  howToSnippet: "Set up the bookmark first",
-  firstTime: "First time here? Set up the bookmark once. After that, copying an article takes one click.",
-  bookmarkTitle: "Copy articles with a bookmark",
-  bookmarkIntro: "Set this up once. After that, each article takes one click.",
-  bookmarkName: "Copy article",
-  bookmarkStep1: "Drag this button onto your browser's bookmarks bar (press Ctrl+Shift+B to show the bar).",
-  bookmarkCopyCode: "Copy code instead",
-  bookmarkCopyHint: "If dragging does not work: create a bookmark by hand and paste this code as its address.",
-  bookmarkCopied: "Bookmark code copied.",
-  bookmarkStep2: "Open an article on ohtuleht.ee and click the bookmark you just added.",
-  bookmarkStep3: "A big green message says “Article copied”. Come back here, click the box (Paste what the bookmark copied), press Ctrl+V, then Add articles. Repeat for every article.",
-  bookmarkDone: "Got it",
-  pasteNothing: "No articles found in that text.",
-  pasteAdded: (n: number, skipped: number) => `Added ${n} article${n === 1 ? "" : "s"}${skipped ? ` (${skipped} line${skipped === 1 ? "" : "s"} not understood)` : ""}.`,
-  addArticle: "Add an article by hand",
-  emptyArticles: "No articles yet. Paste snippets above or add one by hand.",
-  article: (n: number) => `Article ${n}`,
-  untitledArticle: "New article",
-  articleIncomplete: "Something is missing in this article",
-  titleField: "Title",
-  articleUrl: "Article link",
-  imageUrl: "Picture address",
-  badgeField: "Label on the picture",
-  badgeDefault: "Same as campaign label",
-  badgeColor: "Label colour",
-  useDefault: "Use default",
-  noImage: "No image",
-  moveUp: "Move up",
-  moveDown: "Move down",
-  remove: "Remove",
-
-  // 2 Campaign
-  campaignTitle: "Campaign",
-  campaignName: "Campaign name",
-  campaignHint: "Used for the file name.",
-  mainColor: "Main colour",
-  mainColorHint: "Used for the header, the arrows and the default label colour. In dark mode the label colour is lightened automatically so it stays readable.",
-  badge: "Label on the article pictures",
-  badgeHint: "Usually “Sisuturundus”. One article can have a different label (see Articles below).",
-
-  // 3 Header
-  headerTitle: "Header",
-  headerHint: "The bar at the top of the banner. It shows the campaign name.",
-  headerImage: "Picture",
-  headerColor: "Solid colour",
-  headerFile: "Header picture",
-  headerChoose: "Choose picture",
-  headerChange: "Change picture",
-  headerFileHint: "This is the background. The campaign name is written on top of it, so use a picture without text. Best size 2496x92 px (shown at 1248x46).",
-  headerNone: "No picture chosen yet.",
-  headerTextInPicture: "The picture already has the text on it",
-  headerTextInPictureHint: "Tick this for old banners: the campaign name is not written on top of the picture again.",
-  headerLink: "Where the header leads",
-  headerLinkHint: "Link opened when someone clicks the header.",
-
-  // 4 Advanced
-  colorsTitle: "Colours",
-  colorsHint: "Light and dark mode. Most campaigns can keep these.",
-  colorBg: "Background",
-  colorText: "Title text",
-  colorBadge: "Label and arrows",
-  colorHover: "Title on hover",
-  colorHeader: "Header colour",
-  colorHeaderText: "Header text",
-  automatic: "Automatic",
-  useAutomatic: "Use automatic",
-  headerUsesMain: "The bar is filled with the main colour. Change the main colour under Campaign.",
-  behaviorTitle: "Slider settings",
-  behaviorHint: "Only used when there are more than 4 articles.",
-  shuffle: "Random order every time the banner loads",
-  autoplay: "Slide automatically",
-  loop: "Start again after the last article",
-  delay: "Seconds between slides",
-  speed: "Slide speed",
-  speedFast: "Fast",
-  speedNormal: "Normal",
-  speedSlow: "Slow",
-  advanced: "Advanced",
-
-  emptyTitle: "Let's make your banner",
-  emptyText: "Your banner will show up right here as soon as you add something.",
-  emptySteps: [
-    "First, set up the bookmark. You do this only once. It copies articles from ohtuleht.ee for you.",
-    "Open an article, click the bookmark, then come back here and paste.",
-    "Write the campaign name and the link for the header.",
-    "When the top bar says “Ready to download”, press Download zip.",
-  ],
-  emptySetupBookmark: "Set up the bookmark",
-  emptyGoArticles: "Add articles",
-  emptyTryExample: "Not sure? Try an example",
-  imported: "Banner loaded.",
-
-  // Opening a banner made before this tool (old Swiper zips)
-  legacyTitle: "Old banner opened",
-  legacyIntro: "This banner was made before the toolkit. Please check these things:",
-  legacyDone: "Got it",
-  legacyNotMobile: "This is the mobile 600x500 banner. The toolkit cannot open that type yet.",
-  legacyNotSlider: "This is an image slider banner. The toolkit cannot open that type yet.",
-  legacyNoSlides: "No articles were found in this zip, so it cannot be opened.",
-  legacyHeaderText: "The header picture has the text baked in, so the campaign name is not written on it. Untick “The picture already has the text on it” to write the name on top.",
-  legacyNoHeaderPicture: "The header picture was not found in the zip. The header is a plain colour now: choose the picture again.",
-  legacyName: (name: string) => `The campaign name is “${name}”, taken from the page title. Please check it.`,
-  legacyAd: "This banner also has a fixed ad picture. That format does not exist yet, so the ad was left out.",
-  legacyVisible: (n: number) => `The old banner showed ${n} articles at once. The new one shows up to 4.`,
-  legacyShuffle: "Shuffle is off, as in the old banner. You can switch it on under Slider settings.",
-  legacyColors: "The colours were read from the old style sheet. Please check them under Colours.",
-  exampleLoaded: "Example loaded.",
-};
-
-export const headerBar = {
-  title: "Header bar",
-  heading: "Header bar for the site",
-  untitled: "New header bar",
-  previewTitle: "How it looks",
-  desktop: "Computer (1248 px)",
-  tablet: "Tablet (768 px)",
-  phone: "Phone (375 px)",
-  previewNote: "The bar fills the whole width of the page, so it is shown at three widths.",
-  barTitle: "The bar",
-  barHint: "Text, link and colour.",
-  label: "Text on the bar",
-  labelHint: "Shown in capital letters, for example the name of the theme.",
-  href: "Where the bar leads",
-  hrefHint: "The theme page. It opens in a new tab.",
-  colour: "Bar colour",
-  picture: "Background picture (optional)",
-  pictureChoose: "Choose picture",
-  pictureChange: "Change picture",
-  pictureRemove: "Remove picture",
-  pictureHint: "Shown at the left, filling the bar. The bar colour shows behind it. Use a picture without text.",
-  textColour: "Text colour",
-  embedTitle: "Put it on the site",
-  embedSteps: [
-    "Press Download zip.",
-    "Upload the folder to b.ohtuleht.ee.",
-    "Paste the folder address below.",
-    "Copy the code and give it to the person who edits the page.",
-  ],
-  embedUrl: "Address of the uploaded folder",
-  embedPlaceholder: "https://b.ohtuleht.ee/html5/Ohtuleht/…/",
-  embedCode: "Code for the page",
-  copy: "Copy code",
-  copied: "Code copied.",
-  download: "Download zip",
-  tryExample: "Try an example",
-  ready: "Ready to download",
-  loadedExample: "Example loaded.",
-};
-
-export const brandManual = {
-  title: "Brand manual",
-  intro: "Õhtuleht colours and logos. Click a colour to copy it. Download logos in the size you need.",
-  tabColours: "Colours",
-  tabLogos: "Logos",
-  formatLabel: "Copy colours as",
-  formatHint: "Your choice is remembered.",
-  exportCss: "Download CSS",
-  exportTailwind: "Download Tailwind",
-  exportJson: "Download JSON",
-  base: "Base",
-  whiteText: "White",
-  blackText: "Black",
-  copied: (v: string) => `Copied ${v}`,
-  copySwatch: (scale: string, step: string, v: string) => `Copy ${scale} ${step}: ${v}`,
-  contrastNote: "Text on each colour follows the brand rule: black on steps 50 to 500, white from 600 up. Shown with its contrast ratio and WCAG level (AAA 7 or more, AA 4.5 or more, AA large 3 or more).",
-  safeZone: "Include the safe zone",
-  safeZoneHint: (r: number) => `Clear space around the logo (${Math.round(r * 100)}% of its height). Shown as a dashed line.`,
-  pngSize: "PNG width",
-  pngSizeHint: "SVG stays sharp at any size. PNG is made at the width you choose; the height follows.",
-  customWidth: "Other width",
-  pngBackground: "PNG background",
-  bgTransparent: "Transparent",
-  bgWhite: "White",
-  bgBlack: "Black",
-  downloadAll: "Download everything (zip)",
-  downloadAllHint: "Every logo as SVG and PNG, with and without the safe zone.",
-  building: "Building...",
-  wordmarks: "Wordmark (the name)",
-  logomarks: "Logomark (the symbol)",
-  sizeInfo: (w: number, h: number) => `Artwork ${w} × ${h}`,
-  safeZonePad: (p: number) => `safe zone ${p} on each side`,
-  pngFailed: "Could not create the picture.",
-};
-
-// Tools section: small stand-alone helpers (not banners made from articles).
-export interface ToolInfo {
-  id: "image-cropper" | "movie-banner";
-  name: string;
-  description: string;
-  tag: string;
-  ready: boolean;
+export function setLang(lang: Lang) {
+  current = lang;
+  try {
+    localStorage.setItem(KEY, lang);
+  } catch {
+    // not remembered, still works for this visit
+  }
+  document.documentElement.lang = lang;
+  listeners.forEach((fn) => fn());
 }
 
-export const tools = {
-  title: "Tools",
-  intro: "Small helpers for everyday work. Pick one.",
-  open: "Open",
-  soon: "Soon",
-  back: "Back to Tools",
-  items: [
-    { id: "image-cropper", name: "Image cropper", description: "Put any picture on a 1920x1080 canvas and download it as a JPG.", tag: "1920x1080", ready: true },
-    { id: "movie-banner", name: "Movie banner", description: "Banner with a video on a background picture. Makes two zips for the ad server.", tag: "1250 and 1280", ready: true },
-  ] satisfies ToolInfo[],
-};
+// An object (or array) that reads from the active language every time it is used.
+function live<T extends object>(pick: () => T, target: object = {}): T {
+  return new Proxy(target, {
+    get: (_, key) => Reflect.get(pick(), key),
+    has: (_, key) => Reflect.has(pick(), key),
+    ownKeys: () => Reflect.ownKeys(pick()),
+    getOwnPropertyDescriptor: (_, key) => ({ ...Reflect.getOwnPropertyDescriptor(pick(), key), configurable: true }),
+  }) as T;
+}
+const section = <K extends keyof typeof en & keyof typeof et>(k: K): (typeof en)[K] => live(() => sets[current][k] as (typeof en)[K]);
 
-export const imageCropper = {
-  title: "Image cropper",
-  intro: "Put a picture on a 1920x1080 canvas. Drag it to move it, then download.",
-  dropTitle: "Drop a picture here",
-  dropHint: "or click to choose one (JPG, PNG, WebP, GIF)",
-  notImage: "That file is not a picture.",
-  loadFailed: "The picture could not be opened.",
-  canvasLabel: "Preview of the 1920x1080 picture. Drag it, or use the arrow keys, to move the picture.",
-  modeTitle: "How the picture fits",
-  modes: [
-    { id: "fit", name: "Fit completely", hint: "The whole picture is visible. Empty space is filled with the background." },
-    { id: "cover", name: "Fill the canvas", hint: "No empty space. The edges are cut off. Drag to choose what stays." },
-    { id: "original", name: "Original size", hint: "No scaling. Big pictures can be dragged." },
-    { id: "custom", name: "Custom width", hint: "You choose the width of the picture." },
-  ],
-  width: "Width (px)",
-  widthHint: "Between 100 and 3000.",
-  backgroundTitle: "Background",
-  backgroundBlur: "Blurred picture",
-  backgroundColour: "One colour",
-  colour: "Background colour",
-  moveHint: "Drag the picture in the preview, or click it and use the arrow keys.",
-  noMove: "In this mode the picture cannot be moved.",
-  centre: "Centre picture",
-  other: "Choose another picture",
-  download: "Download JPG",
-  subtitle: "Picture on 1920x1080",
-  doneText: "All done. You can download your picture.",
-  choosePicture: "Choose a picture.",
-  downloaded: "Picture saved.",
-  size: (w: number, h: number) => `Original picture: ${w} x ${h} px`,
-};
-
-export const movieBanner = {
-  title: "Movie banner",
-  intro: "A video on top of a background picture. You get two zips, one for each picture size the client sent.",
-  previewTitle: "How it looks",
-  previewEmpty: "Choose a background picture to see the banner.",
-  previewScaled: (pct: number, size: string) => `Shown at ${pct}% to fit your screen. The real banner is ${size}.`,
-  previewFull: (size: string) => `Shown at full size, ${size}.`,
-  videoTitle: "Video",
-  videoChoose: "Choose video",
-  videoChange: "Change video",
-  videoHint: "MP4 or WebM. It plays on a loop, without sound. Viewers can turn the sound on.",
-  videoHeight: "Video height (px)",
-  position: "Where the video sits",
-  positions: [
-    { id: "left", label: "Left" },
-    { id: "center", label: "Centre" },
-    { id: "right", label: "Right" },
-  ],
-  offset: "Distance from the edge (px)",
-  versionTitle: (label: string) => `Version ${label}`,
-  backgroundChoose: "Choose background picture",
-  backgroundChange: "Change background picture",
-  backgroundHint: (w: number, h: number) => `The banner is as big as the picture: ${w} x ${h} px.`,
-  link: "Link (optional)",
-  linkHint: "Where a click goes. Empty = the address the ad server gives.",
-  linkPlaceholder: "https://example.com",
-  noFile: "Nothing chosen yet",
-  notVideo: "That file is not a video (use MP4 or WebM).",
-  notImage: "That file is not a picture.",
-  download: "Download both zips",
-  subtitle: "Video on a picture, two zips",
-  doneText: "All done. You can download both zips.",
-  building: "Building...",
-  ready: "Ready to download",
-  toFix: (n: number) => `${n} thing${n === 1 ? "" : "s"} left to do`,
-  saved: (a: string, b: string) => `Two zips saved: ${a} and ${b}.`,
-  allowDownloads: "If only one zip arrives, allow multiple downloads for this site in your browser.",
-};
+export const nav = live(() => sets[current].nav, []);
+export const bannerTypes = live(() => sets[current].bannerTypes, []);
+export const contentMarketing = section("contentMarketing");
+export const editor = section("editor");
+export const headerBar = section("headerBar");
+export const brandManual = section("brandManual");
+export const tools = section("tools");
+export const imageCropper = section("imageCropper");
+export const movieBanner = section("movieBanner");
+export const ui = section("ui");

@@ -3,6 +3,7 @@
 // https://b.ohtuleht.ee/html5/Ohtuleht/paised_uus/vallatud_joulud/ and category/rubriik-4dimensioon.
 import { onColor } from "./colors.ts";
 import { escapeHtml, jsonForScript } from "./escape.ts";
+import { messages, type Lang } from "./messages.ts";
 import type { Problem } from "./validate.ts";
 
 export interface HeaderBarConfig {
@@ -18,10 +19,11 @@ export interface HeaderBarConfig {
 const FONTS_URL = "https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@400;700&display=swap";
 const isUrl = (s: string) => /^https?:\/\//.test(s.trim());
 
-export function validateHeaderBar(c: HeaderBarConfig): Problem[] {
+export function validateHeaderBar(c: HeaderBarConfig, lang: Lang = "en"): Problem[] {
+  const m = messages(lang);
   const problems: Problem[] = [];
-  if (!c.label.trim()) problems.push({ message: "Write the text for the bar.", field: "hb-label" });
-  if (!isUrl(c.href)) problems.push({ message: "Paste the link the bar should open (it starts with https://).", field: "hb-href" });
+  if (!c.label.trim()) problems.push({ message: m.barLabel, field: "hb-label" });
+  if (!isUrl(c.href)) problems.push({ message: m.barHref, field: "hb-href" });
   return problems;
 }
 

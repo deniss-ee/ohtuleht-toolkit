@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 import { ArrowLeft, CheckCircle2, TriangleAlert } from "lucide-react";
 import { goTo, HoverPill } from "@/components/editor/HoverPill";
 import { Button } from "@/components/ui/button";
-import { tools } from "@/content";
-import { ThemeToggle } from "@/layout/AppShell";
+import { ui } from "@/content";
+import { Toggles } from "@/layout/AppShell";
 
 export interface ToolProblem {
   field: string; // id of the control to jump to
@@ -41,9 +41,9 @@ export function ToolShell({
   return (
     <div className="fixed inset-0 z-40 flex flex-col bg-background">
       <header className="flex shrink-0 flex-wrap items-center gap-x-2 gap-y-2 border-b px-3 py-2 lg:h-14 lg:flex-nowrap lg:gap-3 lg:px-4 lg:py-0">
-        <Button variant="ghost" size="sm" className="gap-2" onClick={onBack} aria-label={tools.back}>
+        <Button variant="ghost" size="sm" className="gap-2" onClick={onBack} aria-label={ui.backToTools}>
           <ArrowLeft className="size-4" />
-          <span className="hidden sm:inline">Back</span>
+          <span className="hidden sm:inline">{ui.back}</span>
         </Button>
         <div className="min-w-0 flex-1">
           <div className="truncate font-semibold leading-tight">{title}</div>
@@ -55,7 +55,7 @@ export function ToolShell({
             icon={n === 0 ? <CheckCircle2 className="size-3.5 text-green-600" /> : <TriangleAlert className="size-3.5 text-yellow-600" />}
             label={
               <>
-                <span className="hidden sm:inline">{n === 0 ? readyText : `${n} thing${n === 1 ? "" : "s"} left to do`}</span>
+                <span className="hidden sm:inline">{n === 0 ? readyText : ui.toFix(n)}</span>
                 <span className="sm:hidden">{n === 0 ? "" : n}</span>
               </>
             }
@@ -65,7 +65,7 @@ export function ToolShell({
                 <p className="text-sm">{doneText}</p>
               ) : (
                 <div className="space-y-2">
-                  <p className="text-sm font-medium">Still to do before you can download</p>
+                  <p className="text-sm font-medium">{ui.toFixTitle}</p>
                   <ul className="space-y-1">
                     {problems.map((p) => (
                       <li key={p.field}>
@@ -87,7 +87,7 @@ export function ToolShell({
             }
           </HoverPill>
           {extra}
-          <ThemeToggle />
+          <Toggles />
           <Button className="ml-auto gap-2 sm:ml-0" disabled={n > 0 || busy} onClick={onDownload}>
             {downloadLabel}
           </Button>

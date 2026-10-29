@@ -36,7 +36,7 @@ JPG, 1920x1080, quality 95. Weight depends on the picture; typical photos are 30
 |---|---|
 | `apps/generator/src/lib/cropper.ts` | Sizes, movement limits, blur, drawing (pure, no React) |
 | `apps/generator/src/pages/ImageCropper.tsx` | The page |
-| `apps/generator/src/content.ts` (`imageCropper`) | Every text |
+| `apps/generator/src/content.en.ts` and `content.et.ts` (`imageCropper`) | Every text |
 
 ## Dropped from the old tool
 

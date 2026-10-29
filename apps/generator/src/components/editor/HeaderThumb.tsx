@@ -1,3 +1,4 @@
+import { editor } from "@/content";
 import { resolveTheme } from "@ohtuleht/templates";
 import type { Draft } from "@/lib/banner";
 
@@ -18,7 +19,7 @@ export function HeaderThumb({ draft }: { draft: Draft }) {
         backgroundPosition: "center",
       }}
       role="img"
-      aria-label={picture ? "Header picture" : "Header colour"}
+      aria-label={picture ? editor.headerFile : editor.headerColor}
     />
   );
 }

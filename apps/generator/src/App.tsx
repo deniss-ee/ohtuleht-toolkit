@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { toast } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { contentMarketing, editor, type PageId, type ToolInfo } from "@/content";
+import { contentMarketing, editor, getLang, subscribeLang, type PageId, type ToolInfo } from "@/content";
 import { AppShell } from "@/layout/AppShell";
 import { newDraft, type Draft } from "@/lib/banner";
 import { importHeaderZip, newHeaderDraft, type HeaderDraft } from "@/lib/header";
@@ -22,6 +22,7 @@ import { ToolsHome } from "@/pages/ToolsHome";
 type Work = { kind: "banner"; draft: Draft } | { kind: "header"; draft: HeaderDraft } | null;
 
 export function App() {
+  useSyncExternalStore(subscribeLang, getLang); // render everything again when the language changes
   const [page, setPage] = useState<PageId>("content");
   const [work, setWork] = useState<Work>(null);
   const [tool, setTool] = useState<ToolInfo["id"] | null>(null); // open tool in the Tools section

@@ -18,7 +18,7 @@ Internal toolkit for the Õhtuleht newsroom and ad sales. Modules so far: banner
 - **Yarn only** (`yarn`, `yarn add`). Never npm or npx. Never create `package-lock.json`. Commit `yarn.lock`.
 - Git: issue, branch from `develop`, PR into `develop`, squash merge. `main` is for releases. Branch names `feat/<issue>-slug`. Merge only when the user says so. Commits end with the Co-Authored-By line given by the session.
 - Check current docs and versions of libraries before using them. Banners have **zero dependencies**; the generator app may use libraries.
-- All UI text lives in `apps/generator/src/content.ts` (English now, Estonian later). Banner text is Estonian.
+- All UI text lives in `apps/generator/src/content.en.ts` and `content.et.ts` (English and Estonian, EN/ET switch; same names in both, typecheck enforces it). Components read it through `content.ts`, never hard-code text. Banner text is Estonian. See `docs/LANGUAGES.md`.
 - **Brand text rule**: on brand colours, steps 50 to 500 get black text, 600 and up get white (`brand.json` is the single source). Other colours: white unless the colour is light (luminance above 0.55 or HSL lightness above 0.78). Buttons use brand red 600 only.
 - Never use the native browser colour picker; use `components/editor/ColorPicker.tsx`.
 - Preview frames must not flicker: use `components/editor/SwapFrame.tsx`.
@@ -31,7 +31,7 @@ apps/generator/            React + Vite + Tailwind v4 + shadcn/ui (port 5173)
   src/pages/               ContentMarketingHome, BannerEditor, HeaderBarEditor, BrandManual
   src/components/editor/   ArticleList, Preview, SwapFrame, ColorPicker, HoverPill ...
   src/lib/                 banner.ts, header.ts, zip.ts, logos.ts, snippets.ts, image.ts
-  src/content.ts           every UI string
+  src/content.*.ts         every UI string (en, et) + content.ts picker
 packages/banner-runtime/   vanilla slider script, 1.7 KB gzip (budget 3 KB); test page on port 5174
 packages/templates/        banner and header-bar HTML/CSS templates, colour logic, validation
 packages/brand/            brand.json (colours, logos, clear space) + optimised logo SVGs

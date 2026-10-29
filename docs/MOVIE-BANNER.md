@@ -46,6 +46,6 @@ Weight is the picture plus the video; the HTML is about 2 KB. The file list show
 | `packages/templates/src/movie-banner.ts` | HTML template (no dependencies) and validation |
 | `apps/generator/src/lib/movie.ts` | Draft, preview html, zip building |
 | `apps/generator/src/pages/MovieBanner.tsx` | The page |
-| `apps/generator/src/content.ts` (`movieBanner`) | Every text |
+| `apps/generator/src/content.en.ts` and `content.et.ts` (`movieBanner`) | Every text |
 
 The preview frame uses `allow-same-origin` (option `sameOrigin` of `SwapFrame`) because the picture and video are local files shown by in-browser addresses; only this page uses it.

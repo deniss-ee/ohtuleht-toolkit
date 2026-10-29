@@ -5,6 +5,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 ## [Unreleased]
 
 ### Added
+- Estonian interface with an EN/ET switch in every top bar (issue #95): navigation, banner editor, header bar, brand manual, tools, messages and problem lists. English stays. Choice is remembered. See docs/LANGUAGES.md.
 - Movie banner tool (issue #92): video on a background picture, two zips (1250 and 1280), live preview, mute button. Replaces `tools/movie banner generator` (old folder kept).
 - Tools section in the side navigation. Image cropper (issue #91): picture onto 1920x1080 with 4 modes, drag, blurred or colour background, JPG download. Replaces `tools/image cropper` (old folder kept).
 - Mobile articles banner (issue #37): full-width page, fixed 267x400 cards with the next card peeking in, pagination dots, light and dark; phone width switch in the preview; Desktop/Mobile switch in the editor keeps all content. Runtime gains optional dots. Category label on every card, as on desktop.

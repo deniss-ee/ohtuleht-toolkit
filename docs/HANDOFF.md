@@ -23,7 +23,7 @@ Doc status: all `docs/*.md`, package READMEs and the generator README were check
 
 ## Decisions already made (do not re-ask)
 
-- English interface now; Estonian and Microsoft login come with Phase 3. Static feed and zip are always the fallback.
+- Interface is English and Estonian with an EN/ET switch (`docs/LANGUAGES.md`); Microsoft login comes with Phase 3. Static feed and zip are always the fallback.
 - Banners: ClickTag code is fixed in the templates; ad server accepts zip or URL; weight budget about 100 KB without images (soft); only Google Fonts as an external request besides article pictures from `p.ohtuleht.ee`.
 - Runtime shuffle on by default; autoplay ignores the OS "reduce motion" setting and hover-pause is off (like the old Dacia banner), both available as options.
 - Header is a picture or a colour, and the campaign name is **always** written on it (Fira Sans Condensed 700, 16 px, uppercase). Pictures must not contain text.

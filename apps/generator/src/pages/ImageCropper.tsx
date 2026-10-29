@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { imageCropper as t } from "@/content";
+import { imageCropper as t, ui } from "@/content";
 import { canMove, CANVAS_H, CANVAS_W, clampOffset, draw, makeBlur, MAX_WIDTH, MIN_WIDTH, newCropState, type CropState, type FitMode } from "@/lib/cropper";
 import { download } from "@/lib/zip";
 
@@ -99,13 +99,13 @@ export function ImageCropper({ onBack }: { onBack: () => void }) {
       title={t.title}
       subtitle={t.subtitle}
       problems={pic ? [] : [{ field: "crop-choose", message: t.choosePicture }]}
-      readyText="Ready to download"
+      readyText={ui.ready}
       doneText={t.doneText}
       onDownload={save}
       onBack={onBack}
       downloadLabel={
         <>
-          <Download className="size-4" /> <>Download<span className="hidden sm:inline"> JPG</span></>
+          <Download className="size-4" /> <>{ui.downloadWord}<span className="hidden sm:inline"> {ui.suffixJpg}</span></>
         </>
       }
     >

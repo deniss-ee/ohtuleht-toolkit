@@ -1,5 +1,6 @@
 import JSZip from "jszip";
 import { brand, safeZone, type LogoVariant } from "@ohtuleht/brand";
+import { ui } from "@/content";
 
 // Optimised SVG sources, read as text at build time (packages/brand/logos/*.svg).
 const sources = import.meta.glob("../../../../packages/brand/logos/*.svg", { query: "?raw", import: "default", eager: true }) as Record<string, string>;
@@ -41,13 +42,13 @@ export async function logoPng(logo: LogoVariant, o: LogoOptions, pixelWidth: num
   canvas.width = w;
   canvas.height = h;
   const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("Could not create the picture.");
+  if (!ctx) throw new Error(ui.errPicture);
   if (background) {
     ctx.fillStyle = background;
     ctx.fillRect(0, 0, w, h);
   }
   ctx.drawImage(img, 0, 0, w, h);
-  return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("Could not create the picture."))), "image/png"));
+  return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error(ui.errPicture))), "image/png"));
 }
 
 export function logoFileName(logo: LogoVariant, o: LogoOptions, ext: "svg" | "png", pixelWidth?: number): string {

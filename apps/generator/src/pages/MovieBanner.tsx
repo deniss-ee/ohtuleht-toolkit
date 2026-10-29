@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { movieBanner as t } from "@/content";
+import { movieBanner as t, ui } from "@/content";
 import { downloadMovieZips, movieProblems, newMovieDraft, readPicture, renderMoviePreview, VERSIONS, type MovieDraft, type VersionKey } from "@/lib/movie";
 import type { VideoPosition } from "@ohtuleht/templates";
 
@@ -83,7 +83,7 @@ export function MovieBanner({ onBack }: { onBack: () => void }) {
       onBack={onBack}
       downloadLabel={
         <>
-          <Download className="size-4" /> {busy ? t.building : <>Download<span className="hidden sm:inline"> both zips</span></>}
+          <Download className="size-4" /> {busy ? t.building : <>{ui.downloadWord}<span className="hidden sm:inline"> {ui.suffixBothZips}</span></>}
         </>
       }
     >
@@ -107,7 +107,7 @@ export function MovieBanner({ onBack }: { onBack: () => void }) {
           <div ref={box} className="w-full">
             <div className="relative overflow-hidden rounded-lg border bg-muted/40" style={{ height: v.file ? Math.round(v.height * scale) : 200 }}>
               {v.file ? (
-                <SwapFrame build={(id) => renderMoviePreview(d, shown, id)} deps={[d, shown]} width={v.width} height={v.height} scaleFor={() => scale} title="Banner preview" sameOrigin />
+                <SwapFrame build={(id) => renderMoviePreview(d, shown, id)} deps={[d, shown]} width={v.width} height={v.height} scaleFor={() => scale} title={ui.bannerPreview} sameOrigin />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center p-4 text-center text-sm text-muted-foreground">{t.previewEmpty}</div>
               )}
