@@ -42,7 +42,7 @@ Spec: [BANNERS.md](BANNERS.md).
 No backend. Output is a zip an ad-server accepts.
 
 1. Tiny runtime replacing Swiper (loop, drag, arrows, autoplay, shuffle). **Built.**
-2. First template: **Kultuurisügis 1250x400** (light and dark), rebuilt without Swiper. **Built.**
+2. First template: **Articles 1250x400** (light and dark), without Swiper. **Built.**
 3. Generator app: upload an existing zip or start new, edit campaign data, add articles (snippet paste, manual form), reorder, remove, preview, download zip. **Built.**
 4. Header bar tool (page header iframe, [HEADER-BAR.md](HEADER-BAR.md)). **Built.**
 5. Bookmarklet v2 (JSON snippet). **Built.**

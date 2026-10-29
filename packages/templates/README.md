@@ -6,7 +6,7 @@ Turns a banner config into one self-contained `index.html` (CSS, ClickTag helper
 
 | Template | Status |
 |---|---|
-| `articles-1250x400` | Built. Rebuild of Kultuurisügis without Swiper, light and dark |
+| `articles-1250x400` | Built. Desktop slider without Swiper, light and dark |
 | `header-bar` | Built. 100% x 46 px page-header bar (`index.html` + `style.css`), iframe code |
 | 1250x400 with static ad, image slider, 600x500 mobile | Planned (issues #35, #36, #37) |
 
@@ -24,14 +24,14 @@ Open `http://localhost:5175/`. `example-output/` is generated and not committed.
 
 ## What to upload
 
-The contents of `example-output/` zipped: `index.html` and `header.png`. The generator app builds this zip itself (`apps/generator/src/lib/zip.ts`).
+A banner zip is `index.html` plus the header picture (if the header is a picture). The generator app builds this zip itself (`apps/generator/src/lib/zip.ts`).
 
 ## Notes
 
-- Colours are per campaign (`theme.light` / `theme.dark`); the example uses the Kultuurisügis values.
+- Colours are per campaign (`theme.light` / `theme.dark`); the example uses the defaults.
 - `validate()` requires at least 2 articles.
 - The ClickTag helper is fixed text in `src/clicktag.ts`; every click goes through it.
-- Weight of the example: about 16 KB without article images (budget about 100 KB).
+- Weight of the example: run the script, it prints it, without article images (budget about 100 KB).
 
 ## Open items
 
