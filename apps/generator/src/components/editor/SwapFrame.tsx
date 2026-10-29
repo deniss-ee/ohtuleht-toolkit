@@ -48,7 +48,8 @@ function PreviewFrame({
       ref={frameRef}
       title={title}
       srcDoc={frame.html}
-      sandbox="allow-scripts allow-popups"
+      // A link clicked in the banner opens as a normal page: without allow-popups-to-escape-sandbox the new tab inherits this sandbox (no cookies or storage) and the site breaks.
+      sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
       width={width}
       height={height}
       tabIndex={hidden ? -1 : undefined}
