@@ -4,7 +4,7 @@ The generator is a static site, so GitHub Pages can host it. Live address: `http
 
 ## How it is published today (by hand)
 
-GitHub Actions is not available on the owner's personal account (billing lock: jobs do not start), so the site is published from a branch called `gh-pages`. Settings, Pages, Source is **Deploy from a branch**, branch `gh-pages`, folder `/ (root)`.
+The site is published from a branch called `gh-pages` (GitHub's own "pages build and deployment" job serves it). We do not use a custom Actions workflow: the one we tried kept failing and was removed. Settings, Pages, Source is **Deploy from a branch**, branch `gh-pages`, folder `/ (root)`.
 
 To update the site after a change reached `develop`:
 
@@ -51,10 +51,6 @@ GitHub Pages cannot serve a project under a path of a domain that has another we
 4. Open `https://linkdesign.eu/ohtuleht-toolkit/`.
 
 The rest of the domain stays untouched. If a custom domain is also set on GitHub Pages, remove it (Settings, Pages, Remove) so `deniss-ee.github.io/ohtuleht-toolkit` does not redirect to it. To update the site, repeat steps 1 to 3.
-
-## Automatic way (when Actions works)
-
-`.github/workflows/pages.yml` builds and publishes `apps/generator/dist` whenever `develop` changes, or by hand (Actions tab, Run workflow). To use it: Settings, Pages, Source **GitHub Actions**. It needs a GitHub account without a billing lock.
 
 ## Read this
 
