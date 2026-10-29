@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Copy, Download, FileArchive, Info, Palette, Shapes, Type } from "lucide-react";
+import { Copy, Download, Eye, FileArchive, Info, Palette, Shapes, Type } from "lucide-react";
 import { toast } from "sonner";
 import { brand, contrastRatio, formatColor, safeZone, textOnStep, tokensCss, tokensJson, tokensTailwind, wcagLevel, type ColorFormat, type LogoVariant } from "@ohtuleht/brand";
 import { PageHeader } from "@/components/editor/PageHeader";
 import { Fonts } from "@/pages/BrandFonts";
+import { BrandEye } from "@/pages/BrandEye";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -283,7 +284,7 @@ function Logos() {
 
 export function BrandManual({ tab, onTab }: { tab: BrandTab; onTab: (t: BrandTab) => void }) {
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
+    <div className="mx-auto max-w-6xl space-y-4">
       <PageHeader icon={Palette} title={t.title} intro={t.intro} />
       <Tabs value={tab} onValueChange={(v) => onTab(v as BrandTab)}>
         <TabsList>
@@ -293,17 +294,23 @@ export function BrandManual({ tab, onTab }: { tab: BrandTab; onTab: (t: BrandTab
           <TabsTrigger value="logos" className="gap-2">
             <Shapes className="size-4" /> {t.tabLogos}
           </TabsTrigger>
+          <TabsTrigger value="eye" className="gap-2">
+            <Eye className="size-4" /> {t.tabEye}
+          </TabsTrigger>
           <TabsTrigger value="fonts" className="gap-2">
             <Type className="size-4" /> {t.tabFonts}
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="colours" className="pt-4">
+        <TabsContent value="colours" className="pt-3">
           <Colours />
         </TabsContent>
-        <TabsContent value="logos" className="pt-4">
+        <TabsContent value="logos" className="pt-3">
           <Logos />
         </TabsContent>
-        <TabsContent value="fonts" className="pt-4">
+        <TabsContent value="eye" className="pt-3">
+          <BrandEye />
+        </TabsContent>
+        <TabsContent value="fonts" className="pt-3">
           <Fonts />
         </TabsContent>
       </Tabs>

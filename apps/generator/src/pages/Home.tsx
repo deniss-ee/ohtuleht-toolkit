@@ -1,4 +1,4 @@
-import { Clapperboard, Crop, FileSearch, FileText, House, Lightbulb, Newspaper, Palette, PanelTop, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
+import { Clapperboard, Crop, Eye, FileSearch, FileText, House, Lightbulb, Newspaper, Palette, PanelTop, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
 import { ContinueCard } from "@/components/editor/ContinueCard";
 import { IconChip } from "@/components/editor/IconChip";
 import { PageHeader } from "@/components/editor/PageHeader";
@@ -27,6 +27,7 @@ const ITEMS: Record<string, { icon: LucideIcon; to: Destination }> = {
   colours: { icon: Palette, to: { page: "brand", tab: "colours" } },
   logos: { icon: Shapes, to: { page: "brand", tab: "logos" } },
   fonts: { icon: Type, to: { page: "brand", tab: "fonts" } },
+  eye: { icon: Eye, to: { page: "brand", tab: "eye" } },
 };
 
 // The first screen: what is here, and one click to each thing.

@@ -33,6 +33,7 @@ Try it: run it locally (below) or open the published site once it is set up ([do
 | Hosted banners + login | Banners served by URL, Microsoft login | Planned, Phase 3 |
 | Task tracker | Unified briefs for banner requests, optional Outlook sync | Planned, Phase 4 ([spec](docs/TASK-TRACKER.md)) |
 | Tools: Article scraper, Picture link converter | Marketing: article title, lead, link and picture link by bookmark; CMS picture links to /54/ and /48/ | **Built** ([docs](docs/MARKETING-TOOLS.md)) |
+| Brand manual: Eye | The brand eye as PNG or SVG: filled or outline, any look, turn or peek, with safety rules | **Built** ([docs](docs/BRAND-EYE.md)) |
 | Legacy tools | Two-article story generator, CapCut template, video ZIP, podcast story, article scrapper | Exist in `tools/`, migrated one by one. The image cropper and movie banner are rebuilt in the toolkit (their old folders stay as reference) |
 
 Full plan: [docs/ROADMAP.md](docs/ROADMAP.md).
@@ -67,6 +68,7 @@ Example: `?section=tools&tool=movie-banner&lang=et`. The address changes by itse
 | [docs/LANGUAGES.md](docs/LANGUAGES.md) | Add or change interface text in English and Estonian |
 | [docs/IMAGE-CROPPER.md](docs/IMAGE-CROPPER.md) | Use the image cropper (1920x1080 JPG) |
 | [docs/MARKETING-TOOLS.md](docs/MARKETING-TOOLS.md) | Article scraper and picture link converter for marketing |
+| [docs/BRAND-EYE.md](docs/BRAND-EYE.md) | The brand eye generator |
 | [docs/MOVIE-BANNER.md](docs/MOVIE-BANNER.md) | Make the movie banner (video on a picture, two zips) |
 | [docs/DEPLOY.md](docs/DEPLOY.md) | Publish the toolkit online with GitHub Pages |
 | [docs/BOOKMARKLET.md](docs/BOOKMARKLET.md) | Install and use the article bookmarklet |
