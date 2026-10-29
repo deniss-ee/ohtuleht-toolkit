@@ -2,7 +2,16 @@
 
 Each phase ends in something usable. Work is tracked as GitHub issues grouped in milestones that match the phases below.
 
-> **Status (2026-10-29):** Phase 0b (brand manual: colours and logos) and most of Phase 1 are built: Articles 1250x400 generator, runtime, bookmarklet v2, header bar tool. Next: old zip import (#34), then lint/CI (#5, #6), static-ad template (#35). See [HANDOFF.md](HANDOFF.md).
+> **Status (2026-10-29):** see the table. Next: old zip import (#34), then lint/CI (#5, #6), static-ad template (#35). Details in [HANDOFF.md](HANDOFF.md).
+
+| Phase | Status |
+|---|---|
+| 0 Foundation | Done except lint, format, tests, CI (#5, #6), release process (#8), branch protection check (#3), podcast bundle flag (#7) |
+| 0b Brand manual | Colours and logos **built**. Typography and ad formats open (#18), scattered assets open (#11) |
+| 1 Static generator | Articles 1250x400, runtime, bookmarklet v2, header bar tool **built**. Open: old zip import (#34), static ad (#35), image slider (#36), mobile 600x500 (#37), header font options (#64), accessibility pass (#38), IT README (#39) |
+| 2 Worker | Not started (#40 to #43) |
+| 3 Hosted and login | Not started (#44 to #47) |
+| 4 Task tracker | Spec only (#50 to #58) |
 
 ## Phase 0: Foundation and documentation (M0)
 
@@ -22,7 +31,7 @@ Spec: [BRAND-MANUAL.md](BRAND-MANUAL.md).
 - `brand.json` data file filled from the Figma library.
 - Colour swatches with one-click copy in many formats, contrast badges, token export.
 - Logo gallery, colour/black/white variants, SVG/PNG/ZIP downloads.
-- Typography and ad-format reference.
+- Typography and ad-format reference (not built yet, #18).
 
 Can run in parallel with Phase 1.
 
@@ -32,12 +41,14 @@ Spec: [BANNERS.md](BANNERS.md).
 
 No backend. Output is a zip an ad-server accepts.
 
-1. Tiny runtime replacing Swiper (loop, drag, arrows, autoplay, shuffle).
-2. First template: **Kultuurisügis 1250x400** (light and dark), rebuilt without Swiper.
-3. Generator app: upload an existing zip or start new, edit campaign data, add articles (snippet paste, manual form), reorder, remove, preview, download zip.
-4. Further templates: 1250x400 with static ad, image slider (client background plus 600x500 images; slide, fade, cube transitions).
-5. Bookmarklet v2 (JSON snippet).
-6. Mobile 600x500 article template once the new Figma design exists.
+1. Tiny runtime replacing Swiper (loop, drag, arrows, autoplay, shuffle). **Built.**
+2. First template: **Kultuurisügis 1250x400** (light and dark), rebuilt without Swiper. **Built.**
+3. Generator app: upload an existing zip or start new, edit campaign data, add articles (snippet paste, manual form), reorder, remove, preview, download zip. **Built.**
+4. Header bar tool (page header iframe, [HEADER-BAR.md](HEADER-BAR.md)). **Built.**
+5. Bookmarklet v2 (JSON snippet). **Built.**
+6. Open old Swiper zips (#34). Next.
+7. Further templates: 1250x400 with static ad (#35), image slider with client background and 600x500 images; slide, fade, cube transitions (#36).
+8. Mobile 600x500 article template once the new Figma design exists (#37).
 
 Done when: ad sales can produce a correct 1250x400 banner zip alone, in under five minutes, with no code edits.
 

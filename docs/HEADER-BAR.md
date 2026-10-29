@@ -13,7 +13,7 @@ In the generator: Content marketing, **Make this banner** on **Header bar** (or 
 | Text on the bar | Shown in capital letters |
 | Where the bar leads | Theme page. Opens in a new tab. Plain link, no ad ClickTag (it is a page, not an ad) |
 | Bar colour | Fills the bar |
-| Text colour | Automatic: brand colours follow the brand rule (black on steps 50 to 500, white from 600 up); other colours get white unless they are very light (luminance above 0.55 or HSL lightness above 0.78) (then a dark tint). Can be set by hand |
+| Text colour | Automatic: brand colours follow the brand rule (black on steps 50 to 500, white from 600 up); other colours get white unless they are very light (luminance above 0.55 or HSL lightness above 0.78), which get a dark tint. Can be set by hand |
 | Background picture | Optional. Shown at the left, `cover`. The bar colour shows behind it. Use a picture without text |
 
 The preview shows the bar at 1248, 768 and 375 px wide.
@@ -42,6 +42,8 @@ Behaviour: 16 px side padding, Fira Sans Condensed 700 16 px uppercase, 6 px rou
 The host sends `frame-ancestors` for `*.ohtuleht.ee` and a few partners, so the iframe only works on those sites.
 
 ## Open items
+
+- Status: built. Code: `packages/templates/src/header-bar.ts`, `apps/generator/src/pages/HeaderBarEditor.tsx`.
 
 - Header font and size options (issue #64) would apply here too.
 - Light/dark page colour behind the rounded corners is fixed to the live values.

@@ -22,52 +22,35 @@ Colours and fonts come from the Figma file **Õhtuleht - Brand hub** (frame `212
 
 Interface mapping: light mode uses white surfaces, Ink 950 text, Ink 200 borders and Red 600 for actions; dark mode uses Ink 950 as the page, slightly lifted surfaces (a mix of Ink 950 and white) and Red 500 for actions. Sizes are not taken from the hub yet.
 
-Banners keep their own fonts (Fira Sans Condensed, Roboto) until the banner design says otherwise.
+Banners keep their own font (Fira Sans Condensed) until the banner design says otherwise.
 
-## Colours
+## Colours (built)
 
-- Swatches grouped: primary, neutrals, accents, campaign presets. Each shows name and role.
-- One-click copy in these formats; the chosen format is remembered:
+- Three scales (Primary Red, Secondary Yellow, Ink Gray), 11 steps each, 33 swatches.
+- One-click copy as HEX, RGB, HSL, CSS variable or Tailwind class; the chosen format is remembered.
+- Each swatch shows the better text colour, its contrast ratio and WCAG level (AA, AA large, AAA).
+- Export buttons: `ohtuleht-colors.css`, a Tailwind v4 `@theme` file, a JSON file.
 
-| Format | Example |
-|---|---|
-| HEX | `#9500B2` |
-| RGB | `rgb(149, 0, 178)` |
-| RGBA | `rgba(149, 0, 178, 1)` |
-| HSL | `hsl(289, 100%, 35%)` |
-| CSS variable | `var(--color-badge)` |
-| Tailwind token | `text-badge` |
+## Logos (built)
 
-- Contrast badge against white and black (WCAG AA / AAA).
-- Light and dark values shown together when both exist.
-- Export buttons: `tokens.css`, `tokens.json`, Tailwind v4 `@theme` block.
-
-## Logos
-
-- One card per logo family; notes on clear space and minimum size.
-- Variants: full colour, black, white, single colour; previewed on light and dark backgrounds.
-- Download per variant:
-  - **SVG** (optimised with SVGO)
-  - **PNG** at 1x, 2x or a custom width, rendered in the browser from the SVG
-  - **ZIP** with the whole family
-- Transparent background by default; optional solid background.
+- Six variants: wordmark red, white, black; logomark square, round, rounded square.
+- Safe zone toggle; SVG (optimised with SVGO) and PNG (128 to 2048 px or a custom width of 16 to 8192; background transparent, white or black), rendered in the browser from the SVG.
+- One zip with everything, with and without the safe zone.
 
 The SVG is the only stored source; PNGs are generated.
 
-## Typography
+## Typography (not built, issue #18)
 
-Fonts, weights, sizes and where each is used (desktop or mobile), with copyable CSS and sample text. The list is provisional: currently Fira Sans Condensed, Roboto, and Inter for mobile. Changing it is a data edit.
+Fonts are already in `brand.json` and used by the interface: Fira Sans, Inter, DM Mono (table above). A page with sizes, line heights and copyable CSS is still to do, once the hub defines sizes. Banners keep Fira Sans Condensed until the banner design changes.
 
-## Ad formats reference
+## Ad formats reference (not built, issue #18)
 
-Table of standard formats (1250x400, 600x500, 300x250...) with size, weight limit and notes.
+A table of standard formats (1250x400, 600x500, 300x250...) with size, weight limit and notes. Today these rules live in [BANNERS.md](BANNERS.md).
 
-## Where it lives and what it does today
+## Where it lives
 
 - Data: `packages/brand/brand.json` (colours, logos, clear space, fonts) and `packages/brand/logos/*.svg`.
-- Page: **Brand manual** in the generator menu, with two tabs.
-- **Colours**: all three scales, 33 swatches. Click copies the colour as HEX, RGB, HSL, CSS variable or Tailwind class (choice remembered). Each swatch shows the better text colour (white or black), its contrast ratio and WCAG level. Buttons download `ohtuleht-colors.css`, a Tailwind `@theme` file and a JSON file.
-- **Logos**: six variants (wordmark red, white, black; logomark square, round, rounded square). Toggle **safe zone**; download each as SVG or PNG at 128 to 2048 px or any width from 16 to 8192; PNG background transparent, white or black; one zip with everything, with and without the safe zone.
+- Page: **Brand manual** in the generator menu, with two tabs (Colours, Logos). Code: `apps/generator/src/pages/BrandManual.tsx`.
 
 ### Logo rules (from the hub)
 
@@ -86,7 +69,9 @@ Table of standard formats (1250x400, 600x500, 300x250...) with size, weight limi
 2. `yarn workspace @ohtuleht/brand optimize-logo <input.svg> <name.svg>` (SVGO; keeps the viewBox, drops fixed sizes).
 3. Add the file to `brand.json` under `logos`.
 
-## Data format (`brand.json`, draft)
+## Data format (`brand.json`, simplified)
+
+Top-level keys today: `v`, `source`, `colors` (three scales with steps), `clearSpace`, `logos`, `fonts`. The sketch below shows the idea; read the file for exact fields. `adFormats` is not in the file yet.
 
 ```json
 {
@@ -125,11 +110,11 @@ Table of standard formats (1250x400, 600x500, 300x250...) with size, weight limi
 
 ## Source of truth
 
-Values are read from the Figma library (via Figma MCP once authorised) and written into `brand.json`. Missing or scattered assets are collected in a tracking issue. The banner generator reads the same file, so its colour pickers offer brand swatches.
+Values were read from the Figma Brand hub (via the Figma connector) and written into `brand.json`. Scattered assets that are not in the hub are tracked in issue #11. The banner generator reads the same file for its text-colour rule and brand swatches.
 
 ## Acceptance
 
 - Copy works with keyboard and mouse, shows a confirmation.
-- All logo variants download in every listed format.
+- All logo variants download as SVG and PNG.
 - Works at 375 px wide and on desktop.
 - Page weight is small; no framework needed beyond the toolkit build.
