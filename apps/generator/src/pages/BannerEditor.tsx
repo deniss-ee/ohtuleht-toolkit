@@ -148,7 +148,8 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
           onValueChange={(v) => {
             const format = v as ArticlesBannerConfig["format"];
             onChange(switchFormat(draft, format));
-            toast.success(t.versionSwitched(format === "articles-mobile" ? t.versionMobile : t.versionDesktop));
+            // The tab fires its change twice on one click (press and focus): one fixed id shows a single message.
+            toast.success(t.versionSwitched(format === "articles-mobile" ? t.versionMobile : t.versionDesktop), { id: "version-switched" });
           }}
         >
           <TabsList aria-label={t.versionLabel}>
