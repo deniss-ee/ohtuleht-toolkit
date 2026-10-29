@@ -4,9 +4,9 @@ For a new session or a new computer. Claude reads `CLAUDE.md` automatically; thi
 
 ## Where we are (2026-10-29)
 
-**Waiting to be merged** (a stack of pull requests, merge in this order; each is rebased after the one before it is squash-merged): #93 Tools section and image cropper, #94 movie banner and the shared tool top bar, #96 Estonian interface with EN/ET switch, #98 shared page headers, and the PR with the docs clean-up and the GitHub Pages workflow. Rows marked "(in a PR)" below are in this stack.
+All pull requests so far (#93, #94, #96, #98 and the docs clean-up with the GitHub Pages workflow) are merged into `develop`. The GitHub Pages site still needs the one-time setup in [DEPLOY.md](DEPLOY.md).
 
-Built (merged into `develop`, unless marked):
+Built and merged into `develop`:
 
 | Module | What it does | Docs |
 |---|---|---|
@@ -15,10 +15,10 @@ Built (merged into `develop`, unless marked):
 | **Old banner import** | Upload an old Swiper zip (articles type): form filled from its slides, colours, header and slider options; a dialog lists what to check; checkbox for header pictures with baked-in text | `docs/BANNERS.md` |
 | **Header bar** tool | 100% x 46 px bar for theme pages (index.html + style.css), preview at 3 widths, iframe code | `docs/HEADER-BAR.md` |
 | **Brand manual** | 33 colour swatches (copy as HEX/RGB/HSL/CSS/Tailwind, contrast, token export), 6 logo variants as SVG/PNG, safe zone, sizes, zip | `docs/BRAND-MANUAL.md` |
-| **Tools: Image cropper** (in a PR) | Picture onto 1920x1080, 4 modes, drag, blur or colour background, JPG | `docs/IMAGE-CROPPER.md` |
-| **Tools: Movie banner** (in a PR) | Video on a picture, two zips, preview | `docs/MOVIE-BANNER.md` |
-| **Estonian interface** (in a PR) | EN/ET switch in every top bar; all text in `content.en.ts` and `content.et.ts` | `docs/LANGUAGES.md` |
-| **GitHub Pages workflow** (in a PR) | Publishes `apps/generator/dist`; needs a one-time setup by the repository owner | `docs/DEPLOY.md` |
+| **Tools: Image cropper** | Picture onto 1920x1080, 4 modes, drag, blur or colour background, JPG | `docs/IMAGE-CROPPER.md` |
+| **Tools: Movie banner** | Video on a picture, two zips, preview | `docs/MOVIE-BANNER.md` |
+| **Estonian interface** | EN/ET switch in every top bar; all text in `content.en.ts` and `content.et.ts` | `docs/LANGUAGES.md` |
+| **GitHub Pages workflow** | Publishes `apps/generator/dist`; needs a one-time setup by the repository owner | `docs/DEPLOY.md` |
 | Bookmarklet v2 | Copies an article as a JSON snippet (title, link, picture, label) | `docs/BOOKMARKLET.md` |
 
 Not built yet (GitHub issues, milestones M0 to M4): 1250x400 with static ad (#35), image slider (#36), header font and size options (#64), brand typography and ad formats (#18), lint/format/CI (#5, #6), accessibility pass (#38), IT handoff README (#39), Cloudflare Worker (M2), hosted banners and login (M3), task tracker (M4, spec in `docs/TASK-TRACKER.md`).
