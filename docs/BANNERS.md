@@ -93,7 +93,7 @@ Reference: `content-marketing/dacia_ol-1250x400-noswiper`.
 Design: Figma "Õhtuleht - Brand hub", frame "Mobile Content". Format id `articles-mobile`.
 
 - **Width is not fixed.** The banner fills the page (8 px margin each side). A narrow phone (iPhone SE, 375 px) shows a sliver of the next card, a wide one shows more.
-- **Everything inside has a fixed size:** header 46 px, 17 px gap, cards 267x400 (about 2:3) with 8 px between, 28 px gap, dots 8 px. Height is 499 px. The banner is centred vertically in the page.
+- **Everything inside has a fixed size:** header 46 px, 16 px gap, cards 267x400 (about 2:3) with 8 px between, 28 px gap, dots 8 px. Height is 498 px. The banner is centred vertically in the page.
 - Card: picture, black gradient behind the title (216 px), title in Fira Sans Condensed Bold 18/23, white. No label, no hover colour.
 - Pagination: 6 dots in the design, one per article here; the active one is solid, the others 30 %. Black on light, white on dark. Dots are clickable (16 px touch area).
 - **Pictures:** the banner uses the `/webp/48/` version of each picture (cropped, higher resolution) whatever size was pasted: `/webp/54/` becomes `/webp/48/` when the banner is written. The form keeps the pasted address.
@@ -101,7 +101,7 @@ Design: Figma "Õhtuleht - Brand hub", frame "Mobile Content". Format id `articl
 - Theme: light background white, dark background `#1c1c1c`. Header colour and picture work as on desktop. Title and label colours do not apply, so the editor hides them.
 - The editor preview has a phone width switch (375, 390, 430).
 - **Desktop and mobile are one campaign.** The editor has a Desktop 1250x400 / Mobile switch at the top: one click turns the banner into the other size and keeps everything (campaign, header, articles, colours, behaviour). Download each size separately. The dark background follows the format unless it was changed by hand.
-- The preview frame is 515 px high (8 px above and below the 499 px banner) so the dots are never cut by the frame edge. In the ad system give the slot at least 499 px.
+- The preview frame is 514 px high (8 px above and below the 498 px banner) so the dots are never cut by the frame edge. In the ad system give the slot at least 498 px.
 - Open: best header picture size for mobile (the hint still names the desktop size), 1 px line height rounding (18 x 1.3 = 23.4 is 23 px).
 
 ## Figma to banner handoff
