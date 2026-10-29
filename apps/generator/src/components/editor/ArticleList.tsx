@@ -46,7 +46,6 @@ function ArticleRow({
   article,
   defaultBadge,
   defaultColor,
-  showBadge,
   onPatch,
   onMove,
   onRemove,
@@ -56,7 +55,6 @@ function ArticleRow({
   article: ArticleItem;
   defaultBadge: string;
   defaultColor: string;
-  showBadge: boolean; // the mobile banner has no labels
   onPatch: (patch: Partial<ArticleItem>) => void;
   onMove: (dir: -1 | 1) => void;
   onRemove: () => void;
@@ -80,7 +78,7 @@ function ArticleRow({
         </div>
       </div>
       <div className="flex flex-col gap-4 sm:flex-row">
-        <Thumb src={article.image} badge={showBadge ? shownBadge : ""} badgeColor={article.badgeColor || defaultColor} />
+        <Thumb src={article.image} badge={shownBadge} badgeColor={article.badgeColor || defaultColor} />
         <div className="grid flex-1 gap-3">
           <div className="space-y-1.5">
             <Label htmlFor={`${id}-title`}>{t.titleField}</Label>
@@ -96,7 +94,6 @@ function ArticleRow({
               <Input id={`${id}-img`} placeholder="https://p.ohtuleht.ee/…" value={article.image} onChange={(e) => onPatch({ image: e.target.value })} />
             </div>
           </div>
-          {showBadge && (
           <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
             <div className="space-y-1.5">
               <Label htmlFor={`${id}-badge`}>{t.badgeField}</Label>
@@ -112,7 +109,6 @@ function ArticleRow({
               </div>
             </div>
           </div>
-          )}
         </div>
       </div>
     </li>
@@ -123,14 +119,12 @@ export function ArticleList({
   articles,
   defaultBadge,
   defaultColor,
-  showBadge = true,
   onChange,
   onOpenBookmark,
 }: {
   articles: ArticleItem[];
   defaultBadge: string;
   defaultColor: string;
-  showBadge?: boolean;
   onChange: (next: ArticleItem[]) => void;
   onOpenBookmark: () => void;
 }) {
@@ -208,7 +202,6 @@ export function ArticleList({
                 article={a}
                 defaultBadge={defaultBadge}
                 defaultColor={defaultColor}
-                showBadge={showBadge}
                 onPatch={(p) => patch(i, p)}
                 onMove={(d) => move(i, d)}
                 onRemove={() => onChange(articles.filter((_, j) => j !== i))}
