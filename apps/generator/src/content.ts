@@ -28,7 +28,7 @@ export interface BannerType {
 export const bannerTypes: BannerType[] = [
   { id: "header-bar", name: "Header bar", size: "100% x 46", device: "All screens", description: "The bar at the top of a theme page, shown on the site in an iframe.", ready: true },
   { id: "articles-1250x400", name: "Articles", size: "1250x400", device: "Desktop", description: "Header and a slider of article cards.", ready: true },
-  { id: "articles-mobile", name: "Articles", size: "Full width x 499", device: "Mobile", description: "Header and swipeable article cards with dots, as wide as the phone.", ready: true },
+  { id: "articles-mobile", name: "Articles", size: "Full width x 498", device: "Mobile", description: "Header and swipeable article cards with dots, as wide as the phone.", ready: true },
   { id: "articles-ad-1250x400", name: "Articles with static ad", size: "1250x400", device: "Desktop", description: "Fixed ad next to a slider of three articles.", ready: false },
   { id: "image-slider-1250x400", name: "Image slider", size: "1250x400", device: "Desktop", description: "Client background with a slider of images.", ready: false },
   { id: "image-slider-600x500", name: "Image slider", size: "600x500", device: "Mobile", description: "Client images with slide, fade or cube transition.", ready: false },

@@ -24,11 +24,11 @@ export interface Draft {
 const light: ThemeColors = { bg: "#ffffff", text: "#272727", hover: "#e3000f" };
 const dark: ThemeColors = { bg: "#0f0f0f", text: "#ffffff", hover: "#e3000f" };
 
-// Preview frame size and name of each format. The mobile banner is 499 px high and fills the width of the phone;
+// Preview frame size and name of each format. The mobile banner is 498 px high and fills the width of the phone;
 // its preview frame is 8 px taller above and below so the dots at the very bottom are never cut by the frame edge.
 export const FORMATS: Record<ArticlesFormat, { label: string; width: number; height: number; suffix: string; darkBg: string }> = {
   "articles-1250x400": { label: "1250x400", width: 1250, height: 400, suffix: "1250x400", darkBg: "#0f0f0f" },
-  "articles-mobile": { label: "Mobile", width: 376, height: 515, suffix: "mobile", darkBg: "#1c1c1c" },
+  "articles-mobile": { label: "Mobile", width: 376, height: 514, suffix: "mobile", darkBg: "#1c1c1c" },
 };
 
 // Same banner, other size: everything is kept (campaign, header, articles, colours, behaviour).

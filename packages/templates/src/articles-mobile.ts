@@ -33,7 +33,7 @@ function css(config: ArticlesBannerConfig): string {
     "body{display:flex;align-items:center;min-height:100vh;padding:0 8px}" +
     ".banner{width:100%}" +
     headerCss(config) +
-    ".header{margin-bottom:17px}" +
+    ".header{margin-bottom:16px}" +
     `.ol-slide{flex:0 0 ${CARD_W}px;width:${CARD_W}px}` +
     `.card{position:relative;display:flex;align-items:flex-end;height:${CARD_H}px;border-radius:8px;overflow:hidden;background:#000 center/cover no-repeat}` +
     // Picture fades to black behind the title (Figma: 216 px gradient, text 16 px from the left, 36 px from the right, 20 px from the bottom).
