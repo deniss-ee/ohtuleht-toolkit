@@ -1,4 +1,5 @@
-import { Clapperboard, Crop, type LucideIcon } from "lucide-react";
+import { Clapperboard, Crop, Wrench, type LucideIcon } from "lucide-react";
+import { PageHeader } from "@/components/editor/PageHeader";
 import { IconChip } from "@/components/editor/IconChip";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,10 +12,7 @@ const ICONS: Record<ToolInfo["id"], LucideIcon> = { "image-cropper": Crop, "movi
 export function ToolsHome({ onOpen }: { onOpen: (id: ToolInfo["id"]) => void }) {
   return (
     <div className="mx-auto max-w-5xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">{t.title}</h1>
-        <p className="text-muted-foreground">{t.intro}</p>
-      </div>
+      <PageHeader icon={Wrench} title={t.title} intro={t.intro} />
       <div className="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {t.items.map((i) => (
           <Card key={i.id} className={i.ready ? "h-full" : "h-full opacity-60"}>

@@ -3,6 +3,7 @@ import { Copy, Download, FileArchive, Palette, Shapes } from "lucide-react";
 import { toast } from "sonner";
 import { brand, contrastRatio, formatColor, safeZone, textOnStep, tokensCss, tokensJson, tokensTailwind, wcagLevel, type ColorFormat, type LogoVariant } from "@ohtuleht/brand";
 import { IconChip } from "@/components/editor/IconChip";
+import { PageHeader } from "@/components/editor/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -284,13 +285,7 @@ function Logos() {
 export function BrandManual() {
   return (
     <div className="mx-auto max-w-6xl space-y-6">
-      <div className="flex items-center gap-3">
-        <IconChip icon={Palette} tone="red" />
-        <div>
-          <h1 className="text-2xl font-semibold">{t.title}</h1>
-          <p className="text-muted-foreground">{t.intro}</p>
-        </div>
-      </div>
+      <PageHeader icon={Palette} title={t.title} intro={t.intro} />
       <Tabs defaultValue="colours">
         <TabsList>
           <TabsTrigger value="colours" className="gap-2">
