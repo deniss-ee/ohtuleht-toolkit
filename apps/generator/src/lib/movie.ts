@@ -1,5 +1,5 @@
 import JSZip from "jszip";
-import { renderMovieBanner, validateMovieVersion, type MovieBannerConfig, type VideoPosition } from "@ohtuleht/templates";
+import { renderMovieBanner, type MovieBannerConfig, type VideoPosition } from "@ohtuleht/templates";
 import { readySignal } from "@/components/editor/SwapFrame";
 import { download } from "@/lib/zip";
 
@@ -49,11 +49,20 @@ function config(d: MovieDraft, v: Version, background: string, video: string): M
   return { title: "Video banner", width: v.width, height: v.height, background, video, videoHeight: d.videoHeight, position: d.position, offset: d.offset, href: v.href.trim() };
 }
 
-export function movieProblems(d: MovieDraft): string[] {
-  const out: string[] = [];
-  if (!d.video) out.push("Choose the video.");
-  for (const { key, label } of VERSIONS) out.push(...validateMovieVersion(label, { hasBackground: !!d[key].file, href: d[key].href.trim() }));
-  if (!(d.videoHeight >= 50 && d.videoHeight <= 1000)) out.push("Video height must be between 50 and 1000 px.");
+export interface MovieProblem {
+  field: string; // id of the control to jump to
+  message: string;
+}
+
+export function movieProblems(d: MovieDraft): MovieProblem[] {
+  const out: MovieProblem[] = [];
+  if (!d.video) out.push({ field: "mv-video", message: "Choose the video." });
+  for (const { key, label } of VERSIONS) {
+    if (!d[key].file) out.push({ field: `mv-bg-${key}`, message: `Choose the ${label} background picture.` });
+    const href = d[key].href.trim();
+    if (href && !/^https?:\/\/\S+$/i.test(href)) out.push({ field: `mv-link-${key}`, message: `The ${label} link must start with https://` });
+  }
+  if (!(d.videoHeight >= 50 && d.videoHeight <= 1000)) out.push({ field: "mv-height", message: "Video height must be between 50 and 1000 px." });
   return out;
 }
 

@@ -35,6 +35,7 @@ Weight is the picture plus the video; the HTML is about 2 KB. The file list show
 - Files are named `background.<ext>` and `video.<ext>` (old: original picture name, always `video.mp4` even for WebM).
 - The button has a label for screen readers and works with the keyboard.
 - Live preview scales to the screen and has a tab per version.
+- Same top bar as the banner editors (Back, "things left to do" pill that jumps to the field, theme switch, Download).
 - Page `lang` is `et`.
 - The old `sound.html` was only a sample output and is not rebuilt.
 

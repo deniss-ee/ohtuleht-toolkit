@@ -65,11 +65,3 @@ function toggleVideoAudio(){var v=document.querySelector('video'),off=document.g
 </html>
 `;
 }
-
-// Plain-language problems for one version of the banner.
-export function validateMovieVersion(label: string, v: { hasBackground: boolean; href: string }): string[] {
-  const out: string[] = [];
-  if (!v.hasBackground) out.push(`Choose the ${label} background picture.`);
-  if (v.href && !/^https?:\/\/\S+$/i.test(v.href)) out.push(`The ${label} link must start with https://`);
-  return out;
-}

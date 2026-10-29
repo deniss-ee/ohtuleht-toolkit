@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, CheckCircle2, Clapperboard, Download, ImagePlus, TriangleAlert, Video } from "lucide-react";
+import { Clapperboard, Download, ImagePlus, Video } from "lucide-react";
 import { toast } from "sonner";
 import { IconChip } from "@/components/editor/IconChip";
 import { SwapFrame } from "@/components/editor/SwapFrame";
+import { ToolShell } from "@/components/editor/ToolShell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { movieBanner as t, tools } from "@/content";
+import { movieBanner as t } from "@/content";
 import { downloadMovieZips, movieProblems, newMovieDraft, readPicture, renderMoviePreview, VERSIONS, type MovieDraft, type VersionKey } from "@/lib/movie";
 import type { VideoPosition } from "@ohtuleht/templates";
 
@@ -71,14 +72,23 @@ export function MovieBanner({ onBack }: { onBack: () => void }) {
   const frameSize = `${v.width} x ${v.height} px`;
 
   return (
-    <div className="mx-auto max-w-6xl space-y-4">
-      <Button variant="ghost" size="sm" className="gap-2" onClick={onBack}>
-        <ArrowLeft className="size-4" /> {tools.back}
-      </Button>
-      <div>
-        <h1 className="text-2xl font-semibold">{t.title}</h1>
-        <p className="text-muted-foreground">{t.intro}</p>
-      </div>
+    <ToolShell
+      title={t.title}
+      subtitle={t.subtitle}
+      problems={issues}
+      readyText={t.ready}
+      doneText={t.doneText}
+      busy={busy}
+      onDownload={download}
+      onBack={onBack}
+      downloadLabel={
+        <>
+          <Download className="size-4" /> {busy ? t.building : <>Download<span className="hidden sm:inline"> both zips</span></>}
+        </>
+      }
+    >
+    <div className="mx-auto w-full max-w-6xl space-y-4 px-4 pb-24 pt-4">
+      <p className="text-muted-foreground">{t.intro}</p>
 
       <div className="grid items-start gap-4 lg:grid-cols-[1fr_22rem]">
         <div className="min-w-0 space-y-2">
@@ -118,7 +128,7 @@ export function MovieBanner({ onBack }: { onBack: () => void }) {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <FileButton accept="video/mp4,video/webm" label={d.video ? t.videoChange : t.videoChoose} name={d.video ? `${d.video.name} (${size(d.video.size)})` : t.noFile} onFile={pickVideo} icon={<Clapperboard className="size-4" />} />
+              <FileButton id="mv-video" accept="video/mp4,video/webm" label={d.video ? t.videoChange : t.videoChoose} name={d.video ? `${d.video.name} (${size(d.video.size)})` : t.noFile} onFile={pickVideo} icon={<Clapperboard className="size-4" />} />
               <div className="space-y-1.5">
                 <Label htmlFor="mv-height">{t.videoHeight}</Label>
                 <Input id="mv-height" type="number" inputMode="numeric" min={50} max={1000} value={d.videoHeight} onChange={(e) => setD({ ...d, videoHeight: Number(e.target.value) })} />
@@ -156,6 +166,7 @@ export function MovieBanner({ onBack }: { onBack: () => void }) {
               </CardHeader>
               <CardContent className="space-y-3">
                 <FileButton
+                  id={`mv-bg-${x.key}`}
                   accept="image/*"
                   label={d[x.key].file ? t.backgroundChange : t.backgroundChoose}
                   name={d[x.key].file ? `${d[x.key].file!.name} (${size(d[x.key].file!.size)})` : t.noFile}
@@ -171,37 +182,20 @@ export function MovieBanner({ onBack }: { onBack: () => void }) {
             </Card>
           ))}
 
-          <div className="space-y-2">
-            {issues.length > 0 ? (
-              <ul className="space-y-1 text-sm text-muted-foreground">
-                {issues.map((i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <TriangleAlert className="mt-0.5 size-4 shrink-0 text-yellow-600" /> {i}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="flex items-center gap-2 text-sm">
-                <CheckCircle2 className="size-4 text-green-600" /> {t.ready}
-              </p>
-            )}
-            <Button className="gap-2" disabled={issues.length > 0 || busy} onClick={download}>
-              <Download className="size-4" /> {busy ? t.building : t.download}
-            </Button>
-          </div>
         </div>
       </div>
     </div>
+    </ToolShell>
   );
 }
 
 // A button that opens the file chooser and shows the chosen file name under it.
-function FileButton({ accept, label, name, onFile, icon }: { accept: string; label: string; name: string; onFile: (f: File | undefined) => void; icon: React.ReactNode }) {
+function FileButton({ id, accept, label, name, onFile, icon }: { id: string; accept: string; label: string; name: string; onFile: (f: File | undefined) => void; icon: React.ReactNode }) {
   const input = useRef<HTMLInputElement>(null);
   return (
     <div className="space-y-1">
       <input ref={input} type="file" accept={accept} className="sr-only" tabIndex={-1} aria-hidden onChange={(e) => { onFile(e.target.files?.[0]); e.target.value = ""; }} />
-      <Button type="button" variant="outline" className="gap-2" onClick={() => input.current?.click()}>
+      <Button id={id} type="button" variant="outline" className="gap-2" onClick={() => input.current?.click()}>
         {icon} {label}
       </Button>
       <p className="truncate text-xs text-muted-foreground">{name}</p>

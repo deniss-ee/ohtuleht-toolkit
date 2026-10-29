@@ -317,6 +317,9 @@ export const imageCropper = {
   centre: "Centre picture",
   other: "Choose another picture",
   download: "Download JPG",
+  subtitle: "Picture on 1920x1080",
+  doneText: "All done. You can download your picture.",
+  choosePicture: "Choose a picture.",
   downloaded: "Picture saved.",
   size: (w: number, h: number) => `Original picture: ${w} x ${h} px`,
 };
@@ -351,6 +354,8 @@ export const movieBanner = {
   notVideo: "That file is not a video (use MP4 or WebM).",
   notImage: "That file is not a picture.",
   download: "Download both zips",
+  subtitle: "Video on a picture, two zips",
+  doneText: "All done. You can download both zips.",
   building: "Building...",
   ready: "Ready to download",
   toFix: (n: number) => `${n} thing${n === 1 ? "" : "s"} left to do`,

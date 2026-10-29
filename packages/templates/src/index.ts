@@ -7,5 +7,5 @@ export { CLICKTAG_JS } from "./clicktag.ts";
 export { resolveTheme, readableOn, onColor, brandTextColor, contrast } from "./colors.ts";
 export { renderHeaderBar, validateHeaderBar, headerTextColor, iframeCode } from "./header-bar.ts";
 export type { HeaderBarConfig, HeaderBarFiles } from "./header-bar.ts";
-export { renderMovieBanner, validateMovieVersion } from "./movie-banner.ts";
+export { renderMovieBanner } from "./movie-banner.ts";
 export type { MovieBannerConfig, VideoPosition } from "./movie-banner.ts";
