@@ -358,6 +358,7 @@ export const marketing = {
   installTitle: "Set it up once",
   installStep1: "Drag this button to your bookmarks bar (Ctrl+Shift+B shows the bar).",
   installName: "Scrape article",
+  installLocal: "You are on a test copy of the toolkit (localhost). This bookmark would open that test copy. Make it from the live site instead.",
   installStep2: "Open an article on ohtuleht.ee and click the bookmark. This page opens with the article.",
   installCopyCode: "Copy the code instead",
   installCopyHint: "If dragging does not work: make a new bookmark by hand and paste this code as its address.",
