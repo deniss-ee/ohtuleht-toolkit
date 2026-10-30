@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { AlertTriangle, Building2, CalendarDays, Download, Kanban, ListChecks, Plus, Sparkles, Table2, Trash2, Upload } from "lucide-react";
+import { AlertTriangle, Building2, CalendarDays, Cloud, CloudOff, Download, Kanban, ListChecks, Plus, Sparkles, Table2, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { BriefPage, STATUS_DOT } from "@/components/editor/BriefPage";
 import { PageHeader } from "@/components/editor/PageHeader";
@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { tracker as t, getLang } from "@/content";
 import { clientsCsv, emptyClient, fetchSharedClients, loadClients, mergeClients, parseClientsCsv, saveClients, sortClients, type Client } from "@/lib/clients";
+import { pull, pushDiff } from "@/lib/sync";
 import { isOverdue, loadBriefs, parseBackup, saveBriefs, STATUSES, type Brief, type Status } from "@/lib/tracker";
 
 const shortDate = (s: string) => new Date(`${s}T12:00:00`).toLocaleDateString(getLang() === "et" ? "et-EE" : "en-GB", { day: "numeric", month: "short" });
@@ -185,17 +186,55 @@ export function TaskTracker({ onMake, onNewRequest }: { onMake: (typeId: string)
   const [over, setOver] = useState<Status | null>(null);
   const file = useRef<HTMLInputElement>(null);
 
+  // The newest lists, for the comparisons below (a state value can be one step behind when changes come quickly).
+  const listRef = useRef(list);
+  const clientsRef = useRef(clients);
+  const [net, setNet] = useState<{ online: boolean | null; testMode: boolean }>({ online: null, testMode: false });
+
   const commit = (next: Brief[]) => {
+    pushDiff("briefs", listRef.current, next);
+    listRef.current = next;
     setList(next);
     saveBriefs(next);
   };
   const commitClients = (next: Client[]) => {
+    pushDiff("clients", clientsRef.current, next);
+    clientsRef.current = next;
     setClients(next);
     saveClients(next);
   };
+  // Fetch what everybody has saved: when the page opens, when the tab gets the focus again, and every half minute.
+  useEffect(() => {
+    let alive = true;
+    const refresh = async () => {
+      const b = await pull("briefs", listRef.current);
+      const c = await pull("clients", clientsRef.current);
+      if (!alive) return;
+      setNet({ online: b.online && c.online, testMode: b.testMode });
+      if (b.online) {
+        listRef.current = b.items;
+        setList(b.items);
+        saveBriefs(b.items);
+      }
+      if (c.online) {
+        clientsRef.current = c.items;
+        setClients(c.items);
+        saveClients(c.items);
+      }
+    };
+    void refresh();
+    const timer = setInterval(() => void refresh(), 30000);
+    const onShow = () => document.visibilityState === "visible" && void refresh();
+    document.addEventListener("visibilitychange", onShow);
+    return () => {
+      alive = false;
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", onShow);
+    };
+  }, []);
   // The shared list from the repository joins the person's own (once, when the page opens).
   useEffect(() => {
-    void fetchSharedClients().then((shared) => shared.length && setClients((c) => mergeClients(c, shared)));
+    void fetchSharedClients().then((shared) => shared.length && ((clientsRef.current = mergeClients(clientsRef.current, shared)), setClients(clientsRef.current)));
   }, []);
 
   const save = (b: Brief) => {
@@ -264,6 +303,14 @@ export function TaskTracker({ onMake, onNewRequest }: { onMake: (typeId: string)
           <Plus className="size-4" /> {t.newRequest}
         </Button>
       </div>
+
+      {net.online !== null && (
+        <p className={`flex flex-wrap items-center gap-2 text-xs ${net.online ? "text-muted-foreground" : "text-destructive"}`} role="status">
+          {net.online ? <Cloud className="size-4 text-green-600" aria-hidden /> : <CloudOff className="size-4" aria-hidden />}
+          {net.online ? t.syncOnline : t.syncOffline}
+          {net.online && net.testMode && <span className="rounded bg-yellow-300/30 px-1.5 py-0.5 font-medium text-foreground">{t.syncTest}</span>}
+        </p>
+      )}
 
       {examples && view !== "clients" && (
         <p className="flex flex-wrap items-center gap-2 rounded-xl border border-dashed bg-muted/50 px-3 py-2 text-sm">

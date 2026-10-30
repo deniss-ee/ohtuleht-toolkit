@@ -486,7 +486,10 @@ export const tracker = {
   import: "Load backup",
   imported: (n: number) => `Loaded ${n} brief${n === 1 ? "" : "s"}.`,
   importFailed: "This file is not a briefs backup.",
-  localNote: "Briefs are kept in this browser only (Scoro and sharing come later). Use Back up to keep a file or move them to another computer.",
+  syncOnline: "Shared: everybody sees the same briefs and clients.",
+  syncOffline: "Offline: saved on this computer, sent when the connection is back.",
+  syncTest: "Test mode: use test data only",
+  localNote: "Briefs are shared through the Cloudflare database (test mode: no login yet) and also kept in this browser. Use Back up to keep a file.",
   clients: {
     title: "Your clients",
     add: "Add a client",

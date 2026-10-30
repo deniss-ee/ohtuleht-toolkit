@@ -8,8 +8,8 @@
     {
       "binding": "DB",
       "database_name": "ohtuleht-db",
-      // Filled in after "yarn wrangler d1 create ohtuleht-db" (the id is not a secret).
-      "database_id": "REPLACE_WITH_DATABASE_ID",
+      // The id of the database (not a secret).
+      "database_id": "7b1dc06d-9f9f-4c8c-9398-78a8db3f1670",
       "migrations_dir": "migrations"
     }
   ],

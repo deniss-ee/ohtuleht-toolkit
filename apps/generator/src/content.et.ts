@@ -453,7 +453,10 @@ export const tracker: typeof En.tracker = {
   import: "Laadi varukoopia",
   imported: (n: number) => `Laaditud ${n} ülesannet.`,
   importFailed: "See fail ei ole ülesannete varukoopia.",
-  localNote: "Ülesanded on salvestatud ainult sellesse brauserisse (Scoro ja jagamine tulevad hiljem). Varukoopiaga saad need faili salvestada või teise arvutisse viia.",
+  syncOnline: "Jagatud: kõik näevad samu ülesandeid ja kliente.",
+  syncOffline: "Võrguühenduseta: salvestatud sellesse arvutisse, saadetakse, kui ühendus taastub.",
+  syncTest: "Testrežiim: kasuta ainult testandmeid",
+  localNote: "Ülesanded jagatakse Cloudflare'i andmebaasi kaudu (testrežiim: sisselogimist veel pole) ja hoitakse ka selles brauseris. Varukoopiaga saad need faili salvestada.",
   clients: {
     title: "Sinu kliendid",
     add: "Lisa klient",

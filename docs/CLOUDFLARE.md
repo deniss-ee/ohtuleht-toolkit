@@ -38,3 +38,10 @@ yarn wrangler dev --port 8788
 1. Microsoft 365 or an Exchange server? (Graph needs Microsoft 365.)
 2. App registration in Entra: single-page app, this tenant only, redirects `https://deniss-ee.github.io/ohtuleht-toolkit/` and `http://localhost:5173/`, delegated `User.Read` and `Mail.Send`. Needed back: Application (client) ID and Directory (tenant) ID (not secrets).
 3. Company address for the API (for example `api.ohtuleht.ee`).
+
+## Status (2026-10-30)
+
+- Deployed: `https://ohtuleht-api.ohtuleht-api.workers.dev` (account of deniss.ivanjuk@ohtuleht.ee). Database `ohtuleht-db`, id in `apps/api/wrangler.jsonc`. Mode `open`: **test data only**.
+- The site (`apps/generator/src/lib/sync.ts`, address `API_URL`, override with `VITE_API_URL`) sends every change of briefs and clients to the Worker, fetches the lists when the Task tracker opens, when the tab gets focus again and every 30 seconds. Offline: changes wait in an outbox (`ol-outbox`) and are sent later. A record made offline and never on the server is uploaded; a record that was on the server and is gone was deleted by someone and is dropped. Sample data is never sent.
+- Update the Worker: `cd apps/api && yarn wrangler deploy`. Remove test records: `DELETE /api/briefs/<id>`.
+- Logs and usage: Cloudflare dashboard, Workers & Pages, ohtuleht-api.
