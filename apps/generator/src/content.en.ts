@@ -361,7 +361,7 @@ export const brandManual = {
 
 // Tools section: small stand-alone helpers (not banners made from articles).
 export interface ToolInfo {
-  id: "image-cropper" | "movie-banner" | "article-scraper" | "picture-converter";
+  id: "image-cropper" | "movie-banner" | "article-scraper" | "picture-converter" | "email-signature";
   name: string;
   description: string;
   tag: string;
@@ -378,7 +378,33 @@ export const tools = {
     { id: "movie-banner", name: "Movie banner", description: "Banner with a video on a background picture. Makes two zips for the ad server.", tag: "1250 and 1280", ready: true },
     { id: "article-scraper", name: "Article scraper", description: "Title, lead text, link and picture link of an article, ready to copy. For marketing.", tag: "Bookmark", ready: true },
     { id: "picture-converter", name: "Picture link converter", description: "Change the size number of CMS picture links to the banner sizes (54 and 48).", tag: "54 and 48", ready: true },
+    { id: "email-signature", name: "Email signature", description: "Name, job title, phone and logo as a signature for Outlook or any mail program.", tag: "Outlook", ready: true },
   ] satisfies ToolInfo[],
+};
+
+export const signature = {
+  back: "Back to Tools",
+  title: "Email signature",
+  intro: "Fill in your details and get a signature for Outlook or any mail program.",
+  formTitle: "Your details",
+  previewTitle: "Your signature",
+  fields: { name: "Name", title: "Job title", department: "Department", phone: "Phone", mobile: "Mobile", email: "Email", website: "Website", address: "Address", company: "Company" } as Record<string, string>,
+  placeholders: { name: "Mari Maasikas", title: "Sales manager", department: "Advertising sales", phone: "+372 600 0000", mobile: "+372 500 0000", email: "mari.maasikas@ohtuleht.ee", website: "www.ohtuleht.ee", address: "Narva mnt 13, Tallinn", company: "Õhtuleht" } as Record<string, string>,
+  logo: "Show the logo",
+  empty: "Type your name to see the signature.",
+  copy: "Copy signature",
+  copyCode: "Copy HTML code",
+  copyText: "Copy as plain text",
+  copied: "Signature copied. Paste it in your mail program.",
+  copiedCode: "HTML code copied.",
+  copiedText: "Plain text copied.",
+  stepsTitle: "How to use it in Outlook",
+  steps: [
+    "Click Copy signature.",
+    "Outlook: Settings, Accounts, Signatures (in classic Outlook: File, Options, Mail, Signatures).",
+    "Make a new signature and paste (Ctrl+V). Save.",
+  ],
+  logoNote: "The logo is loaded from the toolkit site, so it shows in the mail only after the site is published.",
 };
 
 export const marketing = {
@@ -637,6 +663,7 @@ export const home = {
       text: "For texts and picture links.",
       items: [
         { id: "article-scraper", name: "Article scraper", text: "Title, lead, link and picture link of an article." },
+        { id: "email-signature", name: "Email signature", text: "Your details and the logo as a signature for Outlook." },
         { id: "picture-converter", name: "Picture link converter", text: "CMS picture links to the banner sizes." },
       ],
     },

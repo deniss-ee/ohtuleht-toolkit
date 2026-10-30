@@ -71,6 +71,7 @@ export const tools = section("tools");
 export const imageCropper = section("imageCropper");
 export const movieBanner = section("movieBanner");
 export const marketing = section("marketing");
+export const signature = section("signature");
 export const brandEye = section("brandEye");
 export const ui = section("ui");
 export const home = section("home");

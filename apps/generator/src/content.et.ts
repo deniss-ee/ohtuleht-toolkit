@@ -345,7 +345,33 @@ export const tools: typeof En.tools = {
     { id: "movie-banner", name: "Filmibänner", description: "Bänner videoga taustapildil. Teeb reklaamiserveri jaoks kaks zip-faili.", tag: "1250 ja 1280", ready: true },
     { id: "article-scraper", name: "Artikli kopeerija", description: "Artikli pealkiri, juhttekst, link ja pildi link, valmis kopeerimiseks. Turundusele.", tag: "Järjehoidja", ready: true },
     { id: "picture-converter", name: "Pildi lingi muundur", description: "Muuda CMS-i piltide linkide suuruse number bänneri suurusteks (54 ja 48).", tag: "54 ja 48", ready: true },
+    { id: "email-signature", name: "E-posti allkiri", description: "Nimi, ametinimetus, telefon ja logo allkirjana Outlooki või mõne muu postiprogrammi jaoks.", tag: "Outlook", ready: true },
   ],
+};
+
+export const signature: typeof En.signature = {
+  back: "Tagasi tööriistade juurde",
+  title: "E-posti allkiri",
+  intro: "Täida oma andmed ja saad allkirja Outlooki või mõne muu postiprogrammi jaoks.",
+  formTitle: "Sinu andmed",
+  previewTitle: "Sinu allkiri",
+  fields: { name: "Nimi", title: "Ametinimetus", department: "Osakond", phone: "Telefon", mobile: "Mobiil", email: "E-post", website: "Veebileht", address: "Aadress", company: "Ettevõte" },
+  placeholders: { name: "Mari Maasikas", title: "Müügijuht", department: "Reklaamimüük", phone: "+372 600 0000", mobile: "+372 500 0000", email: "mari.maasikas@ohtuleht.ee", website: "www.ohtuleht.ee", address: "Narva mnt 13, Tallinn", company: "Õhtuleht" },
+  logo: "Näita logo",
+  empty: "Kirjuta oma nimi, et allkirja näha.",
+  copy: "Kopeeri allkiri",
+  copyCode: "Kopeeri HTML-kood",
+  copyText: "Kopeeri tavatekstina",
+  copied: "Allkiri kopeeritud. Kleebi see oma postiprogrammi.",
+  copiedCode: "HTML-kood kopeeritud.",
+  copiedText: "Tavatekst kopeeritud.",
+  stepsTitle: "Kuidas Outlookis kasutada",
+  steps: [
+    "Vajuta Kopeeri allkiri.",
+    "Outlook: Seaded, Kontod, Allkirjad (klassikalises Outlookis: Fail, Suvandid, Meil, Allkirjad).",
+    "Tee uus allkiri ja kleebi (Ctrl+V). Salvesta.",
+  ],
+  logoNote: "Logo laetakse tööriistakasti saidilt, seega on see kirjas näha alles pärast saidi avaldamist.",
 };
 
 export const marketing: typeof En.marketing = {
@@ -602,6 +628,7 @@ export const home: typeof En.home = {
       text: "Tekstide ja piltide linkide jaoks.",
       items: [
         { id: "article-scraper", name: "Artikli kopeerija", text: "Artikli pealkiri, juhttekst, link ja pildi link." },
+        { id: "email-signature", name: "E-posti allkiri", text: "Sinu andmed ja logo allkirjana Outlooki jaoks." },
         { id: "picture-converter", name: "Pildi lingi muundur", text: "CMS-i piltide lingid bänneri suurusteks." },
       ],
     },
