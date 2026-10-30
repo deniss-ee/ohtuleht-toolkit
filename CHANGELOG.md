@@ -4,11 +4,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+## [0.2.5] - 2026-10-30
+
+Arrows in the main campaign colour with a smaller chevron; the mobile label keeps its colour in dark mode.
+
+- Mobile articles banner: the label (a block with text on it) keeps its colour in dark mode; only the desktop banner, where the label colour is the text colour, lightens it. The Colours panel has no separate dark label colour for the phone banner.
 ## [0.2.4] - 2026-10-30
 
 Banner arrows are solid (full strength, a darker square), with the chevron at its old size; corrects 0.2.3.
 
-- Banner arrows are solid: the white chevron at full strength (no half-transparent arrow) on a dark, 85 % solid 32 px square; the chevron keeps its old size and has no outline. The square darkens on hover and nothing moves.
+- Banner arrows are solid: the whole button at full strength on an 85 % solid 32 px square. In the articles banners the square takes the main campaign colour (as the header does) and the chevron is white or dark, whichever reads on that colour; in the image slider the square is a neutral dark. The chevron is a bit smaller and has no outline. Hover darkens the square slightly and nothing moves.
 ## [0.2.3] - 2026-10-30
 
 Banner arrows are easier to see.
