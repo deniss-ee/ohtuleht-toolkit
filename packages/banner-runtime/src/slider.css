@@ -1,0 +1,15 @@
+/* Structural slider styles. Templates add their own look on top. */
+.ol-slider { position: relative; }
+.ol-viewport { overflow: hidden; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.ol-track { display: flex; gap: var(--ol-gap, 16px); will-change: transform; }
+.ol-slide {
+  flex: 0 0 calc((100% - var(--ol-gap, 16px) * (var(--ol-visible, 4) - 1)) / var(--ol-visible, 4));
+  min-width: 0;
+  cursor: pointer;
+}
+.ol-static .ol-prev,
+.ol-static .ol-next { display: none; }
+/* Only when a banner opts in with data-respect-motion="1" */
+@media (prefers-reduced-motion: reduce) {
+  .ol-slider[data-respect-motion="1"] .ol-track { transition: none !important; }
+}
