@@ -44,7 +44,7 @@ interface StoredFile {
   avg?: string;
 }
 type Stored =
-  | { kind: "banner"; config: Draft["config"]; file: StoredFile | null; adFile?: StoredFile | null; savedAt: number }
+  | { kind: "banner"; config: Draft["config"]; file: StoredFile | null; adFile?: StoredFile | null; logoFile?: StoredFile | null; savedAt: number }
   | { kind: "header"; config: HeaderDraft["config"]; file: StoredFile | null; embedUrl: string; savedAt: number }
   | { kind: "slider"; config: SliderDraft["config"]; files: Record<string, StoredFile>; savedAt: number };
 
@@ -66,7 +66,7 @@ function unpack(f: StoredFile | null): HeaderFile | null {
 function isPristine(work: NonNullable<Work>): boolean {
   if (work.kind === "slider") return JSON.stringify(work.draft.config) === JSON.stringify(newSliderDraft(work.draft.config.format).config) && Object.keys(work.draft.files).length === 0;
   const fresh = work.kind === "banner" ? newDraft(work.draft.config.format) : newHeaderDraft();
-  return JSON.stringify(work.draft.config) === JSON.stringify(fresh.config) && !(work.kind === "banner" ? work.draft.headerFile || work.draft.adFile : work.draft.picture);
+  return JSON.stringify(work.draft.config) === JSON.stringify(fresh.config) && !(work.kind === "banner" ? work.draft.headerFile || work.draft.adFile || work.draft.logoFile : work.draft.picture);
 }
 
 export function saveWork(work: Work) {
@@ -80,10 +80,10 @@ export function saveWork(work: Work) {
     return;
   }
   const file = work.kind === "banner" ? work.draft.headerFile : work.draft.picture;
-  const base = work.kind === "banner" ? { kind: "banner" as const, config: work.draft.config, adFile: pack(work.draft.adFile ?? null) } : { kind: "header" as const, config: work.draft.config, embedUrl: work.draft.embedUrl };
+  const base = work.kind === "banner" ? { kind: "banner" as const, config: work.draft.config, adFile: pack(work.draft.adFile ?? null), logoFile: pack(work.draft.logoFile ?? null) } : { kind: "header" as const, config: work.draft.config, embedUrl: work.draft.embedUrl };
   const stored = { ...base, file: pack(file), savedAt: Date.now() } as Stored;
   // A big picture can fill the storage: keep the text work without it rather than losing everything.
-  if (!write(WORK_KEY, stored)) write(WORK_KEY, { ...stored, file: null, ...(stored.kind === "banner" ? { adFile: null } : {}) });
+  if (!write(WORK_KEY, stored)) write(WORK_KEY, { ...stored, file: null, ...(stored.kind === "banner" ? { adFile: null, logoFile: null } : {}) });
 }
 
 export const clearWork = () => remove(WORK_KEY);
@@ -114,6 +114,6 @@ export function loadWork(): Work {
     }
     return { kind: "slider", draft: { config: s.config, files } };
   }
-  if (s.kind === "banner") return { kind: "banner", draft: { config: s.config, headerFile: unpack(s.file), adFile: unpack(s.adFile ?? null) } };
+  if (s.kind === "banner") return { kind: "banner", draft: { config: s.config, headerFile: unpack(s.file), adFile: unpack(s.adFile ?? null), logoFile: unpack(s.logoFile ?? null) } };
   return { kind: "header", draft: { config: s.config, picture: unpack(s.file), embedUrl: s.embedUrl ?? "" } };
 }

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { imageCropper as t, ui } from "@/content";
 import { canMove, CANVAS_H, CANVAS_W, clampOffset, draw, makeBlur, MAX_WIDTH, MAX_ZOOM, MIN_WIDTH, newCropState, type CropState, type FitMode } from "@/lib/cropper";
-import { formatSize } from "@/lib/format";
+import { formatSize, stampedName } from "@/lib/format";
 import { download } from "@/lib/zip";
 
 const JPG_QUALITY = 0.95;
@@ -149,7 +149,7 @@ export function ImageCropper({ onBack }: { onBack: () => void }) {
     canvas.current.toBlob(
       (blob) => {
         if (!blob) return toast.error(t.loadFailed);
-        download(blob, `${pic.name}_ol.jpg`);
+        download(blob, stampedName(`${pic.name}_ol`, "jpg"));
         toast.success(t.downloaded);
       },
       "image/jpeg",

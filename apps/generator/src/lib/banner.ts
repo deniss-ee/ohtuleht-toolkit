@@ -2,6 +2,7 @@ import { renderArticles1250x400, renderArticlesMobile, validate } from "@ohtuleh
 import type { ArticleItem, ArticlesBannerConfig, ArticlesFormat, Problem, ThemeColors } from "@ohtuleht/templates";
 import runtimeJs from "../../../../packages/banner-runtime/dist/runtime.js?raw";
 import { getLang } from "@/content";
+import { stampedName } from "@/lib/format";
 import { readySignal } from "@/components/editor/SwapFrame";
 import sliderCssRaw from "../../../../packages/banner-runtime/src/slider.css?raw";
 
@@ -19,6 +20,7 @@ export interface Draft {
   config: ArticlesBannerConfig;
   headerFile: HeaderFile | null;
   adFile?: HeaderFile | null; // picture of the static ad (desktop); same shape as the header picture
+  logoFile?: HeaderFile | null; // logo on the right of the header
 }
 
 // Starting colours copied from the existing banners' stylesheet: titles turn red on hover.
@@ -43,6 +45,9 @@ export function switchFormat(draft: Draft, format: ArticlesFormat): Draft {
 }
 
 const render = (c: ArticlesBannerConfig, assets: Parameters<typeof renderArticles1250x400>[1]) => (c.format === "articles-mobile" ? renderArticlesMobile({ ...c, ad: undefined }, assets) : renderArticles1250x400(c, assets));
+
+// The logo is part of the banner when one is chosen.
+export const logoFileOf = (draft: Draft): HeaderFile | null => (draft.config.headerLogo ? (draft.logoFile ?? null) : null);
 
 // The ad picture is part of the banner only on the desktop size and only when a picture is chosen.
 export const adFileOf = (draft: Draft): HeaderFile | null => (draft.config.format === "articles-1250x400" && draft.config.ad ? (draft.adFile ?? null) : null);
@@ -97,8 +102,9 @@ export function renderPreview(draft: Draft, theme: "light" | "dark", id: number)
   const c = draft.config;
   const header = draft.headerFile && c.header.type === "image" ? { ...c.header, src: draft.headerFile.dataUrl } : c.header;
   const ad = c.ad && draft.adFile ? { ...c.ad, src: draft.adFile.dataUrl } : c.ad;
+  const headerLogo = c.headerLogo && draft.logoFile ? draft.logoFile.dataUrl : undefined;
   const colors = theme === "dark" ? c.theme.dark : c.theme.light;
-  const html = render({ ...c, header, ad, behavior: { ...c.behavior, shuffle: false }, theme: { light: colors, dark: colors } }, { runtimeJs, sliderCss });
+  const html = render({ ...c, header, ad, headerLogo, behavior: { ...c.behavior, shuffle: false }, theme: { light: colors, dark: colors } }, { runtimeJs, sliderCss });
   return html.replace("</body>", readySignal(id) + "</body>");
 }
 
@@ -107,7 +113,8 @@ export function renderExport(draft: Draft): string {
   const c = draft.config;
   const header = c.header.type === "image" && draft.headerFile ? { ...c.header, src: draft.headerFile.name } : c.header;
   const ad = c.ad && draft.adFile ? { ...c.ad, src: draft.adFile.name } : c.ad;
-  return render({ ...c, header, ad }, { runtimeJs, sliderCss });
+  const headerLogo = c.headerLogo && draft.logoFile ? draft.logoFile.name : undefined;
+  return render({ ...c, header, ad, headerLogo }, { runtimeJs, sliderCss });
 }
 
 const encoder = new TextEncoder();
@@ -124,5 +131,5 @@ export function slug(text: string): string {
 }
 
 export function zipName(draft: Draft): string {
-  return `${slug(draft.config.campaign)}_${FORMATS[draft.config.format].suffix}.zip`;
+  return stampedName(`${slug(draft.config.campaign)}_${FORMATS[draft.config.format].suffix}`, "zip");
 }

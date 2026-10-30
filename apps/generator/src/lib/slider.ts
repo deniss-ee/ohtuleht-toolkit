@@ -7,6 +7,7 @@ import sliderCssRaw from "../../../../packages/banner-runtime/src/slider.css?raw
 import { getLang, ui } from "@/content";
 import { readySignal } from "@/components/editor/SwapFrame";
 import { bytesOf, slug, type HeaderFile } from "@/lib/banner";
+import { stampedName } from "@/lib/format";
 import { toDataUrl } from "@/lib/image";
 import { BG_LIMIT, optimiseImage, SLIDE_LIMIT, type Optimised } from "@/lib/optimise";
 import { openZip } from "@/lib/openzip";
@@ -116,7 +117,7 @@ export async function buildSliderZip(d: SliderDraft): Promise<Blob> {
   return zip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 9 } });
 }
 
-export const sliderZipName = (d: SliderDraft) => `${slug(d.config.campaign)}_${isMobileSlider(d.config) ? "600x500" : "1250x400"}.zip`;
+export const sliderZipName = (d: SliderDraft) => stampedName(`${slug(d.config.campaign)}_${isMobileSlider(d.config) ? "600x500" : "1250x400"}`, "zip");
 export const downloadSliderZip = async (d: SliderDraft) => download(await buildSliderZip(d), sliderZipName(d));
 
 // Reads a slider made by this tool (config is embedded in index.html). Returns null when the zip is something else.

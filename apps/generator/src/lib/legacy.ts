@@ -38,8 +38,7 @@ export async function textOf(zip: JSZip, path: string): Promise<string> {
 }
 
 export async function importLegacy(zip: JSZip, doc: Document, zipName: string): Promise<{ draft: Draft; notes: string[] }> {
-  // Other banner types made with Swiper: say so instead of opening something wrong.
-  if (doc.querySelector(".st-wrapper")) throw new Error(t.legacyNotMobile);
+  // Old phone banners (.st-wrapper) and fixed rows from a script are read in legacyExtra.ts before this runs.
   const slides = [...doc.querySelectorAll(".swiper-slide")].filter((s) => !s.classList.contains("swiper-slide-duplicate") && s.querySelector(".article"));
   if (!slides.length) throw new Error(doc.querySelector('[class*="slide"]') ? t.legacyNotSlider : t.legacyNoSlides);
 

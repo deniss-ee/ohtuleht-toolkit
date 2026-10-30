@@ -28,14 +28,16 @@ export function headerCss(config: ArticlesBannerConfig): string {
   return (
     `.header{display:flex;align-items:center;height:46px;padding:0 16px;border-radius:6px;overflow:hidden;${header};cursor:pointer}` +
     // Header (design: Figma "ikea-header-for-claude"): campaign name on a colour or a picture, Fira Sans Condensed Bold 16/16, uppercase, 16 px from the left.
-    '.header-title{overflow:hidden;color:var(--header-text);font:700 16px/16px "Fira Sans Condensed",sans-serif;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap}'
+    '.header-title{min-width:0;overflow:hidden;color:var(--header-text);font:700 16px/16px "Fira Sans Condensed",sans-serif;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap}' +
+    // Logo: always on the right, with the same 16 px from the edge as the text has on the left (the header's side padding), 30 px high.
+    ".header-logo{flex:none;display:block;height:30px;width:auto;max-width:45%;margin-left:auto;object-fit:contain}"
   );
 }
 
 export function headerHtml(config: ArticlesBannerConfig): string {
   // Old pictures have the text baked in: no campaign name on top, the link keeps its label for screen readers.
   const showName = !(config.header.type === "image" && config.header.textInPicture);
-  return `<a class="header" role="link" tabindex="0" aria-label="${escapeHtml(config.campaign)}" onclick="${clickAttr(escapeJsInAttr(config.header.href))}">${showName ? `<span class="header-title">${escapeHtml(config.campaign)}</span>` : ""}</a>`;
+  return `<a class="header" role="link" tabindex="0" aria-label="${escapeHtml(config.campaign)}" onclick="${clickAttr(escapeJsInAttr(config.header.href))}">${showName ? `<span class="header-title">${escapeHtml(config.campaign)}</span>` : ""}${config.headerLogo ? `<img class="header-logo" src="${escapeHtml(config.headerLogo)}" alt="">` : ""}</a>`;
 }
 
 function css(config: ArticlesBannerConfig): string {
