@@ -4,11 +4,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+- Banner arrows are easier to see: a big, bold white chevron with a thin dark outline at full strength (it was a pale, half-transparent one), on a smaller 32 px square; the square gets darker on hover and nothing moves.
 ## [0.2.2] - 2026-10-30
 
 Neutral slider arrows in the articles banners.
 
-- Articles banners: the slider arrows are neutral (a dark translucent square with a white chevron, 36 px, inside the first and last card), the same as in the image slider, instead of squares in the main colour. One shared definition in `packages/templates/src/arrows.ts`.
+- Articles banners: the slider arrows are neutral (a dark translucent square with a white chevron, 32 px, inside the first and last card), the same as in the image slider, instead of squares in the main colour. One shared definition in `packages/templates/src/arrows.ts`.
 ## [0.2.1] - 2026-10-30
 
 Fix: old phone banners keep their own slide timing when converted.

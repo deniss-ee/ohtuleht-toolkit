@@ -109,7 +109,7 @@ Client banners: a background picture with a slider of pictures on top. Made from
 | Background | Required. 1250x400, or 2500x800 for sharp screens; optionally clickable | None: no picture, option or link |
 | Slides | Pictures of 300x250 or 600x500 (same 6:5 shape); at least 2; placed in the order of their file names, then moved by hand. The same pictures serve both sizes | same (600x500 pictures fit the phone banner exactly) |
 | Slider box | Form fields; defaults: from the left 165, from the top 100, 920x250, gap 10, 3 visible (each slide 300x250) | Fixed, not editable: 0, 0, 600x500, one picture at a time, no gap. Each picture is full width and full height, with square corners |
-| Arrows | 36 px, 46 px outside the slider (on top of its edges when there is no room); on by default | Off by default (swipe) |
+| Arrows | 32 px, 46 px outside the slider (on top of its edges when there is no room); on by default | Off by default (swipe) |
 | Effects | **Slide** (sideways) or **Arc** | **Slide** or **Cube** |
 
 **Common behaviour.** Autoplay 2 s, speed 500 ms, loop, drag and swipe, keys; shuffle off. Everything fits (slides <= visible): plain row, no arrows. A click on the slider area never reaches the background link.
