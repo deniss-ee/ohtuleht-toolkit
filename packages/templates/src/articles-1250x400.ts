@@ -1,4 +1,5 @@
 // Template: articles 1250x400. Desktop article slider, no Swiper.
+import { arrowCss } from "./arrows.ts";
 import { clickAttr, CLICKTAG_JS } from "./clicktag.ts";
 import { escapeCssUrlInAttr, escapeHtml, escapeJsInAttr, jsonForScript } from "./escape.ts";
 import { resolveTheme } from "./colors.ts";
@@ -10,10 +11,6 @@ const GAP = 16;
 export const AD_HEIGHT = 338; // 400 minus the 46 px header and the 16 px gap
 
 export const FONTS_URL = "https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@700&family=Roboto:wght@700&display=swap";
-
-// White chevrons; the square behind them takes the main campaign colour.
-const ARROW_LEFT = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 42 42'%3E%3Cpath fill='%23fff' d='M17.2 21l9.2 9.2-2.8 2.8-12-12 12-12 2.8 2.8z'/%3E%3C/svg%3E";
-const ARROW_RIGHT = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 42 42'%3E%3Cpath fill='%23fff' d='M24.8 21l-9.2-9.2 2.8-2.8 12 12-12 12-2.8-2.8z'/%3E%3C/svg%3E";
 
 export function themeVars(t: ResolvedTheme): string {
   return `--bg:${t.bg};--text:${t.text};--primary:${t.primary};--badge:${t.badge};--hover:${t.hover};--header-bg:${t.headerBg};--header-text:${t.headerText}`;
@@ -59,9 +56,11 @@ function css(config: ArticlesBannerConfig): string {
     '.title{padding:8px 0;color:var(--text);font:700 20px/24px "Fira Sans Condensed",sans-serif;overflow-wrap:break-word;transition:color .2s}' +
     ".ol-slide:hover .title{color:var(--hover)}" +
     ".ol-slide:focus-visible,.header:focus-visible{outline:2px solid var(--hover);outline-offset:2px}" +
-    ".ol-prev,.ol-next{position:absolute;top:82px;z-index:2;box-sizing:content-box;width:42px;height:42px;padding:0;border:4px solid var(--bg);background:var(--primary) center/cover no-repeat;cursor:pointer}" +
-    `.ol-prev{left:0;border-left:0;background-image:url("${ARROW_LEFT}")}` +
-    `.ol-next{right:0;border-right:0;background-image:url("${ARROW_RIGHT}")}`
+    // Neutral arrows (the same as in the image slider), inside the picture of the first and the last card, 8 px from the edge, level with the middle of the picture (215 px high).
+    arrowCss() +
+    ".ol-prev,.ol-next{top:90px}" +
+    ".ol-prev{left:8px}" +
+    ".ol-next{right:8px}"
   );
 }
 

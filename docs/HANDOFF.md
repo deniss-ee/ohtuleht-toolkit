@@ -36,7 +36,7 @@ Doc status: all `docs/*.md`, package READMEs and the generator README were check
 - Banners: ClickTag code is fixed in the templates; ad server accepts zip or URL; weight budget about 100 KB without images (soft); only Google Fonts as an external request besides article pictures from `p.ohtuleht.ee`.
 - Runtime shuffle on by default; autoplay ignores the OS "reduce motion" setting and hover-pause is off (like the old Dacia banner), both available as options.
 - Header is a picture or a colour, and the campaign name is **always** written on it (Fira Sans Condensed 700, 16 px, uppercase). Pictures must not contain text.
-- Colours are per campaign (main colour drives header, arrows, labels). Defaults: brand red `#F50000`, hover `#E3000F`.
+- Colours are per campaign (main colour drives header and labels; arrows are neutral). Defaults: brand red `#F50000`, hover `#E3000F`.
 - Interface uses the Brand hub: Fira Sans (headlines), Inter (interface), DM Mono (code); buttons brand red 600 only.
 - Logo safe zone = one full logo height on every side.
 - Colour pickers: our own (react-colorful), never the native one.
