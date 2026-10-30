@@ -9,6 +9,7 @@ import { contentMarketing, editor, getLang, setLang, subscribeLang, type PageId,
 import { AppShell } from "@/layout/AppShell";
 import { newDraft } from "@/lib/banner";
 import { importHeaderZip, newHeaderDraft } from "@/lib/header";
+import { importSliderZip, newSliderDraft } from "@/lib/slider";
 import { buildSearch, parseRoute, type BrandTab } from "@/lib/route";
 import { clearWork, loadWork, savedInfo, saveWork, type SavedInfo, type Work } from "@/lib/storage";
 import { importZip } from "@/lib/zip";
@@ -18,12 +19,13 @@ import { ContentMarketingHome } from "@/pages/ContentMarketingHome";
 import { HeaderBarEditor } from "@/pages/HeaderBarEditor";
 import { Home, type Destination } from "@/pages/Home";
 import { ImageCropper } from "@/pages/ImageCropper";
+import { SliderEditor } from "@/pages/SliderEditor";
 import { MovieBanner } from "@/pages/MovieBanner";
 import { ToolsHome } from "@/pages/ToolsHome";
 import { ArticleScraper } from "@/pages/ArticleScraper";
 import { PictureConverter } from "@/pages/PictureConverter";
 
-const newWork = (typeId: string): Work => (typeId === "header-bar" ? { kind: "header", draft: newHeaderDraft() } : { kind: "banner", draft: newDraft(typeId === "articles-mobile" ? "articles-mobile" : "articles-1250x400") });
+const newWork = (typeId: string): Work => (typeId === "header-bar" ? { kind: "header", draft: newHeaderDraft() } : typeId === "image-slider-1250x400" ? { kind: "slider", draft: newSliderDraft() } : { kind: "banner", draft: newDraft(typeId === "articles-mobile" ? "articles-mobile" : "articles-1250x400") });
 
 export function App() {
   const lang = useSyncExternalStore(subscribeLang, getLang); // render everything again when the language changes
@@ -50,12 +52,16 @@ export function App() {
 
   const create = (typeId: string) => start(newWork(typeId));
 
-  // A zip may be a banner or a header bar made with this tool.
+  // A zip may be a header bar, an image slider or an articles banner made with this tool (or an old Swiper banner).
   const open = async (file: File) => {
     try {
       const header = await importHeaderZip(file);
+      const slider = header ? null : await importSliderZip(file);
       if (header) {
         start({ kind: "header", draft: header });
+        toast.success(editor.imported);
+      } else if (slider) {
+        start({ kind: "slider", draft: slider });
         toast.success(editor.imported);
       } else {
         const opened = await importZip(file);
@@ -160,6 +166,8 @@ export function App() {
           {page === "content" &&
             (work?.kind === "banner" ? (
               <BannerEditor draft={work.draft} onChange={(draft) => change({ kind: "banner", draft })} onBack={close} />
+            ) : work?.kind === "slider" ? (
+              <SliderEditor draft={work.draft} onChange={(draft) => change({ kind: "slider", draft })} onBack={close} />
             ) : work?.kind === "header" ? (
               <HeaderBarEditor draft={work.draft} onChange={(draft) => change({ kind: "header", draft })} onBack={close} />
             ) : (

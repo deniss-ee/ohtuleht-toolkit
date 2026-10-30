@@ -1,5 +1,6 @@
 import { messages, type Lang } from "./messages.ts";
-import type { ArticlesBannerConfig } from "./types.ts";
+import { SLIDER_CANVAS } from "./image-slider.ts";
+import type { ArticlesBannerConfig, ImageSliderConfig } from "./types.ts";
 
 export const MIN_ARTICLES = 2;
 
@@ -33,5 +34,23 @@ export function validate(config: ArticlesBannerConfig, lang: Lang = "en"): Probl
     if (!config.ad.src) problems.push({ message: m.adPicture, field: "ad-choose" });
     if (!isUrl(config.ad.href)) problems.push({ message: m.adHref, field: "ad-href" });
   }
+  return problems;
+}
+
+export const MIN_SLIDES = 2;
+
+// Same idea for the image slider. An empty link is allowed: the ad system's own link (clickTag) is used then.
+export function validateImageSlider(config: ImageSliderConfig, lang: Lang = "en"): Problem[] {
+  const m = messages(lang);
+  const problems: Problem[] = [];
+  const badUrl = (s: string) => s.trim() !== "" && !isUrl(s);
+  if (!config.campaign.trim()) problems.push({ message: m.campaign, field: "campaign" });
+  if (!config.background.src) problems.push({ message: m.sliderBackground, field: "bg-choose" });
+  if (config.background.clickable && badUrl(config.background.href)) problems.push({ message: m.sliderBackgroundHref, field: "bg-href" });
+  if (config.slides.length < MIN_SLIDES) problems.push({ message: m.sliderMinSlides(MIN_SLIDES, config.slides.length), field: "slides-add" });
+  if (config.linkMode === "shared" && badUrl(config.sharedHref)) problems.push({ message: m.sliderSharedHref, field: "shared-href" });
+  if (config.linkMode === "each") config.slides.forEach((s, i) => badUrl(s.href) && problems.push({ message: m.sliderSlideHref(i + 1), field: `slide${i}-href` }));
+  const l = config.layout;
+  if (l.visible < 1 || l.width < 1 || l.height < 1 || l.x < 0 || l.y < 0 || l.x + l.width > SLIDER_CANVAS.width || l.y + l.height > SLIDER_CANVAS.height) problems.push({ message: m.sliderLayout, field: "layout-x" });
   return problems;
 }

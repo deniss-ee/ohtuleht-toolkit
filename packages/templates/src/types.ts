@@ -70,3 +70,37 @@ export interface RuntimeAssets {
   runtimeJs: string;
   sliderCss: string;
 }
+
+// ---- Image slider (client banners): a background picture with a slider of pictures on top. Format 3 in docs/BANNERS.md.
+
+// image: a file name inside the zip. href: where the slide leads; empty = the link set in the ad system (clickTag).
+export interface SliderSlide {
+  image: string;
+  href: string;
+}
+
+// Where the slider sits on the background (px on the 1250x400 canvas) and how its slides are laid out.
+export interface SliderLayout {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  gap: number;
+  visible: number; // slides shown at once; each slide is (width - gaps) / visible wide and `height` high
+}
+
+export type SliderFormat = "image-slider-1250x400";
+
+export interface ImageSliderConfig {
+  v: 1;
+  kind: "image-slider"; // tells these zips apart from the articles banners
+  format: SliderFormat;
+  campaign: string;
+  background: { src: string; clickable: boolean; href: string }; // href empty = the ad system's link
+  slides: SliderSlide[];
+  linkMode: "shared" | "each"; // one link for all slides, or one per slide
+  sharedHref: string;
+  layout: SliderLayout;
+  arrows: boolean;
+  behavior: { shuffle: boolean; autoplay: boolean; delayMs: number; speedMs: number; loop: boolean };
+}

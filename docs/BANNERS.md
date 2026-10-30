@@ -90,13 +90,23 @@ Not a separate banner type: a switch **Static ad** in the editor (desktop size o
 
 Best ad picture size: twice the shown size for sharp screens, for example 494x676 px.
 
-## Format 3: Image slider (client banners) (not built, #36)
+## Format 3: Image slider, desktop 1250x400 (built, part A of #36)
 
-- Client background image plus a set of slide images (desktop example: 300x250 on a 1250x400 canvas; mobile: 600x500).
-- Each slide has its own URL; the background has its own URL.
-- Slider position and size are form fields (x, y, width, height, gap, visible count).
-- Transition: `slide` (default), `fade`, `cube` (CSS 3D, about 1 KB).
-- Drag and touch supported; arrows optional.
+Client banners: a background picture with a slider of pictures on top. Made from the Dacia and Renault banners (`renault_ol-1250x400`). Template: `packages/templates/src/image-slider.ts`; editor: `apps/generator/src/pages/SliderEditor.tsx`; zips carry `kind: "image-slider"` in their embedded config, so they open again in the tool.
+
+| Part | Value |
+|---|---|
+| Canvas | Fixed 1250x400 |
+| Background | A picture (1250x400, or 2500x800 for sharp screens), optionally clickable |
+| Slides | Pictures of 300x250 or 600x500 (same 6:5 shape); at least 2; placed in the order of their file names, then moved by hand |
+| Slider box | Form fields: from the left, from the top, width, height, gap, slides shown at once. Defaults (Renault): 165, 100, 920x250, gap 10, 3 visible, so each slide is 300x250 |
+| Arrows | 36 px, 46 px outside the slider; on top of the edges when there is no room outside. Can be switched off |
+| Behaviour | Autoplay 2 s, speed 500 ms, loop, drag and swipe, keys. Shuffle off. Everything fits (slides <= visible): plain row, no arrows |
+| Links | **One link for all** slides or **a link for each**. Background has its own link (or none). An empty link means "the link set in the ad system" (`clickTag`), as in the old banners. A link goes through `clickMacro` like everywhere else |
+| Click on the slider area | Never reaches the background link |
+| Pictures | Optimised in the browser (see below); in the zip as `bg.png`/`bg.jpg` and `1.jpg`, `2.jpg` ... |
+
+Still to build: part B (mobile 600x500, one campaign with the desktop one), part C (effects: desktop "arc" with side slides tilted back in perspective, mobile cube), part D (opening old Renault/Dacia zips).
 
 ## Format 4: Articles mobile (built, #37)
 

@@ -1,7 +1,8 @@
 export * from "./types.ts";
 export { renderArticles1250x400, AD_HEIGHT } from "./articles-1250x400.ts";
 export { renderArticlesMobile } from "./articles-mobile.ts";
-export { validate, MIN_ARTICLES } from "./validate.ts";
+export { renderImageSlider, slideHref, SLIDER_CANVAS } from "./image-slider.ts";
+export { validate, validateImageSlider, MIN_ARTICLES, MIN_SLIDES } from "./validate.ts";
 export type { Problem } from "./validate.ts";
 export { CLICKTAG_JS } from "./clicktag.ts";
 export { resolveTheme, readableOn, onColor, brandTextColor, contrast } from "./colors.ts";

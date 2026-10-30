@@ -1,5 +1,5 @@
-import { useMemo, useRef, useState, type ReactNode } from "react";
-import { ArrowLeft, CheckCircle2, ChevronRight, Download, FileArchive, FlaskConical, ImagePlus, Megaphone, Palette, PanelRight, PanelTop, SlidersHorizontal, TriangleAlert, type LucideIcon } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { ArrowLeft, CheckCircle2, Download, FileArchive, FlaskConical, ImagePlus, Megaphone, Palette, PanelRight, PanelTop, SlidersHorizontal, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import { resolveTheme } from "@ohtuleht/templates";
 import type { ArticlesBannerConfig, ThemeColors } from "@ohtuleht/templates";
@@ -8,13 +8,10 @@ import { BookmarkletDialog } from "@/components/editor/BookmarkletHelp";
 import { AutoColorField, ColorField } from "@/components/editor/ColorField";
 import { HeaderThumb } from "@/components/editor/HeaderThumb";
 import { goTo, HoverPill } from "@/components/editor/HoverPill";
-import { IconChip, type Tone } from "@/components/editor/IconChip";
 import { Preview } from "@/components/editor/Preview";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { editor as t, ui } from "@/content";
@@ -22,6 +19,7 @@ import { Toggles } from "@/layout/AppShell";
 import { adFileOf, bytesOf, exampleDraft, FORMATS, problems, renderExport, switchFormat, type Draft } from "@/lib/banner";
 import { formatSize } from "@/lib/format";
 import type { Optimised } from "@/lib/optimise";
+import { Collapsible, Section, SwitchRow } from "@/components/editor/FormParts";
 import { useSaveShortcut } from "@/components/editor/useSaveShortcut";
 import { downloadZip, fileToAd, fileToHeader } from "@/lib/zip";
 
@@ -31,51 +29,6 @@ const BUDGET_KB = 100;
 const reportOptimised = (o: Optimised) => {
   if (o.after < o.before) toast.success(t.optimised(formatSize(o.before), formatSize(o.after)));
 };
-
-function Section({ title, description, icon, tone, children }: { title: string; description?: string; icon: LucideIcon; tone: Tone; children: ReactNode }) {
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          <IconChip icon={icon} tone={tone} />
-          <div>
-            <CardTitle>{title}</CardTitle>
-            {description && <CardDescription>{description}</CardDescription>}
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">{children}</CardContent>
-    </Card>
-  );
-}
-
-// Closed by default: advanced settings stay out of the way for people who do not need them.
-function Collapsible({ title, description, icon, tone, children }: { title: string; description: string; icon: LucideIcon; tone: Tone; children: ReactNode }) {
-  return (
-    <details className="group rounded-xl border bg-card">
-      <summary className="flex cursor-pointer list-none items-center gap-3 p-4 [&::-webkit-details-marker]:hidden">
-        <IconChip icon={icon} tone={tone} />
-        <div className="flex-1">
-          <div className="font-medium leading-none">{title}</div>
-          <div className="mt-1 text-sm text-muted-foreground">{description}</div>
-        </div>
-        <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" />
-      </summary>
-      <div className="space-y-4 border-t p-4">{children}</div>
-    </details>
-  );
-}
-
-function SwitchRow({ id, label, checked, onChange }: { id: string; label: string; checked: boolean; onChange: (v: boolean) => void }) {
-  return (
-    <div className="flex items-center justify-between gap-4">
-      <Label htmlFor={id} className="font-normal">
-        {label}
-      </Label>
-      <Switch id={id} checked={checked} onCheckedChange={onChange} />
-    </div>
-  );
-}
 
 function ColorSet({ title, mode, config, onChange }: { title: string; mode: "light" | "dark"; config: ArticlesBannerConfig; onChange: (c: ThemeColors) => void }) {
   const mobile = config.format === "articles-mobile"; // titles are white on the picture: no title or hover colour. The label colour is the label's background there.
