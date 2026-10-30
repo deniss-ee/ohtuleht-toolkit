@@ -4,6 +4,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-30
+
+Date stamps in file names, old phone and fixed-row banners open in the tool, and a logo on the right of the header.
+
 - Articles banners: an optional **logo on the right of the header** (desktop and mobile), 30 px high, always right-aligned with the same 16 px padding as the text on the left.
 - Every generated file has the date in its name (`name_1250x400_30oct26.zip`): articles, image slider and header bar zips, movie banner zips, cropped pictures and brand eye files.
 - Old banners open in the tool: the old phone banners (600x500 "Kuubik", also when a script makes the slides) become the new mobile articles banner; a fixed row of articles listed in `array.js` (Tamrex) becomes the normal articles banner. The old "cannot open the mobile banner" message is gone.
