@@ -6,8 +6,8 @@ export const nav: En.NavItem[] = [
   { id: "content", label: "Sisuturundus", ready: true },
   { id: "tools", label: "Tööriistad", ready: true },
   { id: "brand", label: "Brändiraamat", ready: true },
-  { id: "request", label: "Bännertaotlus", ready: true },
-  { id: "tasks", label: "Tööde jälgija", ready: true },
+  { id: "request", label: "Bännertaotlus", ready: false },
+  { id: "tasks", label: "Tööde jälgija", ready: false },
 ];
 
 export const bannerTypes: En.BannerType[] = [

@@ -4,7 +4,7 @@ import { ContinueCard } from "@/components/editor/ContinueCard";
 import { StartCard } from "@/components/editor/StartCard";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/editor/PageHeader";
-import { home as t, type PageId, type ToolInfo } from "@/content";
+import { home as t, nav, ui, type PageId, type ToolInfo } from "@/content";
 import type { BrandTab } from "@/lib/route";
 import type { SavedInfo } from "@/lib/storage";
 
@@ -79,7 +79,8 @@ export function Home({ saved, onContinue, onDiscard, onGo }: { saved: SavedInfo 
             {g.items.map((i) => {
               const item = ITEMS[i.id];
               if (!item) return null;
-              return <StartCard key={i.id} icon={item.icon} title={i.name} text={i.text} action={t.open} onAction={() => onGo(item.to)} />;
+              const off = nav.find((n) => n.id === item.to.page)?.ready === false;
+              return <StartCard key={i.id} icon={item.icon} title={i.name} text={i.text} action={off ? ui.soon : t.open} disabled={off} onAction={() => onGo(item.to)} />;
             })}
           </div>
         </section>
