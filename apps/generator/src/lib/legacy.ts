@@ -1,8 +1,11 @@
 import type JSZip from "jszip";
-import type { ArticleItem, ArticlesBannerConfig, ThemeColors } from "@ohtuleht/templates";
+import { AD_HEIGHT } from "@ohtuleht/templates";
+import type { AdItem, ArticleItem, ArticlesBannerConfig, ThemeColors } from "@ohtuleht/templates";
 import { editor as t } from "@/content";
 import type { Draft, HeaderFile } from "@/lib/banner";
-import { averageColor, toDataUrl } from "@/lib/image";
+import { averageColor, imageSize, toDataUrl } from "@/lib/image";
+import { AD_LIMIT, HEADER_LIMIT, optimiseImage } from "@/lib/optimise";
+import { formatSize } from "@/lib/format";
 
 // Reads an old Swiper banner (made by hand before this toolkit) into the same Draft the editor uses.
 // Reads the slides from index.html, the colours from style.css and the slider options from the inline script.
@@ -82,11 +85,16 @@ export async function importLegacy(zip: JSZip, doc: Document, zipName: string): 
   const pictureRef = urlIn(decl(base, ".header", "background")) ?? urlIn(decl(base, ".header", "background-image"));
   const pictureEntry = pictureRef && !/^(https?:)?\/\//.test(pictureRef) ? zip.file(pictureRef.replace(/^\.\//, "")) : null;
   const notes: string[] = [];
+  let before = 0; // picture weight before and after optimising, for one note
+  let after = 0;
   let headerFile: HeaderFile | null = null;
   let config: ArticlesBannerConfig["header"] = { type: "color", href };
   if (pictureEntry && pictureRef) {
-    const bytes = await pictureEntry.async("uint8array");
     const name = "header." + (pictureRef.split(".").pop()?.toLowerCase() ?? "png");
+    const opt = await optimiseImage(await pictureEntry.async("uint8array"), name, HEADER_LIMIT);
+    before += opt.before;
+    after += opt.after;
+    const bytes = opt.bytes;
     const dataUrl = toDataUrl(bytes, name);
     const avg = await averageColor(dataUrl);
     headerFile = { name, bytes, dataUrl, avg };
@@ -119,8 +127,27 @@ export async function importLegacy(zip: JSZip, doc: Document, zipName: string): 
   const campaignBadge = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? "";
   const articles: ArticleItem[] = rows.map((r) => ({ url: r.url, title: r.title, image: r.image, ...(r.badge && r.badge !== campaignBadge ? { badge: r.badge } : {}) }));
 
-  if (doc.querySelector("img.banner-img")) notes.push(t.legacyAd);
-  if (visible && visible !== 4) notes.push(t.legacyVisible(visible));
+  // The fixed ad picture on the right (`img.banner-img`): kept, with its own link.
+  let ad: AdItem | undefined;
+  let adFile: HeaderFile | null = null;
+  const adImg = doc.querySelector("img.banner-img");
+  const adRef = adImg?.getAttribute("src") ?? "";
+  const adEntry = adRef && !/^(https?:)?\/\//.test(adRef) ? zip.file(adRef.replace(/^\.\//, "")) : null;
+  if (adImg && adEntry) {
+    const name = "ad." + (adRef.split(".").pop()?.toLowerCase() ?? "jpg");
+    const opt = await optimiseImage(await adEntry.async("uint8array"), name, AD_LIMIT);
+    before += opt.before;
+    after += opt.after;
+    const dataUrl = toDataUrl(opt.bytes, name);
+    const size = await imageSize(dataUrl);
+    const width = size ? Math.min(600, Math.max(100, Math.round((AD_HEIGHT * size.width) / size.height))) : 247;
+    const href = (adImg.getAttribute("onclick") ?? "").match(/getClickTag\(\s*['"]([^'"]+)['"]/)?.[1] ?? "";
+    ad = { src: name, href, width };
+    adFile = { name, bytes: opt.bytes, dataUrl };
+    notes.push(t.legacyAdKept);
+  }
+  if (after && after < before) notes.push(t.legacyOptimised(formatSize(before), formatSize(after)));
+  if (visible && visible !== (ad ? 3 : 4)) notes.push(t.legacyVisible(visible));
   notes.push(t.legacyShuffle);
 
   const cfg: ArticlesBannerConfig = {
@@ -129,10 +156,11 @@ export async function importLegacy(zip: JSZip, doc: Document, zipName: string): 
     campaign,
     primary,
     header: config,
+    ...(ad ? { ad } : {}),
     badge: campaignBadge || "Sisuturundus",
     theme: { light, dark: darkTheme },
     behavior: { shuffle: false, autoplay, delayMs: delay ?? 3000, speedMs: speed ?? 250, loop },
     articles,
   };
-  return { draft: { config: cfg, headerFile }, notes };
+  return { draft: { config: cfg, headerFile, adFile }, notes };
 }

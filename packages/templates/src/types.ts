@@ -38,12 +38,21 @@ export type Header =
 // articles-1250x400: desktop slider. articles-mobile: phone banner, 360 px wide, cards 267x400 with the next card peeking in, dots below.
 export type ArticlesFormat = "articles-1250x400" | "articles-mobile";
 
+// Static ad on the right of the desktop slider (articles-1250x400 only). It is 338 px high (400 minus the header and the gap);
+// width is that height times the picture's shape, so the picture is never cropped. src is a file name inside the zip.
+export interface AdItem {
+  src: string;
+  href: string;
+  width: number;
+}
+
 export interface ArticlesBannerConfig {
   v: 1;
   format: ArticlesFormat;
   campaign: string;
   primary: string; // main campaign colour: header, arrows and default label colour
   header: Header;
+  ad?: AdItem; // desktop only; with an ad the slider shows 3 articles instead of 4
   badge: string;
   theme: { light: ThemeColors; dark: ThemeColors };
   behavior: {

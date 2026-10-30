@@ -5,7 +5,9 @@ import { resolveTheme } from "./colors.ts";
 import type { ArticlesBannerConfig, ResolvedTheme, RuntimeAssets } from "./types.ts";
 
 const VISIBLE = 4;
+const VISIBLE_WITH_AD = 3;
 const GAP = 16;
+export const AD_HEIGHT = 338; // 400 minus the 46 px header and the 16 px gap
 
 export const FONTS_URL = "https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@700&family=Roboto:wght@700&display=swap";
 
@@ -48,6 +50,8 @@ function css(config: ArticlesBannerConfig): string {
     headerCss(config) +
     `.header{margin-bottom:${GAP}px}` +
     ".article{width:100%}" +
+    // With an ad: the slider takes what is left of the row, the ad sits on the right at full height.
+    (config.ad ? `.row{display:flex;gap:${GAP}px;align-items:flex-start}.row>.ol-slider{flex:1;min-width:0}.ad{display:block;flex:0 0 ${config.ad.width}px;width:${config.ad.width}px;height:${AD_HEIGHT}px;border-radius:6px;overflow:hidden;cursor:pointer}.ad img{display:block;width:100%;height:100%;object-fit:cover}.ad:focus-visible{outline:2px solid var(--hover);outline-offset:2px}` : "") +
     ".img{position:relative;height:215px;border-radius:6px;background-position:center;background-size:cover}" +
     ".badge{position:absolute;bottom:-2px;left:0;padding:7px 5px 0 0;background:var(--bg);color:var(--badge);font-size:12px;font-weight:700;line-height:1;text-transform:capitalize}" +
     '.title{padding:8px 0;color:var(--text);font:700 20px/24px "Fira Sans Condensed",sans-serif;overflow-wrap:break-word;transition:color .2s}' +
@@ -76,6 +80,13 @@ export function renderArticles1250x400(config: ArticlesBannerConfig, assets: Run
   const b = config.behavior;
   const delay = b.autoplay ? b.delayMs : 0;
   const header = headerHtml(config);
+  const visible = config.ad ? VISIBLE_WITH_AD : VISIBLE;
+  const slider =
+    `<div class="ol-slider" data-visible="${visible}" data-gap="${GAP}" data-delay="${delay}" data-speed="${b.speedMs}" data-shuffle="${b.shuffle ? 1 : 0}" data-loop="${b.loop ? 1 : 0}">` +
+    '<button class="ol-prev" aria-label="Previous"></button>' +
+    `<div class="ol-viewport"><div class="ol-track">${config.articles.map((a) => slide(a, config.badge)).join("")}</div></div>` +
+    '<button class="ol-next" aria-label="Next"></button></div>';
+  const ad = config.ad ? `<a class="ad" role="link" tabindex="0" aria-label="${escapeHtml(config.campaign)}" onclick="${clickAttr(escapeJsInAttr(config.ad.href))}"><img src="${escapeHtml(config.ad.src)}" alt=""></a>` : "";
   return (
     '<!doctype html><html lang="et"><head><meta charset="utf-8">' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +
@@ -84,11 +95,7 @@ export function renderArticles1250x400(config: ArticlesBannerConfig, assets: Run
     // Fonts must never block the first paint: load as "print" media, then switch to "all" once loaded.
     `<link rel="stylesheet" href="${FONTS_URL}" media="print" onload="this.media='all'">` +
     `<style>${assets.sliderCss}${css(config)}</style></head><body>` +
-    `<div class="banner">${header}` +
-    `<div class="ol-slider" data-visible="${VISIBLE}" data-gap="${GAP}" data-delay="${delay}" data-speed="${b.speedMs}" data-shuffle="${b.shuffle ? 1 : 0}" data-loop="${b.loop ? 1 : 0}">` +
-    '<button class="ol-prev" aria-label="Previous"></button>' +
-    `<div class="ol-viewport"><div class="ol-track">${config.articles.map((a) => slide(a, config.badge)).join("")}</div></div>` +
-    '<button class="ol-next" aria-label="Next"></button></div></div>' +
+    `<div class="banner">${header}${config.ad ? `<div class="row">${slider}${ad}</div>` : slider}</div>` +
     `<script type="application/json" id="ol-banner">${jsonForScript(config)}</script>` +
     `<script>${CLICKTAG_JS}</script><script>${assets.runtimeJs}</script></body></html>`
   );

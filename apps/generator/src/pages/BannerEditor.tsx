@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState, type ReactNode } from "react";
-import { ArrowLeft, CheckCircle2, ChevronRight, Download, FileArchive, FlaskConical, ImagePlus, Megaphone, Palette, PanelTop, SlidersHorizontal, TriangleAlert, type LucideIcon } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ChevronRight, Download, FileArchive, FlaskConical, ImagePlus, Megaphone, Palette, PanelRight, PanelTop, SlidersHorizontal, TriangleAlert, type LucideIcon } from "lucide-react";
 import { toast } from "sonner";
 import { resolveTheme } from "@ohtuleht/templates";
 import type { ArticlesBannerConfig, ThemeColors } from "@ohtuleht/templates";
@@ -19,11 +19,18 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { editor as t, ui } from "@/content";
 import { Toggles } from "@/layout/AppShell";
-import { bytesOf, exampleDraft, FORMATS, problems, renderExport, switchFormat, type Draft } from "@/lib/banner";
+import { adFileOf, bytesOf, exampleDraft, FORMATS, problems, renderExport, switchFormat, type Draft } from "@/lib/banner";
+import { formatSize } from "@/lib/format";
+import type { Optimised } from "@/lib/optimise";
 import { useSaveShortcut } from "@/components/editor/useSaveShortcut";
-import { downloadZip, fileToHeader } from "@/lib/zip";
+import { downloadZip, fileToAd, fileToHeader } from "@/lib/zip";
 
 const BUDGET_KB = 100;
+
+// Tells the person what the optimiser saved (nothing is said when the picture was already as small as it gets).
+const reportOptimised = (o: Optimised) => {
+  if (o.after < o.before) toast.success(t.optimised(formatSize(o.before), formatSize(o.after)));
+};
 
 function Section({ title, description, icon, tone, children }: { title: string; description?: string; icon: LucideIcon; tone: Tone; children: ReactNode }) {
   return (
@@ -106,17 +113,26 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
   const [bookmarkOpen, setBookmarkOpen] = useState(false);
   const [pinned, setPinned] = useState(false); // "Keep preview in view" is always off to start with; the person turns it on
   const fileInput = useRef<HTMLInputElement>(null);
+  const adInput = useRef<HTMLInputElement>(null);
   const c = draft.config;
   const set = (patch: Partial<Draft["config"]>) => onChange({ ...draft, config: { ...c, ...patch } });
   const setBehavior = (patch: Partial<Draft["config"]["behavior"]>) => set({ behavior: { ...c.behavior, ...patch } });
 
   const issues = problems(draft);
-  const weightKb = useMemo(() => (bytesOf(renderExport(draft)) + (c.header.type === "image" ? (draft.headerFile?.bytes.length ?? 0) : 0)) / 1024, [draft, c.header.type]);
+  const weightKb = useMemo(() => (bytesOf(renderExport(draft)) + (c.header.type === "image" ? (draft.headerFile?.bytes.length ?? 0) : 0) + (adFileOf(draft)?.bytes.length ?? 0)) / 1024, [draft, c.header.type]);
 
   const onHeaderFile = async (file: File | undefined) => {
     if (!file) return;
-    const { headerFile, avg } = await fileToHeader(file);
+    const { headerFile, avg, optimised } = await fileToHeader(file);
+    reportOptimised(optimised);
     onChange({ ...draft, headerFile, config: { ...c, header: { type: "image", src: headerFile.name, href: c.header.href, avg } } });
+  };
+
+  const onAdFile = async (file: File | undefined) => {
+    if (!file || !c.ad) return;
+    const { adFile, width, optimised } = await fileToAd(file);
+    reportOptimised(optimised);
+    onChange({ ...draft, adFile, config: { ...c, ad: { ...c.ad, src: adFile.name, width } } });
   };
 
   const loadExample = async () => {
@@ -295,6 +311,33 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                   <p className="text-xs text-muted-foreground">{t.headerLinkHint}</p>
                 </div>
               </Section>
+              {c.format === "articles-1250x400" && (
+                <div className="mt-4">
+                  <Section title={t.adTitle} description={t.adHint} icon={PanelRight} tone="ink">
+                    <SwitchRow id="ad-switch" label={t.adSwitch} checked={!!c.ad} onChange={(on) => set({ ad: on ? { src: draft.adFile?.name ?? "", href: "", width: 247 } : undefined })} />
+                    {c.ad && (
+                      <>
+                        {draft.adFile && <img src={draft.adFile.dataUrl} alt="" className="max-h-40 rounded-md border" />}
+                        <div className="space-y-2">
+                          <input ref={adInput} type="file" className="sr-only" aria-label={t.adTitle} accept="image/png,image/webp,image/jpeg" onChange={(e) => onAdFile(e.target.files?.[0])} />
+                          <Button id="ad-choose" variant="outline" size="sm" className="gap-2" onClick={() => adInput.current?.click()}>
+                            <ImagePlus className="size-4" /> {draft.adFile ? t.adChange : t.adChoose}
+                          </Button>
+                          <p className="text-xs text-muted-foreground">
+                            {draft.adFile ? "" : `${t.adNone} `}
+                            {t.adFileHint}
+                          </p>
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="ad-href">{t.adLink}</Label>
+                          <Input id="ad-href" placeholder="https://" value={c.ad.href} onChange={(e) => set({ ad: { ...c.ad!, href: e.target.value } })} />
+                          <p className="text-xs text-muted-foreground">{t.adLinkHint}</p>
+                        </div>
+                      </>
+                    )}
+                  </Section>
+                </div>
+              )}
               </div>
 
               <div className="min-w-0 md:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-span-3 lg:row-start-1">
