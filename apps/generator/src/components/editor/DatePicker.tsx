@@ -3,6 +3,7 @@ import { CalendarDays, X } from "lucide-react";
 import { DayPicker, type DateRange } from "@daypicker/react";
 import { enGB, et } from "@daypicker/react/locale";
 import "@daypicker/react/style.css";
+import "./calendar.css";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { getLang, ui } from "@/content";
@@ -20,18 +21,10 @@ const show = (s: string) => {
 const THEME = {
   "--rdp-accent-color": "var(--primary)",
   "--rdp-accent-background-color": "color-mix(in oklab, var(--primary) 14%, transparent)",
-  "--rdp-day-height": "2.25rem",
-  "--rdp-day-width": "2.25rem",
-  "--rdp-day_button-height": "2.1rem",
-  "--rdp-day_button-width": "2.1rem",
-  "--rdp-day_button-border-radius": "0.6rem",
-  "--rdp-day_button-border": "0",
-  "--rdp-selected-border": "0",
   "--rdp-today-color": "var(--primary)",
-  "--rdp-nav_button-height": "2rem",
-  "--rdp-nav_button-width": "2rem",
-  "--rdp-nav-height": "2.25rem",
-  fontSize: "0.875rem",
+  "--rdp-nav_button-height": "1.9rem",
+  "--rdp-nav_button-width": "1.9rem",
+  "--rdp-nav-height": "2.1rem",
 } as React.CSSProperties;
 
 function Trigger({ text, placeholder, onClear, id, invalid }: { text: string; placeholder: string; onClear?: () => void; id?: string; invalid?: boolean }) {

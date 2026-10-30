@@ -87,6 +87,14 @@ export function briefEmail(b: Brief): { subject: string; body: string } {
   return { subject: `Banner request: ${b.title.trim()}${b.client.trim() ? ` (${b.client.trim()})` : ""}`, body: body.trimEnd() };
 }
 
+// The same email as formatted text: the subject in bold, one paragraph per block, a line break after each line.
+const escHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+export function briefEmailHtml(b: Brief): string {
+  const m = briefEmail(b);
+  const blocks = m.body.split(/\n{2,}/).map((p) => `<p style="margin:0 0 12px 0;">${p.split("\n").map(escHtml).join("<br>")}</p>`);
+  return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;"><p style="margin:0 0 12px 0;"><b>${escHtml(m.subject)}</b></p>${blocks.join("")}</div>`;
+}
+
 // mailto: links have a limit in some mail programs; past it the caller should offer Copy instead.
 export const MAILTO_LIMIT = 1800;
 export const mailtoHref = (to: string, subject: string, body: string) => `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

@@ -408,6 +408,7 @@ export const tracker: typeof En.tracker = {
   stillNeeded: (n: number) => `Veel vaja: ${n}`,
   sendAndAdd: "Saada kiri ja lisa tahvlile",
   addOnly: "Lisa ainult tahvlile",
+  copyAndAdd: "Kopeeri kiri ja lisa tahvlile",
   sendAgain: "Saada kiri uuesti",
   added: "Lisatud tahvlile.",
   deleted: "Ülesanne kustutatud.",

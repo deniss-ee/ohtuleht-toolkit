@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { tracker as t, getLang } from "@/content";
-import { clientsCsv, emptyClient, fetchSharedClients, loadClients, mergeClients, parseClientsCsv, saveClients, sortClients, type Client } from "@/lib/clients";
+import { clientsCsv, emptyClient, fetchSharedClients, withClientOf, loadClients, mergeClients, parseClientsCsv, saveClients, sortClients, type Client } from "@/lib/clients";
 import { pull, pushDiff } from "@/lib/sync";
 import { isOverdue, loadBriefs, parseBackup, saveBriefs, STATUSES, type Brief, type Status } from "@/lib/tracker";
 
@@ -241,7 +241,7 @@ export function TaskTracker({ onMake, onNewRequest }: { onMake: (typeId: string)
     const exists = list.some((x) => x.id === b.id);
     commit(exists ? list.map((x) => (x.id === b.id ? b : x)) : [b, ...list]);
     // A client typed for the first time joins the client list, so it is a choice next time.
-    if (b.client.trim() && !clients.some((c) => c.name.trim().toLowerCase() === b.client.trim().toLowerCase())) commitClients(mergeClients(clients, [{ ...emptyClient(), name: b.client.trim() }]));
+    commitClients(withClientOf(clientsRef.current, b.client));
     setOpen(null);
     window.scrollTo(0, 0);
     toast.success(exists ? t.saved : t.added);

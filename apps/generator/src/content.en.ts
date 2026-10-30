@@ -441,6 +441,7 @@ export const tracker = {
   stillNeeded: (n: number) => `${n} thing${n === 1 ? "" : "s"} still needed`,
   sendAndAdd: "Send email and add to board",
   addOnly: "Add to board only",
+  copyAndAdd: "Copy email and add to board",
   sendAgain: "Send email again",
   added: "Added to the board.",
   deleted: "Brief deleted.",
