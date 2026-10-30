@@ -8,7 +8,7 @@ import type { Lang, PageId, ToolInfo } from "@/content";
 
 export type BrandTab = "colours" | "logos" | "fonts" | "eye";
 export const PAGES: PageId[] = ["home", "content", "tools", "brand", "tasks"];
-export const TOOL_IDS: ToolInfo["id"][] = ["image-cropper", "movie-banner", "article-scraper", "picture-converter", "email-signature"];
+export const TOOL_IDS: ToolInfo["id"][] = ["image-cropper", "movie-banner", "article-scraper", "picture-converter", "email-signature", "utm-builder"];
 export const MAKE_IDS = ["header-bar", "articles-1250x400", "articles-mobile", "image-slider-1250x400", "image-slider-600x500"];
 
 export interface Route {

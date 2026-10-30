@@ -361,7 +361,7 @@ export const brandManual = {
 
 // Tools section: small stand-alone helpers (not banners made from articles).
 export interface ToolInfo {
-  id: "image-cropper" | "movie-banner" | "article-scraper" | "picture-converter" | "email-signature";
+  id: "image-cropper" | "movie-banner" | "article-scraper" | "picture-converter" | "email-signature" | "utm-builder";
   name: string;
   description: string;
   tag: string;
@@ -379,6 +379,7 @@ export const tools = {
     { id: "article-scraper", name: "Article scraper", description: "Title, lead text, link and picture link of an article, ready to copy. For marketing.", tag: "Bookmark", ready: true },
     { id: "picture-converter", name: "Picture link converter", description: "Change the size number of CMS picture links to the banner sizes (54 and 48).", tag: "54 and 48", ready: true },
     { id: "email-signature", name: "Email signature", description: "Name, job title, phone and logo as a signature for Outlook or any mail program.", tag: "Outlook", ready: true },
+    { id: "utm-builder", name: "Tracking links", description: "Add UTM labels to links, so the statistics show where each visit came from.", tag: "UTM", ready: true },
   ] satisfies ToolInfo[],
 };
 
@@ -450,6 +451,28 @@ export const tracker = {
   saved: "Brief saved.",
   copied: "Email text copied.",
   startOver: "Start over",
+};
+
+export const utmTool = {
+  back: "Back to Tools",
+  title: "Tracking links",
+  intro: "Add UTM labels to links, so the statistics show which banner or campaign brought each visit.",
+  links: "Links",
+  placeholder: "Paste one or more links, one per line",
+  badLine: (n: number) => `Line ${n} does not look like a web address.`,
+  labels: "Labels",
+  required: "needed",
+  fields: { source: "Source", medium: "Medium", campaign: "Campaign", content: "Content", term: "Term" },
+  placeholders: { source: "ohtuleht", medium: "banner", campaign: "spring-sale", content: "header-red", term: "" },
+  hints: { source: "Where the visit starts: the site or the list.", medium: "The kind of ad: banner, email, social.", campaign: "The name of the campaign.", content: "Optional. Tells two banners of one campaign apart.", term: "Optional. Used for search words." },
+  tidy: "Tidy the labels (lower case, hyphens)",
+  becomes: (v: string) => `Becomes: ${v}`,
+  missing: "Still needed:",
+  empty: "Paste a link to get the tracking link.",
+  result: "Tracking link",
+  linkN: (n: number) => `Link ${n}`,
+  copyAll: "Copy all links",
+  copiedAll: "All links copied.",
 };
 
 export const marketing = {
@@ -680,6 +703,9 @@ export const home = {
   title: "Õhtuleht Toolkit",
   intro: "Banners, pictures and the brand in one place. Pick what you want to do.",
   open: "Open",
+  search: "Find something",
+  searchPlaceholder: "Find a banner or tool (press / to search)",
+  noResults: (q: string) => `Nothing found for "${q}".`,
   groups: [
     {
       id: "banners",
@@ -708,6 +734,7 @@ export const home = {
       text: "For texts and picture links.",
       items: [
         { id: "article-scraper", name: "Article scraper", text: "Title, lead, link and picture link of an article." },
+        { id: "utm-builder", name: "Tracking links", text: "UTM labels on links, for the statistics." },
         { id: "email-signature", name: "Email signature", text: "Your details and the logo as a signature for Outlook." },
         { id: "picture-converter", name: "Picture link converter", text: "CMS picture links to the banner sizes." },
       ],

@@ -346,6 +346,7 @@ export const tools: typeof En.tools = {
     { id: "article-scraper", name: "Artikli kopeerija", description: "Artikli pealkiri, juhttekst, link ja pildi link, valmis kopeerimiseks. Turundusele.", tag: "Järjehoidja", ready: true },
     { id: "picture-converter", name: "Pildi lingi muundur", description: "Muuda CMS-i piltide linkide suuruse number bänneri suurusteks (54 ja 48).", tag: "54 ja 48", ready: true },
     { id: "email-signature", name: "E-posti allkiri", description: "Nimi, ametinimetus, telefon ja logo allkirjana Outlooki või mõne muu postiprogrammi jaoks.", tag: "Outlook", ready: true },
+    { id: "utm-builder", name: "Jälgimislingid", description: "Lisa linkidele UTM-sildid, et statistika näitaks, kust iga külastus tuli.", tag: "UTM", ready: true },
   ],
 };
 
@@ -417,6 +418,28 @@ export const tracker: typeof En.tracker = {
   saved: "Ülesanne salvestatud.",
   copied: "Kirja tekst kopeeritud.",
   startOver: "Alusta uuesti",
+};
+
+export const utmTool: typeof En.utmTool = {
+  back: "Tagasi tööriistade juurde",
+  title: "Jälgimislingid",
+  intro: "Lisa linkidele UTM-sildid, et statistika näitaks, milline bänner või kampaania iga külastuse tõi.",
+  links: "Lingid",
+  placeholder: "Kleebi üks või mitu linki, üks rea kohta",
+  badLine: (n: number) => `Rida ${n} ei näe välja nagu veebiaadress.`,
+  labels: "Sildid",
+  required: "vajalik",
+  fields: { source: "Allikas", medium: "Kanal", campaign: "Kampaania", content: "Sisu", term: "Märksõna" },
+  placeholders: { source: "ohtuleht", medium: "banner", campaign: "kevadmuuk", content: "paise-punane", term: "" },
+  hints: { source: "Kust külastus algab: sait või nimekiri.", medium: "Reklaami liik: bänner, e-kiri, sotsiaalmeedia.", campaign: "Kampaania nimi.", content: "Valikuline. Eristab ühe kampaania kahte bännerit.", term: "Valikuline. Otsingusõnade jaoks." },
+  tidy: "Korrasta sildid (väiketähed, sidekriipsud)",
+  becomes: (v: string) => `Saab: ${v}`,
+  missing: "Veel vaja:",
+  empty: "Kleebi link, et saada jälgimislink.",
+  result: "Jälgimislink",
+  linkN: (n: number) => `Link ${n}`,
+  copyAll: "Kopeeri kõik lingid",
+  copiedAll: "Kõik lingid kopeeritud.",
 };
 
 export const marketing: typeof En.marketing = {
@@ -645,6 +668,9 @@ export const home: typeof En.home = {
   title: "Õhtuleht Toolkit",
   intro: "Bännerid, pildid ja bränd ühes kohas. Vali, mida soovid teha.",
   open: "Ava",
+  search: "Otsi midagi",
+  searchPlaceholder: "Otsi bännerit või tööriista (vajuta / otsimiseks)",
+  noResults: (q: string) => `Päringule "${q}" ei leitud midagi.`,
   groups: [
     {
       id: "banners",
@@ -673,6 +699,7 @@ export const home: typeof En.home = {
       text: "Tekstide ja piltide linkide jaoks.",
       items: [
         { id: "article-scraper", name: "Artikli kopeerija", text: "Artikli pealkiri, juhttekst, link ja pildi link." },
+        { id: "utm-builder", name: "Jälgimislingid", text: "UTM-sildid linkidele statistika jaoks." },
         { id: "email-signature", name: "E-posti allkiri", text: "Sinu andmed ja logo allkirjana Outlooki jaoks." },
         { id: "picture-converter", name: "Pildi lingi muundur", text: "CMS-i piltide lingid bänneri suurusteks." },
       ],

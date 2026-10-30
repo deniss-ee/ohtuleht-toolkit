@@ -26,6 +26,7 @@ import { ToolsHome } from "@/pages/ToolsHome";
 import { ArticleScraper } from "@/pages/ArticleScraper";
 import { PictureConverter } from "@/pages/PictureConverter";
 import { TaskTracker } from "@/pages/TaskTracker";
+import { UtmBuilder } from "@/pages/UtmBuilder";
 import { SignatureGenerator } from "@/pages/SignatureGenerator";
 
 const newWork = (typeId: string): Work => (typeId === "header-bar" ? { kind: "header", draft: newHeaderDraft() } : typeId === "image-slider-1250x400" || typeId === "image-slider-600x500" ? { kind: "slider", draft: newSliderDraft(typeId) } : { kind: "banner", draft: newDraft(typeId === "articles-mobile" ? "articles-mobile" : "articles-1250x400") });
@@ -180,7 +181,7 @@ export function App() {
             ) : (
               <ContentMarketingHome onCreate={create} onUpload={open} saved={saved} onContinue={resume} onDiscard={discard} />
             ))}
-          {page === "tools" && (tool === "image-cropper" ? <ImageCropper onBack={() => setTool(null)} /> : tool === "movie-banner" ? <MovieBanner onBack={() => setTool(null)} /> : tool === "article-scraper" ? <ArticleScraper onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "picture-converter" ? <PictureConverter onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "email-signature" ? <SignatureGenerator onBack={() => setTool(null)} /> : <ToolsHome onOpen={setTool} />)}
+          {page === "tools" && (tool === "image-cropper" ? <ImageCropper onBack={() => setTool(null)} /> : tool === "movie-banner" ? <MovieBanner onBack={() => setTool(null)} /> : tool === "article-scraper" ? <ArticleScraper onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "picture-converter" ? <PictureConverter onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "email-signature" ? <SignatureGenerator onBack={() => setTool(null)} /> : tool === "utm-builder" ? <UtmBuilder onBack={() => setTool(null)} /> : <ToolsHome onOpen={setTool} />)}
           {page === "tasks" && <TaskTracker />}
           {page === "brand" && <BrandManual tab={tab} onTab={setTab} />}
         </AppShell>
