@@ -4,6 +4,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+- Banner arrows are solid: the white chevron at full strength (no half-transparent arrow) on a dark, 85 % solid 32 px square; the chevron keeps its old size and has no outline. The square darkens on hover and nothing moves.
 ## [0.2.3] - 2026-10-30
 
 Banner arrows are easier to see.
