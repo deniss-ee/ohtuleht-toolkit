@@ -95,8 +95,8 @@ function SliderPreview({ draft, pinned, onPin, onTryExample, working }: { draft:
           )}
         </div>
       </div>
-      <div ref={box} className={empty ? "relative w-full overflow-hidden rounded-xl border border-dashed" : "relative w-full overflow-hidden"} style={{ height: areaH, transition: "height .25s ease" }}>
-        <div className="absolute left-1/2 -translate-x-1/2" style={{ top: empty ? 0 : Math.round((areaH - frameH) / 2), height: empty ? "100%" : frameH, width: shownMobile && !empty ? Math.round(shownW * shownScale) : "100%", transition: "width .25s ease, top .25s ease, height .25s ease" }}>
+      <div ref={box} className={empty ? "relative w-full overflow-hidden rounded-xl border border-dashed" : "relative w-full overflow-hidden"} style={{ height: areaH }}>
+        <div className="absolute left-1/2 -translate-x-1/2" style={{ top: empty ? 0 : Math.round((areaH - frameH) / 2), height: empty ? "100%" : frameH, width: shownMobile && !empty ? Math.round(shownW * shownScale) : "100%" }}>
           {empty ? (
             <div className="flex h-full flex-col items-center justify-center gap-3 p-4 text-center">
               <div>
@@ -250,12 +250,7 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
           <HoverPill
             tone={issues.length === 0 ? "ok" : "warn"}
             icon={issues.length === 0 ? <CheckCircle2 className="size-3.5 text-green-600" /> : <TriangleAlert className="size-3.5 text-yellow-600" />}
-            label={
-              <>
-                <span className="hidden sm:inline">{issues.length === 0 ? e.ready : ui.toFix(issues.length)}</span>
-                <span className="sm:hidden">{issues.length === 0 ? "" : issues.length}</span>
-              </>
-            }
+            label={issues.length === 0 ? e.ready : ui.toFix(issues.length)} short={issues.length === 0 ? undefined : issues.length}
           >
             {(close) =>
               issues.length === 0 ? (
@@ -284,7 +279,7 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
               )
             }
           </HoverPill>
-          <Button variant="outline" size="sm" className="gap-2" disabled={working !== null} onClick={loadExample}>
+          <Button variant="outline" size="sm" className="gap-2 max-md:size-8 max-sm:size-10 max-md:rounded-full max-md:p-0" disabled={working !== null} onClick={loadExample}>
             {working === "example" ? <Loader2 className="size-4 animate-spin" /> : <FlaskConical className="size-4" />}
             <span className="hidden md:inline">{e.loadExample}</span>
           </Button>

@@ -34,7 +34,7 @@ export function Collapsible({ title, description, icon, tone, children, classNam
           <div className="font-medium leading-none">{title}</div>
           <div className="mt-1 text-sm text-muted-foreground">{description}</div>
         </div>
-        <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" />
+        <ChevronRight className="size-4 shrink-0 text-muted-foreground group-open:rotate-90" />
       </summary>
       <div className="space-y-4 border-t p-4">{children}</div>
     </details>

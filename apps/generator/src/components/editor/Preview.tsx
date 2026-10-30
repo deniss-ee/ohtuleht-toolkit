@@ -120,9 +120,9 @@ export function Preview({
           </Tabs>
         </div>
       </div>
-      <div ref={box} className={empty ? "relative w-full overflow-hidden rounded-xl border border-dashed" : "relative w-full overflow-hidden"} style={{ height: Math.max(shown.height * scale, empty ? 300 : 0), transition: "height .25s ease" }}>
+      <div ref={box} className={empty ? "relative w-full overflow-hidden rounded-xl border border-dashed" : "relative w-full overflow-hidden"} style={{ height: Math.max(shown.height * scale, empty ? 300 : 0) }}>
         {/* The phone banner is narrow: keep it in the middle of the wide preview area. */}
-        <div className="absolute inset-y-0 left-1/2 -translate-x-1/2" style={{ width: shownMobile && !empty ? shownW * scale : "100%", transition: "width .25s ease" }}>
+        <div className="absolute inset-y-0 left-1/2 -translate-x-1/2" style={{ width: shownMobile && !empty ? shownW * scale : "100%" }}>
         {empty ? (
           <EmptyGuide onAddArticles={onAddArticles} onTryExample={onTryExample} onOpenBookmark={onOpenBookmark} working={working} />
         ) : (
