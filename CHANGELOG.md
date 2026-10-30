@@ -4,6 +4,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+- **Image slider** banner (#36), desktop 1250x400 and mobile 600x500 in one campaign (switch with the monitor and phone icons). A background picture with a slider of 300x250 or 600x500 pictures; one link for all slides or a link per slide; a link on the background; an empty link uses the ad system's `clickTag`. Slider position, size, gap, slides shown and arrows are editable. The phone banner has no background: each picture fills the whole 600x500 banner. Effects: **Arc** (a carousel, the slides stand on a ring that turns; desktop) and **Cube** (mobile), in a separate 1.7 KB script `fx.js` only banners that use them carry. Old Dacia/Renault image slider zips open in the tool (background, slides, links, position).
+- **Static ad** (#35): a switch on the desktop articles banner adds a fixed ad on the right with its own link; the slider then shows 3 articles. Old banners with an ad open with it kept.
+- **Picture optimiser**: header, ad, background and slide pictures, and the pictures of old zips, are optimised in the browser with jSquash (the codecs of the Squoosh app); the original is kept when the result is not smaller.
+- Editors: the desktop / phone switch is two icons with a clear active state; switching sizes does not move the page; loading indicators for the preview, pictures, the example and opening a zip; no movement animations; round, centred icon buttons on phones. Home, Content marketing and Tools use the same card with aligned buttons; banner types are named "..., desktop" and "..., mobile" and sit in pairs.
+
 - Brand manual: **Eye** tab, a generator for the brand eye (filled or outline, looks, turns, peeking, PNG and SVG, safety rules). (#121)
 
 - Tools: **Article scraper** (bookmark gives title, lead, link and picture link with Copy buttons) and **Picture link converter** (CMS picture links to /54/ and /48/), with a Brand manual strip. New Marketing group on Home. (#117, #118)
