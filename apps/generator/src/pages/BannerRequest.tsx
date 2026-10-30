@@ -4,7 +4,8 @@ import { toast } from "sonner";
 import { BriefPage } from "@/components/editor/BriefPage";
 import { Button } from "@/components/ui/button";
 import { tracker as t } from "@/content";
-import { emptyClient, loadClients, mergeClients, saveClients, type Client } from "@/lib/clients";
+import { loadClients, saveClients, withClientOf, type Client } from "@/lib/clients";
+import { push, pushDiff } from "@/lib/sync";
 import { loadBriefs, newBrief, saveBriefs, type Brief } from "@/lib/tracker";
 
 // Tool: the banner request form. Anyone can use it; what is sent also lands on the task tracker board (same browser, for now).
@@ -15,7 +16,13 @@ export function BannerRequest({ onOpenBoard, onMake }: { onOpenBoard: () => void
 
   const save = (b: Brief) => {
     saveBriefs([b, ...loadBriefs().filter((x) => x.id !== b.id)]);
-    if (b.client.trim() && !clients.some((c) => c.name.trim().toLowerCase() === b.client.trim().toLowerCase())) saveClients(mergeClients(loadClients(), [{ ...emptyClient(), name: b.client.trim() }]));
+    void push("briefs", "put", b.id, b);
+    const before = loadClients();
+    const after = withClientOf(before, b.client);
+    if (after !== before) {
+      saveClients(after);
+      pushDiff("clients", before, after);
+    }
     toast.success(t.added);
     window.scrollTo(0, 0);
     setSent(true);

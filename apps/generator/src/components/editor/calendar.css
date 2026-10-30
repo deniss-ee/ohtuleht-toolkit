@@ -1,0 +1,64 @@
+/* Calm calendar: small numbers that keep their size when chosen, a filled brand-red day, a soft ring for today. Loaded after the library's own CSS. */
+.rdp-root {
+  --rdp-day-height: 2.1rem;
+  --rdp-day-width: 2.1rem;
+  --rdp-day_button-height: 2rem;
+  --rdp-day_button-width: 2rem;
+  --rdp-months-gap: 1.25rem;
+}
+.rdp-root .rdp-caption_label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.rdp-root .rdp-weekday {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+.rdp-root .rdp-day {
+  font-size: 0.8125rem;
+}
+.rdp-root .rdp-outside {
+  opacity: 0.3;
+}
+.rdp-root .rdp-day_button {
+  border: 0;
+  border-radius: 0.55rem;
+}
+.rdp-root .rdp-day_button:hover:not(:disabled) {
+  background: var(--rdp-accent-background-color);
+}
+.rdp-root .rdp-today:not(.rdp-selected):not(.rdp-outside) .rdp-day_button {
+  background: var(--rdp-accent-background-color);
+  color: var(--rdp-accent-color);
+  font-weight: 600;
+}
+/* A chosen day: same size as the others, filled. */
+.rdp-root .rdp-selected {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.rdp-root .rdp-selected .rdp-day_button {
+  border: 0;
+  background: var(--rdp-accent-color);
+  color: #fff;
+}
+/* Days between the first and the last of a range: only a soft band. */
+.rdp-root .rdp-range_middle .rdp-day_button {
+  background: transparent;
+  color: inherit;
+  border-radius: 0;
+}
+.rdp-root .rdp-button_previous,
+.rdp-root .rdp-button_next {
+  color: var(--muted-foreground);
+}
+.rdp-root .rdp-button_previous:hover,
+.rdp-root .rdp-button_next:hover {
+  color: var(--foreground);
+}
+.rdp-root .rdp-chevron {
+  fill: currentColor;
+}

@@ -10,8 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { bannerTypes, tracker as t } from "@/content";
 import type { Client } from "@/lib/clients";
-import { copyText } from "@/lib/clipboard";
-import { briefEmail, emptyRow, exampleBriefs, MAILTO_LIMIT, mailtoHref, missing, STATUSES, type Brief, type Status } from "@/lib/tracker";
+import { copyRichText } from "@/lib/clipboard";
+import { briefEmail, briefEmailHtml, emptyRow, exampleBriefs, MAILTO_LIMIT, mailtoHref, missing, STATUSES, type Brief, type Status } from "@/lib/tracker";
 
 const SEND_TO = "ol-brief-to";
 const FORMAT_ICONS: Record<string, LucideIcon> = { "header-bar": PanelTop, "articles-1250x400": Newspaper, "articles-mobile": Smartphone, "image-slider-1250x400": Images, "image-slider-600x500": Smartphone, other: Shapes };
@@ -71,6 +71,12 @@ export function BriefPage({ initial, isNew, clients, onSave, onBack, onDelete, o
 
   const text = `${mail.subject}\n\n${mail.body}`;
   const save = () => ready && onSave({ ...b, example: false });
+  const copyMail = () => copyRichText(briefEmailHtml(b), text, t.copied);
+  const copyAndAdd = () => {
+    if (!ready) return;
+    void copyMail();
+    onSave({ ...b, example: false });
+  };
   const send = () => {
     if (!ready) return;
     try {
@@ -81,7 +87,7 @@ export function BriefPage({ initial, isNew, clients, onSave, onBack, onDelete, o
     const href = mailtoHref(sendTo, mail.subject, mail.body);
     onSave({ ...b, example: false });
     if (href.length > MAILTO_LIMIT) {
-      void copyText(text, t.copied);
+      void copyMail();
       toast.message(t.tooLong);
     } else location.href = href;
   };
@@ -260,7 +266,10 @@ export function BriefPage({ initial, isNew, clients, onSave, onBack, onDelete, o
                   <Button className="h-10 gap-2" disabled={!ready} onClick={send}>
                     <Send className="size-4" /> {t.sendAndAdd}
                   </Button>
-                  <Button variant="outline" className="gap-2" disabled={!ready} onClick={save}>
+                  <Button variant="outline" className="gap-2" disabled={!ready} onClick={copyAndAdd}>
+                    <Copy className="size-4" /> {t.copyAndAdd}
+                  </Button>
+                  <Button variant="ghost" className="gap-2" disabled={!ready} onClick={save}>
                     <Plus className="size-4" /> {t.addOnly}
                   </Button>
                 </>
@@ -274,9 +283,11 @@ export function BriefPage({ initial, isNew, clients, onSave, onBack, onDelete, o
                   </Button>
                 </>
               )}
-              <Button variant="ghost" className="gap-2" disabled={!ready} onClick={() => void copyText(text, t.copied)}>
-                <Copy className="size-4" /> {t.copyEmail}
-              </Button>
+              {!isNew && (
+                <Button variant="ghost" className="gap-2" disabled={!ready} onClick={() => void copyMail()}>
+                  <Copy className="size-4" /> {t.copyEmail}
+                </Button>
+              )}
             </div>
           </section>
 

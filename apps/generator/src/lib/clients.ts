@@ -34,6 +34,14 @@ export function mergeClients(old: Client[], incoming: Client[]): Client[] {
   for (const c of incoming) if (c.name.trim() && !out.some((o) => same(o.name, c.name))) out.push(c);
   return out;
 }
+// The list after a brief for this client name is saved: a new name is added; a sample client becomes a real one (so it is shared).
+export function withClientOf(list: Client[], name: string): Client[] {
+  const n = name.trim();
+  if (!n) return list;
+  const hit = list.find((c) => same(c.name, n));
+  if (!hit) return [...list, { ...emptyClient(), name: n }];
+  return hit.example ? list.map((c) => (c === hit ? { ...c, id: crypto.randomUUID(), example: false } : c)) : list;
+}
 export const sortClients = (list: Client[]) => [...list].sort((a, b) => a.name.localeCompare(b.name, "et"));
 
 export function loadClients(): Client[] {
