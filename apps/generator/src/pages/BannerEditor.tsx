@@ -1,20 +1,18 @@
-import { useMemo, useRef, useState, type ReactNode } from "react";
-import { ArrowLeft, CheckCircle2, ChevronRight, Download, FileArchive, FlaskConical, ImagePlus, Megaphone, Palette, PanelRight, PanelTop, SlidersHorizontal, TriangleAlert, type LucideIcon } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { ArrowLeft, CheckCircle2, Download, FileArchive, FlaskConical, ImagePlus, Loader2, Megaphone, Palette, PanelRight, PanelTop, SlidersHorizontal, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import { resolveTheme } from "@ohtuleht/templates";
 import type { ArticlesBannerConfig, ThemeColors } from "@ohtuleht/templates";
 import { ArticleList } from "@/components/editor/ArticleList";
 import { BookmarkletDialog } from "@/components/editor/BookmarkletHelp";
 import { AutoColorField, ColorField } from "@/components/editor/ColorField";
+import { FormatSwitch } from "@/components/editor/FormatSwitch";
 import { HeaderThumb } from "@/components/editor/HeaderThumb";
 import { goTo, HoverPill } from "@/components/editor/HoverPill";
-import { IconChip, type Tone } from "@/components/editor/IconChip";
 import { Preview } from "@/components/editor/Preview";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { editor as t, ui } from "@/content";
@@ -22,6 +20,7 @@ import { Toggles } from "@/layout/AppShell";
 import { adFileOf, bytesOf, exampleDraft, FORMATS, problems, renderExport, switchFormat, type Draft } from "@/lib/banner";
 import { formatSize } from "@/lib/format";
 import type { Optimised } from "@/lib/optimise";
+import { Collapsible, Section, SwitchRow } from "@/components/editor/FormParts";
 import { useSaveShortcut } from "@/components/editor/useSaveShortcut";
 import { downloadZip, fileToAd, fileToHeader } from "@/lib/zip";
 
@@ -31,51 +30,6 @@ const BUDGET_KB = 100;
 const reportOptimised = (o: Optimised) => {
   if (o.after < o.before) toast.success(t.optimised(formatSize(o.before), formatSize(o.after)));
 };
-
-function Section({ title, description, icon, tone, children }: { title: string; description?: string; icon: LucideIcon; tone: Tone; children: ReactNode }) {
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          <IconChip icon={icon} tone={tone} />
-          <div>
-            <CardTitle>{title}</CardTitle>
-            {description && <CardDescription>{description}</CardDescription>}
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">{children}</CardContent>
-    </Card>
-  );
-}
-
-// Closed by default: advanced settings stay out of the way for people who do not need them.
-function Collapsible({ title, description, icon, tone, children }: { title: string; description: string; icon: LucideIcon; tone: Tone; children: ReactNode }) {
-  return (
-    <details className="group rounded-xl border bg-card">
-      <summary className="flex cursor-pointer list-none items-center gap-3 p-4 [&::-webkit-details-marker]:hidden">
-        <IconChip icon={icon} tone={tone} />
-        <div className="flex-1">
-          <div className="font-medium leading-none">{title}</div>
-          <div className="mt-1 text-sm text-muted-foreground">{description}</div>
-        </div>
-        <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" />
-      </summary>
-      <div className="space-y-4 border-t p-4">{children}</div>
-    </details>
-  );
-}
-
-function SwitchRow({ id, label, checked, onChange }: { id: string; label: string; checked: boolean; onChange: (v: boolean) => void }) {
-  return (
-    <div className="flex items-center justify-between gap-4">
-      <Label htmlFor={id} className="font-normal">
-        {label}
-      </Label>
-      <Switch id={id} checked={checked} onCheckedChange={onChange} />
-    </div>
-  );
-}
 
 function ColorSet({ title, mode, config, onChange }: { title: string; mode: "light" | "dark"; config: ArticlesBannerConfig; onChange: (c: ThemeColors) => void }) {
   const mobile = config.format === "articles-mobile"; // titles are white on the picture: no title or hover colour. The label colour is the label's background there.
@@ -110,6 +64,7 @@ const nearestSpeed = (ms: number) => SPEEDS.reduce((best, s) => (Math.abs(s.ms -
 // Full-screen editor: covers the menu so the preview can use the whole width.
 export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChange: (d: Draft) => void; onBack: () => void }) {
   const [busy, setBusy] = useState(false);
+  const [working, setWorking] = useState<"header" | "ad" | "example" | null>(null); // pictures are being prepared
   const [bookmarkOpen, setBookmarkOpen] = useState(false);
   const [pinned, setPinned] = useState(false); // "Keep preview in view" is always off to start with; the person turns it on
   const fileInput = useRef<HTMLInputElement>(null);
@@ -121,24 +76,38 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
   const issues = problems(draft);
   const weightKb = useMemo(() => (bytesOf(renderExport(draft)) + (c.header.type === "image" ? (draft.headerFile?.bytes.length ?? 0) : 0) + (adFileOf(draft)?.bytes.length ?? 0)) / 1024, [draft, c.header.type]);
 
-  const onHeaderFile = async (file: File | undefined) => {
-    if (!file) return;
-    const { headerFile, avg, optimised } = await fileToHeader(file);
-    reportOptimised(optimised);
-    onChange({ ...draft, headerFile, config: { ...c, header: { type: "image", src: headerFile.name, href: c.header.href, avg } } });
+  // Runs a slow job (pictures are optimised in the browser) and shows a spinner on its button meanwhile.
+  const work = async (what: "header" | "ad" | "example", job: () => Promise<void>) => {
+    setWorking(what);
+    try {
+      await job();
+    } finally {
+      setWorking(null);
+    }
   };
 
-  const onAdFile = async (file: File | undefined) => {
-    if (!file || !c.ad) return;
-    const { adFile, width, optimised } = await fileToAd(file);
-    reportOptimised(optimised);
-    onChange({ ...draft, adFile, config: { ...c, ad: { ...c.ad, src: adFile.name, width } } });
-  };
+  const onHeaderFile = (file: File | undefined) =>
+    file &&
+    work("header", async () => {
+      const { headerFile, avg, optimised } = await fileToHeader(file);
+      reportOptimised(optimised);
+      onChange({ ...draft, headerFile, config: { ...c, header: { type: "image", src: headerFile.name, href: c.header.href, avg } } });
+    });
 
-  const loadExample = async () => {
-    onChange(await exampleDraft(c.format));
-    toast.success(t.exampleLoaded);
-  };
+  const onAdFile = (file: File | undefined) =>
+    file &&
+    c.ad &&
+    work("ad", async () => {
+      const { adFile, width, optimised } = await fileToAd(file);
+      reportOptimised(optimised);
+      onChange({ ...draft, adFile, config: { ...c, ad: { ...c.ad!, src: adFile.name, width } } });
+    });
+
+  const loadExample = () =>
+    work("example", async () => {
+      onChange(await exampleDraft(c.format));
+      toast.success(t.exampleLoaded);
+    });
 
   const download = async () => {
     setBusy(true);
@@ -162,20 +131,18 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
           <div className="truncate font-semibold leading-tight">{c.campaign.trim() || t.untitled}</div>
           <div className="text-xs text-muted-foreground">{t.heading} · {FORMATS[c.format].label}</div>
         </div>
-        <Tabs
+        <FormatSwitch
           value={c.format}
-          onValueChange={(v) => {
+          label={t.versionLabel}
+          desktop={{ value: "articles-1250x400", label: `${t.versionDesktop} 1250x400` }}
+          mobile={{ value: "articles-mobile", label: t.versionMobile }}
+          onChange={(v) => {
             const format = v as ArticlesBannerConfig["format"];
             onChange(switchFormat(draft, format));
             // The tab fires its change twice on one click (press and focus): one fixed id shows a single message.
             toast.success(t.versionSwitched(format === "articles-mobile" ? t.versionMobile : t.versionDesktop), { id: "version-switched" });
           }}
-        >
-          <TabsList aria-label={t.versionLabel}>
-            <TabsTrigger value="articles-1250x400">{t.versionDesktop} 1250x400</TabsTrigger>
-            <TabsTrigger value="articles-mobile">{t.versionMobile}</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        />
         <div className="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:flex-nowrap lg:gap-3">
         <HoverPill
           tone="plain"
@@ -198,12 +165,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
         <HoverPill
           tone={issues.length === 0 ? "ok" : "warn"}
           icon={issues.length === 0 ? <CheckCircle2 className="size-3.5 text-green-600" /> : <TriangleAlert className="size-3.5 text-yellow-600" />}
-          label={
-            <>
-              <span className="hidden sm:inline">{issues.length === 0 ? t.ready : t.toFix(issues.length)}</span>
-              <span className="sm:hidden">{issues.length === 0 ? "" : issues.length}</span>
-            </>
-          }
+          label={issues.length === 0 ? t.ready : t.toFix(issues.length)} short={issues.length === 0 ? undefined : issues.length}
         >
           {(close) =>
             issues.length === 0 ? (
@@ -232,8 +194,8 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
             )
           }
         </HoverPill>
-        <Button variant="outline" size="sm" className="gap-2" onClick={loadExample}>
-          <FlaskConical className="size-4" />
+        <Button variant="outline" size="sm" className="gap-2 max-md:size-8 max-sm:size-10 max-md:rounded-full max-md:p-0" disabled={working !== null} onClick={loadExample}>
+          {working === "example" ? <Loader2 className="size-4 animate-spin" /> : <FlaskConical className="size-4" />}
           <span className="hidden md:inline">{t.loadExample}</span>
         </Button>
         <Toggles />
@@ -246,7 +208,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-[1282px] px-4">
           <div className={pinned ? "sticky top-0 z-20 -mx-4 border-b bg-background px-4 py-3" : "py-3"}>
-            <Preview draft={draft} pinned={pinned} onPin={setPinned} onAddArticles={() => goTo("paste")} onTryExample={loadExample} onOpenBookmark={() => setBookmarkOpen(true)} />
+            <Preview draft={draft} pinned={pinned} onPin={setPinned} onAddArticles={() => goTo("paste")} onTryExample={loadExample} working={working === "example"} onOpenBookmark={() => setBookmarkOpen(true)} />
           </div>
 
           <div className="pb-24 pt-4">
@@ -284,8 +246,8 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                 {c.header.type === "image" ? (
                   <div className="space-y-2">
                     <input ref={fileInput} type="file" className="sr-only" aria-label={t.headerFile} accept="image/png,image/webp,image/svg+xml,image/jpeg" onChange={(e) => onHeaderFile(e.target.files?.[0])} />
-                    <Button id="header-choose" variant="outline" size="sm" className="gap-2" onClick={() => fileInput.current?.click()}>
-                      <ImagePlus className="size-4" /> {draft.headerFile ? t.headerChange : t.headerChoose}
+                    <Button id="header-choose" variant="outline" size="sm" className="gap-2" disabled={working !== null} onClick={() => fileInput.current?.click()}>
+                      {working === "header" ? <Loader2 className="size-4 animate-spin" /> : <ImagePlus className="size-4" />} {working === "header" ? t.preparing : draft.headerFile ? t.headerChange : t.headerChoose}
                     </Button>
                     <p className="text-xs text-muted-foreground">
                       {draft.headerFile ? "" : `${t.headerNone} `}
@@ -320,8 +282,8 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                         {draft.adFile && <img src={draft.adFile.dataUrl} alt="" className="max-h-40 rounded-md border" />}
                         <div className="space-y-2">
                           <input ref={adInput} type="file" className="sr-only" aria-label={t.adTitle} accept="image/png,image/webp,image/jpeg" onChange={(e) => onAdFile(e.target.files?.[0])} />
-                          <Button id="ad-choose" variant="outline" size="sm" className="gap-2" onClick={() => adInput.current?.click()}>
-                            <ImagePlus className="size-4" /> {draft.adFile ? t.adChange : t.adChoose}
+                          <Button id="ad-choose" variant="outline" size="sm" className="gap-2" disabled={working !== null} onClick={() => adInput.current?.click()}>
+                            {working === "ad" ? <Loader2 className="size-4 animate-spin" /> : <ImagePlus className="size-4" />} {working === "ad" ? t.preparing : draft.adFile ? t.adChange : t.adChoose}
                           </Button>
                           <p className="text-xs text-muted-foreground">
                             {draft.adFile ? "" : `${t.adNone} `}

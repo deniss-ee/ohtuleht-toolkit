@@ -1,8 +1,7 @@
-import { Clapperboard, Crop, Eye, FileSearch, FileText, House, Lightbulb, Newspaper, Palette, PanelTop, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
+import { Clapperboard, Crop, Eye, FileSearch, FileText, House, Images, Lightbulb, Newspaper, Palette, PanelTop, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
 import { ContinueCard } from "@/components/editor/ContinueCard";
-import { IconChip } from "@/components/editor/IconChip";
+import { StartCard } from "@/components/editor/StartCard";
 import { PageHeader } from "@/components/editor/PageHeader";
-import { Button } from "@/components/ui/button";
 import { home as t, type PageId, type ToolInfo } from "@/content";
 import type { BrandTab } from "@/lib/route";
 import type { SavedInfo } from "@/lib/storage";
@@ -19,6 +18,8 @@ export interface Destination {
 const ITEMS: Record<string, { icon: LucideIcon; to: Destination }> = {
   "articles-1250x400": { icon: Newspaper, to: { page: "content", make: "articles-1250x400" } },
   "articles-mobile": { icon: Smartphone, to: { page: "content", make: "articles-mobile" } },
+  "image-slider-1250x400": { icon: Images, to: { page: "content", make: "image-slider-1250x400" } },
+  "image-slider-600x500": { icon: Smartphone, to: { page: "content", make: "image-slider-600x500" } },
   "header-bar": { icon: PanelTop, to: { page: "content", make: "header-bar" } },
   "movie-banner": { icon: Clapperboard, to: { page: "tools", tool: "movie-banner" } },
   "image-cropper": { icon: Crop, to: { page: "tools", tool: "image-cropper" } },
@@ -50,20 +51,7 @@ export function Home({ saved, onContinue, onDiscard, onGo }: { saved: SavedInfo 
             {g.items.map((i) => {
               const item = ITEMS[i.id];
               if (!item) return null;
-              return (
-                <div key={i.id} className="flex cursor-pointer flex-col gap-3 rounded-xl border bg-card p-4 transition-colors hover:bg-muted/40" onClick={() => onGo(item.to)}>
-                  <div className="flex items-start gap-3">
-                    <IconChip icon={item.icon} tone="red" />
-                    <div className="min-w-0">
-                      <h3 className="font-medium">{i.name}</h3>
-                      <p className="text-sm text-muted-foreground">{i.text}</p>
-                    </div>
-                  </div>
-                  <Button className="mt-auto self-start px-6" variant="outline" size="sm">
-                    {t.open}
-                  </Button>
-                </div>
-              );
+              return <StartCard key={i.id} icon={item.icon} title={i.name} text={i.text} action={t.open} variant="outline" onAction={() => onGo(item.to)} />;
             })}
           </div>
         </section>

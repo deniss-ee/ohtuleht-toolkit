@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Bookmark, FlaskConical, Pin, PinOff, Plus } from "lucide-react";
+import { Bookmark, FlaskConical, Loader2, Pin, PinOff, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { editor as t, ui } from "@/content";
@@ -14,7 +14,7 @@ const PHONES = [
 ];
 
 // Shown instead of the banner until there is something to show: tells a new person what to do.
-function EmptyGuide({ onAddArticles, onTryExample, onOpenBookmark }: { onAddArticles: () => void; onTryExample: () => void; onOpenBookmark: () => void }) {
+function EmptyGuide({ onAddArticles, onTryExample, onOpenBookmark, working }: { onAddArticles: () => void; onTryExample: () => void; onOpenBookmark: () => void; working: boolean }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4 overflow-auto p-4 text-center">
       <div>
@@ -36,8 +36,8 @@ function EmptyGuide({ onAddArticles, onTryExample, onOpenBookmark }: { onAddArti
         <Button variant="outline" className="gap-2" onClick={onAddArticles}>
           <Plus className="size-4" /> {t.emptyGoArticles}
         </Button>
-        <Button variant="outline" className="gap-2" onClick={onTryExample}>
-          <FlaskConical className="size-4" /> {t.emptyTryExample}
+        <Button variant="outline" className="gap-2" disabled={working} onClick={onTryExample}>
+          {working ? <Loader2 className="size-4 animate-spin" /> : <FlaskConical className="size-4" />} {working ? t.preparing : t.emptyTryExample}
         </Button>
       </div>
     </div>
@@ -54,6 +54,7 @@ export function Preview({
   onAddArticles,
   onTryExample,
   onOpenBookmark,
+  working,
 }: {
   draft: Draft;
   pinned: boolean;
@@ -61,6 +62,7 @@ export function Preview({
   onAddArticles: () => void;
   onTryExample: () => void;
   onOpenBookmark: () => void;
+  working: boolean;
 }) {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const box = useRef<HTMLDivElement>(null);
@@ -89,13 +91,13 @@ export function Preview({
   const pct = Math.round(scale * 100);
   return (
     <div className="space-y-2">
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="flex min-h-8 flex-wrap items-center justify-between gap-2">
         <div className="flex items-baseline gap-3">
           <span className="text-sm font-semibold">{t.previewTitle}</span>
           {!empty && <span className="text-xs text-muted-foreground">{shownMobile ? t.previewMobile(shownW) : pct < 100 ? t.previewScaled(pct, FORMATS[draft.config.format].label) : t.previewFull(FORMATS[draft.config.format].label)}</span>}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Button variant="ghost" size="sm" className="gap-1.5" aria-pressed={pinned} onClick={() => onPin(!pinned)}>
+          <Button variant={pinned ? "secondary" : "ghost"} size="sm" className="gap-1.5" aria-pressed={pinned} onClick={() => onPin(!pinned)}>
             {pinned ? <Pin className="size-4" /> : <PinOff className="size-4" />}
             {t.pin}
           </Button>
@@ -118,11 +120,11 @@ export function Preview({
           </Tabs>
         </div>
       </div>
-      <div ref={box} className={empty ? "relative w-full overflow-hidden rounded-xl border border-dashed" : "relative w-full overflow-hidden"} style={{ height: Math.max(shown.height * scale, empty ? 300 : 0), transition: "height .25s ease" }}>
+      <div ref={box} className={empty ? "relative w-full overflow-hidden rounded-xl border border-dashed" : "relative w-full overflow-hidden"} style={{ height: Math.max(shown.height * scale, empty ? 300 : 0) }}>
         {/* The phone banner is narrow: keep it in the middle of the wide preview area. */}
-        <div className="absolute inset-y-0 left-1/2 -translate-x-1/2" style={{ width: shownMobile && !empty ? shownW * scale : "100%", transition: "width .25s ease" }}>
+        <div className="absolute inset-y-0 left-1/2 -translate-x-1/2" style={{ width: shownMobile && !empty ? shownW * scale : "100%" }}>
         {empty ? (
-          <EmptyGuide onAddArticles={onAddArticles} onTryExample={onTryExample} onOpenBookmark={onOpenBookmark} />
+          <EmptyGuide onAddArticles={onAddArticles} onTryExample={onTryExample} onOpenBookmark={onOpenBookmark} working={working} />
         ) : (
           <SwapFrame build={(id) => renderPreview(draft, theme, id)} deps={[draft, theme, W, H]} width={W} height={H} scaleFor={scaleFor} onShown={setShown} title={ui.bannerPreview} />
         )}

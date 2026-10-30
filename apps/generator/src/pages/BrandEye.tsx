@@ -308,7 +308,7 @@ export function BrandEye() {
               {t.moreOptions}
               <span className="block text-xs font-normal text-muted-foreground">{t.moreHint}</span>
             </span>
-            <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" />
+            <ChevronRight className="size-4 shrink-0 text-muted-foreground group-open:rotate-90" />
           </summary>
           <div className="space-y-4 border-t p-3">
             <div className="space-y-2">

@@ -3,6 +3,8 @@
 //   .ol-slider[data-visible][data-gap][data-delay][data-speed][data-shuffle][data-loop]
 //     button.ol-prev
 //     .ol-viewport > .ol-track > .ol-slide*
+//   Optional: data-gap-css="1.6cqw" (gap with its own unit, for banners that scale with their width).
+//   Sliders with data-effect (arc, cube) are run by fx.js instead.
 //     button.ol-next
 //     .ol-dots > button.ol-dot*   (optional pagination, one dot per slide)
 
@@ -65,7 +67,7 @@ export function initSlider(root: HTMLElement): void {
   const n = slides.length;
 
   root.style.setProperty("--ol-visible", String(o.visible));
-  root.style.setProperty("--ol-gap", o.gap + "px");
+  root.style.setProperty("--ol-gap", root.dataset.gapCss ?? o.gap + "px");
 
   // Everything fits: plain row, no arrows, no autoplay. The cards share the whole width
   // (2 articles = two wide cards), instead of keeping the 4-column width and leaving a gap.

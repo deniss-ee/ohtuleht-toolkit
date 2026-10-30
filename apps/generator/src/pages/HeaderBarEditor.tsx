@@ -66,12 +66,7 @@ export function HeaderBarEditor({ draft, onChange, onBack }: { draft: HeaderDraf
           <HoverPill
             tone={issues.length === 0 ? "ok" : "warn"}
             icon={issues.length === 0 ? <CheckCircle2 className="size-3.5 text-green-600" /> : <TriangleAlert className="size-3.5 text-yellow-600" />}
-            label={
-              <>
-                <span className="hidden sm:inline">{issues.length === 0 ? t.ready : ui.toFix(issues.length)}</span>
-                <span className="sm:hidden">{issues.length === 0 ? "" : issues.length}</span>
-              </>
-            }
+            label={issues.length === 0 ? t.ready : ui.toFix(issues.length)} short={issues.length === 0 ? undefined : issues.length}
           >
             {(close) =>
               issues.length === 0 ? (
@@ -102,7 +97,7 @@ export function HeaderBarEditor({ draft, onChange, onBack }: { draft: HeaderDraf
           <Button
             variant="outline"
             size="sm"
-            className="gap-2"
+            className="gap-2 max-md:size-8 max-sm:size-10 max-md:rounded-full max-md:p-0"
             onClick={() => {
               onChange(exampleHeaderDraft());
               toast.success(t.loadedExample);

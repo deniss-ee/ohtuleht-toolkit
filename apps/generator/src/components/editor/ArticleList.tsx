@@ -87,7 +87,7 @@ function ArticleRow({
           <span className="w-5 shrink-0 text-xs font-semibold text-muted-foreground">{index + 1}</span>
           <span className="min-w-0 flex-1 truncate text-sm font-medium">{article.title.trim() || t.untitledArticle}</span>
           {incomplete && <TriangleAlert className="size-4 shrink-0 text-yellow-600" aria-label={t.articleIncomplete} />}
-          <ChevronRight className={"size-4 shrink-0 text-muted-foreground transition-transform" + (open ? " rotate-90" : "")} />
+          <ChevronRight className={"size-4 shrink-0 text-muted-foreground" + (open ? " rotate-90" : "")} />
         </button>
         <div className="flex shrink-0">
           <Button variant="ghost" size="icon" aria-label={t.moveUp} disabled={index === 0} onClick={() => onMove(-1)}>

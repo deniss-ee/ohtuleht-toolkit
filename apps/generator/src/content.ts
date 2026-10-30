@@ -65,6 +65,7 @@ export const bannerTypes = live(() => sets[current].bannerTypes, []);
 export const contentMarketing = section("contentMarketing");
 export const editor = section("editor");
 export const headerBar = section("headerBar");
+export const sliderEditor = section("sliderEditor");
 export const brandManual = section("brandManual");
 export const tools = section("tools");
 export const imageCropper = section("imageCropper");

@@ -14,7 +14,7 @@ import { formatSize } from "@/lib/format";
 const DEFAULTS = { light: { bg: "#ffffff", text: "#272727", hover: "#e3000f" }, dark: { bg: "#0f0f0f", text: "#ffffff", hover: "#e3000f" }, primary: "#f50000" };
 
 // "#fff" or "#FFFFFF" -> "#ffffff"; anything else (var(), names) -> undefined.
-function hex(v: string | undefined): string | undefined {
+export function hex(v: string | undefined): string | undefined {
   const m = v?.trim().match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
   if (!m) return undefined;
   const h = (m[1] ?? "").toLowerCase();
@@ -22,7 +22,7 @@ function hex(v: string | undefined): string | undefined {
 }
 
 // Value of `prop` in the first rule whose selector list contains exactly `selector`.
-function decl(css: string, selector: string, prop: string): string | undefined {
+export function decl(css: string, selector: string, prop: string): string | undefined {
   for (const rule of css.matchAll(/([^{}]+)\{([^}]*)\}/g)) {
     if (!(rule[1] ?? "").split(",").some((s) => s.trim() === selector)) continue;
     const d = (rule[2] ?? "").match(new RegExp(`(?:^|;|\\s)${prop}\\s*:\\s*([^;]+)`, "i"));
@@ -31,9 +31,9 @@ function decl(css: string, selector: string, prop: string): string | undefined {
   return undefined;
 }
 
-const urlIn = (v: string | undefined) => v?.match(/url\(\s*["']?([^"')]+)/i)?.[1];
+export const urlIn = (v: string | undefined) => v?.match(/url\(\s*["']?([^"')]+)/i)?.[1];
 
-async function textOf(zip: JSZip, path: string): Promise<string> {
+export async function textOf(zip: JSZip, path: string): Promise<string> {
   return (await zip.file(path.replace(/^\.\//, ""))?.async("string")) ?? "";
 }
 

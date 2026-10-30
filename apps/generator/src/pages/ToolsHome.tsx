@@ -1,9 +1,6 @@
 import { Clapperboard, Crop, FileSearch, Replace, Wrench, type LucideIcon } from "lucide-react";
 import { PageHeader } from "@/components/editor/PageHeader";
-import { IconChip } from "@/components/editor/IconChip";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { StartCard } from "@/components/editor/StartCard";
 import { tools as t, type ToolInfo } from "@/content";
 
 const ICONS: Record<ToolInfo["id"], LucideIcon> = { "image-cropper": Crop, "movie-banner": Clapperboard, "article-scraper": FileSearch, "picture-converter": Replace };
@@ -15,25 +12,7 @@ export function ToolsHome({ onOpen }: { onOpen: (id: ToolInfo["id"]) => void }) 
       <PageHeader icon={Wrench} title={t.title} intro={t.intro} />
       <div className="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {t.items.map((i) => (
-          <Card key={i.id} className={i.ready ? "h-full cursor-pointer transition-colors hover:bg-muted/40" : "h-full opacity-60"} onClick={i.ready ? () => onOpen(i.id) : undefined}>
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <IconChip icon={ICONS[i.id]} tone={i.ready ? "red" : "ink"} />
-                <div>
-                  <CardTitle>{i.name}</CardTitle>
-                  <CardDescription>{i.description}</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Badge variant="secondary">{i.tag}</Badge>
-            </CardContent>
-            <CardFooter className="mt-auto">
-              <Button className="px-8" variant={i.ready ? "default" : "secondary"} disabled={!i.ready}>
-                {i.ready ? t.open : t.soon}
-              </Button>
-            </CardFooter>
-          </Card>
+          <StartCard key={i.id} icon={ICONS[i.id]} title={i.name} text={i.description} badges={[i.tag]} action={i.ready ? t.open : t.soon} disabled={!i.ready} onAction={() => onOpen(i.id)} />
         ))}
       </div>
     </div>

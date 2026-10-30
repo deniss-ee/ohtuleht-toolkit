@@ -69,4 +69,55 @@ export interface ArticlesBannerConfig {
 export interface RuntimeAssets {
   runtimeJs: string;
   sliderCss: string;
+  fxJs?: string; // 3D effects (ring, cube): only for banners that use one
+}
+
+// ---- Image slider (client banners): a background picture with a slider of pictures on top. Format 3 in docs/BANNERS.md.
+
+// image: a file name inside the zip. href: where the slide leads; empty = the link set in the ad system (clickTag).
+export interface SliderSlide {
+  image: string;
+  href: string;
+}
+
+// Where the slider sits on the background (px on the 1250x400 canvas) and how its slides are laid out.
+export interface SliderLayout {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  gap: number;
+  visible: number; // slides shown at once; each slide is (width - gaps) / visible wide and `height` high
+}
+
+// 1250x400: fixed desktop banner. 600x500: phone banner that fills the page width and keeps the 6:5 shape
+// (everything inside scales with it). Both are one campaign: slides, links and behaviour are shared.
+export type SliderFormat = "image-slider-1250x400" | "image-slider-600x500";
+
+// slide: the strip moves sideways. arc (desktop): slides on a ring, the middle one straight. cube (mobile): one slide at a time on a turning cube.
+export type SliderEffect = "slide" | "arc" | "cube";
+
+// What differs between the two sizes. layout is in px of the 1250x400 canvas.
+export interface SliderView {
+  layout: SliderLayout;
+  arrows: boolean;
+  effect: SliderEffect;
+}
+
+// The phone banner has no background and no layout: its pictures always fill the whole 600x500 (full width, full height).
+export type SliderViewMobile = Omit<SliderView, "layout">;
+
+export interface ImageSliderConfig {
+  v: 1;
+  kind: "image-slider"; // tells these zips apart from the articles banners
+  format: SliderFormat;
+  campaign: string;
+  background: string; // desktop only: file name of the background picture inside the zip
+  backgroundLink: { clickable: boolean; href: string }; // desktop only; href empty = the ad system's link
+  slides: SliderSlide[];
+  linkMode: "shared" | "each"; // one link for all slides, or one per slide
+  sharedHref: string;
+  desktop: SliderView;
+  mobile: SliderViewMobile;
+  behavior: { shuffle: boolean; autoplay: boolean; delayMs: number; speedMs: number; loop: boolean };
 }

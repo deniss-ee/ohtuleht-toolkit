@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type DependencyList } from "react";
+import { Loader2 } from "lucide-react";
 import { editor as t } from "@/content";
 
 // Each frame keeps the size it was built for, so an old frame is not stretched to a new size while the new one loads.
@@ -96,6 +97,7 @@ export function SwapFrame({
 }) {
   const [current, setCurrent] = useState<Frame | null>(null);
   const [pending, setPending] = useState<Frame | null>(null);
+  const [slow, setSlow] = useState(false); // the new frame is taking a while: tell the person
   const pendingFrame = useRef<HTMLIFrameElement | null>(null);
   const counter = useRef(0);
   const buildRef = useRef(build);
@@ -109,6 +111,16 @@ export function SwapFrame({
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
+
+  // Quick edits swap silently; when a new frame needs more than a moment (new size, big pictures) a small "loading" chip shows.
+  useEffect(() => {
+    if (!pending) {
+      setSlow(false);
+      return;
+    }
+    const timer = setTimeout(() => setSlow(true), 400);
+    return () => clearTimeout(timer);
+  }, [pending]);
 
   useEffect(() => {
     if (!pending) return;
@@ -131,7 +143,16 @@ export function SwapFrame({
 
   return (
     <>
-      {!current && <div className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">{t.previewLoading}</div>}
+      {!current && (
+        <div className="absolute inset-0 flex animate-pulse items-center justify-center gap-2 rounded-xl bg-muted/60 text-sm text-muted-foreground" role="status">
+          <Loader2 className="size-4 animate-spin" /> {t.previewLoading}
+        </div>
+      )}
+      {current && slow && (
+        <div className="pointer-events-none absolute right-2 top-2 z-10 flex items-center gap-1.5 rounded-full bg-background/90 px-2.5 py-1 text-xs text-muted-foreground shadow-sm ring-1 ring-border" role="status">
+          <Loader2 className="size-3.5 animate-spin" /> {t.previewLoading}
+        </div>
+      )}
       {current && <PreviewFrame key={current.id} frame={current} width={current.geom.width} height={current.geom.height} scale={typeof current.geom.width === "number" ? scaleFor(current.geom.width) : 1} title={title} sameOrigin={sameOrigin} />}
       {pending && <PreviewFrame key={pending.id} frame={pending} width={pending.geom.width} height={pending.geom.height} scale={typeof pending.geom.width === "number" ? scaleFor(pending.geom.width) : 1} title={title} sameOrigin={sameOrigin} hidden frameRef={(el) => (pendingFrame.current = el)} />}
     </>
