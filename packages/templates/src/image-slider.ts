@@ -76,6 +76,6 @@ export function renderImageSlider(config: ImageSliderConfig, assets: RuntimeAsse
     `<div class="ol-slider" onclick="event.stopPropagation()"${effect === "slide" ? "" : ` data-effect="${effect}"`} data-visible="${visible}" data-gap="${view.layout.gap}"${gap} data-delay="${delay}" data-speed="${b.speedMs}" data-shuffle="${b.shuffle ? 1 : 0}" data-loop="${b.loop ? 1 : 0}">` +
     `${arrows}<div class="ol-viewport"><div class="ol-track">${slides}</div></div></div></div>` +
     `<script type="application/json" id="ol-banner">${jsonForScript(config)}</script>` +
-    `<script>${CLICKTAG_JS}</script><script>${assets.runtimeJs}</script>${effect === "cube" && assets.cubeJs ? `<script>${assets.cubeJs}</script>` : ""}</body></html>`
+    `<script>${CLICKTAG_JS}</script><script>${assets.runtimeJs}</script>${effect !== "slide" && assets.fxJs ? `<script>${assets.fxJs}</script>` : ""}</body></html>`
   );
 }

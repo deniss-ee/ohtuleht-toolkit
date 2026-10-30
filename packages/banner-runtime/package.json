@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port 5174",
-    "build": "tsc -p . && vite build && vite build -c vite.cube.config.ts",
+    "build": "tsc -p . && vite build && vite build -c vite.fx.config.ts",
     "typecheck": "tsc -p .",
     "size": "node scripts/size.mjs"
   },

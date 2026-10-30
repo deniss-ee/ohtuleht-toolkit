@@ -663,7 +663,7 @@ export const sliderEditor = {
   effectSlide: "Liugumine",
   effectSlideHint: "Pildid liiguvad küljele.",
   effectArc: "Kaar",
-  effectArcHint: "Keskmine pilt on sirge ja teised on ära pööratud, nagu seisaksid pildid ringil. Parim, kui näha on 3 slaidi.",
+  effectArcHint: "Karussell: pildid seisavad ringil, mis pöörleb. Keskmine on sirge ja järgmised on tahapoole kallutatud. Parim, kui näha on 3 slaidi.",
   effectCube: "Kuup",
   effectCubeHint: "Üks pilt korraga, pöördub nagu kuup. Pühi sõrmega või kasuta nooli.",
   emptyTitle: "Alusta piltidest",

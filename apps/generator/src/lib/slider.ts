@@ -2,7 +2,7 @@ import JSZip from "jszip";
 import { isMobileSlider, renderImageSlider, sliderView, validateImageSlider } from "@ohtuleht/templates";
 import type { ImageSliderConfig, Problem, SliderFormat } from "@ohtuleht/templates";
 import runtimeJs from "../../../../packages/banner-runtime/dist/runtime.js?raw";
-import cubeJs from "../../../../packages/banner-runtime/dist/cube.js?raw";
+import fxJs from "../../../../packages/banner-runtime/dist/fx.js?raw";
 import sliderCssRaw from "../../../../packages/banner-runtime/src/slider.css?raw";
 import { getLang, ui } from "@/content";
 import { readySignal } from "@/components/editor/SwapFrame";
@@ -96,12 +96,12 @@ function resolve(d: SliderDraft, mode: "preview" | "export"): Resolved {
 export function renderSliderPreview(d: SliderDraft, id: number): string {
   const { config } = resolve(d, "preview");
   // Shuffle is off in the preview so the order does not jump with every edit.
-  return renderImageSlider({ ...config, behavior: { ...config.behavior, shuffle: false } }, { runtimeJs, sliderCss, cubeJs }).replace("</body>", readySignal(id) + "</body>");
+  return renderImageSlider({ ...config, behavior: { ...config.behavior, shuffle: false } }, { runtimeJs, sliderCss, fxJs }).replace("</body>", readySignal(id) + "</body>");
 }
 
 export function renderSliderExport(d: SliderDraft) {
   const { config, out } = resolve(d, "export");
-  return { html: renderImageSlider(config, { runtimeJs, sliderCss, cubeJs }), out };
+  return { html: renderImageSlider(config, { runtimeJs, sliderCss, fxJs }), out };
 }
 
 // Total weight of the zip content, in KB.

@@ -4,7 +4,7 @@ import { gzipSync } from "node:zlib";
 
 const BUDGETS = [
   { file: "runtime.js", bytes: 3 * 1024 }, // see docs/BANNERS.md: runtime at most about 3 KB gzip
-  { file: "cube.js", bytes: 2 * 1024 }, // only in banners with the cube transition
+  { file: "fx.js", bytes: 2.5 * 1024 }, // 3D effects (ring, cube): only in banners that use one
 ];
 let failed = false;
 for (const { file, bytes } of BUDGETS) {

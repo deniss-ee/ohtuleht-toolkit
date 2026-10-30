@@ -69,7 +69,7 @@ export interface ArticlesBannerConfig {
 export interface RuntimeAssets {
   runtimeJs: string;
   sliderCss: string;
-  cubeJs?: string; // only for banners with the cube transition
+  fxJs?: string; // 3D effects (ring, cube): only for banners that use one
 }
 
 // ---- Image slider (client banners): a background picture with a slider of pictures on top. Format 3 in docs/BANNERS.md.

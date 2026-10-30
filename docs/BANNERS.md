@@ -109,9 +109,9 @@ Client banners: a background picture with a slider of pictures on top. Made from
 
 **Links.** *One link for all* slides or *a link for each*. The background has its own link (or none). An empty link means "the link set in the ad system" (`clickTag`), as in the old banners. Every other link goes through `clickMacro`.
 
-**Arc (desktop).** The slides stand on a ring: the middle one is straight, the ones next to it are turned away (about 34 degrees per step, pulled together and pushed back) as if the pictures were on a carousel seen from outside. Works best with 3 or 5 slides shown; choosing Arc sets at least 3. Drag and arrows work as in the plain slider, the turning follows the finger. Implemented in `slider.ts` (about 150 bytes).
+**Arc (desktop).** A carousel: the slides stand on a real ring that turns around its middle, seen from outside. The front slide is straight, the ones next to it are tilted back (45 degrees or less per step), the next ones curve away round the edges and the back of the ring is hidden. A step turns the ring by one slide (arrows, keys, autoplay), and dragging turns it with the finger. The ring has at least 8 cells; with fewer slides each slide is repeated (4 slides: each twice). The slide size comes from the slider box (width, gap, slides shown), so choose 3 slides shown (choosing Arc sets at least 3). Runs in `dist/fx.js` (see below).
 
-**Cube (mobile).** One slide at a time, turning like a cube (90 degrees per step, perspective). Arrows, keys, swipe and autoplay work; a swipe turns one step (the cube does not follow the finger). Separate script `dist/cube.js` (about 1.1 KB gzip), inlined only into banners that use it. With a single slide it shows the picture and does not turn.
+**Cube (mobile).** One slide at a time, turning like a cube (90 degrees per step, perspective). Arrows, keys, swipe and autoplay work; a swipe turns one step (the cube does not follow the finger). Runs in `dist/fx.js`, the script for the 3D effects (ring and cube, about 1.7 KB gzip), inlined only into banners that use one. With a single slide it shows the picture and does not turn.
 
 **Pictures.** Optimised in the browser (see below); in the zip as `bg.png`/`bg.jpg` and `1.jpg`, `2.jpg` ...
 

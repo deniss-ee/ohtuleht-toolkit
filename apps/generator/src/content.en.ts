@@ -698,7 +698,7 @@ export const sliderEditor = {
   effectSlide: "Slide",
   effectSlideHint: "The pictures move sideways.",
   effectArc: "Arc",
-  effectArcHint: "The middle picture is straight and the others are turned away, as if the pictures stood on a ring. Best with 3 slides shown.",
+  effectArcHint: "A carousel: the pictures stand on a ring that turns. The middle one is straight and the next ones are tilted back. Best with 3 slides shown.",
   effectCube: "Cube",
   effectCubeHint: "One picture at a time, turning like a cube. Swipe or use the arrows.",
   emptyTitle: "Start with the pictures",

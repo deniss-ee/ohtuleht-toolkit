@@ -1,14 +1,14 @@
 import { defineConfig } from "vite";
 
-// The cube transition is a separate script (dist/cube.js): only banners that use it carry it.
+// The 3D effects (cube and ring) are a separate script (dist/fx.js): only banners that use one carry it.
 export default defineConfig({
   build: {
     emptyOutDir: false,
     lib: {
-      entry: "src/cube.ts",
+      entry: "src/fx.ts",
       formats: ["iife"],
-      name: "OlCube",
-      fileName: () => "cube.js",
+      name: "OlFx",
+      fileName: () => "fx.js",
     },
     target: "es2019",
     minify: true,
