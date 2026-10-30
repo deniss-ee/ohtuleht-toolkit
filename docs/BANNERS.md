@@ -11,6 +11,7 @@ Specification for every banner format the generator produces.
 | External requests | Fonts (Google Fonts) and article images from `p.ohtuleht.ee` only |
 | ClickTag | Fixed helper in every template; never edited by hand. See [ARCHITECTURE.md](ARCHITECTURE.md#clicktag) |
 | Libraries | None. Swiper is removed |
+| File names | Every generated file carries the date: `name_1250x400_30oct26.zip`, `name_mobile_30oct26.zip` (banners, header bars, movie banner zips, cropped pictures, brand eye files) |
 | Browsers | Current Chrome, Safari, Firefox, Edge; iOS Safari; Android Chrome |
 | Accessibility | Arrows are `<button>` with labels, keyboard focus visible. Autoplay ignores the OS "reduce motion" setting by default (as existing banners do); `respectMotion` and `pauseOnHover` are opt-in switches |
 | Dark mode | Supported through `prefers-color-scheme: dark` |
@@ -72,7 +73,11 @@ Upload the old zip in the same place as new zips. Needs `index.html`, `style.css
 
 After opening, a dialog lists what to check (campaign name, colours, shuffle off like the old banner, header picture, ad skipped, visible count).
 
-Not opened yet: old mobile banners and image sliders (#36); the tool says so. Static-ad banners (`img.banner-img` with a `getClickTag` link) open with the ad kept: picture, link and width. The slider then shows 3 articles, and the dialog says the ad was kept.
+**Old phone banners** (the 600x500 "Kuubik" cube of article pictures, slides in the page or made by a script from `const articles = [...]`) open as the new **mobile articles banner**: articles, links and pictures are read, the cube turn becomes a swipe. They had no header, so the header link and picture are added by hand (or taken from the desktop banner of the same campaign).
+
+**Fixed row of articles in a script** (`array.js` with `var arr = [{ image, url, header, category }]`, as in the Tamrex banner) opens as the normal articles banner: articles, header picture and its link, label colour. Retargeting pixels are not carried over (the dialog says so). The output is always one of the two existing banners, never a new style.
+
+Not opened yet: old mobile image sliders (#36); the tool says so. Static-ad banners (`img.banner-img` with a `getClickTag` link) open with the ad kept: picture, link and width. The slider then shows 3 articles, and the dialog says the ad was kept.
 
 ## Format 2: Articles 1250x400 with static ad (built, #35)
 

@@ -2,6 +2,7 @@ import { renderArticles1250x400, renderArticlesMobile, validate } from "@ohtuleh
 import type { ArticleItem, ArticlesBannerConfig, ArticlesFormat, Problem, ThemeColors } from "@ohtuleht/templates";
 import runtimeJs from "../../../../packages/banner-runtime/dist/runtime.js?raw";
 import { getLang } from "@/content";
+import { stampedName } from "@/lib/format";
 import { readySignal } from "@/components/editor/SwapFrame";
 import sliderCssRaw from "../../../../packages/banner-runtime/src/slider.css?raw";
 
@@ -124,5 +125,5 @@ export function slug(text: string): string {
 }
 
 export function zipName(draft: Draft): string {
-  return `${slug(draft.config.campaign)}_${FORMATS[draft.config.format].suffix}.zip`;
+  return stampedName(`${slug(draft.config.campaign)}_${FORMATS[draft.config.format].suffix}`, "zip");
 }

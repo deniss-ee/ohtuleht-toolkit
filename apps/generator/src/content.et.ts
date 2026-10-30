@@ -177,7 +177,6 @@ export const editor: typeof En.editor = {
   legacyTitle: "Vana bänner avatud",
   legacyIntro: "See bänner tehti enne tööriistakasti. Palun kontrolli neid asju:",
   legacyDone: "Selge",
-  legacyNotMobile: "See on mobiilne 600x500 bänner. Tööriistakast ei oska seda tüüpi veel avada.",
   legacyNotSlider: "See on piltide slaideri bänner. Tööriistakast ei oska seda tüüpi veel avada.",
   legacyNoSlides: "Selles zip-failis ei leitud ühtegi artiklit, seega seda ei saa avada.",
   legacyHeaderText: "Päise pildile on tekst sisse küpsetatud, seega kampaania nime sinna peale ei kirjutata. Võta märge maha valikult „Pildil on tekst juba olemas“, et nimi peale kirjutada.",
@@ -195,6 +194,11 @@ export const editor: typeof En.editor = {
   legacySliderScript: "Vana leht laadis lisaskripti teisest serverist. Seda ei võetud üle.",
   legacySliderMobile: "See on arvutibänner. Telefoni jaoks vali üleval Mobiil: seal täidavad slaidipildid kogu bänneri.",
   exampleLoaded: "Näidis laaditud.",
+  legacyMobile: "See on vana telefonibänner (600x500, piltide kuup). See loeti uueks mobiilseks artiklibänneriks: kaardid libisevad nüüd, mitte ei pöördu kuubina.",
+  legacyMobileHeader: "Vanal telefonibänneril polnud päist. Lisa päise link ja pilt või võta need sama kampaania arvutibännerilt.",
+  legacyStatic: "See bänner näitas skriptis loetletud artikleid püsiva reana. Nüüd on see artiklibänner; kuni 4 artikli puhul jäävad kaardid püsivasse ritta.",
+  legacyRetarget: "Vanal bänneril olid ümbersihtimise pikslid. Neid ei võetud üle.",
+  legacyHeaderLinkFound: (href: string) => `Päise link ${href} leiti vana lehe väljakommenteeritud osast. Palun kontrolli seda.`,
 };
 
 export const headerBar: typeof En.headerBar = {

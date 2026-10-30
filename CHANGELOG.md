@@ -4,6 +4,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+- Every generated file has the date in its name (`name_1250x400_30oct26.zip`): articles, image slider and header bar zips, movie banner zips, cropped pictures and brand eye files.
+- Old banners open in the tool: the old phone banners (600x500 "Kuubik", also when a script makes the slides) become the new mobile articles banner; a fixed row of articles listed in `array.js` (Tamrex) becomes the normal articles banner. The old "cannot open the mobile banner" message is gone.
+
 ## [0.1.0] - 2026-10-30
 
 First release: banner generator (articles desktop and mobile, static ad), image slider (desktop and mobile), header bar, tools (image cropper, movie banner, article scraper, picture link converter), brand manual (colours, logos, fonts, eye), Estonian interface, picture optimiser, home page.

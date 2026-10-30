@@ -2,6 +2,7 @@ import JSZip from "jszip";
 import { renderMovieBanner, type MovieBannerConfig, type VideoPosition } from "@ohtuleht/templates";
 import { movieBanner as t } from "@/content";
 import { readySignal } from "@/components/editor/SwapFrame";
+import { stampedName } from "@/lib/format";
 import { download } from "@/lib/zip";
 
 export interface Version {
@@ -92,7 +93,7 @@ export async function buildMovieZip(d: MovieDraft, key: VersionKey): Promise<Blo
 }
 
 // Name of a zip: the name of the background picture and its size, like the old tool.
-export const movieZipName = (d: MovieDraft, key: VersionKey) => `${stem(d[key].file?.name ?? "banner")}_${key === "a" ? "1250" : "1280"}.zip`;
+export const movieZipName = (d: MovieDraft, key: VersionKey) => stampedName(`${stem(d[key].file?.name ?? "banner")}_${key === "a" ? "1250" : "1280"}`, "zip");
 
 export async function downloadMovieZips(d: MovieDraft): Promise<[number, number]> {
   const sizes: number[] = [];
