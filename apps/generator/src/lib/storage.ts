@@ -95,7 +95,7 @@ export interface SavedInfo {
 }
 
 // A saved slider from an older version of the tool has another shape: it is dropped instead of breaking the editor.
-const usable = (s: Stored | null): s is Stored => !!s && (s.kind !== "slider" || (!!s.config?.desktop && !!s.config?.mobile));
+const usable = (s: Stored | null): s is Stored => !!s && (s.kind !== "slider" || (typeof s.config?.background === "string" && !!s.config?.desktop && !!s.config?.mobile));
 
 export function savedInfo(): SavedInfo | null {
   const s = read<Stored>(WORK_KEY);

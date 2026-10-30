@@ -1,5 +1,5 @@
 import { messages, type Lang } from "./messages.ts";
-import { SLIDER_CANVAS, SLIDER_CANVAS_MOBILE } from "./image-slider.ts";
+import { SLIDER_CANVAS } from "./image-slider.ts";
 import type { ArticlesBannerConfig, ImageSliderConfig } from "./types.ts";
 
 export const MIN_ARTICLES = 2;
@@ -45,16 +45,15 @@ export function validateImageSlider(config: ImageSliderConfig, lang: Lang = "en"
   const problems: Problem[] = [];
   const badUrl = (s: string) => s.trim() !== "" && !isUrl(s);
   const mobile = config.format === "image-slider-600x500";
-  const view = mobile ? config.mobile : config.desktop;
-  const canvas = mobile ? SLIDER_CANVAS_MOBILE : SLIDER_CANVAS;
   if (!config.campaign.trim()) problems.push({ message: m.campaign, field: "campaign" });
-  // On the phone the slides fill the whole banner, so its background is optional.
-  if (!mobile && !view.background) problems.push({ message: m.sliderBackground, field: "bg-choose" });
-  if (config.backgroundLink.clickable && badUrl(config.backgroundLink.href)) problems.push({ message: m.sliderBackgroundHref, field: "bg-href" });
   if (config.slides.length < MIN_SLIDES) problems.push({ message: m.sliderMinSlides(MIN_SLIDES, config.slides.length), field: "slides-add" });
   if (config.linkMode === "shared" && badUrl(config.sharedHref)) problems.push({ message: m.sliderSharedHref, field: "shared-href" });
   if (config.linkMode === "each") config.slides.forEach((s, i) => badUrl(s.href) && problems.push({ message: m.sliderSlideHref(i + 1), field: `slide${i}-href` }));
-  const l = view.layout;
+  if (mobile) return problems; // the phone banner has no background and its pictures fill it, so nothing more to check
+  if (!config.background) problems.push({ message: m.sliderBackground, field: "bg-choose" });
+  if (config.backgroundLink.clickable && badUrl(config.backgroundLink.href)) problems.push({ message: m.sliderBackgroundHref, field: "bg-href" });
+  const l = config.desktop.layout;
+  const canvas = SLIDER_CANVAS;
   if (l.visible < 1 || l.width < 1 || l.height < 1 || l.x < 0 || l.y < 0 || l.x + l.width > canvas.width || l.y + l.height > canvas.height) problems.push({ message: m.sliderLayout(canvas.width, canvas.height), field: "layout-x" });
   return problems;
 }

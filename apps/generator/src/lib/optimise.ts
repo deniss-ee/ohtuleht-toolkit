@@ -15,7 +15,6 @@ export const HEADER_LIMIT = { maxWidth: 2496, maxHeight: 92 };
 export const AD_LIMIT = { maxWidth: 800, maxHeight: 676 }; // 338 px high (AD_HEIGHT) times 2
 export const SLIDE_LIMIT = { maxWidth: 600, maxHeight: 500 }; // slides are 300x250 on the banner
 export const BG_LIMIT = { maxWidth: 2500, maxHeight: 800 }; // background 1250x400
-export const BG_MOBILE_LIMIT = { maxWidth: 1200, maxHeight: 1000 }; // background 600x500
 
 const JPEG_QUALITY = 75; // measured on a real ad: 80 was not smaller than an already tight original, 75 saves about 10%, 70 about 20%
 

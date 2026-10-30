@@ -97,24 +97,27 @@ export type SliderFormat = "image-slider-1250x400" | "image-slider-600x500";
 // slide: the strip moves sideways. arc (desktop): slides on a ring, the middle one straight. cube (mobile): one slide at a time on a turning cube.
 export type SliderEffect = "slide" | "arc" | "cube";
 
-// What differs between the two sizes. background is a file name inside the zip; layout is in px of the 1250x400 or 600x500 canvas.
+// What differs between the two sizes. layout is in px of the 1250x400 canvas.
 export interface SliderView {
-  background: string;
   layout: SliderLayout;
   arrows: boolean;
   effect: SliderEffect;
 }
+
+// The phone banner has no background and no layout: its pictures always fill the whole 600x500 (full width, full height).
+export type SliderViewMobile = Omit<SliderView, "layout">;
 
 export interface ImageSliderConfig {
   v: 1;
   kind: "image-slider"; // tells these zips apart from the articles banners
   format: SliderFormat;
   campaign: string;
-  backgroundLink: { clickable: boolean; href: string }; // href empty = the ad system's link
+  background: string; // desktop only: file name of the background picture inside the zip
+  backgroundLink: { clickable: boolean; href: string }; // desktop only; href empty = the ad system's link
   slides: SliderSlide[];
   linkMode: "shared" | "each"; // one link for all slides, or one per slide
   sharedHref: string;
   desktop: SliderView;
-  mobile: SliderView;
+  mobile: SliderViewMobile;
   behavior: { shuffle: boolean; autoplay: boolean; delayMs: number; speedMs: number; loop: boolean };
 }

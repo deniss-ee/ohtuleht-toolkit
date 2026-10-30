@@ -10,11 +10,11 @@ export const nav: En.NavItem[] = [
 ];
 
 export const bannerTypes: En.BannerType[] = [
+  { id: "articles-1250x400", name: "Artiklibänner, arvuti", size: "1250x400", device: "Arvuti", description: "Päis ja artiklikaartide slaider.", ready: true },
+  { id: "articles-mobile", name: "Artiklibänner, telefon", size: "Täislaius x 498", device: "Telefon", description: "Päis ja pühitavad artiklikaardid punktidega, telefoni laiune.", ready: true },
   { id: "header-bar", name: "Päiseriba", size: "100% x 46", device: "Kõik ekraanid", description: "Teemalehe ülaosas olev riba, mida näidatakse lehel iframe'is.", ready: true },
-  { id: "articles-1250x400", name: "Artiklid", size: "1250x400", device: "Arvuti", description: "Päis ja artiklikaartide slaider.", ready: true },
-  { id: "articles-mobile", name: "Artiklid", size: "Täislaius x 498", device: "Telefon", description: "Päis ja pühitavad artiklikaardid punktidega, telefoni laiune.", ready: true },
-  { id: "image-slider-1250x400", name: "Piltide slaider", size: "1250x400", device: "Arvuti", description: "Kliendi taust ja piltide slaider.", ready: true },
-  { id: "image-slider-600x500", name: "Piltide slaider", size: "600x500", device: "Telefon", description: "Kliendi taust ja pühitavad pildid, liugumine või kuup.", ready: true },
+  { id: "image-slider-1250x400", name: "Piltide slaider, arvuti", size: "1250x400", device: "Arvuti", description: "Kliendi taust ja piltide slaider.", ready: true },
+  { id: "image-slider-600x500", name: "Piltide slaider, telefon", size: "600x500", device: "Telefon", description: "Kliendi taust ja pühitavad pildid, liugumine või kuup.", ready: true },
 ];
 
 export const contentMarketing: typeof En.contentMarketing = {
@@ -571,9 +571,9 @@ export const home: typeof En.home = {
       items: [
         { id: "articles-1250x400", name: "Artiklibänner, arvuti", text: "1250x400, päis ja artiklikaartide slaider." },
         { id: "articles-mobile", name: "Artiklibänner, telefon", text: "Pühitavad artiklikaardid, telefoni laiused." },
-        { id: "image-slider-1250x400", name: "Piltide slaider, arvuti", text: "1250x400, taust ja piltide slaider." },
-        { id: "image-slider-600x500", name: "Piltide slaider, mobiil", text: "600x500, telefoni laiune, pühitavad pildid." },
         { id: "header-bar", name: "Päiseriba", text: "Teemalehe ülaosas olev riba." },
+        { id: "image-slider-1250x400", name: "Piltide slaider, arvuti", text: "1250x400, taust ja piltide slaider." },
+        { id: "image-slider-600x500", name: "Piltide slaider, telefon", text: "600x500, telefoni laiune, pühitavad pildid." },
       ],
     },
     {
@@ -656,9 +656,9 @@ export const sliderEditor = {
   slideSize: (w: number, h: number) => `Iga slaid on ${w}x${h} px.`,
   arrows: "Näita nooli",
   continueName: "Piltide slaider",
-  bgHintMobile: "Valikuline. Slaidid täidavad kogu bänneri, seega taust paistab ainult siis, kui teed slaideri väiksemaks.",
-  bgFileHintMobile: "Suurus 600x500 või teravate ekraanide jaoks 1200x1000. PNG või JPG.",
-  layoutHintMobile: "Vaikimisi täidavad slaidipildid kogu 600x500 bänneri. Tee slaider väiksemaks, et näidata selle ümber tausta. Mobiilibänner skaleerub lehe laiusega.",
+  lookTitle: "Nooled ja efekt",
+  lookHint: "Kuidas slaidid vahetuvad: nooled ja efekt.",
+  lookHintMobile: "Kuidas slaidid vahetuvad. Telefonis täidavad pildid alati kogu bänneri.",
   effectTitle: "Efekt",
   effectSlide: "Liugumine",
   effectSlideHint: "Pildid liiguvad küljele.",

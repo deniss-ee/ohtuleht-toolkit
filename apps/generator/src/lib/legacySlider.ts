@@ -55,8 +55,8 @@ async function importLegacySlider(zip: JSZip, doc: Document, zipName: string): P
     return key;
   };
   const bgRef = urlIn(decl(css, ".banner", "background")) ?? urlIn(decl(css, ".banner", "background-image")) ?? "";
-  c.desktop.background = await take(bgRef, "background", BG_LIMIT);
-  if (!c.desktop.background) notes.push(t.legacySliderNoBackground);
+  c.background = await take(bgRef, "background", BG_LIMIT);
+  if (!c.background) notes.push(t.legacySliderNoBackground);
 
   const hrefs: string[] = [];
   let missing = 0;

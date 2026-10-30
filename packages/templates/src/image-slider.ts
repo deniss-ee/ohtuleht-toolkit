@@ -1,9 +1,10 @@
 // Template: image slider (client banners). A background picture (clickable) with a slider of pictures on it, no libraries.
 // 1250x400: fixed size, built after the Dacia/Renault banners (slides 300x250, three visible, arrows outside the slider).
 // 600x500: the phone banner fills the page width and keeps the 6:5 shape; every size inside scales with it (container units).
+// It has no background: the pictures fill the whole banner.
 import { clickAttr, CLICKTAG_JS } from "./clicktag.ts";
 import { escapeCssUrlInAttr, escapeHtml, escapeJsInAttr, jsonForScript } from "./escape.ts";
-import type { ImageSliderConfig, RuntimeAssets, SliderView } from "./types.ts";
+import type { ImageSliderConfig, RuntimeAssets, SliderLayout, SliderView } from "./types.ts";
 
 export const SLIDER_CANVAS = { width: 1250, height: 400 };
 export const SLIDER_CANVAS_MOBILE = { width: 600, height: 500 };
@@ -19,7 +20,9 @@ const ARROW_RIGHT = arrow("M24.8 21l-9.2-9.2 2.8-2.8 12 12-12 12-2.8-2.8z");
 export const slideHref = (config: ImageSliderConfig, i: number) => (config.linkMode === "shared" ? config.sharedHref : (config.slides[i]?.href ?? "")).trim();
 
 export const isMobile = (config: ImageSliderConfig) => config.format === "image-slider-600x500";
-export const sliderView = (config: ImageSliderConfig): SliderView => (isMobile(config) ? config.mobile : config.desktop);
+// On the phone the pictures always fill the whole banner, one at a time.
+export const SLIDER_MOBILE_LAYOUT: SliderLayout = { x: 0, y: 0, width: 600, height: 500, gap: 0, visible: 1 };
+export const sliderView = (config: ImageSliderConfig): SliderView => (isMobile(config) ? { ...config.mobile, layout: SLIDER_MOBILE_LAYOUT } : config.desktop);
 
 function css(config: ImageSliderConfig): string {
   const view = sliderView(config);
@@ -37,7 +40,7 @@ function css(config: ImageSliderConfig): string {
   return (
     "*{box-sizing:border-box;margin:0;padding:0}" +
     `html,body{${mobile ? "min-width:300px;" : ""}overflow:hidden;background:#000}` +
-    `.banner{position:relative;${shell};overflow:hidden;background-position:center;background-size:cover;cursor:${config.backgroundLink.clickable ? "pointer" : "default"}}` +
+    `.banner{position:relative;${shell};overflow:hidden;background-position:center;background-size:cover;cursor:${!mobile && config.backgroundLink.clickable ? "pointer" : "default"}}` +
     `.ol-slider{position:absolute;left:${u(x)};top:${u(y)};width:${u(width)};height:${u(height)};cursor:default}` +
     ".ol-viewport,.ol-track{height:100%}" +
     ".ol-slide{height:100%;cursor:pointer}" +
@@ -63,15 +66,16 @@ export function renderImageSlider(config: ImageSliderConfig, assets: RuntimeAsse
     .map((s, i) => `<div class="ol-slide" role="link" tabindex="0" onclick="${clickAttr(escapeJsInAttr(slideHref(config, i)))}"><img src="${escapeHtml(s.image)}" alt="" draggable="false"></div>`)
     .join("");
   const arrows = view.arrows ? '<button class="ol-prev" aria-label="Previous"></button><button class="ol-next" aria-label="Next"></button>' : "";
-  const bg = `background-image:url(&quot;${escapeCssUrlInAttr(view.background)}&quot;)`;
-  const open = config.backgroundLink.clickable ? ` role="link" tabindex="0" onclick="${clickAttr(escapeJsInAttr(config.backgroundLink.href.trim()))}"` : "";
+  // The phone banner has no background picture and no background link.
+  const bg = mobile ? "" : ` style="background-image:url(&quot;${escapeCssUrlInAttr(config.background)}&quot;)"`;
+  const open = !mobile && config.backgroundLink.clickable ? ` role="link" tabindex="0" onclick="${clickAttr(escapeJsInAttr(config.backgroundLink.href.trim()))}"` : "";
   const size = mobile ? "600x500" : "1250x400";
   return (
     '<!doctype html><html lang="et"><head><meta charset="utf-8">' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +
     `<title>${escapeHtml(config.campaign)} ${size}</title>` +
     `<style>${assets.sliderCss}${css(config)}</style></head><body>` +
-    `<div class="banner" style="${bg}"${open}>` +
+    `<div class="banner"${bg}${open}>` +
     // A click on the slider (also between the slides) must not reach the background link.
     `<div class="ol-slider" onclick="event.stopPropagation()"${effect === "slide" ? "" : ` data-effect="${effect}"`} data-visible="${visible}" data-gap="${view.layout.gap}"${gap} data-delay="${delay}" data-speed="${b.speedMs}" data-shuffle="${b.shuffle ? 1 : 0}" data-loop="${b.loop ? 1 : 0}">` +
     `${arrows}<div class="ol-viewport"><div class="ol-track">${slides}</div></div></div></div>` +

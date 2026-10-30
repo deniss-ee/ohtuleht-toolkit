@@ -94,14 +94,14 @@ Best ad picture size: twice the shown size for sharp screens, for example 494x67
 
 Client banners: a background picture with a slider of pictures on top. Made from the Dacia and Renault banners (`renault_ol-1250x400`). Template: `packages/templates/src/image-slider.ts`; editor: `apps/generator/src/pages/SliderEditor.tsx`. Zips carry `kind: "image-slider"` in their embedded config, so they open again in the tool.
 
-**One campaign, two sizes.** Like the articles banner, a switch at the top (Desktop 1250x400 / Mobile 600x500) turns one into the other and keeps everything shared: campaign name, slides, links, background link and slider behaviour. Each size has its own background picture, slider position and size, arrows and effect. Download each size separately (`name_1250x400.zip`, `name_600x500.zip`); a zip holds the background of its own size only.
+**One campaign, two sizes.** Like the articles banner, a switch at the top (Desktop 1250x400 / Mobile 600x500) turns one into the other and keeps everything shared: campaign name, slides, links and slider behaviour. Each size has its own arrows and effect. Only the desktop size has a background picture (with its link) and a slider position and size; the phone banner has neither, its pictures fill the whole banner. Download each size separately (`name_1250x400.zip`, `name_600x500.zip`).
 
 | Part | Desktop 1250x400 | Mobile 600x500 |
 |---|---|---|
 | Canvas | Fixed 1250x400 | Fills the page width, keeps the 6:5 shape; every size inside scales with it (CSS container units) |
-| Background | Required. 1250x400, or 2500x800 for sharp screens | Optional: the slides cover the whole banner, so it only shows when the slider is made smaller. 600x500, or 1200x1000 |
+| Background | Required. 1250x400, or 2500x800 for sharp screens; optionally clickable | None: no picture, option or link |
 | Slides | Pictures of 300x250 or 600x500 (same 6:5 shape); at least 2; placed in the order of their file names, then moved by hand. The same pictures serve both sizes | same (600x500 pictures fit the phone banner exactly) |
-| Slider box (default) | From the left 165, from the top 100, 920x250, gap 10, 3 visible (each slide 300x250) | 0, 0, 600x500, gap 0, 1 visible: each picture fills the banner, full width and full height, with square corners |
+| Slider box | Form fields; defaults: from the left 165, from the top 100, 920x250, gap 10, 3 visible (each slide 300x250) | Fixed, not editable: 0, 0, 600x500, one picture at a time, no gap. Each picture is full width and full height, with square corners |
 | Arrows | 36 px, 46 px outside the slider (on top of its edges when there is no room); on by default | Off by default (swipe) |
 | Effects | **Slide** (sideways) or **Arc** | **Slide** or **Cube** |
 

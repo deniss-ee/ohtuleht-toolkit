@@ -2,10 +2,7 @@ import { useRef } from "react";
 import { ChevronRight, FileUp, LayoutTemplate, Images, Newspaper, PanelTop, Smartphone, type LucideIcon } from "lucide-react";
 import { ContinueCard } from "@/components/editor/ContinueCard";
 import { PageHeader } from "@/components/editor/PageHeader";
-import { IconChip } from "@/components/editor/IconChip";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { StartCard } from "@/components/editor/StartCard";
 import { bannerTypes, contentMarketing as t } from "@/content";
 import type { SavedInfo } from "@/lib/storage";
 
@@ -45,58 +42,33 @@ export function ContentMarketingHome({ onCreate, onUpload, saved, onContinue, on
 
       <div className="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {bannerTypes.map((b) => (
-          <Card key={b.id} className={b.ready ? "h-full" : "h-full opacity-60"}>
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <IconChip icon={ICONS[b.id] ?? Newspaper} tone={b.ready ? "red" : "ink"} />
-                <div>
-                  <CardTitle>{b.name}</CardTitle>
-                  <CardDescription>{b.description}</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="flex gap-2">
-              <Badge variant="secondary">{b.size}</Badge>
-              <Badge variant="outline">{b.device}</Badge>
-            </CardContent>
-            <CardFooter className="mt-auto">
-              <Button variant={b.ready ? "default" : "secondary"} disabled={!b.ready} onClick={() => onCreate(b.id)}>
-                {b.ready ? t.create : t.soon}
-              </Button>
-            </CardFooter>
-          </Card>
+          <StartCard key={b.id} icon={ICONS[b.id] ?? Newspaper} title={b.name} text={b.description} badges={[b.size, b.device]} action={b.ready ? t.create : t.soon} disabled={!b.ready} onAction={() => onCreate(b.id)} />
         ))}
-        <Card className="h-full">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <IconChip icon={FileUp} tone="yellow" />
-              <div>
-                <CardTitle>{t.uploadTitle}</CardTitle>
-                <CardDescription>{t.uploadText}</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="flex gap-2">
-            <Badge variant="outline">.zip</Badge>
-          </CardContent>
-          <CardFooter className="mt-auto">
+        <StartCard
+          icon={FileUp}
+          tone="yellow"
+          variant="outline"
+          title={t.uploadTitle}
+          text={t.uploadText}
+          badges={[".zip"]}
+          action={t.uploadButton}
+          onAction={() => input.current?.click()}
+          extra={
             <input
               ref={input}
               type="file"
               accept=".zip,application/zip"
               className="sr-only"
               aria-label={t.uploadButton}
+              onClick={(e) => e.stopPropagation()}
               onChange={(e) => {
                 const f = e.target.files?.[0];
                 e.target.value = "";
                 if (f) onUpload(f);
               }}
             />
-            <Button variant="outline" className="gap-2" onClick={() => input.current?.click()}>
-              <FileUp className="size-4" /> {t.uploadButton}
-            </Button>
-          </CardFooter>
-        </Card>
+          }
+        />
       </div>
     </div>
   );

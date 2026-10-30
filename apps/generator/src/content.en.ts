@@ -28,11 +28,11 @@ export interface BannerType {
 
 // Every banner type the category can build. Add new templates here.
 export const bannerTypes: BannerType[] = [
+  { id: "articles-1250x400", name: "Articles banner, desktop", size: "1250x400", device: "Desktop", description: "Header and a slider of article cards.", ready: true },
+  { id: "articles-mobile", name: "Articles banner, mobile", size: "Full width x 498", device: "Mobile", description: "Header and swipeable article cards with dots, as wide as the phone.", ready: true },
   { id: "header-bar", name: "Header bar", size: "100% x 46", device: "All screens", description: "The bar at the top of a theme page, shown on the site in an iframe.", ready: true },
-  { id: "articles-1250x400", name: "Articles", size: "1250x400", device: "Desktop", description: "Header and a slider of article cards.", ready: true },
-  { id: "articles-mobile", name: "Articles", size: "Full width x 498", device: "Mobile", description: "Header and swipeable article cards with dots, as wide as the phone.", ready: true },
-  { id: "image-slider-1250x400", name: "Image slider", size: "1250x400", device: "Desktop", description: "Client background with a slider of images.", ready: true },
-  { id: "image-slider-600x500", name: "Image slider", size: "600x500", device: "Mobile", description: "Client background with swipeable pictures, sliding or a cube.", ready: true },
+  { id: "image-slider-1250x400", name: "Image slider, desktop", size: "1250x400", device: "Desktop", description: "Client background with a slider of images.", ready: true },
+  { id: "image-slider-600x500", name: "Image slider, mobile", size: "600x500", device: "Mobile", description: "Client background with swipeable pictures, sliding or a cube.", ready: true },
 ];
 
 export const contentMarketing = {
@@ -606,9 +606,9 @@ export const home = {
       items: [
         { id: "articles-1250x400", name: "Articles banner, desktop", text: "1250x400, a header and a slider of article cards." },
         { id: "articles-mobile", name: "Articles banner, mobile", text: "Swipeable article cards, as wide as the phone." },
+        { id: "header-bar", name: "Header bar", text: "The bar at the top of a theme page." },
         { id: "image-slider-1250x400", name: "Image slider, desktop", text: "1250x400, a background with a slider of pictures." },
         { id: "image-slider-600x500", name: "Image slider, mobile", text: "600x500, as wide as the phone, swipeable pictures." },
-        { id: "header-bar", name: "Header bar", text: "The bar at the top of a theme page." },
       ],
     },
     {
@@ -691,9 +691,9 @@ export const sliderEditor = {
   slideSize: (w: number, h: number) => `Each slide is ${w}x${h} px.`,
   arrows: "Show arrows",
   continueName: "Image slider",
-  bgHintMobile: "Optional. The slides fill the whole banner, so the background only shows if you make the slider smaller.",
-  bgFileHintMobile: "Size 600x500, or 1200x1000 for sharp screens. PNG or JPG.",
-  layoutHintMobile: "By default the slide pictures fill the whole 600x500 banner. Make the slider smaller to show the background around it. The phone banner scales with the page width.",
+  lookTitle: "Arrows and effect",
+  lookHint: "How the slides change: arrows and the effect.",
+  lookHintMobile: "How the slides change. On the phone the pictures always fill the whole banner.",
   effectTitle: "Effect",
   effectSlide: "Slide",
   effectSlideHint: "The pictures move sideways.",
