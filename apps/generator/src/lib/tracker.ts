@@ -73,7 +73,6 @@ export function briefEmail(b: Brief): { subject: string; body: string } {
     .map((r, i) => [`${i + 1}. ${formatName(r.format)}`, r.placement.trim() && `   Placement: ${r.placement.trim()}`, r.text.trim() && `   Text: ${r.text.trim()}`, r.link.trim() && `   Link: ${r.link.trim()}`].filter(Boolean).join("\n"))
     .join("\n");
   const body =
-    `Banner request\n\n` +
     line("Title", b.title) +
     line("Client", b.client) +
     line("From", [b.requester, b.department].filter((s) => s.trim()).join(", ")) +
