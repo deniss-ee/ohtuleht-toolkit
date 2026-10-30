@@ -2,7 +2,7 @@
 // 1250x400: fixed size, built after the Dacia/Renault banners (slides 300x250, three visible, arrows outside the slider).
 // 600x500: the phone banner fills the page width and keeps the 6:5 shape; every size inside scales with it (container units).
 // It has no background: the pictures fill the whole banner.
-import { arrowCss, ARROW_SIZE } from "./arrows.ts";
+import { arrowCss, ARROW_DARK, ARROW_SIZE } from "./arrows.ts";
 import { clickAttr, CLICKTAG_JS } from "./clicktag.ts";
 import { escapeCssUrlInAttr, escapeHtml, escapeJsInAttr, jsonForScript } from "./escape.ts";
 import type { ImageSliderConfig, RuntimeAssets, SliderLayout, SliderView } from "./types.ts";
@@ -40,7 +40,7 @@ function css(config: ImageSliderConfig): string {
     ".ol-viewport,.ol-track{height:100%}" +
     ".ol-slide{height:100%;cursor:pointer}" +
     `.ol-slide img{display:block;width:100%;height:100%;object-fit:cover;border-radius:${full ? "0" : mobile ? "1.2cqw" : "4px"};pointer-events:none;-webkit-user-drag:none}` +
-    arrowCss(arrowSize) +
+    arrowCss(ARROW_DARK, arrowSize) +
     `.ol-prev,.ol-next{top:50%;margin-top:calc(${arrowSize} / -2)}` +
     ".ol-slide:focus-visible,.banner:focus-visible{outline:2px solid #fff;outline-offset:2px}" +
     `.ol-prev{left:${u(left)}}` +

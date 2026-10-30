@@ -28,9 +28,11 @@ function themeVars(t: ResolvedTheme, chip: string): string {
 }
 
 function css(config: ArticlesBannerConfig): string {
+  const chip = config.theme.light.badge ?? config.primary;
   return (
-    `:root{${themeVars(resolveTheme(config, "light"), config.theme.light.badge ?? config.primary)};color-scheme:light dark}` +
-    `@media(prefers-color-scheme:dark){:root{${themeVars(resolveTheme(config, "dark"), config.theme.dark.badge ?? config.primary)}}}` +
+    // The label is a block with its own text on it (not coloured text like on the desktop banner), so its colour is the same in light and dark mode.
+    `:root{${themeVars(resolveTheme(config, "light"), chip)};color-scheme:light dark}` +
+    `@media(prefers-color-scheme:dark){:root{${themeVars(resolveTheme(config, "dark"), chip)}}}` +
     "*{box-sizing:border-box;margin:0;padding:0}" +
     // The page is as wide as the phone; the banner sits in the middle of the height.
     'html,body{min-width:320px;overflow:hidden;background:var(--bg);font-family:"Fira Sans Condensed",sans-serif;-webkit-font-smoothing:antialiased}' +

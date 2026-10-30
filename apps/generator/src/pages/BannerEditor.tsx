@@ -47,7 +47,7 @@ function ColorSet({ title, mode, config, onChange }: { title: string; mode: "lig
       <ColorField label={t.colorBg} value={colors.bg} onChange={set("bg")} />
       {!mobile && <ColorField label={t.colorText} value={colors.text} onChange={set("text")} />}
       {!mobile && <ColorField label={t.colorHover} value={colors.hover} onChange={set("hover")} />}
-      <AutoColorField label={t.colorBadge} value={mobile ? (colors.badge ?? config.primary) : resolved.badge} custom={colors.badge !== undefined} onChange={set("badge")} onReset={reset("badge")} />
+      {!(mobile && mode === "dark") && <AutoColorField label={t.colorBadge} value={mobile ? (colors.badge ?? config.primary) : resolved.badge} custom={colors.badge !== undefined} onChange={set("badge")} onReset={reset("badge")} />}
       <AutoColorField label={t.colorHeader} value={resolved.headerBg} custom={colors.headerBg !== undefined} onChange={set("headerBg")} onReset={reset("headerBg")} />
       <AutoColorField label={t.colorHeaderText} value={resolved.headerText} custom={colors.headerText !== undefined} onChange={set("headerText")} onReset={reset("headerText")} />
     </div>
