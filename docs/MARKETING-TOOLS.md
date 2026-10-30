@@ -27,3 +27,11 @@ Paste picture links from the CMS (one per line). Both forms are accepted: `/webp
 
 - Worker for "article by number" (#119).
 - Once the Worker exists, the same call can fill the banner maker's "add by article number".
+
+## Tracking links (UTM)
+
+Tools, Tracking links. Paste one or more web addresses (one per line), fill source, medium and campaign (content and term are optional), copy the links. Existing `?` and `#` parts are kept, labels already in the link are replaced. "Tidy the labels" (on by default) makes them lower case with hyphens, so "Spring Sale" and "spring sale" do not become two campaigns. The labels are remembered in the browser. Code: `lib/utm.ts`, `pages/UtmBuilder.tsx`.
+
+## Home search
+
+The Home page has a search box (press `/` to jump to it) that filters all cards by name and text.

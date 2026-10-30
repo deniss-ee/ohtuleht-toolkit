@@ -1,5 +1,5 @@
 // English interface text (the base: content.et.ts must have the same names and shapes).
-export type PageId = "home" | "content" | "tools" | "brand" | "tasks";
+export type PageId = "home" | "content" | "tools" | "brand" | "request" | "tasks";
 
 export interface NavItem {
   id: PageId;
@@ -12,7 +12,8 @@ export const nav: NavItem[] = [
   { id: "content", label: "Content marketing", ready: true },
   { id: "tools", label: "Tools", ready: true },
   { id: "brand", label: "Brand manual", ready: true },
-  { id: "tasks", label: "Task tracker", ready: false },
+  { id: "request", label: "Banner request", ready: true },
+  { id: "tasks", label: "Task tracker", ready: true },
 ];
 
 export type Device = string;
@@ -361,7 +362,7 @@ export const brandManual = {
 
 // Tools section: small stand-alone helpers (not banners made from articles).
 export interface ToolInfo {
-  id: "image-cropper" | "movie-banner" | "article-scraper" | "picture-converter";
+  id: "image-cropper" | "movie-banner" | "article-scraper" | "picture-converter" | "email-signature" | "utm-builder";
   name: string;
   description: string;
   tag: string;
@@ -378,7 +379,153 @@ export const tools = {
     { id: "movie-banner", name: "Movie banner", description: "Banner with a video on a background picture. Makes two zips for the ad server.", tag: "1250 and 1280", ready: true },
     { id: "article-scraper", name: "Article scraper", description: "Title, lead text, link and picture link of an article, ready to copy. For marketing.", tag: "Bookmark", ready: true },
     { id: "picture-converter", name: "Picture link converter", description: "Change the size number of CMS picture links to the banner sizes (54 and 48).", tag: "54 and 48", ready: true },
+    { id: "email-signature", name: "Email signature", description: "Name, job title, phone and logo as a signature for Outlook or any mail program.", tag: "Outlook", ready: true },
+    { id: "utm-builder", name: "Tracking links", description: "Add UTM labels to links, so the statistics show where each visit came from.", tag: "UTM", ready: true },
   ] satisfies ToolInfo[],
+};
+
+export const signature = {
+  back: "Back to Tools",
+  title: "Email signature",
+  intro: "Fill in your details and get a signature for Outlook or any mail program.",
+  formTitle: "Your details",
+  previewTitle: "Your signature",
+  fields: { name: "Name", title: "Job title", department: "Department", phone: "Phone", mobile: "Mobile", email: "Email", website: "Website", address: "Address", company: "Company" } as Record<string, string>,
+  placeholders: { name: "Mari Maasikas", title: "Sales manager", department: "Advertising sales", phone: "+372 600 0000", mobile: "+372 500 0000", email: "mari.maasikas@ohtuleht.ee", website: "www.ohtuleht.ee", address: "Narva mnt 13, Tallinn", company: "Õhtuleht" } as Record<string, string>,
+  logo: "Show the logo",
+  empty: "Type your name to see the signature.",
+  copy: "Copy signature",
+  copyCode: "Copy HTML code",
+  copyText: "Copy as plain text",
+  copied: "Signature copied. Paste it in your mail program.",
+  copiedCode: "HTML code copied.",
+  copiedText: "Plain text copied.",
+  stepsTitle: "How to use it in Outlook",
+  steps: [
+    "Click Copy signature.",
+    "Outlook: Settings, Accounts, Signatures (in classic Outlook: File, Options, Mail, Signatures).",
+    "Make a new signature and paste (Ctrl+V). Save.",
+  ],
+  logoNote: "The logo is loaded from the toolkit site, so it shows in the mail only after the site is published.",
+};
+
+export const tracker = {
+  title: "Task tracker",
+  intro: "Every banner job as one clear brief. Move it across the board, and send the request as one tidy email.",
+  viewBoard: "Board",
+  viewTable: "Table",
+  viewClients: "Clients",
+  newRequest: "New banner request",
+  sentTitle: "Request added",
+  sentText: "It is now a card on the task tracker board.",
+  another: "Make another request",
+  openBoard: "Open the task tracker",
+  backToBoard: "Back to the board",
+  requestTitle: "New banner request",
+  requestIntro: "Tell the designer what you need. Fill in the blocks; the email is made for you.",
+  secWhat: "What is it for?",
+  secWhatHint: "A short name and the client.",
+  secWho: "Who is asking?",
+  secWhoHint: "So the designer knows whom to answer.",
+  secWhen: "When?",
+  secWhenHint: "The day it must be ready, and when the banner runs.",
+  secBanners: "Which banners?",
+  secBannersHint: "Pick the kind of banner, say where it runs and what it says. Add more banners if you need them.",
+  secMaterials: "What do we need to make it?",
+  secMaterialsHint: "Links to articles, pictures and Figma, and anything else to know.",
+  bannerN: (n: number) => `Banner ${n}`,
+  pickDate: "Pick a date",
+  pickDates: "Pick the first and last day",
+  summary: "Summary",
+  allSet: "Ready to send",
+  stillNeeded: (n: number) => `${n} thing${n === 1 ? "" : "s"} still needed`,
+  sendAndAdd: "Send email and add to board",
+  addOnly: "Add to board only",
+  sendAgain: "Send email again",
+  added: "Added to the board.",
+  deleted: "Brief deleted.",
+  addAsNew: (name: string) => `Add "${name}" as a new client`,
+  untitled: "Untitled brief",
+  example: "Example",
+  examplesNote: "These are examples, so you can see how it works. Open one, move it, or remove them all.",
+  clearExamples: "Remove examples",
+  statuses: { new: "New", design: "In design", review: "Review", delivered: "Delivered", live: "Live", closed: "Closed" },
+  status: "Status",
+  emptyColumn: "Nothing here",
+  dragHint: "Drag a card to another column to change its status.",
+  empty: "No briefs yet. Press New brief.",
+  noDate: "No date",
+  banners: (n: number) => `${n} banner${n === 1 ? "" : "s"}`,
+  cols: { title: "Brief", client: "Client", requester: "From", status: "Status", deadline: "Needed by" },
+  dialogEdit: "Banner request",
+  dialogIntro: "Change anything and save. The email on the right is made from it.",
+  fillExample: "Fill with an example",
+  fields: { title: "Title", client: "Client", requester: "Your name", department: "Department", email: "Your email", deadline: "Needed by", runs: "Banner runs", articles: "Article links", materials: "Materials", notes: "Notes", sendTo: "Send to" },
+  placeholders: { title: "Spring sale banner", department: "Advertising sales", placement: "Front page, top", text: "The headline and the call to action" },
+  hints: { runs: "Optional. Click the first day, then the last.", client: "Choose from the list or type a new one. A new client is added to your list.", deadline: "The day the banner must be ready.", articles: "One link per line. For banners made from articles.", materials: "Links to pictures, logos and Figma files.", sendTo: "The designer's email. It is remembered." },
+  pickClient: "Choose or type a client",
+  newClientNote: (name: string) => `"${name}" is new and will be added to your clients.`,
+  rowsTitle: "Banners",
+  rowsHint: "Add one row for each banner. Say where it runs and what it says.",
+  row: { format: "Format", other: "Other", otherSize: "Another size",  placement: "Where it runs", text: "Text", link: "Link when clicked", add: "Add a banner", remove: "Remove this banner" },
+  missing: { title: "A title", client: "A client", requester: "Your name", deadline: "The date it is needed", rows: "One banner with a place or a text" },
+  emailTitle: "The email",
+  emailHint: "This is what the designer gets. It looks the same for every department.",
+  copyEmail: "Copy email text",
+  openEmail: "Open in email",
+  tooLong: "The text is too long for a link. It was copied: paste it in a new email.",
+  make: (name: string) => `Make: ${name}`,
+  save: "Save brief",
+  update: "Save changes",
+  saved: "Brief saved.",
+  copied: "Email text copied.",
+  cancel: "Cancel",
+  delete: "Delete",
+  deleteSure: "Yes, delete",
+  export: "Back up",
+  import: "Load backup",
+  imported: (n: number) => `Loaded ${n} brief${n === 1 ? "" : "s"}.`,
+  importFailed: "This file is not a briefs backup.",
+  localNote: "Briefs are kept in this browser only (Scoro and sharing come later). Use Back up to keep a file or move them to another computer.",
+  clients: {
+    title: "Your clients",
+    add: "Add a client",
+    name: "Company",
+    contact: "Contact person",
+    email: "Email",
+    phone: "Phone",
+    save: "Add client",
+    added: (name: string) => `Added ${name}.`,
+    empty: "No clients yet. Add one above, or import a CSV file.",
+    import: "Import CSV",
+    export: "Export CSV",
+    imported: (added: number, total: number) => `${added} new of ${total} in the file.`,
+    importFailed: "Could not read this file. It needs a first row with column names, and a column called name or company.",
+    note: "Kept in this browser. A shared list for everybody is the file public/clients.json in the repository: add companies there and publish the site. Later this list will come from Scoro. A CSV from Scoro (columns name, email, phone) can be imported now.",
+  },
+};
+
+export const utmTool = {
+  back: "Back to Tools",
+  title: "Tracking links",
+  intro: "Add UTM labels to links, so the statistics show which banner or campaign brought each visit.",
+  links: "Links",
+  placeholder: "Paste one or more links, one per line",
+  badLine: (n: number) => `Line ${n} does not look like a web address.`,
+  labels: "Labels",
+  required: "needed",
+  fields: { source: "Source", medium: "Medium", campaign: "Campaign", content: "Content", term: "Term" },
+  placeholders: { source: "ohtuleht", medium: "banner", campaign: "spring-sale", content: "header-red", term: "" },
+  hints: { source: "Where the visit starts: the site or the list.", medium: "The kind of ad: banner, email, social.", campaign: "The name of the campaign.", content: "Optional. Tells two banners of one campaign apart.", term: "Optional. Used for search words." },
+  tryExample: "Try an example",
+  tidy: "Tidy the labels (lower case, hyphens)",
+  becomes: (v: string) => `Becomes: ${v}`,
+  missing: "Still needed:",
+  empty: "Paste a link to get the tracking link.",
+  result: "Tracking link",
+  linkN: (n: number) => `Link ${n}`,
+  copyAll: "Copy all links",
+  copiedAll: "All links copied.",
 };
 
 export const marketing = {
@@ -408,7 +555,9 @@ export const marketing = {
   idHint: "Soon: type an article number and get the same fields without opening the article.",
   idPlaceholder: "For example 1169772",
   converterTitle: "Picture link converter",
-  converterIntro: "Picture links from the CMS have another size number than the site. Paste them and get the banner sizes.",
+  converterIntro: "Every picture on ohtuleht.ee has a size number in its link (for example /59/). Banners need two sizes: 54 for desktop and 48 for mobile. Paste a picture link and get both, ready to copy.",
+  tryExample: "Try an example",
+  converterExample: "https://p.ohtuleht.ee/webp/59/i/2026/10/26/example.jpg",
   converterInput: "Picture links (one per line)",
   converterPlaceholder: "https://p.ohtuleht.ee/webp/59/i/2026/10/26/example.jpg",
   converterDesktop: "Desktop banner (54)",
@@ -589,6 +738,7 @@ export const ui = {
   errPicture: "Could not create the picture.",
   closeDialog: "Close",
   copyFailed: "Could not copy. Select the text and press Ctrl+C.",
+  clear: "Clear",
   ready: "Ready to download",
   white: "White",
   black: "Black",
@@ -609,6 +759,9 @@ export const home = {
   title: "Õhtuleht Toolkit",
   intro: "Banners, pictures and the brand in one place. Pick what you want to do.",
   open: "Open",
+  search: "Find something",
+  searchPlaceholder: "Find a banner or tool (press / to search)",
+  noResults: (q: string) => `Nothing found for "${q}".`,
   groups: [
     {
       id: "banners",
@@ -637,7 +790,18 @@ export const home = {
       text: "For texts and picture links.",
       items: [
         { id: "article-scraper", name: "Article scraper", text: "Title, lead, link and picture link of an article." },
+        { id: "utm-builder", name: "Tracking links", text: "UTM labels on links, for the statistics." },
+        { id: "email-signature", name: "Email signature", text: "Your details and the logo as a signature for Outlook." },
         { id: "picture-converter", name: "Picture link converter", text: "CMS picture links to the banner sizes." },
+      ],
+    },
+    {
+      id: "work",
+      title: "Requests and tasks",
+      text: "Ask for a banner, and follow the work.",
+      items: [
+        { id: "banner-request", name: "Banner request", text: "Tell the designer what you need. One clear email, the same every time." },
+        { id: "task-tracker", name: "Task tracker", text: "All requests on a board, with clients and deadlines." },
       ],
     },
     {

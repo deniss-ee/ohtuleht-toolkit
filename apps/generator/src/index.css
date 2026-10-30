@@ -60,7 +60,7 @@
 }
 
 @theme inline {
-    --font-heading: "Fira Sans", "Inter Variable", system-ui, sans-serif;
+    --font-heading: "Inter Variable", system-ui, sans-serif;
     --font-sans: "Inter Variable", system-ui, sans-serif;
     --font-mono: "DM Mono", ui-monospace, monospace;
     --color-sidebar-ring: var(--sidebar-ring);
@@ -185,7 +185,7 @@
   html {
     @apply font-sans;
     }
-  /* Headlines use the display font; everything else stays Inter. */
+  /* The interface is Inter (text and headlines) and DM Mono (codes). Fira stays only for brand previews and banners. */
   h1, h2, h3, h4 {
     font-family: var(--font-heading);
     }

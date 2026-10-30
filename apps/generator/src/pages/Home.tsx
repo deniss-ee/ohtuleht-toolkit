@@ -1,6 +1,8 @@
-import { Clapperboard, Crop, Eye, FileSearch, FileText, House, Images, Lightbulb, Newspaper, Palette, PanelTop, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Clapperboard, Crop, Eye, FileSearch, FileText, House, Images, Link2, ListChecks, Megaphone, Search, Lightbulb, Newspaper, Palette, PanelTop, PenLine, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
 import { ContinueCard } from "@/components/editor/ContinueCard";
 import { StartCard } from "@/components/editor/StartCard";
+import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/editor/PageHeader";
 import { home as t, type PageId, type ToolInfo } from "@/content";
 import type { BrandTab } from "@/lib/route";
@@ -25,6 +27,10 @@ const ITEMS: Record<string, { icon: LucideIcon; to: Destination }> = {
   "image-cropper": { icon: Crop, to: { page: "tools", tool: "image-cropper" } },
   "article-scraper": { icon: FileSearch, to: { page: "tools", tool: "article-scraper" } },
   "picture-converter": { icon: Replace, to: { page: "tools", tool: "picture-converter" } },
+  "utm-builder": { icon: Link2, to: { page: "tools", tool: "utm-builder" } },
+  "email-signature": { icon: PenLine, to: { page: "tools", tool: "email-signature" } },
+  "banner-request": { icon: Megaphone, to: { page: "request" } },
+  "task-tracker": { icon: ListChecks, to: { page: "tasks" } },
   colours: { icon: Palette, to: { page: "brand", tab: "colours" } },
   logos: { icon: Shapes, to: { page: "brand", tab: "logos" } },
   fonts: { icon: Type, to: { page: "brand", tab: "fonts" } },
@@ -33,13 +39,35 @@ const ITEMS: Record<string, { icon: LucideIcon; to: Destination }> = {
 
 // The first screen: what is here, and one click to each thing.
 export function Home({ saved, onContinue, onDiscard, onGo }: { saved: SavedInfo | null; onContinue: () => void; onDiscard: () => void; onGo: (to: Destination) => void }) {
+  const [query, setQuery] = useState("");
+  const box = useRef<HTMLInputElement>(null);
+  // The "/" key jumps to the search box (unless a field already has the focus).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (e.key === "/" && tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
+        e.preventDefault();
+        box.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+  const q = query.trim().toLowerCase();
+  const groups = t.groups.map((g) => ({ ...g, items: q ? g.items.filter((i) => `${i.name} ${i.text}`.toLowerCase().includes(q)) : g.items })).filter((g) => g.items.length > 0);
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       <PageHeader icon={House} title={t.title} intro={t.intro} />
 
       {saved && <ContinueCard saved={saved} onContinue={onContinue} onDiscard={onDiscard} />}
 
-      {t.groups.map((g) => (
+      <div className="relative">
+        <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+        <Input ref={box} type="search" aria-label={t.search} className="h-10 pl-9" placeholder={t.searchPlaceholder} value={query} onChange={(e) => setQuery(e.target.value)} />
+      </div>
+      {q && groups.length === 0 && <p className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">{t.noResults(query.trim())}</p>}
+
+      {groups.map((g) => (
         <section key={g.title} aria-labelledby={`home-${g.id}`} className="space-y-3">
           <div>
             <h2 id={`home-${g.id}`} className="text-lg font-semibold">
@@ -47,11 +75,11 @@ export function Home({ saved, onContinue, onDiscard, onGo }: { saved: SavedInfo 
             </h2>
             {g.text && <p className="text-sm text-muted-foreground">{g.text}</p>}
           </div>
-          <div className="grid auto-rows-fr gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {g.items.map((i) => {
               const item = ITEMS[i.id];
               if (!item) return null;
-              return <StartCard key={i.id} icon={item.icon} title={i.name} text={i.text} action={t.open} variant="outline" onAction={() => onGo(item.to)} />;
+              return <StartCard key={i.id} icon={item.icon} title={i.name} text={i.text} action={t.open} onAction={() => onGo(item.to)} />;
             })}
           </div>
         </section>
