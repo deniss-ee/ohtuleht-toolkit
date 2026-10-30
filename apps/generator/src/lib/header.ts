@@ -4,6 +4,7 @@ import { iframeCode, renderHeaderBar, validateHeaderBar } from "@ohtuleht/templa
 import type { HeaderBarConfig, Problem } from "@ohtuleht/templates";
 import { getLang, ui } from "@/content";
 import { readySignal } from "@/components/editor/SwapFrame";
+import { stampedName } from "@/lib/format";
 import { download } from "@/lib/zip";
 import { averageColor, toDataUrl } from "@/lib/image";
 import { slug, type HeaderFile } from "@/lib/banner";
@@ -29,7 +30,7 @@ export function exampleHeaderDraft(): HeaderDraft {
 
 export const headerProblems = (d: HeaderDraft): Problem[] => validateHeaderBar(d.config, getLang());
 export const headerEmbedCode = (d: HeaderDraft) => iframeCode(d.embedUrl);
-export const headerZipName = (d: HeaderDraft) => `header_${slug(d.config.label)}.zip`;
+export const headerZipName = (d: HeaderDraft) => stampedName(`header_${slug(d.config.label)}`, "zip");
 
 // What goes into the zip: the picture is the file next to the page.
 function exportConfig(d: HeaderDraft): HeaderBarConfig {

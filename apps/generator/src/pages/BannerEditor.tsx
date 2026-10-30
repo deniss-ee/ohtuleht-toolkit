@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-import { ArrowLeft, CheckCircle2, Download, FileArchive, FlaskConical, ImagePlus, Loader2, Megaphone, Palette, PanelRight, PanelTop, SlidersHorizontal, TriangleAlert } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Download, FileArchive, FlaskConical, ImagePlus, Loader2, Megaphone, Palette, PanelRight, PanelTop, SlidersHorizontal, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import { resolveTheme } from "@ohtuleht/templates";
 import type { ArticlesBannerConfig, ThemeColors } from "@ohtuleht/templates";
@@ -17,12 +17,12 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { editor as t, ui } from "@/content";
 import { Toggles } from "@/layout/AppShell";
-import { adFileOf, bytesOf, exampleDraft, FORMATS, problems, renderExport, switchFormat, type Draft } from "@/lib/banner";
+import { adFileOf, bytesOf, logoFileOf, exampleDraft, FORMATS, problems, renderExport, switchFormat, type Draft } from "@/lib/banner";
 import { formatSize } from "@/lib/format";
 import type { Optimised } from "@/lib/optimise";
 import { Collapsible, Section, SwitchRow } from "@/components/editor/FormParts";
 import { useSaveShortcut } from "@/components/editor/useSaveShortcut";
-import { downloadZip, fileToAd, fileToHeader } from "@/lib/zip";
+import { downloadZip, fileToAd, fileToHeader, fileToLogo } from "@/lib/zip";
 
 const BUDGET_KB = 100;
 
@@ -64,20 +64,21 @@ const nearestSpeed = (ms: number) => SPEEDS.reduce((best, s) => (Math.abs(s.ms -
 // Full-screen editor: covers the menu so the preview can use the whole width.
 export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChange: (d: Draft) => void; onBack: () => void }) {
   const [busy, setBusy] = useState(false);
-  const [working, setWorking] = useState<"header" | "ad" | "example" | null>(null); // pictures are being prepared
+  const [working, setWorking] = useState<"header" | "ad" | "logo" | "example" | null>(null); // pictures are being prepared
   const [bookmarkOpen, setBookmarkOpen] = useState(false);
   const [pinned, setPinned] = useState(false); // "Keep preview in view" is always off to start with; the person turns it on
   const fileInput = useRef<HTMLInputElement>(null);
   const adInput = useRef<HTMLInputElement>(null);
+  const logoInput = useRef<HTMLInputElement>(null);
   const c = draft.config;
   const set = (patch: Partial<Draft["config"]>) => onChange({ ...draft, config: { ...c, ...patch } });
   const setBehavior = (patch: Partial<Draft["config"]["behavior"]>) => set({ behavior: { ...c.behavior, ...patch } });
 
   const issues = problems(draft);
-  const weightKb = useMemo(() => (bytesOf(renderExport(draft)) + (c.header.type === "image" ? (draft.headerFile?.bytes.length ?? 0) : 0) + (adFileOf(draft)?.bytes.length ?? 0)) / 1024, [draft, c.header.type]);
+  const weightKb = useMemo(() => (bytesOf(renderExport(draft)) + (c.header.type === "image" ? (draft.headerFile?.bytes.length ?? 0) : 0) + (adFileOf(draft)?.bytes.length ?? 0) + (logoFileOf(draft)?.bytes.length ?? 0)) / 1024, [draft, c.header.type]);
 
   // Runs a slow job (pictures are optimised in the browser) and shows a spinner on its button meanwhile.
-  const work = async (what: "header" | "ad" | "example", job: () => Promise<void>) => {
+  const work = async (what: "header" | "ad" | "logo" | "example", job: () => Promise<void>) => {
     setWorking(what);
     try {
       await job();
@@ -93,6 +94,15 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
       reportOptimised(optimised);
       onChange({ ...draft, headerFile, config: { ...c, header: { type: "image", src: headerFile.name, href: c.header.href, avg } } });
     });
+
+  const onLogoFile = (file: File | undefined) =>
+    file &&
+    work("logo", async () => {
+      const { logoFile, optimised } = await fileToLogo(file);
+      reportOptimised(optimised);
+      onChange({ ...draft, logoFile, config: { ...c, headerLogo: logoFile.name } });
+    });
+  const removeLogo = () => onChange({ ...draft, logoFile: null, config: { ...c, headerLogo: undefined } });
 
   const onAdFile = (file: File | undefined) =>
     file &&
@@ -267,6 +277,26 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                     </div>
                   </div>
                 )}
+                <div className="space-y-2">
+                  <Label htmlFor="header-logo-choose">{t.headerLogoTitle}</Label>
+                  <input ref={logoInput} type="file" className="sr-only" aria-label={t.headerLogoTitle} accept="image/png,image/webp,image/svg+xml,image/jpeg" onChange={(e) => { void onLogoFile(e.target.files?.[0]); e.target.value = ""; }} />
+                  <div className="flex flex-wrap items-center gap-2">
+                    {draft.logoFile && c.headerLogo && (
+                      <span className="flex h-10 items-center rounded-md border px-3" style={{ backgroundColor: resolveTheme(c, "light").headerBg }}>
+                        <img src={draft.logoFile.dataUrl} alt="" className="h-[30px] w-auto max-w-40 object-contain" />
+                      </span>
+                    )}
+                    <Button id="header-logo-choose" variant="outline" size="sm" className="gap-2" disabled={working !== null} onClick={() => logoInput.current?.click()}>
+                      {working === "logo" ? <Loader2 className="size-4 animate-spin" /> : <ImagePlus className="size-4" />} {working === "logo" ? t.preparing : c.headerLogo ? t.headerLogoChange : t.headerLogoChoose}
+                    </Button>
+                    {c.headerLogo && (
+                      <Button variant="ghost" size="sm" className="gap-2" onClick={removeLogo}>
+                        <Trash2 className="size-4" /> {t.headerLogoRemove}
+                      </Button>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">{t.headerLogoHint}</p>
+                </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="header-href">{t.headerLink}</Label>
                   <Input id="header-href" placeholder="https://" value={c.header.href} onChange={(e) => set({ header: { ...c.header, href: e.target.value } })} />

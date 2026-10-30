@@ -13,6 +13,7 @@ export interface Optimised {
 // Largest size each picture is ever shown at, times 2 for sharp screens. Bigger pictures are scaled down.
 export const HEADER_LIMIT = { maxWidth: 2496, maxHeight: 92 };
 export const AD_LIMIT = { maxWidth: 800, maxHeight: 676 }; // 338 px high (AD_HEIGHT) times 2
+export const LOGO_LIMIT = { maxWidth: 400, maxHeight: 60 }; // header logo, 30 px high on the banner
 export const SLIDE_LIMIT = { maxWidth: 600, maxHeight: 500 }; // slides are 300x250 on the banner
 export const BG_LIMIT = { maxWidth: 2500, maxHeight: 800 }; // background 1250x400
 

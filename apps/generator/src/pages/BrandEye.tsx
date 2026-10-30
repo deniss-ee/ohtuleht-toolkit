@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { brandEye as t } from "@/content";
 import { applyPreset, canvasOf, checkSafety, clampIris, eyePng, eyeSvg, IRIS_R, LIMITS, newEye, PRESETS, RATIOS, toGlyph, type EyeState, type RuleId } from "@/lib/eye";
+import { stampedName } from "@/lib/format";
 import { download } from "@/lib/zip";
 
 const RULES: RuleId[] = ["iris", "cap", "eye", "letter"];
@@ -135,7 +136,7 @@ export function BrandEye() {
 
   const background = eye.background;
   const badOutline = eye.style === "outline" && !!background && contrast(background, "#FFFFFF") < 3;
-  const file = (ext: string, extra = "") => `ohtuleht-eye-${eye.style}${background ? "" : "-transparent"}${extra}.${ext}`;
+  const file = (ext: string, extra = "") => stampedName(`ohtuleht-eye-${eye.style}${background ? "" : "-transparent"}${extra}`, ext);
   const savePng = async () => {
     if (!safety.ok) return;
     try {
