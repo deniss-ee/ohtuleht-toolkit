@@ -73,11 +73,11 @@ export function Home({ saved, onContinue, onDiscard, onGo }: { saved: SavedInfo 
             </h2>
             {g.text && <p className="text-sm text-muted-foreground">{g.text}</p>}
           </div>
-          <div className="grid auto-rows-fr gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {g.items.map((i) => {
               const item = ITEMS[i.id];
               if (!item) return null;
-              return <StartCard key={i.id} icon={item.icon} title={i.name} text={i.text} action={t.open} variant="outline" onAction={() => onGo(item.to)} />;
+              return <StartCard key={i.id} icon={item.icon} title={i.name} text={i.text} action={t.open} onAction={() => onGo(item.to)} />;
             })}
           </div>
         </section>
