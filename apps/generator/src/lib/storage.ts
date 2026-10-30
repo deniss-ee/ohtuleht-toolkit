@@ -43,7 +43,7 @@ interface StoredFile {
   avg?: string;
 }
 type Stored =
-  | { kind: "banner"; config: Draft["config"]; file: StoredFile | null; savedAt: number }
+  | { kind: "banner"; config: Draft["config"]; file: StoredFile | null; adFile?: StoredFile | null; savedAt: number }
   | { kind: "header"; config: HeaderDraft["config"]; file: StoredFile | null; embedUrl: string; savedAt: number };
 
 const pack = (f: HeaderFile | null): StoredFile | null => (f ? { name: f.name, dataUrl: f.dataUrl, avg: f.avg } : null);
@@ -63,16 +63,16 @@ function unpack(f: StoredFile | null): HeaderFile | null {
 // A draft that still equals a brand-new one is not worth keeping.
 function isPristine(work: NonNullable<Work>): boolean {
   const fresh = work.kind === "banner" ? newDraft(work.draft.config.format) : newHeaderDraft();
-  return JSON.stringify(work.draft.config) === JSON.stringify(fresh.config) && !(work.kind === "banner" ? work.draft.headerFile : work.draft.picture);
+  return JSON.stringify(work.draft.config) === JSON.stringify(fresh.config) && !(work.kind === "banner" ? work.draft.headerFile || work.draft.adFile : work.draft.picture);
 }
 
 export function saveWork(work: Work) {
   if (!work || isPristine(work)) return;
   const file = work.kind === "banner" ? work.draft.headerFile : work.draft.picture;
-  const base = work.kind === "banner" ? { kind: "banner" as const, config: work.draft.config } : { kind: "header" as const, config: work.draft.config, embedUrl: work.draft.embedUrl };
+  const base = work.kind === "banner" ? { kind: "banner" as const, config: work.draft.config, adFile: pack(work.draft.adFile ?? null) } : { kind: "header" as const, config: work.draft.config, embedUrl: work.draft.embedUrl };
   const stored = { ...base, file: pack(file), savedAt: Date.now() } as Stored;
   // A big picture can fill the storage: keep the text work without it rather than losing everything.
-  if (!write(WORK_KEY, stored)) write(WORK_KEY, { ...stored, file: null });
+  if (!write(WORK_KEY, stored)) write(WORK_KEY, { ...stored, file: null, ...(stored.kind === "banner" ? { adFile: null } : {}) });
 }
 
 export const clearWork = () => remove(WORK_KEY);
@@ -92,6 +92,6 @@ export function savedInfo(): SavedInfo | null {
 export function loadWork(): Work {
   const s = read<Stored>(WORK_KEY);
   if (!s) return null;
-  if (s.kind === "banner") return { kind: "banner", draft: { config: s.config, headerFile: unpack(s.file) } };
+  if (s.kind === "banner") return { kind: "banner", draft: { config: s.config, headerFile: unpack(s.file), adFile: unpack(s.adFile ?? null) } };
   return { kind: "header", draft: { config: s.config, picture: unpack(s.file), embedUrl: s.embedUrl ?? "" } };
 }

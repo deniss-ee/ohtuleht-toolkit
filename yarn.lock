@@ -372,6 +372,23 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@jsquash/jpeg@1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@jsquash/jpeg/-/jpeg-1.6.0.tgz#45474ce6d5b6165740d135c7bdf36dee9ba8618e"
+  integrity sha512-zwN46Awh1VM6gXlIcALwb5WzqK5H2e6+Awcs1QP8AvS8ohsK/sbE4esvmH4jhlhW7+CgiUUww66vg0aTnlSIMA==
+
+"@jsquash/oxipng@2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@jsquash/oxipng/-/oxipng-2.3.0.tgz#49095dd5b7d71ead94e4e80d627b7f0f453493ef"
+  integrity sha512-aQ8wiEp6ztlTMXc+RMt/CG8crU3mEHDU+h+JYkIi6ctMhlh8+Ltj5XwQFfBuyzKYrp8NxaFW80Dp824bqjr+zA==
+  dependencies:
+    wasm-feature-detect "^1.2.11"
+
+"@jsquash/resize@2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@jsquash/resize/-/resize-2.1.1.tgz#f245f1945f12c8c73c313ba3ace58b3f2898c4ff"
+  integrity sha512-0R5UL1ZLHUT+carjVikcE1QfA+kfNQ2YamYyGVRmhfh4zttU5EY3bQBGxPIPtY2xIAw1P4Kgyxm2xrceRw1r2w==
+
 "@modelcontextprotocol/core@2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@modelcontextprotocol/core/-/core-2.4.0.tgz#c7f1a505452c3a0ad666d9a6e78a5804d8d8d0d9"
@@ -3198,6 +3215,11 @@ vite@^8.3.5:
     tinyglobby "^0.2.17"
   optionalDependencies:
     fsevents "~2.3.3"
+
+wasm-feature-detect@^1.2.11:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/wasm-feature-detect/-/wasm-feature-detect-1.9.0.tgz#ae62b944805108fcc3b5f1e048ad2baa2d8ac2da"
+  integrity sha512-zonE+xlIIYtxPy++L24ow0hAD8CICb4+FgPyROd3buyXIqsJvUEDkBgfCCoXOd1Hu3DUr0GOfnPIdcGV+YpNaA==
 
 which@^2.0.1:
   version "2.0.2"

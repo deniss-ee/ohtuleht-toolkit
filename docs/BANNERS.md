@@ -72,13 +72,23 @@ Upload the old zip in the same place as new zips. Needs `index.html`, `style.css
 
 After opening, a dialog lists what to check (campaign name, colours, shuffle off like the old banner, header picture, ad skipped, visible count).
 
-Not opened yet: old mobile banners and image sliders (#36); the tool says so. Static-ad banners open but the ad picture is left out until format 2 exists (#35).
+Not opened yet: old mobile banners and image sliders (#36); the tool says so. Static-ad banners (`img.banner-img` with a `getClickTag` link) open with the ad kept: picture, link and width. The slider then shows 3 articles, and the dialog says the ad was kept.
 
-## Format 2: Articles 1250x400 with static ad (not built, #35)
+## Format 2: Articles 1250x400 with static ad (built, #35)
 
-- A fixed ad image with its own ClickTag URL next to a slider of 3 visible articles (instead of 4).
-- Side and size of the ad: from Figma (open question).
-- Mobile: every Nth slide is the ad (N to be decided).
+Not a separate banner type: a switch **Static ad** in the editor (desktop size only) adds an ad to the Articles 1250x400 banner. Template: the same `articles-1250x400.ts`, config field `ad` (`src`, `href`, `width`). Taken from the old Autopay banner (`st_Autopay0810_1250x400`).
+
+| Part | Value |
+|---|---|
+| Ad position | Right of the slider, top edge level with the cards (header 46 px + 16 px gap) |
+| Ad size | 338 px high (400 minus header and gap); width follows the picture's shape (650x890 gives 247 px). Never cropped |
+| Gap | 16 px between slider and ad; 6 px rounded corners |
+| Slider | 3 articles visible (instead of 4); the slider takes the rest of the width (985 px with a 247 px ad) |
+| Click | The ad has its own ClickTag link; the validation asks for the picture and the link when the switch is on |
+| Files | `ad.jpg` (or `.png`) next to `index.html` in the zip; counted in the weight shown at the top |
+| Mobile | Ignored: the mobile banner has no ad (open: every Nth slide as an ad) |
+
+Best ad picture size: twice the shown size for sharp screens, for example 494x676 px.
 
 ## Format 3: Image slider (client banners) (not built, #36)
 
@@ -104,6 +114,19 @@ Design: Figma "Õhtuleht - Brand hub", frame "Mobile Content". Format id `articl
 - **Desktop and mobile are one campaign.** The editor has a Desktop 1250x400 / Mobile switch at the top: one click turns the banner into the other size and keeps everything (campaign, header, articles, colours, behaviour). Download each size separately. The dark background follows the format unless it was changed by hand.
 - The preview frame is 514 px high (8 px above and below the 498 px banner) so the dots are never cut by the frame edge. In the ad system give the slot at least 498 px.
 - Open: best header picture size for mobile (the hint still names the desktop size), 1 px line height rounding (18 x 1.3 = 23.4 is 23 px).
+
+## Picture optimiser
+
+Pictures chosen in the form (header, ad) and the pictures of an old zip are optimised in the browser with **jSquash**, the codecs of the Squoosh app as WebAssembly (`@jsquash/jpeg` MozJPEG, `@jsquash/oxipng`, `@jsquash/resize`). Nothing is uploaded. Code: `apps/generator/src/lib/optimise.ts`.
+
+| Picture | What happens |
+|---|---|
+| JPEG | Scaled down (Lanczos) when bigger than twice the shown size (header 2496x92, ad 800x676), then MozJPEG quality 75 |
+| PNG | Scaled down the same way, then OxiPNG level 3 (lossless) |
+| SVG, WebP | Left as they are |
+| Result not smaller | The original is kept, so a picture is never made bigger |
+
+The app tells the person what was saved. Measured on the Autopay ad (46.2 KB): quality 75 gives 41.1 KB, 70 gives 37.1 KB, 60 gives 31.2 KB. The original was already tight, so the gain is modest; photos straight from a camera or Figma shrink much more. The old Squoosh CLI (`@squoosh/cli`) is abandoned (2023), which is why jSquash is used instead. WebP output would be about 30% smaller than JPEG but ad servers may refuse `.webp` in a zip, so JPEG stays.
 
 ## Figma to banner handoff
 

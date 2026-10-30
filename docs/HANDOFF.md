@@ -19,12 +19,13 @@ Built and merged into `develop`:
 | **Tools: Movie banner** | Video on a picture, two zips, preview | `docs/MOVIE-BANNER.md` |
 | **Brand manual: Eye** | Brand eye generator, PNG and SVG, filled or outline, safety rules (merged and live, #121) | `docs/BRAND-EYE.md` |
 | **Tools: Article scraper, Picture link converter** | Marketing: article title, lead, link, picture link by bookmark; CMS picture links to /54/ and /48/ | `docs/MARKETING-TOOLS.md` |
+| **Static ad** (#35) + **picture optimiser** | Desktop banner with a fixed ad on the right and 3 articles; old Autopay-style zips open with the ad kept; header and ad pictures are optimised in the browser with jSquash (Squoosh codecs). On branch `feat/35-static-ad`, not merged yet | `docs/BANNERS.md` |
 | **Home page** | Intro with cards to everything; plain address opens it | `README.md` (Direct links) |
 | **Estonian interface** | EN/ET switch in every top bar; all text in `content.en.ts` and `content.et.ts` | `docs/LANGUAGES.md` |
 | **GitHub Pages site** | Live from the `gh-pages` branch; republished by hand | `docs/DEPLOY.md` |
 | Bookmarklet v2 | Copies an article as a JSON snippet (title, link, picture, label) | `docs/BOOKMARKLET.md` |
 
-Not built yet (GitHub issues, milestones M0 to M4): Worker for article by number (#119), 1250x400 with static ad (#35), image slider (#36), header font and size options (#64), brand typography and ad formats (#18), lint/format/CI (#5, #6), accessibility pass (#38), IT handoff README (#39), Cloudflare Worker (M2), hosted banners and login (M3), task tracker (M4, spec in `docs/TASK-TRACKER.md`).
+Not built yet (GitHub issues, milestones M0 to M4): Worker for article by number (#119), image slider (#36), header font and size options (#64), brand typography and ad formats (#18), lint/format/CI (#5, #6), accessibility pass (#38), IT handoff README (#39), Cloudflare Worker (M2), hosted banners and login (M3), task tracker (M4, spec in `docs/TASK-TRACKER.md`).
 
 Doc status: all `docs/*.md`, package READMEs and the generator README were checked against the code on 2026-10-29. Issues #9 (brand.json schema) and #11 (scattered assets) are open on GitHub although their core work is done; close or keep them when the user decides.
 

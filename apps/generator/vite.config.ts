@@ -7,5 +7,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   base: "./",
   plugins: [react(), tailwindcss()],
+  // The picture optimiser (jSquash, WebAssembly) breaks in Vite's dependency optimiser.
+  optimizeDeps: { exclude: ["@jsquash/jpeg", "@jsquash/oxipng", "@jsquash/resize"] },
   resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
 });

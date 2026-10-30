@@ -1,5 +1,5 @@
 export * from "./types.ts";
-export { renderArticles1250x400 } from "./articles-1250x400.ts";
+export { renderArticles1250x400, AD_HEIGHT } from "./articles-1250x400.ts";
 export { renderArticlesMobile } from "./articles-mobile.ts";
 export { validate, MIN_ARTICLES } from "./validate.ts";
 export type { Problem } from "./validate.ts";

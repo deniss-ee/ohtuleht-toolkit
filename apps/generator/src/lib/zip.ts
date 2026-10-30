@@ -1,8 +1,10 @@
 import JSZip from "jszip";
 import type { ArticlesBannerConfig } from "@ohtuleht/templates";
 import { ui } from "@/content";
-import { renderExport, zipName, type Draft, type HeaderFile } from "@/lib/banner";
-import { averageColor, toDataUrl } from "@/lib/image";
+import { adFileOf, renderExport, zipName, type Draft, type HeaderFile } from "@/lib/banner";
+import { AD_HEIGHT } from "@ohtuleht/templates";
+import { averageColor, imageSize, toDataUrl } from "@/lib/image";
+import { AD_LIMIT, HEADER_LIMIT, optimiseImage, type Optimised } from "@/lib/optimise";
 import { importLegacy } from "@/lib/legacy";
 import { openZip } from "@/lib/openzip";
 
@@ -10,6 +12,8 @@ export async function buildZip(draft: Draft): Promise<Blob> {
   const zip = new JSZip();
   zip.file("index.html", renderExport(draft));
   if (draft.config.header.type === "image" && draft.headerFile) zip.file(draft.headerFile.name, draft.headerFile.bytes);
+  const ad = adFileOf(draft);
+  if (ad) zip.file(ad.name, ad.bytes);
   return zip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 9 } });
 }
 
@@ -27,13 +31,24 @@ export function download(blob: Blob, name: string) {
 
 export const downloadZip = async (draft: Draft) => download(await buildZip(draft), zipName(draft));
 
-export async function fileToHeader(file: File): Promise<{ headerFile: HeaderFile; avg?: string }> {
-  const bytes = new Uint8Array(await file.arrayBuffer());
+export async function fileToHeader(file: File): Promise<{ headerFile: HeaderFile; avg?: string; optimised: Optimised }> {
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "png";
   const name = `header.${ext}`;
-  const dataUrl = toDataUrl(bytes, name);
+  const optimised = await optimiseImage(new Uint8Array(await file.arrayBuffer()), name, HEADER_LIMIT);
+  const dataUrl = toDataUrl(optimised.bytes, name);
   const avg = await averageColor(dataUrl);
-  return { headerFile: { name, bytes, dataUrl, avg }, avg };
+  return { headerFile: { name, bytes: optimised.bytes, dataUrl, avg }, avg, optimised };
+}
+
+// The ad picture: optimised, and its width worked out from its shape (it is always AD_HEIGHT high).
+export async function fileToAd(file: File): Promise<{ adFile: HeaderFile; width: number; optimised: Optimised }> {
+  const ext = file.name.split(".").pop()?.toLowerCase() ?? "png";
+  const name = `ad.${ext}`;
+  const optimised = await optimiseImage(new Uint8Array(await file.arrayBuffer()), name, AD_LIMIT);
+  const dataUrl = toDataUrl(optimised.bytes, name);
+  const size = await imageSize(dataUrl);
+  const width = size ? Math.min(600, Math.max(100, Math.round((AD_HEIGHT * size.width) / size.height))) : 247;
+  return { adFile: { name, bytes: optimised.bytes, dataUrl }, width, optimised };
 }
 
 // Reads a banner: made by this toolkit (config embedded in index.html) or an old Swiper banner (read by importLegacy).
@@ -57,5 +72,13 @@ export async function importZip(file: File): Promise<{ draft: Draft; notes: stri
       headerFile = { name: config.header.src, bytes, dataUrl: toDataUrl(bytes, config.header.src), avg: config.header.avg };
     }
   }
-  return { draft: { config, headerFile }, notes: [] };
+  let adFile: HeaderFile | null = null;
+  if (config.ad) {
+    const entry = zip.file(config.ad.src);
+    if (entry) {
+      const bytes = await entry.async("uint8array");
+      adFile = { name: config.ad.src, bytes, dataUrl: toDataUrl(bytes, config.ad.src) };
+    }
+  }
+  return { draft: { config, headerFile, adFile }, notes: [] };
 }

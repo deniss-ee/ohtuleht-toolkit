@@ -14,6 +14,22 @@ export function toDataUrl(bytes: Uint8Array, name: string): string {
   return `data:${mimeOf(name)};base64,${btoa(binary)}`;
 }
 
+// Natural size of a picture, or undefined when it cannot be read.
+export async function imageSize(dataUrl: string): Promise<{ width: number; height: number } | undefined> {
+  try {
+    const img = new Image();
+    img.src = dataUrl;
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error("image"));
+      setTimeout(() => reject(new Error("timeout")), 3000);
+    });
+    return img.naturalWidth && img.naturalHeight ? { width: img.naturalWidth, height: img.naturalHeight } : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 // Average colour of the left third of a picture (where the header text sits), as #rrggbb.
 // Used to choose a readable text colour. Returns undefined when the picture cannot be read.
 export async function averageColor(dataUrl: string): Promise<string | undefined> {
