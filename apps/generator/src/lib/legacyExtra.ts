@@ -42,11 +42,14 @@ async function cssOf(zip: JSZip, doc: Document): Promise<string> {
   return css.replace(/@import[^;]+;/g, "").replace(/\/\*[\s\S]*?\*\//g, "");
 }
 
+// The scripts of the page that belong to the banner: inline scripts and its own files. Other servers' scripts and the Swiper
+// library are left out: the library carries its own defaults (`delay:3e3`) that must never be read as the banner's settings.
 async function scriptsOf(zip: JSZip, doc: Document): Promise<string> {
   let script = "";
   for (const s of doc.querySelectorAll("script")) {
     const src = s.getAttribute("src");
-    script += src ? (remote(src) ? "" : await textOf(zip, src)) : (s.textContent ?? "");
+    if (src && (remote(src) || /swiper/i.test(src))) continue;
+    script += src ? await textOf(zip, src) : (s.textContent ?? "");
     script += "\n";
   }
   return script;
@@ -84,7 +87,9 @@ export async function importLegacyMobile(zip: JSZip, doc: Document, zipName: str
   c.campaign = zipName.slice(0, 80);
   c.badge = campaignBadge;
   c.articles = articles;
-  c.behavior = { shuffle: false, autoplay: /autoplay/.test(script), delayMs: num(/delay\s*:\s*(\d+)/) ?? 3000, speedMs: num(/speed\s*:\s*(\d+)/) ?? 250, loop: !/loop\s*:\s*false/.test(script) };
+  // A delay under half a second can only be a misreading: use the default then.
+  const delay = num(/delay\s*:\s*(\d+)\b(?!\s*e)/);
+  c.behavior = { shuffle: false, autoplay: /autoplay/.test(script), delayMs: delay && delay >= 500 ? delay : 3000, speedMs: num(/speed\s*:\s*(\d+)/) ?? 250, loop: !/loop\s*:\s*false/.test(script) };
   const notes = [t.legacyName(c.campaign), t.legacyMobile, t.legacyMobileHeader, t.legacyShuffle];
   return { draft, notes };
 }
