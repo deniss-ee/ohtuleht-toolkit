@@ -4,6 +4,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+## [0.2.5] - 2026-10-30
+
+Arrows in the main campaign colour with a smaller chevron; the mobile label keeps its colour in dark mode.
+
 - Mobile articles banner: the label (a block with text on it) keeps its colour in dark mode; only the desktop banner, where the label colour is the text colour, lightens it. The Colours panel has no separate dark label colour for the phone banner.
 ## [0.2.4] - 2026-10-30
 
