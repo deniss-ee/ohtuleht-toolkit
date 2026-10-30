@@ -54,3 +54,13 @@ One unified brief per job, with everything the designer needs, linked to email a
 4. Is Microsoft Graph access approved by IT?
 5. Where do uploaded images live (Cloudflare R2, company storage)?
 6. Languages for the interface and brief text.
+
+## Status: first prototype (local)
+
+Built in the toolkit (side menu, Task tracker). No server, no login: briefs live in this browser (`localStorage`, key `ol-briefs`) and can be backed up to a JSON file and loaded on another computer.
+
+- **New brief**: title, client, requester, department, deadline, run dates, a list of banner rows (format, placement, text, link), article links, materials, notes. Required: title, client, requester, deadline, one banner with a place or text. Missing items are named.
+- **One email for everyone**: the brief becomes a subject and a body in a fixed layout. Copy email text, or Open in email (a `mailto:` link; if the text is too long for a link it is copied instead). The designer's address is remembered.
+- **My briefs**: list with status (New, In design, Review, Delivered, Live, Closed), overdue marking, filter by status, edit, delete, backup and restore.
+- Code: `lib/tracker.ts` (fields, email text, storage), `pages/TaskTracker.tsx`, texts in `content.*.ts` (`tracker`).
+- Not yet: sharing briefs between people, Outlook/Exchange (Microsoft Graph), login, assignee, comments, opening the banner generator from a row (T3 to T5 above). Sending needs the person's own mail program until Graph is approved by IT.
