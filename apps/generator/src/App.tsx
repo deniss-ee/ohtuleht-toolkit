@@ -182,7 +182,7 @@ export function App() {
               <ContentMarketingHome onCreate={create} onUpload={open} saved={saved} onContinue={resume} onDiscard={discard} />
             ))}
           {page === "tools" && (tool === "image-cropper" ? <ImageCropper onBack={() => setTool(null)} /> : tool === "movie-banner" ? <MovieBanner onBack={() => setTool(null)} /> : tool === "article-scraper" ? <ArticleScraper onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "picture-converter" ? <PictureConverter onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "email-signature" ? <SignatureGenerator onBack={() => setTool(null)} /> : tool === "utm-builder" ? <UtmBuilder onBack={() => setTool(null)} /> : <ToolsHome onOpen={setTool} />)}
-          {page === "tasks" && <TaskTracker />}
+          {page === "tasks" && <TaskTracker onMake={(id) => go({ page: "content", make: id })} />}
           {page === "brand" && <BrandManual tab={tab} onTab={setTab} />}
         </AppShell>
         <Dialog open={notes.length > 0} onOpenChange={(o) => !o && setNotes([])}>

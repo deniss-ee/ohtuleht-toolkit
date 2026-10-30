@@ -427,6 +427,7 @@ export const tracker = {
   overdue: "late",
   edit: "Edit",
   copyEmail: "Copy email text",
+  make: (name: string) => `Make: ${name}`,
   delete: "Delete",
   deleteSure: "Yes, delete",
   cancel: "Cancel",

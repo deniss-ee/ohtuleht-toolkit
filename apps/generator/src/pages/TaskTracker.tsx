@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-import { AlertTriangle, Download, ListChecks, Mail, Pencil, Plus, Save, Trash2, Upload, X } from "lucide-react";
+import { AlertTriangle, Download, LayoutTemplate, ListChecks, Mail, Pencil, Plus, Save, Trash2, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/editor/PageHeader";
 import { Badge } from "@/components/ui/badge";
@@ -26,7 +26,7 @@ function Field({ id, label, children, hint }: { id: string; label: string; child
 }
 
 // The first version of the task tracker: briefs for banner jobs, kept in this browser. A brief also becomes one clear email text.
-export function TaskTracker() {
+export function TaskTracker({ onMake }: { onMake: (typeId: string) => void }) {
   const [list, setList] = useState<Brief[]>(loadBriefs);
   const [draft, setDraft] = useState<Brief>(newBrief);
   const [tab, setTab] = useState("list");
@@ -187,6 +187,11 @@ export function TaskTracker() {
                     <Button size="sm" variant="outline" className="gap-2" onClick={() => copyEmail(b)}>
                       <Mail className="size-4" /> {t.copyEmail}
                     </Button>
+                    {[...new Set(b.rows.map((r) => r.format))].flatMap((f) => (bannerTypes.some((x) => x.id === f && x.ready) ? [f] : [])).map((f) => (
+                      <Button key={f} size="sm" variant="outline" className="gap-2" onClick={() => onMake(f)}>
+                        <LayoutTemplate className="size-4" /> {t.make(bannerTypes.find((x) => x.id === f)?.name ?? f)}
+                      </Button>
+                    ))}
                     {sure === b.id ? (
                       <>
                         <Button size="sm" variant="destructive" onClick={() => (commit(list.filter((x) => x.id !== b.id)), setSure(null))}>

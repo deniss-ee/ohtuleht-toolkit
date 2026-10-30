@@ -394,6 +394,7 @@ export const tracker: typeof En.tracker = {
   overdue: "hilineb",
   edit: "Muuda",
   copyEmail: "Kopeeri kirja tekst",
+  make: (name: string) => `Tee: ${name}`,
   delete: "Kustuta",
   deleteSure: "Jah, kustuta",
   cancel: "Tühista",
