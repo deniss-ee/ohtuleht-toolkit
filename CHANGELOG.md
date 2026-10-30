@@ -4,6 +4,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-10-30
+
+Fix: old phone banners keep their own slide timing when converted.
+
 - Fixed: old phone banners opened with a 3 ms delay between slides (the importer read Swiper's own default `delay:3e3` as `3`) and a 300 ms transition. The importer now ignores the Swiper library and any delay under half a second, so the banner's own 2500 ms and 500 ms are kept.
 ## [0.2.0] - 2026-10-30
 
