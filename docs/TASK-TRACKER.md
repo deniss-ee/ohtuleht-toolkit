@@ -98,3 +98,7 @@ Limits of the Workers Free plan, read from the Cloudflare docs on 2026-10-30 (ch
 A small team making tens of requests and a few hundred card moves a day is far below this. When a limit is hit D1 refuses queries until 00:00 UTC; there is no surprise bill on the free plan.
 
 Plan: one Worker `api` with a D1 database (`briefs`, `clients`), the site (GitHub Pages) calls it. The same Worker later holds the Scoro API key and the article-by-ID scraper (#119, #40). Login (Microsoft Entra, #55) comes before real data is shared; until then only test data. The site keeps working offline with the browser copy as a fallback.
+
+## Switched off for now
+
+Banner request and Task tracker are built but switched off while they are finished: the menu shows "Soon", the Home cards are greyed out and direct links open Home. Nothing is deleted. To switch them on again set `ready: true` for `request` and `tasks` in `nav` (`content.en.ts` and `content.et.ts`).

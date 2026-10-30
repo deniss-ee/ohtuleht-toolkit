@@ -12,8 +12,9 @@ export const nav: NavItem[] = [
   { id: "content", label: "Content marketing", ready: true },
   { id: "tools", label: "Tools", ready: true },
   { id: "brand", label: "Brand manual", ready: true },
-  { id: "request", label: "Banner request", ready: true },
-  { id: "tasks", label: "Task tracker", ready: true },
+  // Banner request and Task tracker are built but switched off while they are finished: set ready to true to open them.
+  { id: "request", label: "Banner request", ready: false },
+  { id: "tasks", label: "Task tracker", ready: false },
 ];
 
 export type Device = string;
