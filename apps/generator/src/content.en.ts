@@ -145,6 +145,11 @@ export const editor = {
   headerNone: "No picture chosen yet.",
   headerTextInPicture: "The picture already has the text on it",
   headerTextInPictureHint: "Tick this for old banners: the campaign name is not written on top of the picture again.",
+  headerLogoTitle: "Logo on the right (optional)",
+  headerLogoChoose: "Choose logo",
+  headerLogoChange: "Change logo",
+  headerLogoRemove: "Remove logo",
+  headerLogoHint: "Shown on the right of the header, 30 px high, with the same space from the edge as the text on the left (16 px). PNG, SVG, WebP or JPG; a logo that reads well on the header colour.",
   headerLink: "Where the header leads",
   headerLinkHint: "Link opened when someone clicks the header.",
 

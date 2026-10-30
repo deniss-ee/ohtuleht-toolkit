@@ -124,6 +124,11 @@ export const editor: typeof En.editor = {
   headerNone: "Pilti pole veel valitud.",
   headerTextInPicture: "Pildil on tekst juba olemas",
   headerTextInPictureHint: "Märgi see vanade bännerite jaoks: kampaania nime ei kirjutata pildi peale uuesti.",
+  headerLogoTitle: "Logo paremal (valikuline)",
+  headerLogoChoose: "Vali logo",
+  headerLogoChange: "Muuda logo",
+  headerLogoRemove: "Eemalda logo",
+  headerLogoHint: "Näidatakse päise paremal pool, 30 px kõrgusena, servast sama kaugel kui tekst vasakul (16 px). PNG, SVG, WebP või JPG; logo, mis on päise värvil hästi loetav.",
   headerLink: "Kuhu päis viib",
   headerLinkHint: "Link, mis avatakse, kui keegi päisel klõpsab.",
 

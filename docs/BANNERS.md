@@ -40,6 +40,8 @@ Rebuilt without Swiper, light and dark. Template: `packages/templates/src/articl
 
 Bar 1248x46 with 6 px corners, filled with the main colour or with a background picture (picture without text, best 2496x92, scaled to cover). The campaign name is always written on it: Fira Sans Condensed Bold, 16 px, line height 16 px, uppercase, 16 px from the left, vertically centred. The text colour is automatic: on a brand colour the brand rule (black on steps 50 to 500, white from 600 up); on any other colour white, unless the colour is light (relative luminance above 0.55 or HSL lightness above 0.78), then a dark tint of the colour; on a picture, the same choice from the picture's average colour on the left third and can be set by hand in Advanced, Colours. The Figma example is yellow `#FFDB00` with black text.
 
+**Logo (optional).** A logo can sit on the right of the header, on desktop and mobile alike: 30 px high, always right-aligned with the same 16 px from the edge as the campaign name has on the left (the header's side padding), at most 45 % of the header width. PNG, SVG, WebP or JPG; it is optimised in the browser (a vector logo stays as it is) and written as `logo.*` next to `index.html`. The header link covers the logo too.
+
 **Behaviour**
 
 | Rule | Value |

@@ -52,6 +52,7 @@ export interface ArticlesBannerConfig {
   campaign: string;
   primary: string; // main campaign colour: header, arrows and default label colour
   header: Header;
+  headerLogo?: string; // logo on the right of the header (file name inside the zip): right-aligned, 16 px from the edge like the text on the left
   ad?: AdItem; // desktop only; with an ad the slider shows 3 articles instead of 4
   badge: string;
   theme: { light: ThemeColors; dark: ThemeColors };

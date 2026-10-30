@@ -1,10 +1,10 @@
 import JSZip from "jszip";
 import type { ArticlesBannerConfig } from "@ohtuleht/templates";
 import { ui } from "@/content";
-import { adFileOf, renderExport, zipName, type Draft, type HeaderFile } from "@/lib/banner";
+import { adFileOf, logoFileOf, renderExport, zipName, type Draft, type HeaderFile } from "@/lib/banner";
 import { AD_HEIGHT } from "@ohtuleht/templates";
 import { averageColor, imageSize, toDataUrl } from "@/lib/image";
-import { AD_LIMIT, HEADER_LIMIT, optimiseImage, type Optimised } from "@/lib/optimise";
+import { AD_LIMIT, HEADER_LIMIT, LOGO_LIMIT, optimiseImage, type Optimised } from "@/lib/optimise";
 import { importLegacy } from "@/lib/legacy";
 import { importLegacyMobile, importLegacyStatic } from "@/lib/legacyExtra";
 import { openZip } from "@/lib/openzip";
@@ -15,6 +15,8 @@ export async function buildZip(draft: Draft): Promise<Blob> {
   if (draft.config.header.type === "image" && draft.headerFile) zip.file(draft.headerFile.name, draft.headerFile.bytes);
   const ad = adFileOf(draft);
   if (ad) zip.file(ad.name, ad.bytes);
+  const logo = logoFileOf(draft);
+  if (logo) zip.file(logo.name, logo.bytes);
   return zip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 9 } });
 }
 
@@ -39,6 +41,14 @@ export async function fileToHeader(file: File): Promise<{ headerFile: HeaderFile
   const dataUrl = toDataUrl(optimised.bytes, name);
   const avg = await averageColor(dataUrl);
   return { headerFile: { name, bytes: optimised.bytes, dataUrl, avg }, avg, optimised };
+}
+
+// The logo of the header: optimised (a vector logo stays as it is), at most 30 px high on the banner, so 60 px for sharp screens.
+export async function fileToLogo(file: File): Promise<{ logoFile: HeaderFile; optimised: Optimised }> {
+  const ext = file.name.split(".").pop()?.toLowerCase() ?? "png";
+  const name = `logo.${ext === "jpeg" ? "jpg" : ext}`;
+  const optimised = await optimiseImage(new Uint8Array(await file.arrayBuffer()), name, LOGO_LIMIT);
+  return { logoFile: { name, bytes: optimised.bytes, dataUrl: toDataUrl(optimised.bytes, name) }, optimised };
 }
 
 // The ad picture: optimised, and its width worked out from its shape (it is always AD_HEIGHT high).
@@ -86,5 +96,13 @@ export async function importZip(file: File): Promise<{ draft: Draft; notes: stri
       adFile = { name: config.ad.src, bytes, dataUrl: toDataUrl(bytes, config.ad.src) };
     }
   }
-  return { draft: { config, headerFile, adFile }, notes: [] };
+  let logoFile: HeaderFile | null = null;
+  if (config.headerLogo) {
+    const entry = zip.file(config.headerLogo);
+    if (entry) {
+      const bytes = await entry.async("uint8array");
+      logoFile = { name: config.headerLogo, bytes, dataUrl: toDataUrl(bytes, config.headerLogo) };
+    }
+  }
+  return { draft: { config, headerFile, adFile, logoFile }, notes: [] };
 }
