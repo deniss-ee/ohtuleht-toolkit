@@ -64,7 +64,7 @@ function unpack(f: StoredFile | null): HeaderFile | null {
 
 // A draft that still equals a brand-new one is not worth keeping.
 function isPristine(work: NonNullable<Work>): boolean {
-  if (work.kind === "slider") return JSON.stringify(work.draft.config) === JSON.stringify(newSliderDraft().config) && Object.keys(work.draft.files).length === 0;
+  if (work.kind === "slider") return JSON.stringify(work.draft.config) === JSON.stringify(newSliderDraft(work.draft.config.format).config) && Object.keys(work.draft.files).length === 0;
   const fresh = work.kind === "banner" ? newDraft(work.draft.config.format) : newHeaderDraft();
   return JSON.stringify(work.draft.config) === JSON.stringify(fresh.config) && !(work.kind === "banner" ? work.draft.headerFile || work.draft.adFile : work.draft.picture);
 }
@@ -94,15 +94,18 @@ export interface SavedInfo {
   savedAt: number;
 }
 
+// A saved slider from an older version of the tool has another shape: it is dropped instead of breaking the editor.
+const usable = (s: Stored | null): s is Stored => !!s && (s.kind !== "slider" || (!!s.config?.desktop && !!s.config?.mobile));
+
 export function savedInfo(): SavedInfo | null {
   const s = read<Stored>(WORK_KEY);
-  if (!s) return null;
+  if (!usable(s)) return null;
   return { kind: s.kind, name: s.kind === "header" ? s.config.label : s.config.campaign, savedAt: s.savedAt };
 }
 
 export function loadWork(): Work {
   const s = read<Stored>(WORK_KEY);
-  if (!s) return null;
+  if (!usable(s)) return null;
   if (s.kind === "slider") {
     const files: SliderDraft["files"] = {};
     for (const [k, f] of Object.entries(s.files)) {

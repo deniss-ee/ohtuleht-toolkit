@@ -90,23 +90,32 @@ Not a separate banner type: a switch **Static ad** in the editor (desktop size o
 
 Best ad picture size: twice the shown size for sharp screens, for example 494x676 px.
 
-## Format 3: Image slider, desktop 1250x400 (built, part A of #36)
+## Format 3: Image slider, desktop 1250x400 and mobile 600x500 (built, #36)
 
-Client banners: a background picture with a slider of pictures on top. Made from the Dacia and Renault banners (`renault_ol-1250x400`). Template: `packages/templates/src/image-slider.ts`; editor: `apps/generator/src/pages/SliderEditor.tsx`; zips carry `kind: "image-slider"` in their embedded config, so they open again in the tool.
+Client banners: a background picture with a slider of pictures on top. Made from the Dacia and Renault banners (`renault_ol-1250x400`). Template: `packages/templates/src/image-slider.ts`; editor: `apps/generator/src/pages/SliderEditor.tsx`. Zips carry `kind: "image-slider"` in their embedded config, so they open again in the tool.
 
-| Part | Value |
-|---|---|
-| Canvas | Fixed 1250x400 |
-| Background | A picture (1250x400, or 2500x800 for sharp screens), optionally clickable |
-| Slides | Pictures of 300x250 or 600x500 (same 6:5 shape); at least 2; placed in the order of their file names, then moved by hand |
-| Slider box | Form fields: from the left, from the top, width, height, gap, slides shown at once. Defaults (Renault): 165, 100, 920x250, gap 10, 3 visible, so each slide is 300x250 |
-| Arrows | 36 px, 46 px outside the slider; on top of the edges when there is no room outside. Can be switched off |
-| Behaviour | Autoplay 2 s, speed 500 ms, loop, drag and swipe, keys. Shuffle off. Everything fits (slides <= visible): plain row, no arrows |
-| Links | **One link for all** slides or **a link for each**. Background has its own link (or none). An empty link means "the link set in the ad system" (`clickTag`), as in the old banners. A link goes through `clickMacro` like everywhere else |
-| Click on the slider area | Never reaches the background link |
-| Pictures | Optimised in the browser (see below); in the zip as `bg.png`/`bg.jpg` and `1.jpg`, `2.jpg` ... |
+**One campaign, two sizes.** Like the articles banner, a switch at the top (Desktop 1250x400 / Mobile 600x500) turns one into the other and keeps everything shared: campaign name, slides, links, background link and slider behaviour. Each size has its own background picture, slider position and size, arrows and effect. Download each size separately (`name_1250x400.zip`, `name_600x500.zip`); a zip holds the background of its own size only.
 
-Still to build: part B (mobile 600x500, one campaign with the desktop one), part C (effects: desktop "arc" with side slides tilted back in perspective, mobile cube), part D (opening old Renault/Dacia zips).
+| Part | Desktop 1250x400 | Mobile 600x500 |
+|---|---|---|
+| Canvas | Fixed 1250x400 | Fills the page width, keeps the 6:5 shape; every size inside scales with it (CSS container units) |
+| Background | 1250x400, or 2500x800 for sharp screens | 600x500, or 1200x1000 |
+| Slides | Pictures of 300x250 or 600x500 (same 6:5 shape); at least 2; placed in the order of their file names, then moved by hand. The same pictures serve both sizes | same |
+| Slider box (default) | From the left 165, from the top 100, 920x250, gap 10, 3 visible (each slide 300x250) | 60, 90, 480x400, gap 12, 1 visible |
+| Arrows | 36 px, 46 px outside the slider (on top of its edges when there is no room); on by default | Off by default (swipe) |
+| Effects | **Slide** (sideways) or **Arc** | **Slide** or **Cube** |
+
+**Common behaviour.** Autoplay 2 s, speed 500 ms, loop, drag and swipe, keys; shuffle off. Everything fits (slides <= visible): plain row, no arrows. A click on the slider area never reaches the background link.
+
+**Links.** *One link for all* slides or *a link for each*. The background has its own link (or none). An empty link means "the link set in the ad system" (`clickTag`), as in the old banners. Every other link goes through `clickMacro`.
+
+**Arc (desktop).** The slides stand on a ring: the middle one is straight, the ones next to it are turned away (about 34 degrees per step, pulled together and pushed back) as if the pictures were on a carousel seen from outside. Works best with 3 or 5 slides shown; choosing Arc sets at least 3. Drag and arrows work as in the plain slider, the turning follows the finger. Implemented in `slider.ts` (about 150 bytes).
+
+**Cube (mobile).** One slide at a time, turning like a cube (90 degrees per step, perspective). Arrows, keys, swipe and autoplay work; a swipe turns one step (the cube does not follow the finger). Separate script `dist/cube.js` (about 1.1 KB gzip), inlined only into banners that use it. With a single slide it shows the picture and does not turn.
+
+**Pictures.** Optimised in the browser (see below); in the zip as `bg.png`/`bg.jpg` and `1.jpg`, `2.jpg` ...
+
+**Opening old banners.** An old desktop image slider zip (the Dacia/Renault kind: `.slider-track > .slide`, `style.css`, `script.js`) opens with the background and its link, every slide with its link (one shared link when all are the same), position and size, gap, visible count, delay, speed and arrows. A dialog lists what to check (campaign name from the page title, links, position, optimised pictures, extra scripts such as `ads.js` that are not carried over, shuffle off). The mobile size is added afterwards by hand. Old mobile 600x500 slider banners (`.st-wrapper`) still cannot be opened: no sample was available.
 
 ## Format 4: Articles mobile (built, #37)
 

@@ -13,3 +13,6 @@
 @media (prefers-reduced-motion: reduce) {
   .ol-slider[data-respect-motion="1"] .ol-track { transition: none !important; }
 }
+.ol-slider[data-effect="arc"] .ol-viewport { perspective: 900px; }
+.ol-slider[data-effect="arc"] .ol-track { transform-style: preserve-3d; }
+.ol-slider[data-effect="arc"] .ol-slide { backface-visibility: hidden; }

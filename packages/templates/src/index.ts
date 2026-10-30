@@ -1,7 +1,7 @@
 export * from "./types.ts";
 export { renderArticles1250x400, AD_HEIGHT } from "./articles-1250x400.ts";
 export { renderArticlesMobile } from "./articles-mobile.ts";
-export { renderImageSlider, slideHref, SLIDER_CANVAS } from "./image-slider.ts";
+export { renderImageSlider, slideHref, sliderView, isMobile as isMobileSlider, SLIDER_CANVAS, SLIDER_CANVAS_MOBILE } from "./image-slider.ts";
 export { validate, validateImageSlider, MIN_ARTICLES, MIN_SLIDES } from "./validate.ts";
 export type { Problem } from "./validate.ts";
 export { CLICKTAG_JS } from "./clicktag.ts";

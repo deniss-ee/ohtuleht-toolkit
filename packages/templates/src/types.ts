@@ -69,6 +69,7 @@ export interface ArticlesBannerConfig {
 export interface RuntimeAssets {
   runtimeJs: string;
   sliderCss: string;
+  cubeJs?: string; // only for banners with the cube transition
 }
 
 // ---- Image slider (client banners): a background picture with a slider of pictures on top. Format 3 in docs/BANNERS.md.
@@ -89,18 +90,31 @@ export interface SliderLayout {
   visible: number; // slides shown at once; each slide is (width - gaps) / visible wide and `height` high
 }
 
-export type SliderFormat = "image-slider-1250x400";
+// 1250x400: fixed desktop banner. 600x500: phone banner that fills the page width and keeps the 6:5 shape
+// (everything inside scales with it). Both are one campaign: slides, links and behaviour are shared.
+export type SliderFormat = "image-slider-1250x400" | "image-slider-600x500";
+
+// slide: the strip moves sideways. arc (desktop): slides on a ring, the middle one straight. cube (mobile): one slide at a time on a turning cube.
+export type SliderEffect = "slide" | "arc" | "cube";
+
+// What differs between the two sizes. background is a file name inside the zip; layout is in px of the 1250x400 or 600x500 canvas.
+export interface SliderView {
+  background: string;
+  layout: SliderLayout;
+  arrows: boolean;
+  effect: SliderEffect;
+}
 
 export interface ImageSliderConfig {
   v: 1;
   kind: "image-slider"; // tells these zips apart from the articles banners
   format: SliderFormat;
   campaign: string;
-  background: { src: string; clickable: boolean; href: string }; // href empty = the ad system's link
+  backgroundLink: { clickable: boolean; href: string }; // href empty = the ad system's link
   slides: SliderSlide[];
   linkMode: "shared" | "each"; // one link for all slides, or one per slide
   sharedHref: string;
-  layout: SliderLayout;
-  arrows: boolean;
+  desktop: SliderView;
+  mobile: SliderView;
   behavior: { shuffle: boolean; autoplay: boolean; delayMs: number; speedMs: number; loop: boolean };
 }

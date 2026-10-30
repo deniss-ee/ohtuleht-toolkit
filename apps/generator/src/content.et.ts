@@ -14,7 +14,7 @@ export const bannerTypes: En.BannerType[] = [
   { id: "articles-1250x400", name: "Artiklid", size: "1250x400", device: "Arvuti", description: "Päis ja artiklikaartide slaider.", ready: true },
   { id: "articles-mobile", name: "Artiklid", size: "Täislaius x 498", device: "Telefon", description: "Päis ja pühitavad artiklikaardid punktidega, telefoni laiune.", ready: true },
   { id: "image-slider-1250x400", name: "Piltide slaider", size: "1250x400", device: "Arvuti", description: "Kliendi taust ja piltide slaider.", ready: true },
-  { id: "image-slider-600x500", name: "Piltide slaider", size: "600x500", device: "Telefon", description: "Kliendi pildid liugu-, hajumis- või kuubiüleminekuga.", ready: false },
+  { id: "image-slider-600x500", name: "Piltide slaider", size: "600x500", device: "Telefon", description: "Kliendi taust ja pühitavad pildid, liugumine või kuup.", ready: true },
 ];
 
 export const contentMarketing: typeof En.contentMarketing = {
@@ -186,6 +186,12 @@ export const editor: typeof En.editor = {
   legacyVisible: (n) => `Vana bänner näitas korraga ${n} artiklit. Uus näitab 4 või reklaami korral 3.`,
   legacyShuffle: "Segamine on väljas, nagu vanas bänneris. Saad selle sisse lülitada jaotises Slaideri seaded.",
   legacyColors: "Värvid loeti vanast stiililehest. Palun kontrolli neid jaotises Värvid.",
+  legacySliderLinks: "Slaidide ja tausta lingid loeti vanast bännerist. Tühi link tähendab reklaamisüsteemis määratud linki (clickTag). Kontrolli neid jaotises Slaidid.",
+  legacySliderPosition: "Slaideri asukoht ja suurus loeti vanast stiililehest. Kontrolli neid jaotises Asukoht ja suurus.",
+  legacySliderNoPicture: (n: number) => `${n} pilti ei leitud zipist ja need jäeti välja.`,
+  legacySliderNoBackground: "Taustapilti ei leitud zipist. Vali see uuesti.",
+  legacySliderScript: "Vana leht laadis lisaskripti teisest serverist. Seda ei võetud üle.",
+  legacySliderMobile: "See on arvutibänner. Telefoni jaoks vali üleval Mobiil ja lisa 600x500 taust.",
   exampleLoaded: "Näidis laaditud.",
 };
 
@@ -566,6 +572,7 @@ export const home: typeof En.home = {
         { id: "articles-1250x400", name: "Artiklibänner, arvuti", text: "1250x400, päis ja artiklikaartide slaider." },
         { id: "articles-mobile", name: "Artiklibänner, telefon", text: "Pühitavad artiklikaardid, telefoni laiused." },
         { id: "image-slider-1250x400", name: "Piltide slaider, arvuti", text: "1250x400, taust ja piltide slaider." },
+        { id: "image-slider-600x500", name: "Piltide slaider, mobiil", text: "600x500, telefoni laiune, pühitavad pildid." },
         { id: "header-bar", name: "Päiseriba", text: "Teemalehe ülaosas olev riba." },
       ],
     },
@@ -649,6 +656,15 @@ export const sliderEditor = {
   slideSize: (w: number, h: number) => `Iga slaid on ${w}x${h} px.`,
   arrows: "Näita nooli",
   continueName: "Piltide slaider",
+  bgFileHintMobile: "Suurus 600x500 või teravate ekraanide jaoks 1200x1000. PNG või JPG.",
+  layoutHintMobile: "Kus slaider 600x500 taustal asub. Mobiilibänner skaleerub lehe laiusega, seega hoia see kuju.",
+  effectTitle: "Efekt",
+  effectSlide: "Liugumine",
+  effectSlideHint: "Pildid liiguvad küljele.",
+  effectArc: "Kaar",
+  effectArcHint: "Keskmine pilt on sirge ja teised on ära pööratud, nagu seisaksid pildid ringil. Parim, kui näha on 3 slaidi.",
+  effectCube: "Kuup",
+  effectCubeHint: "Üks pilt korraga, pöördub nagu kuup. Pühi sõrmega või kasuta nooli.",
   emptyTitle: "Alusta piltidest",
   emptyText: "Vali taust ja lisa slaidipildid. Bänner ilmub siia, kui töötad.",
 };

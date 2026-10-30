@@ -2,14 +2,14 @@
 //   ?section=home | content | tools | brand   (no section = home)
 //   &tool=image-cropper | movie-banner | article-scraper | picture-converter       (with section=tools)
 //   &tab=colours | logos | fonts | eye                     (with section=brand)
-//   &make=header-bar | articles-1250x400 | articles-mobile | image-slider-1250x400   (with section=content: opens a new banner of that type)
+//   &make=header-bar | articles-1250x400 | articles-mobile | image-slider-1250x400 | image-slider-600x500   (with section=content: opens a new banner of that type)
 //   &lang=en | et
 import type { Lang, PageId, ToolInfo } from "@/content";
 
 export type BrandTab = "colours" | "logos" | "fonts" | "eye";
 export const PAGES: PageId[] = ["home", "content", "tools", "brand"];
 export const TOOL_IDS: ToolInfo["id"][] = ["image-cropper", "movie-banner", "article-scraper", "picture-converter"];
-export const MAKE_IDS = ["header-bar", "articles-1250x400", "articles-mobile", "image-slider-1250x400"];
+export const MAKE_IDS = ["header-bar", "articles-1250x400", "articles-mobile", "image-slider-1250x400", "image-slider-600x500"];
 
 export interface Route {
   page: PageId | null; // null = not in the link (the home page opens)

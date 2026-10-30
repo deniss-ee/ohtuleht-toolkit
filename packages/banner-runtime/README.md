@@ -1,6 +1,6 @@
 # Banner runtime
 
-Dependency-free slider script that replaces Swiper in banners. Builds to one file, `dist/runtime.js` (about 1.7 KB gzip, budget 3 KB).
+Dependency-free slider script that replaces Swiper in banners. Builds to `dist/runtime.js` (about 1.9 KB gzip, budget 3 KB) and `dist/cube.js` (cube transition, about 1.1 KB gzip, budget 2 KB; only banners that use it carry it).
 
 ## Run locally
 
@@ -45,6 +45,8 @@ Optional pagination (used by the mobile banner, which has no arrows): `<div clas
 | `data-loop` | 1 | Endless loop |
 | `data-respect-motion` | 0 | 1 = obey the OS "reduce motion" setting (autoplay off, no slide animation) |
 | `data-pause-on-hover` | 0 | 1 = pause autoplay while hovered or focused |
+| `data-gap-css` | none | Gap with its own unit, e.g. `2cqw`, for banners that scale with their width (replaces `data-gap` for layout) |
+| `data-effect` | slide | `arc`: slides on a ring (middle straight, others turned away), best with 3 or 5 visible. `cube`: run by `cube.js`, one slide at a time |
 
 ## Behaviour
 
@@ -55,5 +57,5 @@ Optional pagination (used by the mobile banner, which has no arrows): `<div clas
 
 ## Open items
 
-- Slide-fade and cube transitions (image-slider template).
+- Fade transition.
 - Automated tests (needs the test setup from the CI issue).

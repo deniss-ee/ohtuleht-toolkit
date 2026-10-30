@@ -3,6 +3,8 @@
 //   .ol-slider[data-visible][data-gap][data-delay][data-speed][data-shuffle][data-loop]
 //     button.ol-prev
 //     .ol-viewport > .ol-track > .ol-slide*
+//   Optional: data-gap-css="1.6cqw" (gap with its own unit, for banners that scale with their width), data-effect="arc"
+//   (slides on a ring: the middle one straight, the others turned away; best with 3 or 5 visible).
 //     button.ol-next
 //     .ol-dots > button.ol-dot*   (optional pagination, one dot per slide)
 
@@ -65,7 +67,7 @@ export function initSlider(root: HTMLElement): void {
   const n = slides.length;
 
   root.style.setProperty("--ol-visible", String(o.visible));
-  root.style.setProperty("--ol-gap", o.gap + "px");
+  root.style.setProperty("--ol-gap", root.dataset.gapCss ?? o.gap + "px");
 
   // Everything fits: plain row, no arrows, no autoplay. The cards share the whole width
   // (2 articles = two wide cards), instead of keeping the 4-column width and leaving a gap.
@@ -110,9 +112,21 @@ export function initSlider(root: HTMLElement): void {
     const b = track.children[1] as HTMLElement;
     step = b.getBoundingClientRect().left - a.getBoundingClientRect().left;
   };
+  // Arc effect: every slide is turned by its distance from the middle of the view (a fraction while dragging).
+  const arc = root.dataset.effect === "arc";
+  const bend = (pos: number, animate: boolean) => {
+    const mid = pos + (o.visible - 1) / 2;
+    Array.from(track.children).forEach((el, i) => {
+      const d = Math.max(-2, Math.min(2, i - mid));
+      const s = (el as HTMLElement).style;
+      s.transition = animate && speed ? `transform ${speed}ms ease` : "none";
+      s.transform = `translate3d(${-d * 22}px,0,${-Math.abs(d) * 70}px) rotateY(${d * 34}deg)`;
+    });
+  };
   const place = (x: number, animate: boolean) => {
     track.style.transition = animate && speed ? `transform ${speed}ms ease` : "none";
     track.style.transform = `translate3d(${x}px,0,0)`;
+    if (arc) bend(-x / step, animate);
   };
   const dots = Array.from(root.querySelectorAll<HTMLElement>(".ol-dot"));
   const render = (animate: boolean) => {

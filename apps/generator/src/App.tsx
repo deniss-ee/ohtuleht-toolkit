@@ -9,7 +9,8 @@ import { contentMarketing, editor, getLang, setLang, subscribeLang, type PageId,
 import { AppShell } from "@/layout/AppShell";
 import { newDraft } from "@/lib/banner";
 import { importHeaderZip, newHeaderDraft } from "@/lib/header";
-import { importSliderZip, newSliderDraft } from "@/lib/slider";
+import { importSliderAny } from "@/lib/legacySlider";
+import { newSliderDraft } from "@/lib/slider";
 import { buildSearch, parseRoute, type BrandTab } from "@/lib/route";
 import { clearWork, loadWork, savedInfo, saveWork, type SavedInfo, type Work } from "@/lib/storage";
 import { importZip } from "@/lib/zip";
@@ -25,7 +26,7 @@ import { ToolsHome } from "@/pages/ToolsHome";
 import { ArticleScraper } from "@/pages/ArticleScraper";
 import { PictureConverter } from "@/pages/PictureConverter";
 
-const newWork = (typeId: string): Work => (typeId === "header-bar" ? { kind: "header", draft: newHeaderDraft() } : typeId === "image-slider-1250x400" ? { kind: "slider", draft: newSliderDraft() } : { kind: "banner", draft: newDraft(typeId === "articles-mobile" ? "articles-mobile" : "articles-1250x400") });
+const newWork = (typeId: string): Work => (typeId === "header-bar" ? { kind: "header", draft: newHeaderDraft() } : typeId === "image-slider-1250x400" || typeId === "image-slider-600x500" ? { kind: "slider", draft: newSliderDraft(typeId) } : { kind: "banner", draft: newDraft(typeId === "articles-mobile" ? "articles-mobile" : "articles-1250x400") });
 
 export function App() {
   const lang = useSyncExternalStore(subscribeLang, getLang); // render everything again when the language changes
@@ -56,13 +57,14 @@ export function App() {
   const open = async (file: File) => {
     try {
       const header = await importHeaderZip(file);
-      const slider = header ? null : await importSliderZip(file);
+      const slider = header ? null : await importSliderAny(file);
       if (header) {
         start({ kind: "header", draft: header });
         toast.success(editor.imported);
       } else if (slider) {
-        start({ kind: "slider", draft: slider });
-        toast.success(editor.imported);
+        start({ kind: "slider", draft: slider.draft });
+        if (slider.notes.length) setNotes(slider.notes);
+        else toast.success(editor.imported);
       } else {
         const opened = await importZip(file);
         start({ kind: "banner", draft: opened.draft });

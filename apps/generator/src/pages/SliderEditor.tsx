@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowDown, ArrowLeft, ArrowUp, CheckCircle2, Download, FileArchive, FlaskConical, ImagePlus, Images, LayoutDashboard, Pin, PinOff, SlidersHorizontal, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
+import { isMobileSlider, sliderView } from "@ohtuleht/templates";
+import type { SliderEffect, SliderView } from "@ohtuleht/templates";
 import { Collapsible, Section, SwitchRow } from "@/components/editor/FormParts";
 import { goTo, HoverPill } from "@/components/editor/HoverPill";
 import { SwapFrame } from "@/components/editor/SwapFrame";
@@ -13,17 +15,19 @@ import { editor as e, sliderEditor as t, ui } from "@/content";
 import { Toggles } from "@/layout/AppShell";
 import { formatSize } from "@/lib/format";
 import type { Optimised } from "@/lib/optimise";
-import { downloadSliderZip, exampleSliderDraft, fileToSliderPicture, renderSliderPreview, sliderProblems, sliderWeightKb, tidy, type SliderDraft } from "@/lib/slider";
+import { downloadSliderZip, exampleSliderDraft, fileToSliderPicture, renderSliderPreview, sliderProblems, sliderWeightKb, switchSliderFormat, tidy, type SliderDraft } from "@/lib/slider";
 
 const BUDGET_KB = 100;
-const W = 1250;
-const H = 400;
+const PHONES = [375, 390, 430];
 
 const SPEEDS = [
   { label: e.speedFast, ms: 250 },
   { label: e.speedNormal, ms: 500 },
   { label: e.speedSlow, ms: 900 },
 ];
+const EFFECTS: Record<"desktop" | "mobile", SliderEffect[]> = { desktop: ["slide", "arc"], mobile: ["slide", "cube"] };
+const EFFECT_LABEL = (f: SliderEffect) => (f === "arc" ? t.effectArc : f === "cube" ? t.effectCube : t.effectSlide);
+const EFFECT_HINT = (f: SliderEffect) => (f === "arc" ? t.effectArcHint : f === "cube" ? t.effectCubeHint : t.effectSlideHint);
 const nearestSpeed = (ms: number) => SPEEDS.reduce((best, s) => (Math.abs(s.ms - ms) < Math.abs(best.ms - ms) ? s : best)).ms;
 
 // Number box for a size in pixels.
@@ -37,10 +41,17 @@ function Num({ id, label, value, min, onChange }: { id: string; label: string; v
 }
 
 // The banner at full size when the screen allows, otherwise scaled to fit; does not flicker while editing.
+// The phone banner is as wide as the phone and 5/6 of that high.
 function SliderPreview({ draft, pinned, onPin, onTryExample }: { draft: SliderDraft; pinned: boolean; onPin: (v: boolean) => void; onTryExample: () => void }) {
   const box = useRef<HTMLDivElement>(null);
-  const [boxW, setBoxW] = useState(W);
-  const empty = !draft.config.background.src && draft.config.slides.length === 0;
+  const [boxW, setBoxW] = useState(1250);
+  const [phone, setPhone] = useState(375);
+  const mobile = isMobileSlider(draft.config);
+  const W = mobile ? phone : 1250;
+  const H = mobile ? Math.round((phone * 5) / 6) : 400;
+  const size = mobile ? "600x500" : "1250x400";
+  const view = sliderView(draft.config);
+  const empty = !view.background && draft.config.slides.length === 0;
   useEffect(() => {
     const el = box.current;
     if (!el) return;
@@ -55,27 +66,42 @@ function SliderPreview({ draft, pinned, onPin, onTryExample }: { draft: SliderDr
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-baseline gap-3">
           <span className="text-sm font-semibold">{e.previewTitle}</span>
-          {!empty && <span className="text-xs text-muted-foreground">{pct < 100 ? e.previewScaled(pct, "1250x400") : e.previewFull("1250x400")}</span>}
+          {!empty && <span className="text-xs text-muted-foreground">{mobile ? e.previewMobile(phone) : pct < 100 ? e.previewScaled(pct, size) : e.previewFull(size)}</span>}
         </div>
-        <Button variant="ghost" size="sm" className="gap-1.5" aria-pressed={pinned} onClick={() => onPin(!pinned)}>
-          {pinned ? <Pin className="size-4" /> : <PinOff className="size-4" />}
-          {e.pin}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="ghost" size="sm" className="gap-1.5" aria-pressed={pinned} onClick={() => onPin(!pinned)}>
+            {pinned ? <Pin className="size-4" /> : <PinOff className="size-4" />}
+            {e.pin}
+          </Button>
+          {mobile && (
+            <Tabs value={String(phone)} onValueChange={(v) => setPhone(Number(v))}>
+              <TabsList aria-label={e.phoneWidth}>
+                {PHONES.map((w) => (
+                  <TabsTrigger key={w} value={String(w)}>
+                    {w}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          )}
+        </div>
       </div>
       <div ref={box} className={empty ? "relative w-full overflow-hidden rounded-xl border border-dashed" : "relative w-full overflow-hidden"} style={{ height: empty ? 240 : H * scale }}>
-        {empty ? (
-          <div className="flex h-full flex-col items-center justify-center gap-3 p-4 text-center">
-            <div>
-              <h2 className="text-lg font-semibold">{t.emptyTitle}</h2>
-              <p className="text-sm text-muted-foreground">{t.emptyText}</p>
+        <div className="absolute inset-y-0 left-1/2 -translate-x-1/2" style={{ width: mobile && !empty ? W * scale : "100%" }}>
+          {empty ? (
+            <div className="flex h-full flex-col items-center justify-center gap-3 p-4 text-center">
+              <div>
+                <h2 className="text-lg font-semibold">{t.emptyTitle}</h2>
+                <p className="text-sm text-muted-foreground">{t.emptyText}</p>
+              </div>
+              <Button variant="outline" className="gap-2" onClick={onTryExample}>
+                <FlaskConical className="size-4" /> {e.emptyTryExample}
+              </Button>
             </div>
-            <Button variant="outline" className="gap-2" onClick={onTryExample}>
-              <FlaskConical className="size-4" /> {e.emptyTryExample}
-            </Button>
-          </div>
-        ) : (
-          <SwapFrame build={(id) => renderSliderPreview(draft, id)} deps={[draft]} width={W} height={H} scaleFor={(w) => Math.min(1, boxW / w)} title={ui.bannerPreview} />
-        )}
+          ) : (
+            <SwapFrame build={(id) => renderSliderPreview(draft, id)} deps={[draft, W, H]} width={W} height={H} scaleFor={(w) => Math.min(1, boxW / w)} title={ui.bannerPreview} />
+          )}
+        </div>
       </div>
     </div>
   );
@@ -93,13 +119,17 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
   const bgInput = useRef<HTMLInputElement>(null);
   const slideInput = useRef<HTMLInputElement>(null);
   const c = draft.config;
+  const mobile = isMobileSlider(c);
+  const view = sliderView(c);
   const set = (patch: Partial<SliderDraft["config"]>) => onChange(tidy({ ...draft, config: { ...c, ...patch } }));
-  const setLayout = (patch: Partial<SliderDraft["config"]["layout"]>) => set({ layout: { ...c.layout, ...patch } });
+  // Background, layout, arrows and effect belong to the size being edited.
+  const setView = (patch: Partial<SliderView>) => set(mobile ? { mobile: { ...c.mobile, ...patch } } : { desktop: { ...c.desktop, ...patch } });
+  const setLayout = (patch: Partial<SliderView["layout"]>) => setView({ layout: { ...view.layout, ...patch } });
   const setBehavior = (patch: Partial<SliderDraft["config"]["behavior"]>) => set({ behavior: { ...c.behavior, ...patch } });
 
   const issues = sliderProblems(draft);
   const weightKb = useMemo(() => sliderWeightKb(draft), [draft]);
-  const slideW = Math.round((c.layout.width - c.layout.gap * (c.layout.visible - 1)) / Math.max(1, c.layout.visible));
+  const slideW = Math.round((view.layout.width - view.layout.gap * (view.layout.visible - 1)) / Math.max(1, view.layout.visible));
 
   // What the optimiser saved, in one message for all pictures just added.
   const report = (list: Optimised[]) => {
@@ -110,9 +140,10 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
 
   const onBackground = async (file: File | undefined) => {
     if (!file) return;
-    const p = await fileToSliderPicture(file, "background");
+    const p = await fileToSliderPicture(file, mobile ? "background-mobile" : "background");
     report([p.optimised]);
-    onChange(tidy({ ...draft, files: { ...draft.files, [p.key]: p.file }, config: { ...c, background: { ...c.background, src: p.key } } }));
+    const config = mobile ? { ...c, mobile: { ...c.mobile, background: p.key } } : { ...c, desktop: { ...c.desktop, background: p.key } };
+    onChange(tidy({ ...draft, files: { ...draft.files, [p.key]: p.file }, config }));
   };
 
   // Pictures are placed in the order of their file names (1.jpg, 2.jpg, 10.jpg).
@@ -135,7 +166,7 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
   const setSlideHref = (i: number, href: string) => set({ slides: c.slides.map((s, j) => (j === i ? { ...s, href } : s)) });
 
   const loadExample = async () => {
-    onChange(await exampleSliderDraft());
+    onChange(switchSliderFormat(await exampleSliderDraft(), c.format));
     toast.success(e.exampleLoaded);
   };
 
@@ -149,7 +180,7 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
   };
   useSaveShortcut(download, issues.length === 0 && !busy);
 
-  const bgFile = draft.files[c.background.src];
+  const bgFile = draft.files[view.background];
 
   return (
     <div className="fixed inset-0 z-40 flex flex-col bg-background">
@@ -161,9 +192,22 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
         <div className="min-w-0 flex-1">
           <div className="truncate font-semibold leading-tight">{c.campaign.trim() || t.untitled}</div>
           <div className="text-xs text-muted-foreground">
-            {t.heading} · 1250x400
+            {t.heading} · {mobile ? "600x500" : "1250x400"}
           </div>
         </div>
+        <Tabs
+          value={c.format}
+          onValueChange={(v) => {
+            const format = v as SliderDraft["config"]["format"];
+            onChange(switchSliderFormat(draft, format));
+            toast.success(e.versionSwitched(format === "image-slider-600x500" ? e.versionMobile : e.versionDesktop), { id: "version-switched" });
+          }}
+        >
+          <TabsList aria-label={e.versionLabel}>
+            <TabsTrigger value="image-slider-1250x400">{e.versionDesktop} 1250x400</TabsTrigger>
+            <TabsTrigger value="image-slider-600x500">{e.versionMobile} 600x500</TabsTrigger>
+          </TabsList>
+        </Tabs>
         <div className="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:flex-nowrap lg:gap-3">
           <HoverPill tone="plain" icon={<FileArchive className="size-3.5" />} label={`${weightKb.toFixed(1)} KB`}>
             {() => (
@@ -253,7 +297,7 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
                 </Section>
 
                 <Section title={t.bgTitle} description={t.bgHint} icon={ImagePlus} tone="ink">
-                  {bgFile && <img src={bgFile.dataUrl} alt="" className="aspect-[1250/400] w-full rounded-md border object-cover" />}
+                  {bgFile && <img src={bgFile.dataUrl} alt="" className={mobile ? "aspect-[6/5] max-h-64 rounded-md border object-cover" : "aspect-[1250/400] w-full rounded-md border object-cover"} />}
                   <div className="space-y-2">
                     <input ref={bgInput} type="file" className="sr-only" aria-label={t.bgTitle} accept="image/png,image/jpeg,image/webp" onChange={(ev) => onBackground(ev.target.files?.[0])} />
                     <Button id="bg-choose" variant="outline" size="sm" className="gap-2" onClick={() => bgInput.current?.click()}>
@@ -261,14 +305,14 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
                     </Button>
                     <p className="text-xs text-muted-foreground">
                       {bgFile ? "" : `${t.bgNone} `}
-                      {t.bgFileHint}
+                      {mobile ? t.bgFileHintMobile : t.bgFileHint}
                     </p>
                   </div>
-                  <SwitchRow id="bg-clickable" label={t.bgClickable} checked={c.background.clickable} onChange={(v) => set({ background: { ...c.background, clickable: v } })} />
-                  {c.background.clickable && (
+                  <SwitchRow id="bg-clickable" label={t.bgClickable} checked={c.backgroundLink.clickable} onChange={(v) => set({ backgroundLink: { ...c.backgroundLink, clickable: v } })} />
+                  {c.backgroundLink.clickable && (
                     <div className="space-y-1.5">
                       <Label htmlFor="bg-href">{t.bgLink}</Label>
-                      <Input id="bg-href" placeholder="https://" value={c.background.href} onChange={(ev) => set({ background: { ...c.background, href: ev.target.value } })} />
+                      <Input id="bg-href" placeholder="https://" value={c.backgroundLink.href} onChange={(ev) => set({ backgroundLink: { ...c.backgroundLink, href: ev.target.value } })} />
                       <p className="text-xs text-muted-foreground">{t.linkHint}</p>
                     </div>
                   )}
@@ -335,17 +379,28 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
 
               <div className="min-w-0 space-y-4 lg:col-start-2">
                 <h2 className="pt-2 text-sm font-semibold text-muted-foreground">{e.advanced}</h2>
-                <Collapsible title={t.layoutTitle} description={t.layoutHint} icon={LayoutDashboard} tone="yellow">
+                <Collapsible title={t.layoutTitle} description={mobile ? t.layoutHintMobile : t.layoutHint} icon={LayoutDashboard} tone="yellow">
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <Num id="layout-x" label={t.fromLeft} value={c.layout.x} min={0} onChange={(x) => setLayout({ x })} />
-                    <Num id="layout-y" label={t.fromTop} value={c.layout.y} min={0} onChange={(y) => setLayout({ y })} />
-                    <Num id="layout-width" label={t.sliderWidth} value={c.layout.width} min={1} onChange={(width) => setLayout({ width })} />
-                    <Num id="layout-height" label={t.sliderHeight} value={c.layout.height} min={1} onChange={(height) => setLayout({ height })} />
-                    <Num id="layout-gap" label={t.slideGap} value={c.layout.gap} min={0} onChange={(gap) => setLayout({ gap })} />
-                    <Num id="layout-visible" label={t.slidesVisible} value={c.layout.visible} min={1} onChange={(visible) => setLayout({ visible })} />
+                    <Num id="layout-x" label={t.fromLeft} value={view.layout.x} min={0} onChange={(x) => setLayout({ x })} />
+                    <Num id="layout-y" label={t.fromTop} value={view.layout.y} min={0} onChange={(y) => setLayout({ y })} />
+                    <Num id="layout-width" label={t.sliderWidth} value={view.layout.width} min={1} onChange={(width) => setLayout({ width })} />
+                    <Num id="layout-height" label={t.sliderHeight} value={view.layout.height} min={1} onChange={(height) => setLayout({ height })} />
+                    <Num id="layout-gap" label={t.slideGap} value={view.layout.gap} min={0} onChange={(gap) => setLayout({ gap })} />
+                    <Num id="layout-visible" label={t.slidesVisible} value={view.layout.visible} min={1} onChange={(visible) => setLayout({ visible })} />
                   </div>
-                  <p className="text-xs text-muted-foreground">{t.slideSize(slideW, c.layout.height)}</p>
-                  <SwitchRow id="arrows" label={t.arrows} checked={c.arrows} onChange={(v) => set({ arrows: v })} />
+                  <p className="text-xs text-muted-foreground">{t.slideSize(slideW, view.layout.height)}</p>
+                  <SwitchRow id="arrows" label={t.arrows} checked={view.arrows} onChange={(v) => setView({ arrows: v })} />
+                  <div className="space-y-2">
+                    <Label>{t.effectTitle}</Label>
+                    <div className="flex flex-wrap gap-2" role="group" aria-label={t.effectTitle}>
+                      {EFFECTS[mobile ? "mobile" : "desktop"].map((f) => (
+                        <Button key={f} variant={view.effect === f ? "default" : "outline"} size="sm" aria-pressed={view.effect === f} onClick={() => setView(f === "cube" ? { effect: f, layout: { ...view.layout, visible: 1 } } : f === "arc" ? { effect: f, layout: { ...view.layout, visible: Math.max(3, view.layout.visible) } } : { effect: f })}>
+                          {EFFECT_LABEL(f)}
+                        </Button>
+                      ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground">{EFFECT_HINT(view.effect)}</p>
+                  </div>
                 </Collapsible>
                 <Collapsible title={e.behaviorTitle} description={e.behaviorHint} icon={SlidersHorizontal} tone="ink">
                   <SwitchRow id="shuffle" label={e.shuffle} checked={c.behavior.shuffle} onChange={(v) => setBehavior({ shuffle: v })} />

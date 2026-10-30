@@ -2,7 +2,7 @@ import { initSlider } from "./slider";
 
 // Entry point of the banner script: wires up every slider on the page.
 function boot() {
-  document.querySelectorAll<HTMLElement>(".ol-slider").forEach(initSlider);
+  document.querySelectorAll<HTMLElement>('.ol-slider:not([data-effect="cube"])').forEach(initSlider);
 }
 
 // Slides and headers are div/a with role="link": Enter opens them like a real link.

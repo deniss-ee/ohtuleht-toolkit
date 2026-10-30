@@ -20,6 +20,7 @@ const ITEMS: Record<string, { icon: LucideIcon; to: Destination }> = {
   "articles-1250x400": { icon: Newspaper, to: { page: "content", make: "articles-1250x400" } },
   "articles-mobile": { icon: Smartphone, to: { page: "content", make: "articles-mobile" } },
   "image-slider-1250x400": { icon: Images, to: { page: "content", make: "image-slider-1250x400" } },
+  "image-slider-600x500": { icon: Smartphone, to: { page: "content", make: "image-slider-600x500" } },
   "header-bar": { icon: PanelTop, to: { page: "content", make: "header-bar" } },
   "movie-banner": { icon: Clapperboard, to: { page: "tools", tool: "movie-banner" } },
   "image-cropper": { icon: Crop, to: { page: "tools", tool: "image-cropper" } },
