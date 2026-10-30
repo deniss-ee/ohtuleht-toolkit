@@ -6,6 +6,7 @@ export const nav: En.NavItem[] = [
   { id: "content", label: "Sisuturundus", ready: true },
   { id: "tools", label: "Tööriistad", ready: true },
   { id: "brand", label: "Brändiraamat", ready: true },
+  { id: "request", label: "Bännertaotlus", ready: true },
   { id: "tasks", label: "Tööde jälgija", ready: true },
 ];
 
@@ -382,6 +383,10 @@ export const tracker: typeof En.tracker = {
   viewTable: "Tabel",
   viewClients: "Kliendid",
   newRequest: "Uus bännertaotlus",
+  sentTitle: "Taotlus lisatud",
+  sentText: "See on nüüd kaart ülesannete jälgija tahvlil.",
+  another: "Tee veel üks taotlus",
+  openBoard: "Ava ülesannete jälgija",
   backToBoard: "Tagasi tahvli juurde",
   requestTitle: "Uus bännertaotlus",
   requestIntro: "Ütle kujundajale, mida vajad. Täida plokid; kiri tehakse sinu eest.",
@@ -753,6 +758,15 @@ export const home: typeof En.home = {
         { id: "utm-builder", name: "Jälgimislingid", text: "UTM-sildid linkidele statistika jaoks." },
         { id: "email-signature", name: "E-posti allkiri", text: "Sinu andmed ja logo allkirjana Outlooki jaoks." },
         { id: "picture-converter", name: "Pildi lingi muundur", text: "CMS-i piltide lingid bänneri suurusteks." },
+      ],
+    },
+    {
+      id: "work",
+      title: "Taotlused ja ülesanded",
+      text: "Küsi bännerit ja jälgi tööd.",
+      items: [
+        { id: "banner-request", name: "Bännertaotlus", text: "Ütle kujundajale, mida vajad. Üks selge kiri, iga kord ühesugune." },
+        { id: "task-tracker", name: "Ülesannete jälgija", text: "Kõik taotlused tahvlil, koos klientide ja tähtaegadega." },
       ],
     },
     {

@@ -1,5 +1,5 @@
 // English interface text (the base: content.et.ts must have the same names and shapes).
-export type PageId = "home" | "content" | "tools" | "brand" | "tasks";
+export type PageId = "home" | "content" | "tools" | "brand" | "request" | "tasks";
 
 export interface NavItem {
   id: PageId;
@@ -12,6 +12,7 @@ export const nav: NavItem[] = [
   { id: "content", label: "Content marketing", ready: true },
   { id: "tools", label: "Tools", ready: true },
   { id: "brand", label: "Brand manual", ready: true },
+  { id: "request", label: "Banner request", ready: true },
   { id: "tasks", label: "Task tracker", ready: true },
 ];
 
@@ -415,6 +416,10 @@ export const tracker = {
   viewTable: "Table",
   viewClients: "Clients",
   newRequest: "New banner request",
+  sentTitle: "Request added",
+  sentText: "It is now a card on the task tracker board.",
+  another: "Make another request",
+  openBoard: "Open the task tracker",
   backToBoard: "Back to the board",
   requestTitle: "New banner request",
   requestIntro: "Tell the designer what you need. Fill in the blocks; the email is made for you.",
@@ -788,6 +793,15 @@ export const home = {
         { id: "utm-builder", name: "Tracking links", text: "UTM labels on links, for the statistics." },
         { id: "email-signature", name: "Email signature", text: "Your details and the logo as a signature for Outlook." },
         { id: "picture-converter", name: "Picture link converter", text: "CMS picture links to the banner sizes." },
+      ],
+    },
+    {
+      id: "work",
+      title: "Requests and tasks",
+      text: "Ask for a banner, and follow the work.",
+      items: [
+        { id: "banner-request", name: "Banner request", text: "Tell the designer what you need. One clear email, the same every time." },
+        { id: "task-tracker", name: "Task tracker", text: "All requests on a board, with clients and deadlines." },
       ],
     },
     {

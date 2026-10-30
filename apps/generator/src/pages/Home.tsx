@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Clapperboard, Crop, Eye, FileSearch, FileText, House, Images, Link2, Search, Lightbulb, Newspaper, Palette, PanelTop, PenLine, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
+import { Clapperboard, Crop, Eye, FileSearch, FileText, House, Images, Link2, ListChecks, Megaphone, Search, Lightbulb, Newspaper, Palette, PanelTop, PenLine, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
 import { ContinueCard } from "@/components/editor/ContinueCard";
 import { StartCard } from "@/components/editor/StartCard";
 import { Input } from "@/components/ui/input";
@@ -29,6 +29,8 @@ const ITEMS: Record<string, { icon: LucideIcon; to: Destination }> = {
   "picture-converter": { icon: Replace, to: { page: "tools", tool: "picture-converter" } },
   "utm-builder": { icon: Link2, to: { page: "tools", tool: "utm-builder" } },
   "email-signature": { icon: PenLine, to: { page: "tools", tool: "email-signature" } },
+  "banner-request": { icon: Megaphone, to: { page: "request" } },
+  "task-tracker": { icon: ListChecks, to: { page: "tasks" } },
   colours: { icon: Palette, to: { page: "brand", tab: "colours" } },
   logos: { icon: Shapes, to: { page: "brand", tab: "logos" } },
   fonts: { icon: Type, to: { page: "brand", tab: "fonts" } },

@@ -78,3 +78,23 @@ Built in the toolkit (side menu, Task tracker). No server, no login: briefs live
 ## Update: the request page
 
 A new banner request is a full page, not a window: blocks with icons (What is it for, Who is asking, When, Which banners, What do we need), banner formats chosen as picture tiles, a real client dropdown (filters while typing, offers "add as new client"), and a calendar (`@daypicker/react`, brand red, Monday first, EN/ET). On the right a checklist shows what is still needed, and the email that will be sent. The status is not asked for a new request (it starts as New); it is a dropdown only when an existing card is opened. Sending adds the request to the board.
+
+## Update: two tools
+
+- **Banner request** (own menu item, `?section=request`): the form for anyone. After sending, the request lands on the board.
+- **Task tracker** (`?section=tasks`): board, table and clients. A card opens as a page.
+- Both read and write the same data (`lib/tracker.ts`, `lib/clients.ts`), for now in the same browser.
+
+## Going online: Cloudflare (free plan is enough for this)
+
+Limits of the Workers Free plan, read from the Cloudflare docs on 2026-10-30 (check again before building):
+
+| Part | Free limit |
+|---|---|
+| Worker requests | 100,000 per day |
+| D1 (SQL database) | 5 million rows read and 100,000 rows written per day, 5 GB in total, 500 MB per database, 10 databases |
+| Workers KV | 100,000 reads and 1,000 writes per day, 1 GB |
+
+A small team making tens of requests and a few hundred card moves a day is far below this. When a limit is hit D1 refuses queries until 00:00 UTC; there is no surprise bill on the free plan.
+
+Plan: one Worker `api` with a D1 database (`briefs`, `clients`), the site (GitHub Pages) calls it. The same Worker later holds the Scoro API key and the article-by-ID scraper (#119, #40). Login (Microsoft Entra, #55) comes before real data is shared; until then only test data. The site keeps working offline with the browser copy as a fallback.

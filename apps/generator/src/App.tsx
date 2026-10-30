@@ -26,6 +26,7 @@ import { ToolsHome } from "@/pages/ToolsHome";
 import { ArticleScraper } from "@/pages/ArticleScraper";
 import { PictureConverter } from "@/pages/PictureConverter";
 import { TaskTracker } from "@/pages/TaskTracker";
+import { BannerRequest } from "@/pages/BannerRequest";
 import { UtmBuilder } from "@/pages/UtmBuilder";
 import { SignatureGenerator } from "@/pages/SignatureGenerator";
 
@@ -182,7 +183,8 @@ export function App() {
               <ContentMarketingHome onCreate={create} onUpload={open} saved={saved} onContinue={resume} onDiscard={discard} />
             ))}
           {page === "tools" && (tool === "image-cropper" ? <ImageCropper onBack={() => setTool(null)} /> : tool === "movie-banner" ? <MovieBanner onBack={() => setTool(null)} /> : tool === "article-scraper" ? <ArticleScraper onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "picture-converter" ? <PictureConverter onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "email-signature" ? <SignatureGenerator onBack={() => setTool(null)} /> : tool === "utm-builder" ? <UtmBuilder onBack={() => setTool(null)} /> : <ToolsHome onOpen={setTool} />)}
-          {page === "tasks" && <TaskTracker onMake={(id) => go({ page: "content", make: id })} />}
+          {page === "request" && <BannerRequest onOpenBoard={() => go({ page: "tasks" })} onMake={(id) => go({ page: "content", make: id })} />}
+          {page === "tasks" && <TaskTracker onMake={(id) => go({ page: "content", make: id })} onNewRequest={() => go({ page: "request" })} />}
           {page === "brand" && <BrandManual tab={tab} onTab={setTab} />}
         </AppShell>
         <Dialog open={notes.length > 0} onOpenChange={(o) => !o && setNotes([])}>

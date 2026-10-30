@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { tracker as t, getLang } from "@/content";
 import { clientsCsv, emptyClient, fetchSharedClients, loadClients, mergeClients, parseClientsCsv, saveClients, sortClients, type Client } from "@/lib/clients";
-import { isOverdue, loadBriefs, newBrief, parseBackup, saveBriefs, STATUSES, type Brief, type Status } from "@/lib/tracker";
+import { isOverdue, loadBriefs, parseBackup, saveBriefs, STATUSES, type Brief, type Status } from "@/lib/tracker";
 
 const shortDate = (s: string) => new Date(`${s}T12:00:00`).toLocaleDateString(getLang() === "et" ? "et-EE" : "en-GB", { day: "numeric", month: "short" });
 
@@ -177,12 +177,11 @@ function Clients({ clients, onChange }: { clients: Client[]; onChange: (list: Cl
 }
 
 // Task tracker: a banner request (the form), the board and table of requests, and the client list. A request becomes a card on the board.
-export function TaskTracker({ onMake }: { onMake: (typeId: string) => void }) {
+export function TaskTracker({ onMake, onNewRequest }: { onMake: (typeId: string) => void; onNewRequest: () => void }) {
   const [list, setList] = useState<Brief[]>(loadBriefs);
   const [clients, setClients] = useState<Client[]>(loadClients);
-  const [view, setView] = useState<"request" | "board" | "table" | "clients">("board");
+  const [view, setView] = useState<"board" | "table" | "clients">("board");
   const [open, setOpen] = useState<Brief | null>(null); // an existing card being edited
-  const [fresh, setFresh] = useState<Brief>(newBrief); // the blank request (a new one after each save)
   const [over, setOver] = useState<Status | null>(null);
   const file = useRef<HTMLInputElement>(null);
 
@@ -205,8 +204,6 @@ export function TaskTracker({ onMake }: { onMake: (typeId: string) => void }) {
     // A client typed for the first time joins the client list, so it is a choice next time.
     if (b.client.trim() && !clients.some((c) => c.name.trim().toLowerCase() === b.client.trim().toLowerCase())) commitClients(mergeClients(clients, [{ ...emptyClient(), name: b.client.trim() }]));
     setOpen(null);
-    setFresh(newBrief());
-    setView("board");
     window.scrollTo(0, 0);
     toast.success(exists ? t.saved : t.added);
   };
@@ -227,10 +224,10 @@ export function TaskTracker({ onMake }: { onMake: (typeId: string) => void }) {
     toast.success(t.imported(got.length));
   };
 
-  // The form takes the whole page: a new request, or an existing card.
-  if (open || view === "request") {
-    const b = open ?? fresh;
-    return <BriefPage key={b.id} initial={b} isNew={!open} clients={clients} onSave={save} onBack={() => (setOpen(null), setView("board"))} onDelete={(id) => (commit(list.filter((x) => x.id !== id)), setOpen(null), toast.success(t.deleted))} onMake={onMake} />;
+  // An existing card opens as a page.
+  if (open) {
+    const b = open;
+    return <BriefPage key={b.id} initial={b} isNew={false} clients={clients} onSave={save} onBack={() => setOpen(null)} onDelete={(id) => (commit(list.filter((x) => x.id !== id)), setOpen(null), toast.success(t.deleted))} onMake={onMake} />;
   }
 
   return (
@@ -263,7 +260,7 @@ export function TaskTracker({ onMake }: { onMake: (typeId: string) => void }) {
             <input ref={file} type="file" accept=".json,application/json" className="sr-only" aria-label={t.import} onChange={(e) => (e.target.files?.[0] && void importAll(e.target.files[0]), (e.target.value = ""))} />
           </>
         )}
-        <Button className="gap-2" onClick={() => setView("request")}>
+        <Button className="gap-2" onClick={onNewRequest}>
           <Plus className="size-4" /> {t.newRequest}
         </Button>
       </div>
