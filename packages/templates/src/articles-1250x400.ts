@@ -56,9 +56,9 @@ function css(config: ArticlesBannerConfig): string {
     '.title{padding:8px 0;color:var(--text);font:700 20px/24px "Fira Sans Condensed",sans-serif;overflow-wrap:break-word;transition:color .2s}' +
     ".ol-slide:hover .title{color:var(--hover)}" +
     ".ol-slide:focus-visible,.header:focus-visible{outline:2px solid var(--hover);outline-offset:2px}" +
-    // Neutral arrows (the same as in the image slider), inside the picture of the first and the last card, 8 px from the edge, level with the middle of the picture (215 px high).
+    // Neutral arrows (the same as in the image slider), inside the picture of the first and the last card, 8 px from the edge, level with the middle of the picture (215 px high, 32 px buttons).
     arrowCss() +
-    ".ol-prev,.ol-next{top:90px}" +
+    ".ol-prev,.ol-next{top:92px}" +
     ".ol-prev{left:8px}" +
     ".ol-next{right:8px}"
   );
