@@ -28,6 +28,7 @@ export interface Brief {
   notes: string;
   status: Status;
   created: string; // ISO time
+  example?: boolean; // a sample brief shown to new users; can be removed in one click
 }
 
 export const emptyRow = (): BannerRow => ({ format: bannerTypes[0]?.id ?? "other", placement: "", text: "", link: "" });
@@ -90,11 +91,24 @@ export function briefEmail(b: Brief): { subject: string; body: string } {
 export const MAILTO_LIMIT = 1800;
 export const mailtoHref = (to: string, subject: string, body: string) => `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
+// ---- examples: what a good brief looks like, so a new person sees the tool filled in ----
+const day = (offset: number) => new Date(Date.now() + offset * 86400000).toISOString().slice(0, 10);
+const ex = (id: string, p: Partial<Brief>): Brief => ({ ...newBrief(), id: "example-" + id, example: true, ...p });
+export const exampleBriefs = (): Brief[] => [
+  ex("rimi", { title: "Spring sale, Rimi", client: "Rimi Eesti", department: "Advertising sales", requester: "Mari Maasikas", email: "mari.maasikas@ohtuleht.ee", deadline: day(3), runFrom: day(7), runTo: day(21), status: "design", rows: [{ format: "articles-1250x400", placement: "Front page, top", text: "Spring prices: up to -30%", link: "https://www.rimi.ee/kevad?utm_source=ohtuleht&utm_medium=banner&utm_campaign=spring-sale" }, { format: "articles-mobile", placement: "Front page, mobile", text: "Spring prices: up to -30%", link: "https://www.rimi.ee/kevad?utm_source=ohtuleht&utm_medium=banner&utm_campaign=spring-sale" }], articles: "https://www.ohtuleht.ee/1169772/\nhttps://www.ohtuleht.ee/1169801/", materials: "Logo and pictures: https://example.com/rimi-materials\nFigma: https://www.figma.com/design/example", notes: "Red background, logo top left. Client wants to approve before it runs." }),
+  ex("telia", { title: "Black Friday teaser", client: "Telia", department: "Content marketing", requester: "Jaan Tamm", deadline: day(-2), status: "review", rows: [{ format: "image-slider-1250x400", placement: "Article pages, header", text: "Black Friday starts Monday", link: "https://www.telia.ee/blackfriday" }], notes: "Three pictures in the slider. Send a preview to the client first." }),
+  ex("saku", { title: "New beer, Saku", client: "Saku Õlletehas", department: "Advertising sales", requester: "Mari Maasikas", deadline: day(10), status: "new", rows: [{ format: "header-bar", placement: "Theme page: Beer", text: "Try the new taste", link: "https://www.saku.ee" }], materials: "Pictures to come from the client." }),
+  ex("kino", { title: "Movie premiere", client: "Forum Cinemas", department: "Content marketing", requester: "Liis Kask", deadline: day(-9), status: "delivered", rows: [{ format: "other", placement: "Entertainment section", text: "In cinemas from Friday", link: "https://www.forumcinemas.ee" }] }),
+  ex("lhv", { title: "Savings campaign", client: "LHV", department: "Advertising sales", requester: "Jaan Tamm", deadline: day(-20), status: "live", rows: [{ format: "articles-1250x400", placement: "Business section", text: "Savings at 3%", link: "https://www.lhv.ee" }] }),
+];
+
 // ---- storage (this browser only) ----
 const KEY = "ol-briefs";
 export function loadBriefs(): Brief[] {
   try {
-    const raw = JSON.parse(localStorage.getItem(KEY) ?? "[]");
+    const stored = localStorage.getItem(KEY);
+    if (stored === null) return exampleBriefs(); // first visit: show the tool with examples in it
+    const raw = JSON.parse(stored);
     return Array.isArray(raw) ? (raw.filter((b) => b && typeof b.id === "string") as Brief[]) : [];
   } catch {
     return [];

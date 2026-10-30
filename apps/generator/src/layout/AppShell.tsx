@@ -76,12 +76,12 @@ export function AppShell({ page, onNavigate, children }: { page: PageId; onNavig
         <Toggles />
       </header>
       <div className="flex flex-1 flex-col md:flex-row">
-        <nav aria-label={ui.mainNav} className="flex gap-1 overflow-x-auto border-b p-2 md:w-60 md:flex-col md:border-r md:border-b-0 md:p-3">
+        <nav aria-label={ui.mainNav} className="flex gap-1 overflow-x-auto border-b p-2 md:w-60 md:shrink-0 md:flex-col md:border-r md:border-b-0 md:p-3">
           {nav.map((item) => (
             <NavButton key={item.id} item={item} active={item.id === page} onSelect={onNavigate} />
           ))}
         </nav>
-        <main className="flex-1 p-4 md:px-6 md:py-4">{children}</main>
+        <main className="min-w-0 flex-1 p-4 md:px-6 md:py-4">{children}</main>
       </div>
     </div>
   );

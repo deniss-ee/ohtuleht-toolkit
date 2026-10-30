@@ -60,6 +60,15 @@ export function UtmBuilder({ onBack }: { onBack: () => void }) {
       <div className="space-y-2">
         <Label htmlFor="utm-links">{t.links}</Label>
         <Textarea id="utm-links" autoFocus rows={3} value={text} spellCheck={false} placeholder={t.placeholder} onChange={(e) => setText(e.target.value)} />
+        {!text && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => (setText("https://www.rimi.ee/kevad"), set({ source: "ohtuleht", medium: "banner", campaign: "Spring Sale" }))}
+          >
+            {t.tryExample}
+          </Button>
+        )}
         {rows.flatMap((r) => (r.result.ok ? [] : [r])).map((r) => (
           <p key={r.n} role="alert" className="text-sm text-destructive">
             {t.badLine(r.n)}

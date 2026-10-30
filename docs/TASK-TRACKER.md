@@ -64,3 +64,13 @@ Built in the toolkit (side menu, Task tracker). No server, no login: briefs live
 - **My briefs**: list with status (New, In design, Review, Delivered, Live, Closed), overdue marking, filter by status, edit, delete, backup and restore.
 - Code: `lib/tracker.ts` (fields, email text, storage), `pages/TaskTracker.tsx`, texts in `content.*.ts` (`tracker`).
 - Not yet: sharing briefs between people, Outlook/Exchange (Microsoft Graph), login, assignee, comments, opening the banner generator from a row (T3 to T5 above). Sending needs the person's own mail program until Graph is approved by IT.
+
+## Update: board, examples and clients
+
+- **Board** (like Notion or Trello): one column per status, cards you drag between columns; also a **Table** view. A brief opens as a page in a window with its fields, banner rows and the email.
+- **Examples** are shown on the first visit (five briefs, five clients) so the design can be judged; "Remove examples" clears them.
+- **Clients** (third view): add a company once and pick it every time. A client typed in a brief for the first time is added automatically. Import a CSV (a Scoro export works: columns name or company, email, phone, contact), export CSV.
+- **Where clients are kept, without a database:**
+  1. This browser (`localStorage`, key `ol-clients`).
+  2. The shared file `apps/generator/public/clients.json` in the repository (a list of `{ "name", "contact", "email", "phone", "note" }`). Everybody gets it when the page opens; add companies on GitHub and republish the site. It is merged with the person's own list by name.
+  3. Later: Scoro (needs access and an API key, so it must go through a Cloudflare Worker, never browser code) or a Worker with D1/KV. `Client.scoro` is reserved for the Scoro id. GitHub Pages cannot store data written by visitors; that needs a Worker.
