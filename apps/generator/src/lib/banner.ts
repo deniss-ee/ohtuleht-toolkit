@@ -103,7 +103,8 @@ export function renderPreview(draft: Draft, theme: "light" | "dark", id: number)
   const header = draft.headerFile && c.header.type === "image" ? { ...c.header, src: draft.headerFile.dataUrl } : c.header;
   const ad = c.ad && draft.adFile ? { ...c.ad, src: draft.adFile.dataUrl } : c.ad;
   const headerLogo = c.headerLogo && draft.logoFile ? draft.logoFile.dataUrl : undefined;
-  const colors = theme === "dark" ? c.theme.dark : c.theme.light;
+  // The phone banner's label is a block: its colour does not change in dark mode, so the dark tab keeps the light one.
+  const colors = { ...(theme === "dark" ? c.theme.dark : c.theme.light), ...(c.format === "articles-mobile" ? { badge: c.theme.light.badge } : {}) };
   const html = render({ ...c, header, ad, headerLogo, behavior: { ...c.behavior, shuffle: false }, theme: { light: colors, dark: colors } }, { runtimeJs, sliderCss });
   return html.replace("</body>", readySignal(id) + "</body>");
 }
