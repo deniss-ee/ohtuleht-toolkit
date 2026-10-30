@@ -74,3 +74,7 @@ Built in the toolkit (side menu, Task tracker). No server, no login: briefs live
   1. This browser (`localStorage`, key `ol-clients`).
   2. The shared file `apps/generator/public/clients.json` in the repository (a list of `{ "name", "contact", "email", "phone", "note" }`). Everybody gets it when the page opens; add companies on GitHub and republish the site. It is merged with the person's own list by name.
   3. Later: Scoro (needs access and an API key, so it must go through a Cloudflare Worker, never browser code) or a Worker with D1/KV. `Client.scoro` is reserved for the Scoro id. GitHub Pages cannot store data written by visitors; that needs a Worker.
+
+## Update: the request page
+
+A new banner request is a full page, not a window: blocks with icons (What is it for, Who is asking, When, Which banners, What do we need), banner formats chosen as picture tiles, a real client dropdown (filters while typing, offers "add as new client"), and a calendar (`@daypicker/react`, brand red, Monday first, EN/ET). On the right a checklist shows what is still needed, and the email that will be sent. The status is not asked for a new request (it starts as New); it is a dropdown only when an existing card is opened. Sending adds the request to the board.

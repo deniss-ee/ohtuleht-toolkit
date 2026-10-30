@@ -1,23 +1,19 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { AlertTriangle, Building2, CalendarDays, Download, Kanban, LayoutTemplate, ListChecks, Mail, Plus, Sparkles, Table2, Trash2, Upload } from "lucide-react";
+import { AlertTriangle, Building2, CalendarDays, Download, Kanban, ListChecks, Plus, Sparkles, Table2, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
+import { BriefPage, STATUS_DOT } from "@/components/editor/BriefPage";
 import { PageHeader } from "@/components/editor/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { bannerTypes, tracker as t } from "@/content";
+import { tracker as t, getLang } from "@/content";
 import { clientsCsv, emptyClient, fetchSharedClients, loadClients, mergeClients, parseClientsCsv, saveClients, sortClients, type Client } from "@/lib/clients";
-import { copyText } from "@/lib/clipboard";
-import { briefEmail, emptyRow, exampleBriefs, isOverdue, loadBriefs, MAILTO_LIMIT, mailtoHref, missing, newBrief, parseBackup, saveBriefs, STATUSES, type Brief, type Status } from "@/lib/tracker";
+import { isOverdue, loadBriefs, newBrief, parseBackup, saveBriefs, STATUSES, type Brief, type Status } from "@/lib/tracker";
 
-const SEND_TO = "ol-brief-to";
-const field = "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
-// Each status has a quiet colour, so a column or a chip is recognised before it is read.
-const DOT: Record<Status, string> = { new: "bg-ink-400", design: "bg-yellow-500", review: "bg-blue-500", delivered: "bg-green-600", live: "bg-red-600", closed: "bg-ink-600" };
+const shortDate = (s: string) => new Date(`${s}T12:00:00`).toLocaleDateString(getLang() === "et" ? "et-EE" : "en-GB", { day: "numeric", month: "short" });
+
 
 const initials = (name: string) =>
   name
@@ -38,10 +34,10 @@ function Field({ id, label, hint, children, wide }: { id: string; label: string;
 }
 
 function StatusDot({ status }: { status: Status }) {
-  return <span className={`size-2 shrink-0 rounded-full ${DOT[status]}`} aria-hidden />;
+  return <span className={`size-2 shrink-0 rounded-full ${STATUS_DOT[status]}`} aria-hidden />;
 }
 
-// A brief as a card: what, for whom, when. The whole card opens it.
+// A brief as a card: who it is for, what, when. The whole card opens it.
 function BriefCard({ b, onOpen, draggable }: { b: Brief; onOpen: () => void; draggable?: boolean }) {
   const late = isOverdue(b);
   const n = b.rows.filter((r) => r.placement || r.text).length;
@@ -51,229 +47,28 @@ function BriefCard({ b, onOpen, draggable }: { b: Brief; onOpen: () => void; dra
       draggable={draggable}
       onDragStart={(e) => e.dataTransfer.setData("text/plain", b.id)}
       onClick={onOpen}
-      className="w-full cursor-pointer rounded-xl border bg-card p-3 text-left shadow-xs transition hover:border-foreground/30 hover:shadow-sm focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+      className="group w-full cursor-grab rounded-xl border bg-card p-3.5 text-left shadow-xs transition hover:-translate-y-px hover:border-foreground/25 hover:shadow-md focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none active:cursor-grabbing"
     >
-      <span className="block font-medium leading-snug">{b.title || t.untitled}</span>
-      <p className="mt-0.5 flex items-center gap-1 text-sm text-muted-foreground">
-        <Building2 className="size-3.5 shrink-0" aria-hidden /> {b.client || "-"}
-      </p>
-      <div className="mt-3 flex flex-wrap items-center gap-1.5 text-xs whitespace-nowrap">
+      <span className="flex items-center gap-2 text-xs text-muted-foreground">
+        <span className="flex size-5 shrink-0 items-center justify-center rounded-md bg-muted text-[9px] font-semibold text-foreground">{initials(b.client)}</span>
+        <span className="truncate">{b.client || "-"}</span>
+        {b.example && <span className="ml-auto shrink-0 rounded bg-muted px-1 text-[10px]">{t.example}</span>}
+      </span>
+      <span className="mt-2 block leading-snug font-medium">{b.title || t.untitled}</span>
+      <span className="mt-3 flex flex-wrap items-center gap-1.5 text-xs whitespace-nowrap">
         <span className={`flex items-center gap-1 rounded-md px-1.5 py-0.5 ${late ? "bg-red-600/10 font-medium text-red-700 dark:text-red-400" : "bg-muted text-muted-foreground"}`}>
           {late ? <AlertTriangle className="size-3" aria-hidden /> : <CalendarDays className="size-3" aria-hidden />}
-          {b.deadline || t.noDate}
+          {b.deadline ? shortDate(b.deadline) : t.noDate}
         </span>
         <span className="rounded-md bg-muted px-1.5 py-0.5 text-muted-foreground">{t.banners(n)}</span>
-        {b.example && <span className="text-muted-foreground/70">{t.example}</span>}
         <span className="flex-1" />
         {b.requester && (
           <span title={b.requester} className="flex size-6 items-center justify-center rounded-full bg-primary/10 text-[10px] font-semibold text-primary">
             {initials(b.requester)}
           </span>
         )}
-      </div>
+      </span>
     </button>
-  );
-}
-
-// The brief itself, as a page in a window: fields, banner rows, and the email that will be sent.
-function BriefDialog({ initial, clients, onSave, onDelete, onClose, onMake }: { initial: Brief; clients: Client[]; onSave: (b: Brief) => void; onDelete: (id: string) => void; onClose: () => void; onMake: (typeId: string) => void }) {
-  const [b, setB] = useState<Brief>(initial);
-  const [touched, setTouched] = useState(false);
-  const [sure, setSure] = useState(false);
-  const [sendTo, setSendTo] = useState(() => {
-    try {
-      return localStorage.getItem(SEND_TO) ?? "";
-    } catch {
-      return "";
-    }
-  });
-  const patch = (p: Partial<Brief>) => setB((x) => ({ ...x, ...p }));
-  const row = (i: number, p: Partial<Brief["rows"][number]>) => patch({ rows: b.rows.map((r, j) => (j === i ? { ...r, ...p } : r)) });
-  const lacking = missing(b);
-  const bad = (k: (typeof lacking)[number]) => touched && lacking.includes(k);
-  const known = clients.some((c) => c.name.trim().toLowerCase() === b.client.trim().toLowerCase());
-  const mail = useMemo(() => briefEmail(b), [b]);
-  const isNew = initial.title === "" && !initial.example && initial.rows.length === 1 && !initial.rows[0]!.placement;
-
-  const copyEmail = () => {
-    setTouched(true);
-    if (!lacking.length) void copyText(`${mail.subject}\n\n${mail.body}`, t.copied);
-  };
-  const openEmail = () => {
-    setTouched(true);
-    if (lacking.length) return;
-    try {
-      localStorage.setItem(SEND_TO, sendTo);
-    } catch {
-      /* not remembered */
-    }
-    const href = mailtoHref(sendTo, mail.subject, mail.body);
-    if (href.length > MAILTO_LIMIT) {
-      void copyText(`${mail.subject}\n\n${mail.body}`, t.copied);
-      toast.message(t.tooLong);
-    } else location.href = href;
-  };
-  const save = () => {
-    setTouched(true);
-    if (!lacking.length) onSave({ ...b, example: false });
-  };
-  const fill = () => setB({ ...exampleBriefs()[0]!, id: b.id, example: false, status: "new", created: b.created });
-  const formats = [...new Set(b.rows.map((r) => r.format))].filter((f) => bannerTypes.some((x) => x.id === f && x.ready));
-
-  return (
-    <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-h-[92vh] gap-5 overflow-y-auto sm:max-w-3xl">
-        <DialogHeader>
-          <DialogTitle className="text-lg">{isNew ? t.dialogNew : t.dialogEdit}</DialogTitle>
-          <DialogDescription>{t.dialogIntro}</DialogDescription>
-        </DialogHeader>
-
-        <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t.status}>
-          {STATUSES.map((s) => (
-            <Button key={s} size="sm" variant={b.status === s ? "default" : "outline"} className="gap-2" aria-pressed={b.status === s} onClick={() => patch({ status: s })}>
-              <StatusDot status={s} /> {t.statuses[s]}
-            </Button>
-          ))}
-          {isNew && (
-            <Button size="sm" variant="ghost" className="ml-auto gap-2" onClick={fill}>
-              <Sparkles className="size-4" /> {t.fillExample}
-            </Button>
-          )}
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field id="b-title" label={t.fields.title} wide>
-            <Input id="b-title" className="h-10 text-base" value={b.title} aria-invalid={bad("title")} placeholder={t.placeholders.title} onChange={(e) => patch({ title: e.target.value })} />
-          </Field>
-          <Field id="b-client" label={t.fields.client} hint={b.client.trim() && !known ? t.newClientNote(b.client.trim()) : t.hints.client}>
-            <Input id="b-client" list="b-clients" value={b.client} aria-invalid={bad("client")} placeholder={t.pickClient} onChange={(e) => patch({ client: e.target.value })} />
-            <datalist id="b-clients">
-              {clients.map((c) => (
-                <option key={c.id} value={c.name} />
-              ))}
-            </datalist>
-          </Field>
-          <Field id="b-deadline" label={t.fields.deadline} hint={t.hints.deadline}>
-            <Input id="b-deadline" type="date" value={b.deadline} aria-invalid={bad("deadline")} onChange={(e) => patch({ deadline: e.target.value })} />
-          </Field>
-          <Field id="b-requester" label={t.fields.requester}>
-            <Input id="b-requester" value={b.requester} aria-invalid={bad("requester")} autoComplete="name" onChange={(e) => patch({ requester: e.target.value })} />
-          </Field>
-          <Field id="b-department" label={t.fields.department}>
-            <Input id="b-department" value={b.department} placeholder={t.placeholders.department} onChange={(e) => patch({ department: e.target.value })} />
-          </Field>
-          <Field id="b-from" label={t.fields.runFrom}>
-            <Input id="b-from" type="date" value={b.runFrom} onChange={(e) => patch({ runFrom: e.target.value })} />
-          </Field>
-          <Field id="b-to" label={t.fields.runTo}>
-            <Input id="b-to" type="date" value={b.runTo} onChange={(e) => patch({ runTo: e.target.value })} />
-          </Field>
-        </div>
-
-        <section aria-label={t.rowsTitle} className="space-y-3">
-          <div>
-            <h3 className="font-semibold">{t.rowsTitle}</h3>
-            <p className={`text-sm ${bad("rows") ? "text-destructive" : "text-muted-foreground"}`}>{t.rowsHint}</p>
-          </div>
-          {b.rows.map((r, i) => (
-            <div key={i} className="grid gap-3 rounded-xl border bg-muted/30 p-3 sm:grid-cols-2">
-              <Field id={`r-format-${i}`} label={t.row.format}>
-                <select id={`r-format-${i}`} className={field} value={r.format} onChange={(e) => row(i, { format: e.target.value })}>
-                  {bannerTypes.map((x) => (
-                    <option key={x.id} value={x.id}>
-                      {x.name} ({x.size})
-                    </option>
-                  ))}
-                  <option value="other">{t.row.other}</option>
-                </select>
-              </Field>
-              <Field id={`r-place-${i}`} label={t.row.placement}>
-                <Input id={`r-place-${i}`} value={r.placement} placeholder={t.placeholders.placement} onChange={(e) => row(i, { placement: e.target.value })} />
-              </Field>
-              <Field id={`r-text-${i}`} label={t.row.text}>
-                <Textarea id={`r-text-${i}`} rows={2} value={r.text} onChange={(e) => row(i, { text: e.target.value })} />
-              </Field>
-              <Field id={`r-link-${i}`} label={t.row.link}>
-                <Input id={`r-link-${i}`} type="url" value={r.link} placeholder="https://" onChange={(e) => row(i, { link: e.target.value })} />
-              </Field>
-              {b.rows.length > 1 && (
-                <div className="sm:col-span-2">
-                  <Button size="sm" variant="ghost" onClick={() => patch({ rows: b.rows.filter((_, j) => j !== i) })}>
-                    {t.row.remove}
-                  </Button>
-                </div>
-              )}
-            </div>
-          ))}
-          <Button variant="outline" size="sm" className="gap-2" onClick={() => patch({ rows: [...b.rows, emptyRow()] })}>
-            <Plus className="size-4" /> {t.row.add}
-          </Button>
-        </section>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field id="b-articles" label={t.fields.articles} hint={t.hints.articles}>
-            <Textarea id="b-articles" rows={3} value={b.articles} spellCheck={false} onChange={(e) => patch({ articles: e.target.value })} />
-          </Field>
-          <Field id="b-materials" label={t.fields.materials} hint={t.hints.materials}>
-            <Textarea id="b-materials" rows={3} value={b.materials} spellCheck={false} onChange={(e) => patch({ materials: e.target.value })} />
-          </Field>
-          <Field id="b-notes" label={t.fields.notes} wide>
-            <Textarea id="b-notes" rows={2} value={b.notes} onChange={(e) => patch({ notes: e.target.value })} />
-          </Field>
-        </div>
-
-        <section aria-label={t.emailTitle} className="space-y-3 rounded-xl border bg-muted/30 p-4">
-          <div>
-            <h3 className="font-semibold">{t.emailTitle}</h3>
-            <p className="text-sm text-muted-foreground">{t.emailHint}</p>
-          </div>
-          <div className="rounded-lg border bg-card p-3 text-sm">
-            <p className="font-medium">{mail.subject}</p>
-            <pre className="mt-2 max-h-52 overflow-auto font-mono text-xs whitespace-pre-wrap text-muted-foreground">{mail.body}</pre>
-          </div>
-          <Field id="b-sendto" label={t.fields.sendTo} hint={t.hints.sendTo}>
-            <Input id="b-sendto" type="email" value={sendTo} placeholder="designer@ohtuleht.ee" onChange={(e) => setSendTo(e.target.value)} />
-          </Field>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" className="gap-2" onClick={copyEmail}>
-              <Mail className="size-4" /> {t.copyEmail}
-            </Button>
-            <Button variant="outline" className="gap-2" onClick={openEmail}>
-              <Mail className="size-4" /> {t.openEmail}
-            </Button>
-          </div>
-        </section>
-
-        {touched && lacking.length > 0 && (
-          <p role="alert" className="flex items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
-            <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden /> {t.missingIntro} {lacking.map((k) => t.missing[k]).join(", ")}.
-          </p>
-        )}
-
-        <div className="flex flex-wrap items-center gap-2 border-t pt-4">
-          <Button onClick={save}>{isNew ? t.save : t.update}</Button>
-          <Button variant="ghost" onClick={onClose}>
-            {t.cancel}
-          </Button>
-          {formats.map((f) => (
-            <Button key={f} variant="outline" className="gap-2" onClick={() => onMake(f)}>
-              <LayoutTemplate className="size-4" /> {t.make(bannerTypes.find((x) => x.id === f)?.name ?? f)}
-            </Button>
-          ))}
-          <span className="flex-1" />
-          {!isNew &&
-            (sure ? (
-              <Button variant="destructive" onClick={() => onDelete(b.id)}>
-                {t.deleteSure}
-              </Button>
-            ) : (
-              <Button variant="ghost" className="gap-2 text-destructive" onClick={() => setSure(true)}>
-                <Trash2 className="size-4" /> {t.delete}
-              </Button>
-            ))}
-        </div>
-      </DialogContent>
-    </Dialog>
   );
 }
 
@@ -381,12 +176,13 @@ function Clients({ clients, onChange }: { clients: Client[]; onChange: (list: Cl
   );
 }
 
-// Task tracker: briefs for banner jobs on a board (like Notion or Trello), as a table, and the client list.
+// Task tracker: a banner request (the form), the board and table of requests, and the client list. A request becomes a card on the board.
 export function TaskTracker({ onMake }: { onMake: (typeId: string) => void }) {
   const [list, setList] = useState<Brief[]>(loadBriefs);
   const [clients, setClients] = useState<Client[]>(loadClients);
-  const [view, setView] = useState<"board" | "table" | "clients">("board");
-  const [open, setOpen] = useState<Brief | null>(null);
+  const [view, setView] = useState<"request" | "board" | "table" | "clients">("board");
+  const [open, setOpen] = useState<Brief | null>(null); // an existing card being edited
+  const [fresh, setFresh] = useState<Brief>(newBrief); // the blank request (a new one after each save)
   const [over, setOver] = useState<Status | null>(null);
   const file = useRef<HTMLInputElement>(null);
 
@@ -409,7 +205,10 @@ export function TaskTracker({ onMake }: { onMake: (typeId: string) => void }) {
     // A client typed for the first time joins the client list, so it is a choice next time.
     if (b.client.trim() && !clients.some((c) => c.name.trim().toLowerCase() === b.client.trim().toLowerCase())) commitClients(mergeClients(clients, [{ ...emptyClient(), name: b.client.trim() }]));
     setOpen(null);
-    toast.success(t.saved);
+    setFresh(newBrief());
+    setView("board");
+    window.scrollTo(0, 0);
+    toast.success(exists ? t.saved : t.added);
   };
   const move = (id: string, status: Status) => commit(list.map((b) => (b.id === id ? { ...b, status } : b)));
   const examples = list.some((b) => b.example);
@@ -427,6 +226,12 @@ export function TaskTracker({ onMake }: { onMake: (typeId: string) => void }) {
     commit([...got.filter((b) => !ids.has(b.id)), ...list]);
     toast.success(t.imported(got.length));
   };
+
+  // The form takes the whole page: a new request, or an existing card.
+  if (open || view === "request") {
+    const b = open ?? fresh;
+    return <BriefPage key={b.id} initial={b} isNew={!open} clients={clients} onSave={save} onBack={() => (setOpen(null), setView("board"))} onDelete={(id) => (commit(list.filter((x) => x.id !== id)), setOpen(null), toast.success(t.deleted))} onMake={onMake} />;
+  }
 
   return (
     <div className="mx-auto max-w-[110rem] space-y-4">
@@ -456,15 +261,15 @@ export function TaskTracker({ onMake }: { onMake: (typeId: string) => void }) {
               <Upload className="size-4" /> {t.import}
             </Button>
             <input ref={file} type="file" accept=".json,application/json" className="sr-only" aria-label={t.import} onChange={(e) => (e.target.files?.[0] && void importAll(e.target.files[0]), (e.target.value = ""))} />
-            <Button className="gap-2" onClick={() => setOpen(newBrief())}>
-              <Plus className="size-4" /> {t.newBrief}
-            </Button>
           </>
         )}
+        <Button className="gap-2" onClick={() => setView("request")}>
+          <Plus className="size-4" /> {t.newRequest}
+        </Button>
       </div>
 
       {examples && view !== "clients" && (
-        <p className="flex flex-wrap items-center gap-2 rounded-lg border border-dashed bg-muted/50 px-3 py-2 text-sm">
+        <p className="flex flex-wrap items-center gap-2 rounded-xl border border-dashed bg-muted/50 px-3 py-2 text-sm">
           <Sparkles className="size-4 text-primary" aria-hidden /> {t.examplesNote}
           <Button size="sm" variant="outline" className="ml-auto" onClick={() => commit(list.filter((b) => !b.example))}>
             {t.clearExamples}
@@ -474,7 +279,7 @@ export function TaskTracker({ onMake }: { onMake: (typeId: string) => void }) {
 
       {view === "board" && (
         <div className="-mx-4 overflow-x-auto px-4 pb-2 md:mx-0 md:px-0">
-          <div className="grid min-w-max grid-flow-col auto-cols-[16.5rem] gap-3 xl:min-w-0 xl:auto-cols-fr">
+          <div className="grid min-w-max grid-flow-col auto-cols-[17rem] gap-3 2xl:min-w-0 2xl:auto-cols-fr">
             {STATUSES.map((s) => (
               <section
                 key={s}
@@ -487,15 +292,16 @@ export function TaskTracker({ onMake }: { onMake: (typeId: string) => void }) {
                   const id = e.dataTransfer.getData("text/plain");
                   if (id) move(id, s);
                 }}
-                className={`flex min-h-48 flex-col gap-2 rounded-xl p-2 transition-colors ${over === s ? "bg-primary/10 ring-2 ring-primary/40" : "bg-muted/50"}`}
+                className={`flex min-h-56 flex-col gap-2.5 rounded-2xl p-2.5 transition-colors ${over === s ? "bg-primary/10 ring-2 ring-primary/40" : "bg-muted/60"}`}
               >
-                <h2 className="flex items-center gap-2 px-1 pt-1 text-sm font-semibold">
-                  <StatusDot status={s} /> {t.statuses[s]} <span className="font-normal text-muted-foreground">{byStatus[s].length}</span>
+                <h2 className="flex items-center gap-2 px-1 pt-0.5 text-sm font-semibold">
+                  <StatusDot status={s} /> {t.statuses[s]}
+                  <span className="rounded-full bg-background px-1.5 text-xs font-medium text-muted-foreground">{byStatus[s].length}</span>
                 </h2>
                 {byStatus[s].map((b) => (
                   <BriefCard key={b.id} b={b} draggable onOpen={() => setOpen(b)} />
                 ))}
-                {byStatus[s].length === 0 && <p className="px-1 py-4 text-center text-xs text-muted-foreground">{t.emptyColumn}</p>}
+                {byStatus[s].length === 0 && <p className="rounded-xl border border-dashed px-2 py-6 text-center text-xs text-muted-foreground">{t.emptyColumn}</p>}
               </section>
             ))}
           </div>
@@ -504,12 +310,12 @@ export function TaskTracker({ onMake }: { onMake: (typeId: string) => void }) {
       )}
 
       {view === "table" && (
-        <div className="overflow-x-auto rounded-xl border bg-card">
-          <table className="w-full min-w-[40rem] text-sm">
+        <div className="overflow-x-auto rounded-2xl border bg-card shadow-xs">
+          <table className="w-full min-w-[44rem] text-sm">
             <thead className="border-b bg-muted/50 text-left text-xs text-muted-foreground">
               <tr>
                 {(["title", "client", "requester", "status", "deadline"] as const).map((c) => (
-                  <th key={c} scope="col" className="px-3 py-2 font-medium">
+                  <th key={c} scope="col" className="px-4 py-2.5 font-medium">
                     {t.cols[c]}
                   </th>
                 ))}
@@ -520,36 +326,42 @@ export function TaskTracker({ onMake }: { onMake: (typeId: string) => void }) {
                 .sort((a, b) => (a.deadline || "9").localeCompare(b.deadline || "9"))
                 .map((b) => (
                   <tr key={b.id} className="border-b last:border-0 hover:bg-muted/40">
-                    <td className="px-3 py-2">
-                      <button type="button" className="font-medium underline-offset-2 hover:underline focus-visible:underline focus-visible:outline-none" onClick={() => setOpen(b)}>
+                    <td className="px-4 py-3">
+                      <button type="button" className="text-left font-medium underline-offset-2 hover:underline focus-visible:underline focus-visible:outline-none" onClick={() => setOpen(b)}>
                         {b.title || t.untitled}
                       </button>
                     </td>
-                    <td className="px-3 py-2">{b.client}</td>
-                    <td className="px-3 py-2">{b.requester}</td>
-                    <td className="px-3 py-2">
-                      <select aria-label={t.status} className={`${field} w-32`} value={b.status} onChange={(e) => move(b.id, e.target.value as Status)}>
-                        {STATUSES.map((s) => (
-                          <option key={s} value={s}>
-                            {t.statuses[s]}
-                          </option>
-                        ))}
-                      </select>
+                    <td className="px-4 py-3">
+                      <span className="flex items-center gap-2">
+                        <span className="flex size-6 items-center justify-center rounded-md bg-muted text-[10px] font-semibold">{initials(b.client)}</span>
+                        {b.client}
+                      </span>
                     </td>
-                    <td className={`px-3 py-2 ${isOverdue(b) ? "font-medium text-destructive" : ""}`}>{b.deadline || "-"}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{b.requester}</td>
+                    <td className="px-4 py-3">
+                      <span className="relative inline-flex items-center">
+                        <StatusDot status={b.status} />
+                        <select aria-label={t.status} className="-ml-2 h-8 cursor-pointer appearance-none rounded-lg bg-transparent pr-2 pl-5 text-sm font-medium outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50" value={b.status} onChange={(e) => move(b.id, e.target.value as Status)}>
+                          {STATUSES.map((s) => (
+                            <option key={s} value={s}>
+                              {t.statuses[s]}
+                            </option>
+                          ))}
+                        </select>
+                      </span>
+                    </td>
+                    <td className={`px-4 py-3 whitespace-nowrap ${isOverdue(b) ? "font-medium text-destructive" : "text-muted-foreground"}`}>{b.deadline || "-"}</td>
                   </tr>
                 ))}
             </tbody>
           </table>
-          {list.length === 0 && <p className="p-6 text-center text-sm text-muted-foreground">{t.empty}</p>}
+          {list.length === 0 && <p className="p-8 text-center text-sm text-muted-foreground">{t.empty}</p>}
         </div>
       )}
 
       {view === "clients" && <Clients clients={clients} onChange={commitClients} />}
 
       {view !== "clients" && <p className="text-xs text-muted-foreground">{t.localNote}</p>}
-
-      {open && <BriefDialog key={open.id} initial={open} clients={clients} onSave={save} onDelete={(id) => (commit(list.filter((b) => b.id !== id)), setOpen(null))} onClose={() => setOpen(null)} onMake={onMake} />}
     </div>
   );
 }
