@@ -4,6 +4,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-10-30
+
+Neutral slider arrows in the articles banners.
+
 - Articles banners: the slider arrows are neutral (a dark translucent square with a white chevron, 36 px, inside the first and last card), the same as in the image slider, instead of squares in the main colour. One shared definition in `packages/templates/src/arrows.ts`.
 ## [0.2.1] - 2026-10-30
 
