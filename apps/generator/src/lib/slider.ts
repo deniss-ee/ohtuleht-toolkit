@@ -35,8 +35,8 @@ export function newSliderDraft(format: SliderFormat = "image-slider-1250x400"): 
       sharedHref: "",
       // Desktop: values of the Dacia/Renault banners (three 300x250 slides, 10 px apart, 165 px from the left, 100 px from the top).
       desktop: { background: "", layout: { x: 165, y: 100, width: 920, height: 250, gap: 10, visible: 3 }, arrows: true, effect: "slide" },
-      // Mobile: one 6:5 slide (480x400) in the middle of the 600x500 canvas, swiped rather than clicked (no arrows).
-      mobile: { background: "", layout: { x: 60, y: 90, width: 480, height: 400, gap: 12, visible: 1 }, arrows: false, effect: "slide" },
+      // Mobile: one slide at a time, the picture fills the whole 600x500 banner (full width, full height); swiped rather than clicked (no arrows).
+      mobile: { background: "", layout: { x: 0, y: 0, width: 600, height: 500, gap: 0, visible: 1 }, arrows: false, effect: "slide" },
       behavior: { shuffle: false, autoplay: true, delayMs: 2000, speedMs: 500, loop: true },
     },
   };

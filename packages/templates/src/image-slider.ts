@@ -31,6 +31,7 @@ function css(config: ImageSliderConfig): string {
   // Arrows go outside the slider when there is room on both sides, otherwise on top of its edges.
   const outside = x >= ARROW_OUT && canvas.width - (x + width) >= ARROW_OUT;
   const left = outside ? -ARROW_OUT : 6;
+  const full = width >= canvas.width && height >= canvas.height; // a picture over the whole banner has square corners
   const arrowSize = mobile ? `max(${u(ARROW)},30px)` : `${ARROW}px`;
   const shell = mobile ? `width:100%;aspect-ratio:6/5;container-type:inline-size` : `width:${canvas.width}px;height:${canvas.height}px`;
   return (
@@ -40,7 +41,7 @@ function css(config: ImageSliderConfig): string {
     `.ol-slider{position:absolute;left:${u(x)};top:${u(y)};width:${u(width)};height:${u(height)};cursor:default}` +
     ".ol-viewport,.ol-track{height:100%}" +
     ".ol-slide{height:100%;cursor:pointer}" +
-    `.ol-slide img{display:block;width:100%;height:100%;object-fit:cover;border-radius:${mobile ? "1.2cqw" : "4px"};pointer-events:none;-webkit-user-drag:none}` +
+    `.ol-slide img{display:block;width:100%;height:100%;object-fit:cover;border-radius:${full ? "0" : mobile ? "1.2cqw" : "4px"};pointer-events:none;-webkit-user-drag:none}` +
     `.ol-prev,.ol-next{position:absolute;top:50%;z-index:2;width:${arrowSize};height:${arrowSize};margin-top:calc(${arrowSize} / -2);padding:0;border:0;border-radius:4px;background:center/cover no-repeat;cursor:pointer;opacity:.6;transition:opacity .15s}` +
     ".ol-prev:hover,.ol-next:hover{opacity:1}" +
     ".ol-prev:disabled,.ol-next:disabled{opacity:.2;cursor:default}" +

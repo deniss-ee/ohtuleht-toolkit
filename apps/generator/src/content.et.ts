@@ -191,7 +191,7 @@ export const editor: typeof En.editor = {
   legacySliderNoPicture: (n: number) => `${n} pilti ei leitud zipist ja need jäeti välja.`,
   legacySliderNoBackground: "Taustapilti ei leitud zipist. Vali see uuesti.",
   legacySliderScript: "Vana leht laadis lisaskripti teisest serverist. Seda ei võetud üle.",
-  legacySliderMobile: "See on arvutibänner. Telefoni jaoks vali üleval Mobiil ja lisa 600x500 taust.",
+  legacySliderMobile: "See on arvutibänner. Telefoni jaoks vali üleval Mobiil: seal täidavad slaidipildid kogu bänneri.",
   exampleLoaded: "Näidis laaditud.",
 };
 
@@ -656,8 +656,9 @@ export const sliderEditor = {
   slideSize: (w: number, h: number) => `Iga slaid on ${w}x${h} px.`,
   arrows: "Näita nooli",
   continueName: "Piltide slaider",
+  bgHintMobile: "Valikuline. Slaidid täidavad kogu bänneri, seega taust paistab ainult siis, kui teed slaideri väiksemaks.",
   bgFileHintMobile: "Suurus 600x500 või teravate ekraanide jaoks 1200x1000. PNG või JPG.",
-  layoutHintMobile: "Kus slaider 600x500 taustal asub. Mobiilibänner skaleerub lehe laiusega, seega hoia see kuju.",
+  layoutHintMobile: "Vaikimisi täidavad slaidipildid kogu 600x500 bänneri. Tee slaider väiksemaks, et näidata selle ümber tausta. Mobiilibänner skaleerub lehe laiusega.",
   effectTitle: "Efekt",
   effectSlide: "Liugumine",
   effectSlideHint: "Pildid liiguvad küljele.",

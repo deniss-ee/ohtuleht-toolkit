@@ -215,7 +215,7 @@ export const editor = {
   legacySliderNoPicture: (n: number) => `${n} picture${n === 1 ? " was" : "s were"} not found in the zip and left out.`,
   legacySliderNoBackground: "The background picture was not found in the zip. Choose it again.",
   legacySliderScript: "The old page loaded an extra script from another server. It was not carried over.",
-  legacySliderMobile: "This is the desktop banner. For phones, switch to Mobile at the top and choose a 600x500 background.",
+  legacySliderMobile: "This is the desktop banner. For phones, switch to Mobile at the top: there the slide pictures fill the whole banner.",
 };
 
 export const headerBar = {
@@ -691,8 +691,9 @@ export const sliderEditor = {
   slideSize: (w: number, h: number) => `Each slide is ${w}x${h} px.`,
   arrows: "Show arrows",
   continueName: "Image slider",
+  bgHintMobile: "Optional. The slides fill the whole banner, so the background only shows if you make the slider smaller.",
   bgFileHintMobile: "Size 600x500, or 1200x1000 for sharp screens. PNG or JPG.",
-  layoutHintMobile: "Where the slider sits on the 600x500 background. The phone banner scales with the page width, so keep to this shape.",
+  layoutHintMobile: "By default the slide pictures fill the whole 600x500 banner. Make the slider smaller to show the background around it. The phone banner scales with the page width.",
   effectTitle: "Effect",
   effectSlide: "Slide",
   effectSlideHint: "The pictures move sideways.",

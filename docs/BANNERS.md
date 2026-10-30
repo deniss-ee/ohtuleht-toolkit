@@ -99,9 +99,9 @@ Client banners: a background picture with a slider of pictures on top. Made from
 | Part | Desktop 1250x400 | Mobile 600x500 |
 |---|---|---|
 | Canvas | Fixed 1250x400 | Fills the page width, keeps the 6:5 shape; every size inside scales with it (CSS container units) |
-| Background | 1250x400, or 2500x800 for sharp screens | 600x500, or 1200x1000 |
-| Slides | Pictures of 300x250 or 600x500 (same 6:5 shape); at least 2; placed in the order of their file names, then moved by hand. The same pictures serve both sizes | same |
-| Slider box (default) | From the left 165, from the top 100, 920x250, gap 10, 3 visible (each slide 300x250) | 60, 90, 480x400, gap 12, 1 visible |
+| Background | Required. 1250x400, or 2500x800 for sharp screens | Optional: the slides cover the whole banner, so it only shows when the slider is made smaller. 600x500, or 1200x1000 |
+| Slides | Pictures of 300x250 or 600x500 (same 6:5 shape); at least 2; placed in the order of their file names, then moved by hand. The same pictures serve both sizes | same (600x500 pictures fit the phone banner exactly) |
+| Slider box (default) | From the left 165, from the top 100, 920x250, gap 10, 3 visible (each slide 300x250) | 0, 0, 600x500, gap 0, 1 visible: each picture fills the banner, full width and full height, with square corners |
 | Arrows | 36 px, 46 px outside the slider (on top of its edges when there is no room); on by default | Off by default (swipe) |
 | Effects | **Slide** (sideways) or **Arc** | **Slide** or **Cube** |
 
@@ -115,7 +115,7 @@ Client banners: a background picture with a slider of pictures on top. Made from
 
 **Pictures.** Optimised in the browser (see below); in the zip as `bg.png`/`bg.jpg` and `1.jpg`, `2.jpg` ...
 
-**Opening old banners.** An old desktop image slider zip (the Dacia/Renault kind: `.slider-track > .slide`, `style.css`, `script.js`) opens with the background and its link, every slide with its link (one shared link when all are the same), position and size, gap, visible count, delay, speed and arrows. A dialog lists what to check (campaign name from the page title, links, position, optimised pictures, extra scripts such as `ads.js` that are not carried over, shuffle off). The mobile size is added afterwards by hand. Old mobile 600x500 slider banners (`.st-wrapper`) still cannot be opened: no sample was available.
+**Opening old banners.** An old desktop image slider zip (the Dacia/Renault kind: `.slider-track > .slide`, `style.css`, `script.js`) opens with the background and its link, every slide with its link (one shared link when all are the same), position and size, gap, visible count, delay, speed and arrows. A dialog lists what to check (campaign name from the page title, links, position, optimised pictures, extra scripts such as `ads.js` that are not carried over, shuffle off). The mobile size needs no extra work: the same pictures fill the phone banner. Old mobile 600x500 slider banners (`.st-wrapper`) still cannot be opened: no sample was available.
 
 ## Format 4: Articles mobile (built, #37)
 

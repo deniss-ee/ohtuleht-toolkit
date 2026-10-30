@@ -48,7 +48,8 @@ export function validateImageSlider(config: ImageSliderConfig, lang: Lang = "en"
   const view = mobile ? config.mobile : config.desktop;
   const canvas = mobile ? SLIDER_CANVAS_MOBILE : SLIDER_CANVAS;
   if (!config.campaign.trim()) problems.push({ message: m.campaign, field: "campaign" });
-  if (!view.background) problems.push({ message: mobile ? m.sliderBackgroundMobile : m.sliderBackground, field: "bg-choose" });
+  // On the phone the slides fill the whole banner, so its background is optional.
+  if (!mobile && !view.background) problems.push({ message: m.sliderBackground, field: "bg-choose" });
   if (config.backgroundLink.clickable && badUrl(config.backgroundLink.href)) problems.push({ message: m.sliderBackgroundHref, field: "bg-href" });
   if (config.slides.length < MIN_SLIDES) problems.push({ message: m.sliderMinSlides(MIN_SLIDES, config.slides.length), field: "slides-add" });
   if (config.linkMode === "shared" && badUrl(config.sharedHref)) problems.push({ message: m.sliderSharedHref, field: "shared-href" });

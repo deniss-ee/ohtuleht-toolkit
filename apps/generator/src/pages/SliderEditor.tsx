@@ -51,7 +51,7 @@ function SliderPreview({ draft, pinned, onPin, onTryExample }: { draft: SliderDr
   const H = mobile ? Math.round((phone * 5) / 6) : 400;
   const size = mobile ? "600x500" : "1250x400";
   const view = sliderView(draft.config);
-  const empty = !view.background && draft.config.slides.length === 0;
+  const empty = draft.config.slides.length === 0 && (mobile || !view.background);
   useEffect(() => {
     const el = box.current;
     if (!el) return;
@@ -296,7 +296,7 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
                   </div>
                 </Section>
 
-                <Section title={t.bgTitle} description={t.bgHint} icon={ImagePlus} tone="ink">
+                <Section title={t.bgTitle} description={mobile ? t.bgHintMobile : t.bgHint} icon={ImagePlus} tone="ink">
                   {bgFile && <img src={bgFile.dataUrl} alt="" className={mobile ? "aspect-[6/5] max-h-64 rounded-md border object-cover" : "aspect-[1250/400] w-full rounded-md border object-cover"} />}
                   <div className="space-y-2">
                     <input ref={bgInput} type="file" className="sr-only" aria-label={t.bgTitle} accept="image/png,image/jpeg,image/webp" onChange={(ev) => onBackground(ev.target.files?.[0])} />
