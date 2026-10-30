@@ -55,6 +55,7 @@ export function App() {
 
   // A zip may be a header bar, an image slider or an articles banner made with this tool (or an old Swiper banner).
   const open = async (file: File) => {
+    const loading = toast.loading(editor.opening);
     try {
       const header = await importHeaderZip(file);
       const slider = header ? null : await importSliderAny(file);
@@ -73,6 +74,8 @@ export function App() {
       }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : contentMarketing.uploadFailed);
+    } finally {
+      toast.dismiss(loading);
     }
   };
 

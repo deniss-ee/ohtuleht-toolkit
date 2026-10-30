@@ -7,9 +7,9 @@ import { Switch } from "@/components/ui/switch";
 
 // Building blocks of the full-screen editors.
 
-export function Section({ title, description, icon, tone, children }: { title: string; description?: string; icon: LucideIcon; tone: Tone; children: ReactNode }) {
+export function Section({ title, description, icon, tone, children, className }: { title: string; description?: string; icon: LucideIcon; tone: Tone; children: ReactNode; className?: string }) {
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader>
         <div className="flex items-center gap-3">
           <IconChip icon={icon} tone={tone} />
@@ -25,9 +25,9 @@ export function Section({ title, description, icon, tone, children }: { title: s
 }
 
 // Closed by default: advanced settings stay out of the way for people who do not need them.
-export function Collapsible({ title, description, icon, tone, children }: { title: string; description: string; icon: LucideIcon; tone: Tone; children: ReactNode }) {
+export function Collapsible({ title, description, icon, tone, children, className }: { title: string; description: string; icon: LucideIcon; tone: Tone; children: ReactNode; className?: string }) {
   return (
-    <details className="group rounded-xl border bg-card">
+    <details className={`group rounded-xl border bg-card ${className ?? ""}`}>
       <summary className="flex cursor-pointer list-none items-center gap-3 p-4 [&::-webkit-details-marker]:hidden">
         <IconChip icon={icon} tone={tone} />
         <div className="flex-1">
