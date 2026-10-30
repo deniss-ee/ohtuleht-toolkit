@@ -109,7 +109,7 @@ export const editor: typeof En.editor = {
   campaignName: "Kampaania nimi",
   campaignHint: "Kasutatakse faili nimena.",
   mainColor: "Põhivärv",
-  mainColorHint: "Kasutatakse päises, nooltel ja sildi vaikevärvina. Tumedas režiimis tehakse sildi värv automaatselt heledamaks, et see püsiks loetav.",
+  mainColorHint: "Kasutatakse päises ja sildi vaikevärvina. Tumedas režiimis tehakse sildi värv automaatselt heledamaks, et see püsiks loetav.",
   badge: "Silt artiklite piltidel",
   badgeHint: "Tavaliselt „Sisuturundus“. Ühel artiklil võib olla teistsugune silt (vt Artiklid allpool).",
 
@@ -136,7 +136,7 @@ export const editor: typeof En.editor = {
   colorsHint: "Hele ja tume režiim. Enamik kampaaniaid võib need samaks jätta.",
   colorBg: "Taust",
   colorText: "Pealkirja tekst",
-  colorBadge: "Silt ja nooled",
+  colorBadge: "Silt",
   colorHover: "Pealkiri hiirega peal",
   colorHeader: "Päise värv",
   colorHeaderText: "Päise tekst",

@@ -129,7 +129,7 @@ export const editor = {
   campaignName: "Campaign name",
   campaignHint: "Used for the file name.",
   mainColor: "Main colour",
-  mainColorHint: "Used for the header, the arrows and the default label colour. In dark mode the label colour is lightened automatically so it stays readable.",
+  mainColorHint: "Used for the header and the default label colour. In dark mode the label colour is lightened automatically so it stays readable.",
   badge: "Label on the article pictures",
   badgeHint: "Usually “Sisuturundus”. One article can have a different label (see Articles below).",
 
@@ -158,7 +158,7 @@ export const editor = {
   colorsHint: "Light and dark mode. Most campaigns can keep these.",
   colorBg: "Background",
   colorText: "Title text",
-  colorBadge: "Label and arrows",
+  colorBadge: "Label",
   colorHover: "Title on hover",
   colorHeader: "Header colour",
   colorHeaderText: "Header text",
