@@ -78,7 +78,7 @@ function SliderPreview({ draft, pinned, onPin, onTryExample, working }: { draft:
           {!empty && <span className="text-xs text-muted-foreground">{mobile ? e.previewMobile(phone) : pct < 100 ? e.previewScaled(pct, size) : e.previewFull(size)}</span>}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Button variant="ghost" size="sm" className="gap-1.5" aria-pressed={pinned} onClick={() => onPin(!pinned)}>
+          <Button variant={pinned ? "secondary" : "ghost"} size="sm" className="gap-1.5" aria-pressed={pinned} onClick={() => onPin(!pinned)}>
             {pinned ? <Pin className="size-4" /> : <PinOff className="size-4" />}
             {e.pin}
           </Button>

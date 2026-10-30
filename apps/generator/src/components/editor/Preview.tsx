@@ -97,7 +97,7 @@ export function Preview({
           {!empty && <span className="text-xs text-muted-foreground">{shownMobile ? t.previewMobile(shownW) : pct < 100 ? t.previewScaled(pct, FORMATS[draft.config.format].label) : t.previewFull(FORMATS[draft.config.format].label)}</span>}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Button variant="ghost" size="sm" className="gap-1.5" aria-pressed={pinned} onClick={() => onPin(!pinned)}>
+          <Button variant={pinned ? "secondary" : "ghost"} size="sm" className="gap-1.5" aria-pressed={pinned} onClick={() => onPin(!pinned)}>
             {pinned ? <Pin className="size-4" /> : <PinOff className="size-4" />}
             {t.pin}
           </Button>
