@@ -23,5 +23,4 @@ dist/
 example-output/
 
 # Client banners and what the tool made from them: never commit (the repository is public)
-/banners/
-/banners-new/
+/banners*/
