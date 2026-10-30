@@ -4,6 +4,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-10-30
+
+Banner arrows are easier to see.
+
 - Banner arrows are easier to see: a big, bold white chevron with a thin dark outline at full strength (it was a pale, half-transparent one), on a smaller 32 px square; the square gets darker on hover and nothing moves.
 ## [0.2.2] - 2026-10-30
 
