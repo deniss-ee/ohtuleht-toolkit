@@ -141,6 +141,10 @@ Design: Figma "Õhtuleht - Brand hub", frame "Mobile Content". Format id `articl
 - The preview frame is 514 px high (8 px above and below the 498 px banner) so the dots are never cut by the frame edge. In the ad system give the slot at least 498 px.
 - Open: best header picture size for mobile (the hint still names the desktop size), 1 px line height rounding (18 x 1.3 = 23.4 is 23 px).
 
+## Format 5: Picture loop (built)
+
+Several pictures that fade into each other, in place of a GIF; fixed size or responsive; optional background under transparent pictures. Own document: [FRAME-BANNER.md](FRAME-BANNER.md).
+
 ## Picture optimiser
 
 Pictures chosen in the form (header, ad) and the pictures of an old zip are optimised in the browser with **jSquash**, the codecs of the Squoosh app as WebAssembly (`@jsquash/jpeg` MozJPEG, `@jsquash/oxipng`, `@jsquash/resize`). Nothing is uploaded. Code: `apps/generator/src/lib/optimise.ts`.

@@ -9,5 +9,7 @@ export { resolveTheme, readableOn, onColor, brandTextColor, contrast } from "./c
 export { renderHeaderBar, validateHeaderBar, headerTextColor, iframeCode } from "./header-bar.ts";
 export type { HeaderBarConfig, HeaderBarFiles } from "./header-bar.ts";
 export { renderMovieBanner } from "./movie-banner.ts";
+export { renderFrameBanner, validateFrameBanner, frameTimeline, frameStops, frameAnimationCss, effectiveHolds, FRAME_MIN_HOLD_MS, FRAME_SIZE_MIN, FRAME_SIZE_MAX } from "./frame-banner.ts";
+export type { FrameBannerConfig, FrameFit } from "./frame-banner.ts";
 export type { MovieBannerConfig, VideoPosition } from "./movie-banner.ts";
 export type { Lang } from "./messages.ts";

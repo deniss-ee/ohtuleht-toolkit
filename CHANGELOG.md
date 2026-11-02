@@ -4,6 +4,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+### Picture loop banner
+
+- New banner type in Content marketing: **Picture loop**, pictures (PNG, JPG, WebP) that fade into each other in place of a GIF. Fixed size or responsive (100% wide), fit (fill, whole picture, stretch), a colour and/or picture background under transparent PNGs, time per picture and fade, repeat forever or a number of rounds, pause on hover, optional reduced-motion. The fade keeps the old picture solid until the new one is fully in, so the background never shows and nothing jumps. Pure CSS. Zip with the settings embedded, opens again. Doc: `docs/FRAME-BANNER.md`.
+
 ### Handover preparation (2026-11-02)
 
 - Documentation rewritten for the handover to IT: new README, docs index (`docs/README.md`), `docs/TRANSFER.md` (owners, accounts, moving the repository and the API, first week), `docs/AUTH-MICROSOFT.md` (Microsoft login, sending mail as the person, who sees what), `SECURITY.md`, `docs/AI-ASSISTANT.md`. `docs/CLOUDFLARE.md`, `docs/DEPLOY.md`, `docs/ROADMAP.md`, `docs/TASK-TRACKER.md`, `CONTRIBUTING.md`, `CLAUDE.md` and the package READMEs brought up to date.

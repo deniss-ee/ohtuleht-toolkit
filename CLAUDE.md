@@ -27,7 +27,7 @@ Internal toolkit for the Õhtuleht newsroom, ad sales and marketing: banner make
 
 ```
 apps/generator/            React + Vite + Tailwind v4 + shadcn/ui (port 5173)
-  src/pages/               Home, ContentMarketingHome, BannerEditor, SliderEditor, HeaderBarEditor, ToolsHome, ImageCropper, MovieBanner,
+  src/pages/               Home, ContentMarketingHome, BannerEditor, SliderEditor, FrameBannerEditor, HeaderBarEditor, ToolsHome, ImageCropper, MovieBanner,
                            ArticleScraper, PictureConverter, SignatureGenerator, UtmBuilder, BrandManual, BrandFonts, BrandEye, Guide,
                            BannerRequest, TaskTracker
   src/components/editor/   ArticleList, Preview, SwapFrame, ColorPicker, BriefPage, DatePicker, ClientCombobox, ShotPlaceholder ...

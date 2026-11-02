@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { ChevronRight, FileUp, LayoutTemplate, Images, Newspaper, PanelTop, Smartphone, type LucideIcon } from "lucide-react";
+import { ChevronRight, FileUp, Layers, LayoutTemplate, Images, Newspaper, PanelTop, Smartphone, type LucideIcon } from "lucide-react";
 import { ContinueCard } from "@/components/editor/ContinueCard";
 import { PageHeader } from "@/components/editor/PageHeader";
 import { StartCard } from "@/components/editor/StartCard";
@@ -15,6 +15,7 @@ const ICONS: Record<string, LucideIcon> = {
   "articles-mobile": Smartphone,
   "articles-600x500": Smartphone,
   "image-slider-600x500": Smartphone,
+  "frame-banner": Layers,
 };
 
 // Start screen of the category: pick a banner type or open an existing zip.
