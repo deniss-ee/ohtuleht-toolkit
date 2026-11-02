@@ -6,6 +6,7 @@ export const nav: En.NavItem[] = [
   { id: "content", label: "Sisuturundus", ready: true },
   { id: "tools", label: "Tööriistad", ready: true },
   { id: "brand", label: "Brändiraamat", ready: true },
+  { id: "guide", label: "Käsiraamat", ready: true, wip: true },
   { id: "request", label: "Bännertaotlus", ready: false },
   { id: "tasks", label: "Tööde jälgija", ready: false },
 ];
@@ -499,6 +500,27 @@ export const utmTool: typeof En.utmTool = {
   copiedAll: "Kõik lingid kopeeritud.",
 };
 
+export const guide: typeof En.guide = {
+  title: "Käsiraamat",
+  intro: "Uue töötaja käsiraamat: lühikesed sammud piltidega.",
+  startHere: "Alusta siit",
+  progress: (n: number, m: number) => `${n} / ${m} tehtud`,
+  open: "Ava",
+  steps: (n: number) => `${n} sammu`,
+  back: "Tagasi käsiraamatu juurde",
+  contents: "Selles teemas",
+  tip: "Hea teada",
+  warn: "Ettevaatust",
+  prev: "Eelmine",
+  next: "Järgmine",
+  done: "Tagasi algusesse",
+  moreTopics: "Veel teemasid",
+  welcome: "Tere tulemast meie meeskonda!",
+  afterSignIn: "sisselogituna",
+  shotTitle: "Tee ekraanipilt",
+  enlarge: "Suurenda pilti",
+};
+
 export const marketing: typeof En.marketing = {
   back: "Tagasi tööriistade juurde",
   scraperTitle: "Artikli kopeerija",
@@ -698,6 +720,9 @@ export const ui: typeof En.ui = {
   back: "Tagasi",
   backToTools: "Tagasi tööriistade juurde",
   soon: "Tulekul",
+  wip: "Töö käib",
+  wipShort: "Töös",
+  wipText: "Tööriistakast on veel tegemisel. Midagi võib muutuda või puududa.",
   mainNav: "Peamenüü",
   toLight: "Lülita heledale teemale",
   toDark: "Lülita tumedale teemale",
@@ -763,6 +788,12 @@ export const home: typeof En.home = {
         { id: "email-signature", name: "E-posti allkiri", text: "Sinu andmed ja logo allkirjana Outlooki jaoks." },
         { id: "picture-converter", name: "Pildi lingi muundur", text: "CMS-i piltide lingid bänneri suurusteks." },
       ],
+    },
+    {
+      id: "guide",
+      title: "Oled uus?",
+      text: "Uue töötaja käsiraamat.",
+      items: [{ id: "guide", name: "Käsiraamat", text: "Uksekaart, intranet, hüved, kontod ja IT-tugi lühikeste sammudena." }],
     },
     {
       id: "work",

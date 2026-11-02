@@ -1,10 +1,11 @@
 // English interface text (the base: content.et.ts must have the same names and shapes).
-export type PageId = "home" | "content" | "tools" | "brand" | "request" | "tasks";
+export type PageId = "home" | "content" | "tools" | "brand" | "guide" | "request" | "tasks";
 
 export interface NavItem {
   id: PageId;
   label: string;
   ready: boolean;
+  wip?: boolean; // open, but still being finished: the menu shows a WIP badge
 }
 
 export const nav: NavItem[] = [
@@ -12,6 +13,7 @@ export const nav: NavItem[] = [
   { id: "content", label: "Content marketing", ready: true },
   { id: "tools", label: "Tools", ready: true },
   { id: "brand", label: "Brand manual", ready: true },
+  { id: "guide", label: "Guide", ready: true, wip: true },
   // Banner request and Task tracker are built but switched off while they are finished: set ready to true to open them.
   { id: "request", label: "Banner request", ready: false },
   { id: "tasks", label: "Task tracker", ready: false },
@@ -533,6 +535,27 @@ export const utmTool = {
   copiedAll: "All links copied.",
 };
 
+export const guide = {
+  title: "Guide",
+  intro: "The new-employee handbook: short steps with pictures. The guide text is in Estonian.",
+  startHere: "Start here",
+  progress: (n: number, m: number) => `${n} of ${m} done`,
+  open: "Open",
+  steps: (n: number) => `${n} steps`,
+  back: "Back to the guide",
+  contents: "In this topic",
+  tip: "Good to know",
+  warn: "Careful",
+  prev: "Previous",
+  next: "Next",
+  done: "Back to the start",
+  moreTopics: "More topics",
+  welcome: "Tere tulemast meie meeskonda!",
+  afterSignIn: "after sign-in",
+  shotTitle: "Screenshot to take",
+  enlarge: "Enlarge the picture",
+};
+
 export const marketing = {
   back: "Back to Tools",
   scraperTitle: "Article scraper",
@@ -733,6 +756,9 @@ export const ui = {
   back: "Back",
   backToTools: "Back to Tools",
   soon: "Soon",
+  wip: "Work in progress",
+  wipShort: "WIP",
+  wipText: "The toolkit is still being built. Things may change or be missing.",
   mainNav: "Main",
   toLight: "Switch to light theme",
   toDark: "Switch to dark theme",
@@ -799,6 +825,12 @@ export const home = {
         { id: "email-signature", name: "Email signature", text: "Your details and the logo as a signature for Outlook." },
         { id: "picture-converter", name: "Picture link converter", text: "CMS picture links to the banner sizes." },
       ],
+    },
+    {
+      id: "guide",
+      title: "New here?",
+      text: "The handbook for new employees.",
+      items: [{ id: "guide", name: "Guide", text: "Door card, intranet, benefits, accounts and IT support in short steps." }],
     },
     {
       id: "work",
