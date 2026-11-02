@@ -36,7 +36,7 @@ my-loop-300x250_02nov26.zip
   bg.jpg         The background picture, when there is one
 ```
 
-Opening the zip again in Content marketing, **Upload zip**, restores the form exactly. Name: `<campaign>_<width>x<height>_<date>.zip`, or `_responsive_` for a responsive banner.
+Opening the zip again in Content marketing, **Upload zip**, restores the form exactly. Name: `<campaign>_<width>x<height>_<date>.zip`, always with the size, also for a responsive banner (where the size is the design size, for example 970x250).
 
 ## Responsive banners
 
