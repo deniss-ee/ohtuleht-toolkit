@@ -1,5 +1,5 @@
 import { useSyncExternalStore, type ReactNode } from "react";
-import { BookOpen, House, Languages, LayoutTemplate, ListChecks, Megaphone, Moon, Palette, Sun, Wrench } from "lucide-react";
+import { BookOpen, Construction, House, Languages, LayoutTemplate, ListChecks, Megaphone, Moon, Palette, Sun, Wrench } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,11 @@ function NavButton({ item, active, onSelect }: { item: NavItem; active: boolean;
       <Icon className="size-4" />
       <span className="flex-1 text-left">{item.label}</span>
       {!item.ready && <Badge variant="outline">{ui.soon}</Badge>}
+      {item.ready && item.wip && (
+        <Badge variant="outline" title={ui.wip} className="border-yellow-500/50 bg-yellow-300/30 text-foreground">
+          {ui.wipShort}
+        </Badge>
+      )}
     </Button>
   );
 }
@@ -71,15 +76,21 @@ export function Toggles() {
 export function AppShell({ page, onNavigate, children }: { page: PageId; onNavigate: (id: PageId) => void; children: ReactNode }) {
   return (
     <div className="flex min-h-svh flex-col">
-      <header className="flex h-14 items-center justify-between border-b px-4">
+      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-background px-4">
         <span className="font-heading text-lg font-semibold">Õhtuleht Toolkit</span>
         <Toggles />
       </header>
       <div className="flex flex-1 flex-col md:flex-row">
-        <nav aria-label={ui.mainNav} className="flex gap-1 overflow-x-auto border-b p-2 md:w-60 md:shrink-0 md:flex-col md:border-r md:border-b-0 md:p-3">
+        <nav aria-label={ui.mainNav} className="flex gap-1 overflow-x-auto border-b p-2 md:sticky md:top-14 md:h-[calc(100svh-3.5rem)] md:w-60 md:shrink-0 md:self-start md:flex-col md:border-r md:border-b-0 md:p-3">
           {nav.map((item) => (
             <NavButton key={item.id} item={item} active={item.id === page} onSelect={onNavigate} />
           ))}
+          <div role="note" className="mt-auto hidden rounded-xl border border-yellow-500/40 bg-yellow-300/20 p-3 text-sm md:block">
+            <p className="flex items-center gap-2 font-medium">
+              <Construction className="size-4 shrink-0 text-yellow-700 dark:text-yellow-300" aria-hidden /> {ui.wip}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">{ui.wipText}</p>
+          </div>
         </nav>
         <main className="min-w-0 flex-1 p-4 md:px-6 md:py-4">{children}</main>
       </div>

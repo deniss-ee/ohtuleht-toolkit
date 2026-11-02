@@ -5,6 +5,7 @@ export interface NavItem {
   id: PageId;
   label: string;
   ready: boolean;
+  wip?: boolean; // open, but still being finished: the menu shows a WIP badge
 }
 
 export const nav: NavItem[] = [
@@ -12,7 +13,7 @@ export const nav: NavItem[] = [
   { id: "content", label: "Content marketing", ready: true },
   { id: "tools", label: "Tools", ready: true },
   { id: "brand", label: "Brand manual", ready: true },
-  { id: "guide", label: "Guide", ready: true },
+  { id: "guide", label: "Guide", ready: true, wip: true },
   // Banner request and Task tracker are built but switched off while they are finished: set ready to true to open them.
   { id: "request", label: "Banner request", ready: false },
   { id: "tasks", label: "Task tracker", ready: false },
@@ -755,6 +756,9 @@ export const ui = {
   back: "Back",
   backToTools: "Back to Tools",
   soon: "Soon",
+  wip: "Work in progress",
+  wipShort: "WIP",
+  wipText: "The toolkit is still being built. Things may change or be missing.",
   mainNav: "Main",
   toLight: "Switch to light theme",
   toDark: "Switch to dark theme",

@@ -6,7 +6,7 @@ export const nav: En.NavItem[] = [
   { id: "content", label: "Sisuturundus", ready: true },
   { id: "tools", label: "Tööriistad", ready: true },
   { id: "brand", label: "Brändiraamat", ready: true },
-  { id: "guide", label: "Käsiraamat", ready: true },
+  { id: "guide", label: "Käsiraamat", ready: true, wip: true },
   { id: "request", label: "Bännertaotlus", ready: false },
   { id: "tasks", label: "Tööde jälgija", ready: false },
 ];
@@ -720,6 +720,9 @@ export const ui: typeof En.ui = {
   back: "Tagasi",
   backToTools: "Tagasi tööriistade juurde",
   soon: "Tulekul",
+  wip: "Töö käib",
+  wipShort: "Töös",
+  wipText: "Tööriistakast on veel tegemisel. Midagi võib muutuda või puududa.",
   mainNav: "Peamenüü",
   toLight: "Lülita heledale teemale",
   toDark: "Lülita tumedale teemale",

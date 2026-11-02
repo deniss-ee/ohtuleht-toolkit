@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, BookOpen, Check, Gift, HandHelping, DoorOpen, Laptop, LifeBuoy, Lightbulb, TriangleAlert, User, Users, type LucideIcon } from "lucide-react";
 import { IconChip } from "@/components/editor/IconChip";
 import { PageHeader } from "@/components/editor/PageHeader";
@@ -11,9 +12,9 @@ import { GuideLink, Rich, Secret, useChecklist, useGuideValues, ValuesProvider }
 const ICONS: Record<Topic["icon"], LucideIcon> = { hand: HandHelping, door: DoorOpen, gift: Gift, users: Users, laptop: Laptop, "life-buoy": LifeBuoy };
 
 // One step: a number, a short title, a line or two of text, small extras, and a screenshot slot.
-function StepView({ n, step, topic }: { n: number; step: Step; topic: string }) {
+function StepView({ n, step, topic, flash }: { n: number; step: Step; topic: string; flash: boolean }) {
   return (
-    <li id={`${topic}-${n}`} className="scroll-mt-4 rounded-2xl border bg-card p-5 shadow-xs">
+    <li id={`${topic}-${n}`} className={`scroll-mt-20 rounded-2xl border bg-card p-5 shadow-xs transition-shadow duration-700 ${flash ? "ring-2 ring-primary/50" : ""}`}>
       <div className="flex items-start gap-3">
         <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground" aria-hidden>
           {n}
@@ -81,15 +82,26 @@ function StepView({ n, step, topic }: { n: number; step: Step; topic: string }) 
 }
 
 // The guide: a start page (checklist and topics) and one page per topic.
-export function Guide({ topic, onTopic }: { topic: string | null; onTopic: (id: string | null) => void }) {
+export function Guide({ topic, step, onTopic }: { topic: string | null; step: number | null; onTopic: (id: string | null, step?: number) => void }) {
   const values = useGuideValues();
   const [done, toggle] = useChecklist();
   const current = TOPICS.find((x) => x.id === topic);
   const index = current ? TOPICS.indexOf(current) : -1;
-  const open = (id: string | null) => {
-    onTopic(id);
-    window.scrollTo(0, 0);
+  const [flash, setFlash] = useState<number | null>(null);
+  const open = (id: string | null, s?: number) => {
+    onTopic(id, s);
+    if (!s) window.scrollTo(0, 0);
   };
+  // A link to a step (from the checklist, the contents or the address): scroll to it and mark it for a moment.
+  useEffect(() => {
+    if (!topic || !step) return setFlash(null);
+    const go = requestAnimationFrame(() => {
+      document.getElementById(`${topic}-${step}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      setFlash(step);
+    });
+    const off = setTimeout(() => setFlash(null), 2600);
+    return () => (cancelAnimationFrame(go), clearTimeout(off));
+  }, [topic, step]);
 
   if (!current) {
     const count = FIRST_DAYS.filter((f) => done.has(f.id)).length;
@@ -120,7 +132,7 @@ export function Guide({ topic, onTopic }: { topic: string | null; onTopic: (id: 
                     {done.has(f.id) && <Check className="size-4" aria-hidden />}
                   </button>
                   <span className={`flex-1 text-sm ${done.has(f.id) ? "text-muted-foreground line-through" : ""}`}>{f.text}</span>
-                  <Button variant="ghost" size="sm" className="gap-1" onClick={() => open(f.topic)}>
+                  <Button variant="ghost" size="sm" className="gap-1" onClick={() => open(f.topic, f.step)}>
                     {t.open} <ArrowRight className="size-3.5" aria-hidden />
                   </Button>
                 </li>
@@ -160,7 +172,7 @@ export function Guide({ topic, onTopic }: { topic: string | null; onTopic: (id: 
             <ol className="sticky top-4 space-y-1 text-sm">
               {current.steps.map((s, i) => (
                 <li key={s.title}>
-                  <a href={`#${current.id}-${i + 1}`} onClick={(e) => (e.preventDefault(), document.getElementById(`${current.id}-${i + 1}`)?.scrollIntoView({ behavior: "smooth", block: "start" }))} className="flex gap-2 rounded-md px-2 py-1 text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none">
+                  <a href={`#${current.id}-${i + 1}`} onClick={(e) => (e.preventDefault(), open(current.id, i + 1))} className="flex gap-2 rounded-md px-2 py-1 text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none">
                     <span className="w-4 shrink-0 text-right tabular-nums">{i + 1}</span>
                     <span>{s.title}</span>
                   </a>
@@ -170,11 +182,13 @@ export function Guide({ topic, onTopic }: { topic: string | null; onTopic: (id: 
           </nav>
           <ol className="space-y-4">
             {current.steps.map((s, i) => (
-              <StepView key={s.title} n={i + 1} step={s} topic={current.id} />
+              <StepView key={s.title} n={i + 1} step={s} topic={current.id} flash={flash === i + 1} />
             ))}
           </ol>
         </div>
 
+        {/* Room below the last step, so that even the last step can scroll up to the same place as the first. */}
+        <div className="min-h-[55svh]">
         <nav aria-label={t.moreTopics} className="grid gap-3 sm:grid-cols-2">
           {prev ? (
             <Button variant="outline" className="h-auto justify-start gap-3 p-3 text-left" onClick={() => open(prev.id)}>
@@ -201,6 +215,7 @@ export function Guide({ topic, onTopic }: { topic: string | null; onTopic: (id: 
             </Button>
           )}
         </nav>
+        </div>
       </div>
     </ValuesProvider>
   );

@@ -27,13 +27,13 @@ export interface Topic {
 }
 
 // The things to do on the first days: a checklist on the start page (ticks are kept in the browser).
-export const FIRST_DAYS: { id: string; text: string; topic: string }[] = [
-  { id: "card", text: "Võta IT-osakonnast uksekaart ja aktiveeri see", topic: "esimene-paev" },
-  { id: "login", text: "Logi arvutisse ja vaheta parool", topic: "arvuti-ja-kontod" },
-  { id: "mail", text: "Ava e-post ja seadista mitmikautentimine", topic: "arvuti-ja-kontod" },
-  { id: "intranet", text: "Tutvu intranetiga, rubriik „Oluline info töötajale“", topic: "esimene-paev" },
-  { id: "onedrive", text: "Aktiveeri OneDrive ja logi sisse", topic: "arvuti-ja-kontod" },
-  { id: "teams", text: "Leia Teamsist kolleegi kontakt", topic: "esimene-paev" },
+export const FIRST_DAYS: { id: string; text: string; topic: string; step: number }[] = [ // step: the number of the step in the topic (1 is the first)
+  { id: "card", text: "Võta IT-osakonnast uksekaart ja aktiveeri see", topic: "esimene-paev", step: 1 },
+  { id: "login", text: "Logi arvutisse ja vaheta parool", topic: "arvuti-ja-kontod", step: 2 },
+  { id: "mail", text: "Ava e-post ja seadista mitmikautentimine", topic: "arvuti-ja-kontod", step: 5 },
+  { id: "intranet", text: "Tutvu intranetiga, rubriik „Oluline info töötajale“", topic: "esimene-paev", step: 3 },
+  { id: "onedrive", text: "Aktiveeri OneDrive ja logi sisse", topic: "arvuti-ja-kontod", step: 6 },
+  { id: "teams", text: "Leia Teamsist kolleegi kontakt", topic: "esimene-paev", step: 4 },
 ];
 
 export const TOPICS: Topic[] = [
