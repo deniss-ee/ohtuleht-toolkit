@@ -1,59 +1,62 @@
-# Publishing the toolkit online (GitHub Pages)
+# Publishing the site
 
-The generator is a static site, so GitHub Pages can host it. Live address: `https://deniss-ee.github.io/ohtuleht-toolkit/`. The build uses relative paths, so it works from that sub-folder with no extra setting.
+The web app is a **static site**: `yarn build` writes `apps/generator/dist/` (an `index.html` and an `assets/` folder), and any static host can serve it. The build uses relative paths, so it works from a sub-folder as well as from the root of a domain.
 
-## How it is published today (by hand)
+| Option | Today | Hides the site from the public? |
+|---|---|---|
+| **A. GitHub Pages** (branch `gh-pages`) | **In use**: `https://deniss-ee.github.io/ohtuleht-toolkit/` | No (never, on any plan that is free) |
+| **B. Cloudflare Workers with static assets** | Target; see [AUTH-MICROSOFT.md](AUTH-MICROSOFT.md#hosting-that-fits-design-a-cloudflare-workers). One address for the app and the API; login can be put in front with Cloudflare Access | Yes, with Access |
+| **C. A company web server** | Possible: upload the contents of `dist/` | Yes, with the server's own single sign-on |
 
-The site is published from a branch called `gh-pages` (GitHub's own "pages build and deployment" job serves it). We do not use a custom Actions workflow: the one we tried kept failing and was removed. Settings, Pages, Source is **Deploy from a branch**, branch `gh-pages`, folder `/ (root)`.
+HTTPS is required (ad servers and the bookmarks need it). Cache settings for any host: `index.html` `no-cache`; the hashed files in `assets/` `max-age=31536000, immutable`.
 
-To update the site after a change reached `develop`:
+## A. GitHub Pages (how it is published today, by hand)
+
+The site is served from the branch `gh-pages` (Settings, Pages, Source: **Deploy from a branch**, branch `gh-pages`, folder `/ (root)`). A custom Actions workflow was tried and removed because it kept failing. After a change reached `develop`:
 
 ```bash
 git checkout develop && git pull
-yarn build
-```
-
-Then copy the contents of `apps/generator/dist/` (plus an empty file `.nojekyll`) into a fresh orphan branch and force-push it:
-
-```bash
+yarn install && yarn build
+git branch -D gh-pages 2>/dev/null                       # a leftover local branch would make the next step fail
 git worktree add --detach ../ol-pages HEAD
 cd ../ol-pages
 git checkout --orphan gh-pages && git rm -rqf .
 cp -r ../ohtuleht-toolkit/apps/generator/dist/. . && touch .nojekyll
-echo "toolkit.example.com" > CNAME   # only when a custom domain is set (see below); keep the same name
+# echo "toolkit.example.com" > CNAME                     # only when a custom domain is set (below); keep the same name every time
 git add -A && git commit -m "Publish build of develop"
 git push -f origin gh-pages
-cd ../ohtuleht-toolkit && git worktree remove --force ../ol-pages
+cd ../ohtuleht-toolkit && git worktree remove --force ../ol-pages && git branch -D gh-pages
 ```
 
-Pages refreshes in one or two minutes. Claude can do this when asked to "republish".
+Pages refreshes in one or two minutes. Check by opening the site and pressing Ctrl+F5.
 
-## Custom domain
+**Custom domain.** Settings, Pages, Custom domain (saving it writes a `CNAME` file into `gh-pages`; every publish must contain the same file, otherwise the domain is dropped). At the DNS host: for a subdomain a `CNAME` record to `<owner>.github.io` (no repository name); for a main domain four `A` records to `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153` (this replaces an existing `A` record, so that domain's present website stops working, so prefer a subdomain). Then "Check again" in Settings, Pages, and tick Enforce HTTPS.
 
-Settings, Pages, **Custom domain** (saving it writes a `CNAME` file into `gh-pages`). Every republish must contain that same `CNAME` file, otherwise the domain is dropped.
+**Take down:** Settings, Pages, Unpublish site.
 
-At the DNS host (for example Zone.eu):
+## B. Cloudflare Workers (target)
 
-| Domain type | Record |
+Use the Worker in `apps/api` to also serve the built app (`assets.directory` pointing to `apps/generator/dist`), and deploy both with `yarn build` and `yarn wrangler deploy`. Cloudflare's documentation says to start new projects on Workers rather than Pages. Details, the config sketch and the login in front of it: [AUTH-MICROSOFT.md](AUTH-MICROSOFT.md#hosting-that-fits-design-a-cloudflare-workers). Automate the publish with a pull-request check and a deploy on merge once the host is decided (issue #6).
+
+When the address of the site changes, change these (search the repository for the old address):
+
+| Where | What |
 |---|---|
-| **Subdomain** (recommended, for example `toolkit.yourdomain.eu`) | `CNAME`, host `toolkit`, destination `deniss-ee.github.io` (no repository name) |
-| Main domain (`yourdomain.eu`) | four `A` records to `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153` (this replaces any existing `A` record, so the current website of that domain stops working) |
+| `apps/api/wrangler.jsonc` | `ALLOWED_ORIGINS` |
+| `apps/generator/src/lib/bookmarklet.ts` | `LIVE_URL` (the bookmarks open this address) |
+| `apps/generator/src/lib/sync.ts` | `API_URL`, unless the app and the API share one address |
+| Documents | [README.md](../README.md), this file, [CLOUDFLARE.md](CLOUDFLARE.md), [AUTH-MICROSOFT.md](AUTH-MICROSOFT.md) |
+| Entra app registration | The redirect addresses ([AUTH-MICROSOFT.md](AUTH-MICROSOFT.md#3-what-it-needs-to-create)) |
+| The signature logo | `LOGO_URL` in `lib/signature.ts` points to the logo file on the live site; mail programs need a full web address |
 
-Then press **Check again** in Settings, Pages (DNS can take up to 24 hours, usually minutes) and tick **Enforce HTTPS** when it becomes available.
-
-## Your own server in a sub-folder (for example linkdesign.eu/ohtuleht-toolkit)
-
-GitHub Pages cannot serve a project under a path of a domain that has another website. For that, upload the build to the web hosting instead (the build uses relative paths, so any folder works):
+## C. A web server in a sub-folder
 
 1. `yarn build`.
-2. In the hosting file manager or over SFTP, open the web root of the domain (on Zone.eu usually `htdocs`) and create the folder `ohtuleht-toolkit`.
-3. Upload the **contents** of `apps/generator/dist/` into it (`index.html` and the `assets` folder).
-4. Open `https://linkdesign.eu/ohtuleht-toolkit/`.
-
-The rest of the domain stays untouched. If a custom domain is also set on GitHub Pages, remove it (Settings, Pages, Remove) so `deniss-ee.github.io/ohtuleht-toolkit` does not redirect to it. To update the site, repeat steps 1 to 3.
+2. Create the folder (for example `ohtuleht-toolkit`) in the web root, over SFTP or the hosting file manager.
+3. Upload the **contents** of `apps/generator/dist/` into it.
+4. Open the address. The rest of the domain stays untouched. To update, repeat steps 1 to 3.
 
 ## Read this
 
-- The repository is **public**, and so is the site and the git history. Never commit secrets or customer material; the tool itself has no login and no secrets.
-- To keep the tool internal later, the answer is Phase 3: host it behind company login (Cloudflare Access / Microsoft login).
-- Take down: Settings, Pages, **Unpublish site**.
+- The repository, the site and the git history are **public** today. Never commit secrets or customer material ([SECURITY.md](../SECURITY.md)).
+- To keep the tool internal, host it behind company login (B with Access, or C with single sign-on). The choice and its trade-offs: [AUTH-MICROSOFT.md](AUTH-MICROSOFT.md#1-who-may-see-what).

@@ -41,9 +41,9 @@ The generator also accepts `"badgeColor":"#rrggbb"` and the old HTML slide snipp
 
 A second bookmark (`tools/bookmarklet/article-scraper.js`) reads title, lead text, link and picture link and opens the toolkit page with them. See [MARKETING-TOOLS.md](MARKETING-TOOLS.md).
 
-## Older tools
+## Older versions
 
-`tools/article scrapper/` holds the earlier versions (separate mobile and desktop HTML snippets, and the one-article banner download). They stay until the mobile template is rebuilt; the new bookmarklet serves the desktop 1250x400 banner only for now.
+The earlier scripts (separate mobile and desktop HTML snippets, and the one-article banner download) were removed from the repository once the mobile template existed. They are in git history: `git show legacy-tools-final:"tools/article scrapper/ol-article-snippets.js"`.
 
 ## Limits
 

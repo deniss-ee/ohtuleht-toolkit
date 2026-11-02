@@ -6,11 +6,13 @@ Turns a banner config into one self-contained `index.html` (CSS, ClickTag helper
 
 | Template | Status |
 |---|---|
-| `articles-1250x400` | Built. Desktop slider without Swiper, light and dark |
+| `articles-1250x400` | Built. Desktop slider without Swiper, light and dark, optional static ad on the right |
+| `articles-mobile` | Built. Swipeable cards with dots, as wide as the phone |
+| `image-slider` | Built. Desktop 1250x400 and mobile 600x500; arc and cube effects |
 | `header-bar` | Built. 100% x 46 px page-header bar (`index.html` + `style.css`), iframe code |
-| 1250x400 with static ad, image slider, 600x500 mobile | Planned (issues #35, #36, #37) |
+| `movie-banner` | Built. A video on a background picture (two zips) |
 
-Also here: `colors.ts` (text-colour rules, readable label colours), `validate.ts` (plain-language problems), `clicktag.ts`, `types.ts`.
+Also here: `arrows.ts` (the one definition of the slider arrows), `colors.ts` (text-colour rules, readable label colours), `validate.ts` (plain-language problems), `messages.ts` (the problems in English and Estonian), `clicktag.ts`, `escape.ts`, `types.ts`.
 
 ## Run locally
 

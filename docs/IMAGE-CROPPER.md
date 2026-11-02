@@ -1,6 +1,6 @@
 # Image cropper
 
-Tools section of the generator. Puts any picture on a **1920x1080** canvas and saves it as a JPG. Rebuilt from the old `tools/image cropper` (issue #91). Runs fully in the browser; nothing is uploaded.
+Tools section of the generator. Puts any picture on a **1920x1080** canvas and saves it as a JPG. Rebuilt from an older stand-alone page (issue #91); the old files are in git history (tag `legacy-tools-final`). Runs fully in the browser; nothing is uploaded.
 
 ## How to use
 

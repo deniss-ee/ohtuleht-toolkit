@@ -1,6 +1,6 @@
 // Template: header bar. The 100% wide, 46 px bar uploaded to b.ohtuleht.ee and shown on the site in an iframe.
 // Output matches the live files (index.html + style.css [+ bg picture]), e.g.
-// https://b.ohtuleht.ee/html5/Ohtuleht/paised_uus/vallatud_joulud/ and category/rubriik-4dimensioon.
+// https://b.ohtuleht.ee/html5/Ohtuleht/paised_uus/vallatud_joulud/ and tools/legacy/category-rubriik-4dimensioon.
 import { onColor } from "./colors.ts";
 import { escapeHtml, jsonForScript } from "./escape.ts";
 import { messages, type Lang } from "./messages.ts";

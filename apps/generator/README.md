@@ -1,6 +1,6 @@
 # Toolkit web app (generator)
 
-Web app of the toolkit, in English and Estonian (EN/ET switch). Sections: **Content marketing** (Articles 1250x400, Articles mobile, Header bar), **Tools** (Image cropper, Movie banner) and **Brand manual** (colours and logos). Other banner types are listed on the start screen as "Coming soon".
+The web app of the toolkit, in English and Estonian (EN/ET switch): a static React 19 + Vite + Tailwind v4 + shadcn/ui site. Sections: **Home**, **Content marketing** (articles banners, image sliders, header bar), **Tools** (image cropper, movie banner, article scraper, picture link converter, email signature, tracking links), **Brand manual** (colours, logos, fonts, eye), **Guide** (new-employee handbook), and, switched off for now, **Banner request** and **Task tracker**. The overview with links to every document is in the [root README](../../README.md) and [docs/README.md](../../docs/README.md).
 
 ## Run locally
 
@@ -29,22 +29,22 @@ The contents of `apps/generator/dist/` to a static host.
 4. Check the live preview (light/dark) and the file weight meter.
 5. **Download zip**. The button enables when there are no problems listed.
 
-The Header bar, Image cropper, Movie banner and Brand manual work the same way; see [HEADER-BAR.md](../../docs/HEADER-BAR.md), [IMAGE-CROPPER.md](../../docs/IMAGE-CROPPER.md), [MOVIE-BANNER.md](../../docs/MOVIE-BANNER.md) and [BRAND-MANUAL.md](../../docs/BRAND-MANUAL.md). Interface text: [LANGUAGES.md](../../docs/LANGUAGES.md).
+The other tools work the same way and each has its document in [docs/README.md](../../docs/README.md). Interface text: [LANGUAGES.md](../../docs/LANGUAGES.md); guide text: [GUIDE.md](../../docs/GUIDE.md).
 
 **Load example** fills a sample campaign for trying things out.
 
 ## Environment variables
 
-None.
+None are required. Optional, set at build time (not secret, they end up in the build): `VITE_API_URL` (address of the API, default is the Worker in `lib/sync.ts`).
 
 ## Server settings
 
-HTTPS. No CORS needs; the app is fully static. Article images are loaded from `p.ohtuleht.ee` by the banner itself.
+HTTPS. The app is static. It calls the API (`lib/sync.ts`), which must allow the site's address (`ALLOWED_ORIGINS` in `apps/api/wrangler.jsonc`). Article images are loaded from `p.ohtuleht.ee` by the banner itself.
 
 ## Open items
 
-- Old Swiper banners open (articles type). Old mobile banners and image sliders do not yet (#36); a static ad on an old banner is left out (#35).
-- Fetching an article by URL needs the Phase 2 Worker.
-- Other banner types: static ad (#35), image slider (#36).
-- Header font and size options (#64). Brand typography and ad formats pages (#18).
+- Fetching an article by number needs a Worker route (#119, [CLOUDFLARE.md](../../docs/CLOUDFLARE.md)).
+- Microsoft login, then switching on Banner request and Task tracker ([AUTH-MICROSOFT.md](../../docs/AUTH-MICROSOFT.md)).
+- Header font and size options (#64). Ad-format reference in the brand manual (#18).
 - The Estonian wording is a first draft: a native speaker should read it.
+- No automated tests yet (#5, #6).
