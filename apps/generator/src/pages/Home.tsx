@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Clapperboard, Crop, Eye, FileSearch, FileText, House, Images, BookOpen, Layers, Link2, ListChecks, Megaphone, Search, Lightbulb, Newspaper, Palette, PanelTop, PenLine, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
+import { Clapperboard, Crop, Eye, FileSearch, FileText, House, Images, BookOpen, Layers, Link2, MonitorSmartphone, ListChecks, Megaphone, Search, Lightbulb, Newspaper, Palette, PanelTop, PenLine, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
 import { ContinueCard } from "@/components/editor/ContinueCard";
 import { StartCard } from "@/components/editor/StartCard";
 import { Input } from "@/components/ui/input";
@@ -23,6 +23,7 @@ const ITEMS: Record<string, { icon: LucideIcon; to: Destination }> = {
   "image-slider-1250x400": { icon: Images, to: { page: "content", make: "image-slider-1250x400" } },
   "image-slider-600x500": { icon: Smartphone, to: { page: "content", make: "image-slider-600x500" } },
   "frame-banner": { icon: Layers, to: { page: "content", make: "frame-banner" } },
+  "responsive-banner": { icon: MonitorSmartphone, to: { page: "content", make: "responsive-banner" } },
   "header-bar": { icon: PanelTop, to: { page: "content", make: "header-bar" } },
   "movie-banner": { icon: Clapperboard, to: { page: "tools", tool: "movie-banner" } },
   "image-cropper": { icon: Crop, to: { page: "tools", tool: "image-cropper" } },

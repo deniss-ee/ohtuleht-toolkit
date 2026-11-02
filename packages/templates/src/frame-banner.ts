@@ -98,21 +98,29 @@ function keyframes(name: string, prop: string, stops: Stops, total: number): str
   return `@keyframes ${name}{${out.join("")}}`;
 }
 
-// Everything the banner needs in CSS for the animation (empty for a single picture).
-export function frameAnimationCss(c: FrameBannerConfig): { css: string; total: number } {
-  const n = c.frames.length;
+// The CSS that fades a group of stacked pictures into each other (empty for a single picture).
+// `scope` is a selector of the element that holds the pictures (they are its `img.ol-fr` children); `name` keeps the keyframe
+// names of several groups on one page apart.
+export function groupAnimationCss(opts: { scope: string; name?: string; holds: number[]; fadeMs: number; rounds: string }): { css: string; total: number } {
+  const n = opts.holds.length;
   if (n < 2) return { css: "", total: 0 };
-  const { v, total, f } = frameTimeline(effectiveHolds(c), c.fadeMs);
-  const rounds = c.loop.forever ? "infinite" : String(Math.max(1, Math.round(c.loop.times)));
-  const delay = `${-Math.round(fadeRamp(f))}ms`; // the first round starts after the fade that closes a round, so frame 1 is solid at once
+  const { v, total, f } = frameTimeline(opts.holds, opts.fadeMs);
+  const delay = `${-Math.round(fadeRamp(f))}ms`; // the first round starts after the fade that closes a round, so picture 1 is solid at once
+  const prefix = opts.name ?? "";
   let css = "";
   let rules = "";
   for (let i = 0; i < n; i++) {
-    const s = frameStops(i, n, v, total, f);
-    css += keyframes(`o${i}`, "opacity", s.opacity, total) + keyframes(`z${i}`, "z-index", s.z, total);
-    rules += `.ol-fr:nth-of-type(${i + 1}){animation:o${i} ${Math.round(total)}ms linear ${delay} ${rounds} both,z${i} ${Math.round(total)}ms step-end ${delay} ${rounds} both}`;
+    const st = frameStops(i, n, v, total, f);
+    css += keyframes(`${prefix}o${i}`, "opacity", st.opacity, total) + keyframes(`${prefix}z${i}`, "z-index", st.z, total);
+    rules += `${opts.scope} .ol-fr:nth-of-type(${i + 1}){animation:${prefix}o${i} ${Math.round(total)}ms linear ${delay} ${opts.rounds} both,${prefix}z${i} ${Math.round(total)}ms step-end ${delay} ${opts.rounds} both}`;
   }
   return { css: css + rules, total };
+}
+
+// Everything the picture loop banner needs in CSS for the animation.
+export function frameAnimationCss(c: FrameBannerConfig): { css: string; total: number } {
+  const rounds = c.loop.forever ? "infinite" : String(Math.max(1, Math.round(c.loop.times)));
+  return groupAnimationCss({ scope: ".ol-frames", holds: effectiveHolds(c), fadeMs: c.fadeMs, rounds });
 }
 
 export function renderFrameBanner(c: FrameBannerConfig): string {

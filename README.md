@@ -11,7 +11,7 @@ Internal tools for the Õhtuleht newsroom, ad sales and marketing, in one web ap
 | Section | What you can do | State |
 |---|---|---|
 | **Home** | One page with a card for everything, a search box (press `/`), "continue where you left off" | Live |
-| **Content marketing** | Make banner zips for the ad server: articles banner (desktop 1250x400, optional static ad; mobile), image slider (desktop and mobile), **picture loop** (pictures that fade into each other instead of a GIF, fixed or responsive), header bar for theme pages. Open and convert old Swiper banners | Live |
+| **Content marketing** | Make banner zips for the ad server: articles banner (desktop 1250x400, optional static ad; mobile), image slider (desktop and mobile), **picture loop** (pictures that fade into each other instead of a GIF, fixed or responsive), **responsive banner** (always 200 px high, 320 to 700 wide, a small and a large video or set of pictures), header bar for theme pages. Open and convert old Swiper banners | Live |
 | **Tools** | Image cropper (1920x1080 JPG), Movie banner (video on a picture), Article scraper and Picture link converter (marketing), Email signature, Tracking links (UTM) | Live |
 | **Brand manual** | Colours (copy in many formats), logos (SVG, PNG), fonts, the brand eye generator | Live |
 | **Guide** | Handbook for new employees: first-days checklist, steps with screenshot placeholders | In progress ([docs/GUIDE.md](docs/GUIDE.md)) |
@@ -71,7 +71,7 @@ The address follows the app, so any place can be sent to a colleague. Add it to 
 | Link | Opens |
 |---|---|
 | *(nothing)* | Home |
-| `?section=content&make=header-bar` | A new header bar (also `articles-1250x400`, `articles-mobile`, `image-slider-1250x400`, `image-slider-600x500`, `frame-banner`) |
+| `?section=content&make=header-bar` | A new header bar (also `articles-1250x400`, `articles-mobile`, `image-slider-1250x400`, `image-slider-600x500`, `frame-banner`, `responsive-banner`) |
 | `?section=tools&tool=image-cropper` | A tool (also `movie-banner`, `article-scraper`, `picture-converter`, `email-signature`, `utm-builder`) |
 | `?section=brand&tab=colours` | Brand manual (also `logos`, `fonts`, `eye`) |
 | `?section=guide&topic=esimene-paev&step=3` | A topic of the guide, scrolled to its step |
