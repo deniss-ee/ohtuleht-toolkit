@@ -196,7 +196,7 @@ export function Guide({ topic, step, onTopic }: { topic: string | null; step: nu
             <ol className="sticky top-20 max-h-[calc(100svh-6rem)] space-y-1 overflow-y-auto pr-1 text-sm">
               {current.steps.map((s, i) => (
                 <li key={s.title}>
-                  <a href={`#${current.id}-${i + 1}`} onClick={(e) => (e.preventDefault(), open(current.id, i + 1))} aria-current={active === i + 1 ? "location" : undefined} className={`flex gap-2 rounded-md px-2 py-1 transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none ${active === i + 1 ? "bg-primary/10 font-medium text-primary" : "text-muted-foreground"}`}>
+                  <a href={`#${current.id}-${i + 1}`} onClick={(e) => (e.preventDefault(), open(current.id, i + 1))} aria-current={active === i + 1 ? "location" : undefined} className={`flex gap-2 rounded-md px-2 py-1 transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none ${active === i + 1 ? "bg-muted font-medium text-foreground" : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"}`}>
                     <span className="w-4 shrink-0 text-right tabular-nums">{i + 1}</span>
                     <span>{s.title}</span>
                   </a>
