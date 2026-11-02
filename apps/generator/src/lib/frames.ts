@@ -120,7 +120,7 @@ export async function buildFrameZip(d: FrameDraft): Promise<Blob> {
   return zip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 9 } });
 }
 
-export const frameZipName = (d: FrameDraft) => stampedName(`${slug(d.config.campaign)}_${d.config.responsive ? "responsive" : `${d.config.width}x${d.config.height}`}`, "zip");
+export const frameZipName = (d: FrameDraft) => stampedName(`${slug(d.config.campaign)}_${d.config.width}x${d.config.height}`, "zip");
 export const downloadFrameZip = async (d: FrameDraft) => download(await buildFrameZip(d), frameZipName(d));
 
 // Reads a banner made by this tool (the config is embedded in index.html). Returns null when the zip is something else.
