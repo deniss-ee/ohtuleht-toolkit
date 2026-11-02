@@ -92,6 +92,30 @@ export function Guide({ topic, step, onTopic }: { topic: string | null; step: nu
     onTopic(id, s);
     if (!s) window.scrollTo(0, 0);
   };
+  // "You are here" in the contents list: the last step whose top has passed just under the header.
+  const [active, setActive] = useState(1);
+  useEffect(() => {
+    if (!topic) return;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const steps = [...document.querySelectorAll<HTMLElement>(`li[id^="${topic}-"]`)];
+      let now = 1;
+      steps.forEach((el, i) => {
+        if (el.getBoundingClientRect().top <= 140) now = i + 1;
+      });
+      setActive(now);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, [topic]);
   // A link to a step (from the checklist, the contents or the address): scroll to it and mark it for a moment.
   useEffect(() => {
     if (!topic || !step) return setFlash(null);
@@ -169,10 +193,10 @@ export function Guide({ topic, step, onTopic }: { topic: string | null; step: nu
 
         <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[13rem_minmax(0,1fr)]">
           <nav aria-label={t.contents} className="hidden lg:block">
-            <ol className="sticky top-4 space-y-1 text-sm">
+            <ol className="sticky top-20 max-h-[calc(100svh-6rem)] space-y-1 overflow-y-auto pr-1 text-sm">
               {current.steps.map((s, i) => (
                 <li key={s.title}>
-                  <a href={`#${current.id}-${i + 1}`} onClick={(e) => (e.preventDefault(), open(current.id, i + 1))} className="flex gap-2 rounded-md px-2 py-1 text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none">
+                  <a href={`#${current.id}-${i + 1}`} onClick={(e) => (e.preventDefault(), open(current.id, i + 1))} aria-current={active === i + 1 ? "location" : undefined} className={`flex gap-2 rounded-md px-2 py-1 transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none ${active === i + 1 ? "bg-primary/10 font-medium text-primary" : "text-muted-foreground"}`}>
                     <span className="w-4 shrink-0 text-right tabular-nums">{i + 1}</span>
                     <span>{s.title}</span>
                   </a>
