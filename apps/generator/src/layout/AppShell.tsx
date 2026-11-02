@@ -12,7 +12,7 @@ function NavButton({ item, active, onSelect }: { item: NavItem; active: boolean;
   return (
     <Button
       variant={active ? "secondary" : "ghost"}
-      className="justify-start gap-2"
+      className={`justify-start gap-2 ${active ? "bg-primary/10 font-medium text-primary hover:bg-primary/15" : ""}`}
       disabled={!item.ready}
       aria-current={active ? "page" : undefined}
       onClick={() => onSelect(item.id)}
