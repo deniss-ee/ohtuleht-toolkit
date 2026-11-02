@@ -10,6 +10,7 @@ import { AppShell } from "@/layout/AppShell";
 import { newDraft } from "@/lib/banner";
 import { importHeaderZip, newHeaderDraft } from "@/lib/header";
 import { importSliderAny } from "@/lib/legacySlider";
+import { importFrameZip, newFrameDraft } from "@/lib/frames";
 import { newSliderDraft } from "@/lib/slider";
 import { buildSearch, parseRoute, type BrandTab } from "@/lib/route";
 import { clearWork, loadWork, savedInfo, saveWork, type SavedInfo, type Work } from "@/lib/storage";
@@ -17,6 +18,7 @@ import { importZip } from "@/lib/zip";
 import { BannerEditor } from "@/pages/BannerEditor";
 import { BrandManual } from "@/pages/BrandManual";
 import { ContentMarketingHome } from "@/pages/ContentMarketingHome";
+import { FrameBannerEditor } from "@/pages/FrameBannerEditor";
 import { HeaderBarEditor } from "@/pages/HeaderBarEditor";
 import { Home, type Destination } from "@/pages/Home";
 import { ImageCropper } from "@/pages/ImageCropper";
@@ -31,7 +33,7 @@ import { Guide } from "@/pages/Guide";
 import { UtmBuilder } from "@/pages/UtmBuilder";
 import { SignatureGenerator } from "@/pages/SignatureGenerator";
 
-const newWork = (typeId: string): Work => (typeId === "header-bar" ? { kind: "header", draft: newHeaderDraft() } : typeId === "image-slider-1250x400" || typeId === "image-slider-600x500" ? { kind: "slider", draft: newSliderDraft(typeId) } : { kind: "banner", draft: newDraft(typeId === "articles-mobile" ? "articles-mobile" : "articles-1250x400") });
+const newWork = (typeId: string): Work => (typeId === "header-bar" ? { kind: "header", draft: newHeaderDraft() } : typeId === "frame-banner" ? { kind: "frames", draft: newFrameDraft() } : typeId === "image-slider-1250x400" || typeId === "image-slider-600x500" ? { kind: "slider", draft: newSliderDraft(typeId) } : { kind: "banner", draft: newDraft(typeId === "articles-mobile" ? "articles-mobile" : "articles-1250x400") });
 
 export function App() {
   const lang = useSyncExternalStore(subscribeLang, getLang); // render everything again when the language changes
@@ -66,8 +68,12 @@ export function App() {
     try {
       const header = await importHeaderZip(file);
       const slider = header ? null : await importSliderAny(file);
+      const frames = header || slider ? null : await importFrameZip(file);
       if (header) {
         start({ kind: "header", draft: header });
+        toast.success(editor.imported);
+      } else if (frames) {
+        start({ kind: "frames", draft: frames });
         toast.success(editor.imported);
       } else if (slider) {
         start({ kind: "slider", draft: slider.draft });
@@ -184,6 +190,8 @@ export function App() {
           {page === "content" &&
             (work?.kind === "banner" ? (
               <BannerEditor draft={work.draft} onChange={(draft) => change({ kind: "banner", draft })} onBack={close} />
+            ) : work?.kind === "frames" ? (
+              <FrameBannerEditor draft={work.draft} onChange={(draft) => change({ kind: "frames", draft })} onBack={close} />
             ) : work?.kind === "slider" ? (
               <SliderEditor draft={work.draft} onChange={(draft) => change({ kind: "slider", draft })} onBack={close} />
             ) : work?.kind === "header" ? (

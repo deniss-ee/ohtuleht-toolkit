@@ -28,6 +28,7 @@ Pick what you need. New to the project? Read the first group in order.
 | Tool | Document |
 |---|---|
 | Banners: articles, static ad, image slider, mobile, old Swiper import, picture optimiser | [BANNERS.md](BANNERS.md) |
+| Picture loop banner (pictures that fade into each other, instead of a GIF) | [FRAME-BANNER.md](FRAME-BANNER.md) |
 | Header bar for theme pages | [HEADER-BAR.md](HEADER-BAR.md) |
 | Image cropper | [IMAGE-CROPPER.md](IMAGE-CROPPER.md) |
 | Movie banner | [MOVIE-BANNER.md](MOVIE-BANNER.md) |
