@@ -4,6 +4,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+### Handover preparation (2026-11-02)
+
+- Documentation rewritten for the handover to IT: new README, docs index (`docs/README.md`), `docs/TRANSFER.md` (owners, accounts, moving the repository and the API, first week), `docs/AUTH-MICROSOFT.md` (Microsoft login, sending mail as the person, who sees what), `SECURITY.md`, `docs/AI-ASSISTANT.md`. `docs/CLOUDFLARE.md`, `docs/DEPLOY.md`, `docs/ROADMAP.md`, `docs/TASK-TRACKER.md`, `CONTRIBUTING.md`, `CLAUDE.md` and the package READMEs brought up to date.
+- Removed `docs/HANDOFF.md` and `docs/RECOMMENDATIONS.md` (their content moved into the new documents).
+- Old tools: the rebuilt ones (image cropper, movie banner, article scrapper) removed; the rest archived in `tools/legacy/`. The tag `legacy-tools-final` keeps the old state.
+- `yarn docs:check` checks every link and anchor in the Markdown files.
+
 ## [0.2.5] - 2026-10-30
 
 Arrows in the main campaign colour with a smaller chevron; the mobile label keeps its colour in dark mode.

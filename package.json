@@ -10,7 +10,8 @@
     "dev": "yarn workspace @ohtuleht/generator dev",
     "build": "yarn workspace @ohtuleht/generator build",
     "typecheck": "yarn workspace @ohtuleht/generator typecheck",
-    "guide:docs": "node tools/guide-docs.mjs"
+    "guide:docs": "node tools/guide-docs.mjs",
+    "docs:check": "node tools/check-links.mjs"
   },
   "engines": {
     "node": ">=20"

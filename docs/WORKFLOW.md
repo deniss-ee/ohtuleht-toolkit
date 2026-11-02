@@ -102,7 +102,7 @@ Update `CHANGELOG.md` in the release PR.
 | "My branch is behind `develop`" | `git checkout feat/12-x`, `git merge develop`, resolve conflicts, `git push` |
 | "I want to undo the last commit but keep changes" | `git reset --soft HEAD~1` |
 | "I do not know what I changed" | `git status`, then `git diff` |
-| "Commit rejected: file too large" | Compress images first; see [RECOMMENDATIONS.md](RECOMMENDATIONS.md) |
+| "Commit rejected: file too large" | Compress images first; see [CONTRIBUTING.md](../CONTRIBUTING.md) |
 
 ## Package manager
 

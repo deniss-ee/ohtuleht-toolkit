@@ -1,6 +1,6 @@
 # Movie banner
 
-Tools section of the generator. A looping video on top of a background picture, delivered as **two zips** (one for each picture size the client sends: 1250 px and 1280 px wide). Rebuilt from the old `tools/movie banner generator` (issue #92). Runs fully in the browser.
+Tools section of the generator. A looping video on top of a background picture, delivered as **two zips** (one for each picture size the client sends: 1250 px and 1280 px wide). Rebuilt from an older stand-alone page (issue #92); the old files are in git history (tag `legacy-tools-final`). Runs fully in the browser.
 
 ## How to use
 

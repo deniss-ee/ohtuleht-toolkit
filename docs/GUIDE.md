@@ -12,7 +12,7 @@ The repository and the site are public. The guide text therefore holds **no secr
 
 ## Change the text
 
-Everything is in `apps/generator/src/guide-content.ts`: `TOPICS` (topics, steps), `FIRST_DAYS` (the checklist). A step has `title`, `text`, optional `chips`, `tip`, `warn`, `links`, `people` and `shot`. `**word**` is red, `[[key]]` a private value, `[label](url)` is not used: links go in `links`.
+Everything is in `apps/generator/src/guide-content.ts`: `TOPICS` (topics, steps), `FIRST_DAYS` (the checklist). A step has `title`, `text`, optional `chips`, `tip`, `warn`, `links`, `people` and `shot`. `**word**` is red, `[[key]]` a private value, Links go in `links` (a label and an address), not inside the text.
 
 ## Add a screenshot
 
