@@ -145,6 +145,10 @@ Design: Figma "Õhtuleht - Brand hub", frame "Mobile Content". Format id `articl
 
 Several pictures that fade into each other, in place of a GIF; fixed size or responsive; optional background under transparent pictures. Own document: [FRAME-BANNER.md](FRAME-BANNER.md).
 
+## Format 6: Responsive banner, 200 px (built)
+
+Always 200 px high, 320 to 700 px wide; a small (540x200) and a large (700x200) version of a video or pictures, chosen by the banner's own width; safe zones 320 and 540. Own document: [RESPONSIVE-BANNER.md](RESPONSIVE-BANNER.md).
+
 ## Picture optimiser
 
 Pictures chosen in the form (header, ad) and the pictures of an old zip are optimised in the browser with **jSquash**, the codecs of the Squoosh app as WebAssembly (`@jsquash/jpeg` MozJPEG, `@jsquash/oxipng`, `@jsquash/resize`). Nothing is uploaded. Code: `apps/generator/src/lib/optimise.ts`.

@@ -12,7 +12,7 @@ export type BrandTab = "colours" | "logos" | "fonts" | "eye";
 // Only pages that are switched on (see nav in content) can be opened by a link.
 export const PAGES: PageId[] = nav.filter((n) => n.ready).map((n) => n.id);
 export const TOOL_IDS: ToolInfo["id"][] = ["image-cropper", "movie-banner", "article-scraper", "picture-converter", "email-signature", "utm-builder"];
-export const MAKE_IDS = ["header-bar", "articles-1250x400", "articles-mobile", "image-slider-1250x400", "image-slider-600x500", "frame-banner"];
+export const MAKE_IDS = ["header-bar", "articles-1250x400", "articles-mobile", "image-slider-1250x400", "image-slider-600x500", "frame-banner", "responsive-banner"];
 
 export interface Route {
   page: PageId | null; // null = not in the link (the home page opens)

@@ -4,6 +4,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+### Responsive banner
+
+- New banner type in Content marketing: **Responsive banner, 200 px**. Always 200 px high, as wide as its place (320 to 700 px). A small version (made 540x200, safe zone 320, shown up to 540 px wide) and a large version (700x200, safe zone 540, above 540), each a muted looping video (no controls; the first frame becomes the still) or pictures (one still, two or more fade into each other with the solid fade of the picture loop). Chosen by the banner's own width, only the shown version is loaded. Pictures at 1x or 2x accepted, with a warning for other shapes; the safe zone can be drawn on the preview. Doc: `docs/RESPONSIVE-BANNER.md`.
+- The picture loop's fade is now one reusable function (`groupAnimationCss`).
+
 ### Picture loop banner
 
 - New banner type in Content marketing: **Picture loop**, pictures (PNG, JPG, WebP) that fade into each other in place of a GIF. Fixed size or responsive (100% wide), fit (fill, whole picture, stretch), a colour and/or picture background under transparent PNGs, time per picture and fade, repeat forever or a number of rounds, pause on hover, optional reduced-motion. The fade keeps the old picture solid until the new one is fully in, so the background never shows and nothing jumps. Pure CSS. Zip with the settings embedded, opens again. Doc: `docs/FRAME-BANNER.md`.

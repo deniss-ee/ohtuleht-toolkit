@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowDown, ArrowUp, Download, FileArchive, FlaskConical, ImagePlus, Images, Loader2, Palette, Repeat, Ruler, Timer, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { ColorField } from "@/components/editor/ColorField";
+import { Choice, Num } from "@/components/editor/Fields";
 import { Section, SwitchRow } from "@/components/editor/FormParts";
 import { HoverPill } from "@/components/editor/HoverPill";
 import { SwapFrame, type Geometry } from "@/components/editor/SwapFrame";
@@ -19,35 +20,6 @@ const PREVIEW_WIDTHS = [0, 600, 320]; // responsive only: 0 = as designed
 
 const seconds = (ms: number) => Math.round(ms) / 1000;
 const toMs = (s: string) => Math.max(0, Math.round((Number(s.replace(",", ".")) || 0) * 1000));
-
-// A number box with a unit in its label.
-function Num({ id, label, value, min, max, step = 1, onChange, hint }: { id: string; label: string; value: number; min: number; max?: number; step?: number; onChange: (v: number) => void; hint?: string }) {
-  return (
-    <div className="space-y-1.5">
-      <Label htmlFor={id}>{label}</Label>
-      <Input id={id} type="number" inputMode="decimal" min={min} max={max} step={step} value={value} onChange={(ev) => onChange(Number(ev.target.value))} />
-      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
-    </div>
-  );
-}
-
-// Choice of a few options as buttons.
-function Choice<T extends string>({ label, value, options, onChange }: { label: string; value: T; options: { id: T; label: string; hint?: string }[]; onChange: (v: T) => void }) {
-  return (
-    <div className="space-y-1.5">
-      <span className="text-sm font-medium">{label}</span>
-      <div role="radiogroup" aria-label={label} className="grid gap-2" style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}>
-        {options.map((o) => (
-          <label key={o.id} className="flex cursor-pointer flex-col items-center justify-center gap-0.5 rounded-lg border p-2 text-center text-sm has-checked:border-primary has-checked:bg-primary/5 has-focus-visible:ring-3 has-focus-visible:ring-ring/50">
-            <input type="radio" name={label} className="sr-only" checked={value === o.id} onChange={() => onChange(o.id)} />
-            {o.label}
-            {o.hint && <span className="text-xs text-muted-foreground">{o.hint}</span>}
-          </label>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // The banner as it will run: the real HTML in a frame, scaled to fit. Responsive banners can be tried at narrower widths.
 function FramePreview({ draft, onTryExample, working }: { draft: FrameDraft; onTryExample: () => void; working: boolean }) {
