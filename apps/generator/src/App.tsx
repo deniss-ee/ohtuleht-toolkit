@@ -27,6 +27,7 @@ import { ArticleScraper } from "@/pages/ArticleScraper";
 import { PictureConverter } from "@/pages/PictureConverter";
 import { TaskTracker } from "@/pages/TaskTracker";
 import { BannerRequest } from "@/pages/BannerRequest";
+import { Guide } from "@/pages/Guide";
 import { UtmBuilder } from "@/pages/UtmBuilder";
 import { SignatureGenerator } from "@/pages/SignatureGenerator";
 
@@ -38,6 +39,7 @@ export function App() {
   // The address says where to start; a plain address opens the Home page.
   const [page, setPage] = useState<PageId>(() => link.page ?? "home");
   const [tab, setTab] = useState<BrandTab>(link.tab);
+  const [topic, setTopic] = useState<string | null>(link.topic); // open topic of the guide
   const [work, setWork] = useState<Work>(() => (link.make ? newWork(link.make) : null)); // what is being edited: nothing (start screen), an articles banner or a header bar
   const [saved, setSaved] = useState<SavedInfo | null>(savedInfo); // unfinished work from an earlier visit
   const edited = useRef(false); // changed since it was opened and not downloaded yet
@@ -108,11 +110,11 @@ export function App() {
   // changing only the language replaces the entry.
   const placeKey = useRef<string | null>(null);
   useEffect(() => {
-    const search = buildSearch(page, tool, tab, lang);
-    const key = `${page}/${tool}/${tab}`;
+    const search = buildSearch(page, tool, tab, lang, topic);
+    const key = `${page}/${tool}/${tab}/${topic}`;
     if (search !== location.search) history[placeKey.current === null || placeKey.current === key ? "replaceState" : "pushState"](null, "", search);
     placeKey.current = key;
-  }, [page, tool, tab, lang]);
+  }, [page, tool, tab, lang, topic]);
 
   // Back and Forward buttons of the browser.
   useEffect(() => {
@@ -125,6 +127,7 @@ export function App() {
       setPage(r.page ?? "home");
       setTool(r.tool);
       setTab(r.tab);
+      setTopic(r.topic);
       if (r.lang && r.lang !== getLang()) setLang(r.lang);
     };
     window.addEventListener("popstate", onPop);
@@ -151,6 +154,7 @@ export function App() {
     setSaved(savedInfo());
     setPage(to.page);
     setTool(to.tool ?? null);
+    setTopic(null);
     if (to.tab) setTab(to.tab);
     start(to.make ? newWork(to.make) : null);
     window.scrollTo(0, 0);
@@ -169,6 +173,7 @@ export function App() {
             setPage(p);
             close();
             setTool(null);
+            setTopic(null);
           }}
         >
           {page === "home" && <Home saved={saved} onContinue={resume} onDiscard={discard} onGo={go} />}
@@ -183,6 +188,7 @@ export function App() {
               <ContentMarketingHome onCreate={create} onUpload={open} saved={saved} onContinue={resume} onDiscard={discard} />
             ))}
           {page === "tools" && (tool === "image-cropper" ? <ImageCropper onBack={() => setTool(null)} /> : tool === "movie-banner" ? <MovieBanner onBack={() => setTool(null)} /> : tool === "article-scraper" ? <ArticleScraper onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "picture-converter" ? <PictureConverter onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "email-signature" ? <SignatureGenerator onBack={() => setTool(null)} /> : tool === "utm-builder" ? <UtmBuilder onBack={() => setTool(null)} /> : <ToolsHome onOpen={setTool} />)}
+          {page === "guide" && <Guide topic={topic} onTopic={setTopic} />}
           {page === "request" && <BannerRequest onOpenBoard={() => go({ page: "tasks" })} onMake={(id) => go({ page: "content", make: id })} />}
           {page === "tasks" && <TaskTracker onMake={(id) => go({ page: "content", make: id })} onNewRequest={() => go({ page: "request" })} />}
           {page === "brand" && <BrandManual tab={tab} onTab={setTab} />}

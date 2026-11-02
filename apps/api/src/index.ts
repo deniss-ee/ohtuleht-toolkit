@@ -55,6 +55,27 @@ export default {
     if (url.pathname === "/api/health") return json({ ok: true, auth: env.AUTH_MODE }, 200, cors);
     if (!(await authorised(req, env))) return json({ error: "Sign in first." }, 401, cors);
 
+    // Private values of the guide. Never stored or served while AUTH_MODE is "open": there is no login yet, so anybody could read them.
+    const v = /^\/api\/values(?:\/([\w-]{1,80}))?$/.exec(url.pathname);
+    if (v) {
+      if (env.AUTH_MODE === "open") return req.method === "GET" && !v[1] ? json({}, 200, cors) : json({ error: "Needs login: private values are switched off." }, 403, cors);
+      if (req.method === "GET" && !v[1]) {
+        const { results } = await env.DB.prepare("SELECT key, value FROM guide_values").all<{ key: string; value: string }>();
+        return json(Object.fromEntries(results.map((r) => [r.key, r.value])), 200, cors);
+      }
+      if (req.method === "PUT" && v[1]) {
+        const body = (await req.json().catch(() => null)) as { value?: unknown } | null;
+        if (!body || typeof body.value !== "string" || body.value.length > 2000) return json({ error: "Expected { value: text }." }, 400, cors);
+        await env.DB.prepare("INSERT INTO guide_values (key, value, updated_at) VALUES (?1, ?2, ?3) ON CONFLICT(key) DO UPDATE SET value = ?2, updated_at = ?3").bind(v[1], body.value, new Date().toISOString()).run();
+        return json({ ok: true }, 200, cors);
+      }
+      if (req.method === "DELETE" && v[1]) {
+        await env.DB.prepare("DELETE FROM guide_values WHERE key = ?1").bind(v[1]).run();
+        return json({ ok: true }, 200, cors);
+      }
+      return json({ error: "Method not allowed." }, 405, cors);
+    }
+
     const m = /^\/api\/(briefs|clients)(?:\/([^/]+))?$/.exec(url.pathname);
     if (!m) return json({ error: "Not found." }, 404, cors);
     const table = m[1] as Table;
