@@ -43,7 +43,7 @@ function css(config: ArticlesBannerConfig): string {
     `.ol-slide{flex:0 0 ${CARD_W}px;width:${CARD_W}px}` +
     `.card{position:relative;display:flex;align-items:flex-end;height:${CARD_H}px;border-radius:8px;overflow:hidden;background:#000 center/cover no-repeat}` +
     // Picture fades to black behind the title (Figma: 216 px gradient, text 16 px from the left, 36 px from the right, 20 px from the bottom).
-    ".shade{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:4px;width:100%;min-height:216px;padding:0 36px 20px 16px;background:linear-gradient(to bottom,rgba(0,0,0,0),#000)}" +
+    ".shade{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:8px;width:100%;min-height:216px;padding:0 36px 20px 16px;background:linear-gradient(to bottom,rgba(0,0,0,0),#000)}" +
     // Category label (Figma "Article Label"): chip on the main colour, Inter Bold 12/15, uppercase, 4 px radius, 4 x 6 px padding.
     '.badge{padding:4px 6px;border-radius:4px;background:var(--chip);color:var(--chip-text);font:700 12px/15px "Inter",sans-serif;text-transform:uppercase;white-space:nowrap}' +
     ".title{min-width:0;display:-webkit-box;overflow:hidden;color:#fff;font-size:18px;font-weight:700;line-height:23px;overflow-wrap:break-word;-webkit-box-orient:vertical;-webkit-line-clamp:6}" +
