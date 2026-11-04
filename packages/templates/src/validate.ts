@@ -28,7 +28,7 @@ export function validate(config: ArticlesBannerConfig, lang: Lang = "en"): Probl
     if (!isUrl(a.image)) problems.push({ message: m.image(n), field: `a${i}-img` });
     if (a.badgeColor && !/^#[0-9a-fA-F]{6}$/.test(a.badgeColor)) problems.push({ message: m.color(n), field: `a${i}-color` });
   });
-  if (!isUrl(config.header.href)) problems.push({ message: m.headerHref, field: "header-href" });
+  if (config.header.href.trim() && !isUrl(config.header.href)) problems.push({ message: m.headerHref, field: "header-href" });
   if (config.header.type === "image" && !config.header.src) problems.push({ message: m.headerPicture, field: "header-choose" });
   if (config.format === "articles-1250x400" && config.ad) {
     if (!config.ad.src) problems.push({ message: m.adPicture, field: "ad-choose" });

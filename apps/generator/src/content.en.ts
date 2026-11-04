@@ -158,8 +158,8 @@ export const editor = {
   headerLogoChange: "Change logo",
   headerLogoRemove: "Remove logo",
   headerLogoHint: "Shown on the right of the header, 30 px high, with the same space from the edge as the text on the left (16 px). PNG, SVG, WebP or JPG; a logo that reads well on the header colour.",
-  headerLink: "Where the header leads",
-  headerLinkHint: "Link opened when someone clicks the header.",
+  headerLink: "Where the header leads (optional)",
+  headerLinkHint: "Link opened when someone clicks the header. Empty = the ad server's own click address.",
 
   // 4 Advanced
   colorsTitle: "Colours",

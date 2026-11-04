@@ -135,8 +135,8 @@ export const editor: typeof En.editor = {
   headerLogoChange: "Muuda logo",
   headerLogoRemove: "Eemalda logo",
   headerLogoHint: "Näidatakse päise paremal pool, 30 px kõrgusena, servast sama kaugel kui tekst vasakul (16 px). PNG, SVG, WebP või JPG; logo, mis on päise värvil hästi loetav.",
-  headerLink: "Kuhu päis viib",
-  headerLinkHint: "Link, mis avatakse, kui keegi päisel klõpsab.",
+  headerLink: "Kuhu päis viib (valikuline)",
+  headerLinkHint: "Link, mis avatakse, kui keegi päisel klõpsab. Tühi = reklaamiserveri enda klikiaadress.",
 
   colorsTitle: "Värvid",
   colorsHint: "Hele ja tume režiim. Enamik kampaaniaid võib need samaks jätta.",
