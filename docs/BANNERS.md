@@ -133,13 +133,21 @@ Design: Figma "Õhtuleht - Brand hub", frame "Mobile Content". Format id `articl
 - Card: picture, black gradient behind the title (216 px), title in Fira Sans Condensed Bold 18/23, white. No hover colour.
 - **Category label** above the title (Figma "Article Label"): chip on the label colour, Inter Bold 12/15, uppercase, 4 px radius, 4 x 6 px padding, 4 px above the title. Same data as the desktop banner: the campaign label (default Sisuturundus), a different text or colour per article. The chip is the main colour with white text (brand rule: white on red 600 and darker, black on lighter), or the label colour set in Colours or on the article.
 - Pagination: 6 dots in the design, one per article here; the active one is solid, the others 30 %. Black on light, white on dark. Dots are clickable (16 px touch area).
-- **Pictures:** the banner uses the `/webp/48/` version of each picture (cropped, higher resolution) whatever size was pasted: `/webp/54/` becomes `/webp/48/` when the banner is written. The form keeps the pasted address.
+- **Pictures:** the banner uses the `/webp/48/` version of each picture (cropped, higher resolution) whatever size was pasted: `/webp/54/` becomes `/webp/48/` when the banner is written. Switching the version at the top also rewrites the picture links in the form: Mobile shows `/webp/48/`, Desktop shows `/webp/54/` (other links are left alone).
 - Swipe, drag, autoplay, loop and shuffle as in the desktop banner. No arrows.
 - Theme: light background white, dark background `#1c1c1c`. Header colour and picture work as on desktop. Title and hover colours do not apply, so the editor hides them.
 - The editor preview has a phone width switch (375, 390, 430).
 - **Desktop and mobile are one campaign.** The editor has a Desktop 1250x400 / Mobile switch at the top: one click turns the banner into the other size and keeps everything (campaign, header, articles, colours, behaviour). Download each size separately. The dark background follows the format unless it was changed by hand.
 - The preview frame is 514 px high (8 px above and below the 498 px banner) so the dots are never cut by the frame edge. In the ad system give the slot at least 498 px.
 - Open: best header picture size for mobile (the hint still names the desktop size), 1 px line height rounding (18 x 1.3 = 23.4 is 23 px).
+
+## Format 5: Picture loop (built)
+
+Several pictures that fade into each other, in place of a GIF; fixed size or responsive; optional background under transparent pictures. Own document: [FRAME-BANNER.md](FRAME-BANNER.md).
+
+## Format 6: Responsive banner, 200 px (built)
+
+Always 200 px high, 320 to 700 px wide; a small (540x200) and a large (700x200) version of a video or pictures, chosen by the banner's own width; safe zones 320 and 540. Own document: [RESPONSIVE-BANNER.md](RESPONSIVE-BANNER.md).
 
 ## Picture optimiser
 

@@ -1,9 +1,9 @@
-import { Clapperboard, Crop, FileSearch, Replace, Wrench, type LucideIcon } from "lucide-react";
+import { Clapperboard, Crop, FileSearch, Link2, PenLine, Replace, Wrench, type LucideIcon } from "lucide-react";
 import { PageHeader } from "@/components/editor/PageHeader";
 import { StartCard } from "@/components/editor/StartCard";
 import { tools as t, type ToolInfo } from "@/content";
 
-const ICONS: Record<ToolInfo["id"], LucideIcon> = { "image-cropper": Crop, "movie-banner": Clapperboard, "article-scraper": FileSearch, "picture-converter": Replace };
+const ICONS: Record<ToolInfo["id"], LucideIcon> = { "image-cropper": Crop, "movie-banner": Clapperboard, "article-scraper": FileSearch, "picture-converter": Replace, "email-signature": PenLine, "utm-builder": Link2 };
 
 // Start screen of the Tools section: one card per tool.
 export function ToolsHome({ onOpen }: { onOpen: (id: ToolInfo["id"]) => void }) {

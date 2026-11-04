@@ -58,4 +58,4 @@ Optional pagination (used by the mobile banner, which has no arrows): `<div clas
 ## Open items
 
 - Fade transition.
-- Automated tests (needs the test setup from the CI issue).
+- Automated tests (needs the test setup from the CI issue, #5 and #6).

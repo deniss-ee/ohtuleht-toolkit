@@ -12,20 +12,31 @@
 
 ```
 apps/
-  generator/        React + Vite + Tailwind v4 + shadcn/ui: banners, header bar, tools (image cropper, movie banner), brand manual (one app, static dist/)
+  generator/        The web app: React 19 + Vite + Tailwind v4 + shadcn/ui. Banners, header bar, tools, brand manual, guide, request form and task tracker. One app, static dist/
+  api/              Cloudflare Worker + D1 database: briefs, clients, guide values (test mode, no login yet)
 packages/
-  banner-runtime/   Vanilla TS compiled to one small script (slider)
-  templates/        Banner and header-bar HTML/CSS templates, colour logic, validation, types
+  banner-runtime/   Vanilla TS compiled to one small script (slider), plus fx.js for the 3D effects
+  templates/        Banner, image slider, header-bar and movie-banner HTML/CSS templates, colour logic, validation, messages, types
   brand/            brand.json (colours, logos, fonts, clear space), optimised logo SVGs, helpers
-tools/bookmarklet/  Article bookmarklet v2 (source)
-tools/              Older standalone tools (migrated gradually; image cropper and movie banner are rebuilt in the app)
-category/           Older category header (reference for the header bar)
-docs/               Documentation
+tools/
+  bookmarklet/      Sources of the two bookmarks (article snippet, article scraper)
+  legacy/           Archived old stand-alone tools (not part of the build)
+  guide-docs.mjs    Generates docs/GUIDE-SCREENSHOTS.md and docs/GUIDE-VALUES.md
+docs/               Documentation (index: docs/README.md)
 ```
 
-Planned, not created yet: `apps/api` (Cloudflare Worker, Phase 2/3). The old plan had `packages/core` and `apps/brand`; types and validation live in `packages/templates`, and the brand manual is a page of the generator.
+## How the pieces talk
 
-`format` is `articles-1250x400` or `articles-mobile`; both share one config shape (the mobile template ignores the title and hover colours). `apps/generator/src/lib/banner.ts` picks the template by `format`.
+```
+browser (the static app)  ->  api Worker  ->  D1 database
+        |                          ^
+        |  (planned) Microsoft login: the app gets a token, the Worker checks it
+        +--> Microsoft Graph /me/sendMail  (planned: send mail as the person)
+```
+
+The banner tools run entirely in the browser and need no server. Only briefs, clients and guide values use the API ([CLOUDFLARE.md](CLOUDFLARE.md)). Menu items, their order and whether a page is switched on (`ready`) are in `nav` in `content.en.ts`; the address (`?section=...`) is handled in `lib/route.ts`.
+
+`format` is `articles-1250x400`, `articles-mobile` or an image-slider format; the shared config shape is in `packages/templates/src/types.ts`. `apps/generator/src/lib/banner.ts` picks the template by `format` (the mobile template ignores the title and hover colours).
 
 ## Banner zip format
 

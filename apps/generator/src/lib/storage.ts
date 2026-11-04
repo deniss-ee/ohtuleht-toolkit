@@ -3,6 +3,8 @@
 import type { Draft, HeaderFile } from "@/lib/banner";
 import { newDraft } from "@/lib/banner";
 import { newHeaderDraft, type HeaderDraft } from "@/lib/header";
+import { newFrameDraft, tidy as tidyFrames, type FrameDraft } from "@/lib/frames";
+import { isVideoName, newResponsiveDraft, tidy as tidyResponsive, type ResponsiveDraft } from "@/lib/responsive";
 import { newSliderDraft, tidy, type SliderDraft } from "@/lib/slider";
 
 export function read<T>(key: string): T | null {
@@ -33,7 +35,7 @@ export function remove(key: string) {
 
 // ---- Unfinished work (one slot) ----
 
-export type Work = { kind: "banner"; draft: Draft } | { kind: "header"; draft: HeaderDraft } | { kind: "slider"; draft: SliderDraft } | null;
+export type Work = { kind: "banner"; draft: Draft } | { kind: "header"; draft: HeaderDraft } | { kind: "slider"; draft: SliderDraft } | { kind: "frames"; draft: FrameDraft } | { kind: "responsive"; draft: ResponsiveDraft } | null;
 
 const WORK_KEY = "ol-work";
 
@@ -46,7 +48,9 @@ interface StoredFile {
 type Stored =
   | { kind: "banner"; config: Draft["config"]; file: StoredFile | null; adFile?: StoredFile | null; logoFile?: StoredFile | null; savedAt: number }
   | { kind: "header"; config: HeaderDraft["config"]; file: StoredFile | null; embedUrl: string; savedAt: number }
-  | { kind: "slider"; config: SliderDraft["config"]; files: Record<string, StoredFile>; savedAt: number };
+  | { kind: "slider"; config: SliderDraft["config"]; files: Record<string, StoredFile>; savedAt: number }
+  | { kind: "frames"; config: FrameDraft["config"]; files: Record<string, StoredFile>; savedAt: number }
+  | { kind: "responsive"; config: ResponsiveDraft["config"]; files: Record<string, StoredFile>; savedAt: number };
 
 const pack = (f: HeaderFile | null): StoredFile | null => (f ? { name: f.name, dataUrl: f.dataUrl, avg: f.avg } : null);
 
@@ -64,6 +68,8 @@ function unpack(f: StoredFile | null): HeaderFile | null {
 
 // A draft that still equals a brand-new one is not worth keeping.
 function isPristine(work: NonNullable<Work>): boolean {
+  if (work.kind === "responsive") return JSON.stringify(work.draft.config) === JSON.stringify(newResponsiveDraft().config) && Object.keys(work.draft.files).length === 0;
+  if (work.kind === "frames") return JSON.stringify(work.draft.config) === JSON.stringify(newFrameDraft().config) && Object.keys(work.draft.files).length === 0;
   if (work.kind === "slider") return JSON.stringify(work.draft.config) === JSON.stringify(newSliderDraft(work.draft.config.format).config) && Object.keys(work.draft.files).length === 0;
   const fresh = work.kind === "banner" ? newDraft(work.draft.config.format) : newHeaderDraft();
   return JSON.stringify(work.draft.config) === JSON.stringify(fresh.config) && !(work.kind === "banner" ? work.draft.headerFile || work.draft.adFile || work.draft.logoFile : work.draft.picture);
@@ -71,6 +77,24 @@ function isPristine(work: NonNullable<Work>): boolean {
 
 export function saveWork(work: Work) {
   if (!work || isPristine(work)) return;
+  if (work.kind === "responsive") {
+    const draft = tidyResponsive(work.draft);
+    // A video is too big for the browser storage: it is not kept (its still picture is), and the version asks for it again.
+    const kept = Object.entries(draft.files).filter(([, f]) => !isVideoName(f.name));
+    const files = Object.fromEntries(kept.map(([k, f]) => [k, pack(f)!]));
+    const config = { ...draft.config, small: { ...draft.config.small, video: draft.files[draft.config.small.video] && !isVideoName(draft.files[draft.config.small.video]!.name) ? draft.config.small.video : "" }, large: { ...draft.config.large, video: draft.files[draft.config.large.video] && !isVideoName(draft.files[draft.config.large.video]!.name) ? draft.config.large.video : "" } };
+    const stored: Stored = { kind: "responsive", config, files, savedAt: Date.now() };
+    if (!write(WORK_KEY, stored)) write(WORK_KEY, { ...stored, files: {} });
+    return;
+  }
+  if (work.kind === "frames") {
+    const draft = tidyFrames(work.draft);
+    const files = Object.fromEntries(Object.entries(draft.files).map(([k, f]) => [k, pack(f)!]));
+    const stored: Stored = { kind: "frames", config: draft.config, files, savedAt: Date.now() };
+    // Many pictures can fill the storage: keep the text work without them rather than losing everything.
+    if (!write(WORK_KEY, stored)) write(WORK_KEY, { ...stored, files: {} });
+    return;
+  }
   if (work.kind === "slider") {
     const draft = tidy(work.draft);
     const files = Object.fromEntries(Object.entries(draft.files).map(([k, f]) => [k, pack(f)!]));
@@ -89,7 +113,7 @@ export function saveWork(work: Work) {
 export const clearWork = () => remove(WORK_KEY);
 
 export interface SavedInfo {
-  kind: "banner" | "header" | "slider";
+  kind: "banner" | "header" | "slider" | "frames" | "responsive";
   name: string; // campaign name or bar text ("" when not written yet)
   savedAt: number;
 }
@@ -106,6 +130,22 @@ export function savedInfo(): SavedInfo | null {
 export function loadWork(): Work {
   const s = read<Stored>(WORK_KEY);
   if (!usable(s)) return null;
+  if (s.kind === "responsive") {
+    const files: ResponsiveDraft["files"] = {};
+    for (const [k, f] of Object.entries(s.files)) {
+      const u = unpack(f);
+      if (u) files[k] = u;
+    }
+    return { kind: "responsive", draft: { config: s.config, files } };
+  }
+  if (s.kind === "frames") {
+    const files: FrameDraft["files"] = {};
+    for (const [k, f] of Object.entries(s.files)) {
+      const u = unpack(f);
+      if (u) files[k] = u;
+    }
+    return { kind: "frames", draft: { config: s.config, files } };
+  }
   if (s.kind === "slider") {
     const files: SliderDraft["files"] = {};
     for (const [k, f] of Object.entries(s.files)) {

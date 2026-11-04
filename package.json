@@ -2,11 +2,18 @@
   "name": "ohtuleht-toolkit",
   "private": true,
   "version": "0.0.0",
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "yarn workspace @ohtuleht/generator dev",
     "build": "yarn workspace @ohtuleht/generator build",
-    "typecheck": "yarn workspace @ohtuleht/generator typecheck"
+    "typecheck": "yarn workspace @ohtuleht/generator typecheck",
+    "guide:docs": "node tools/guide-docs.mjs",
+    "docs:check": "node tools/check-links.mjs"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  }
 }

@@ -2,7 +2,7 @@
 
 The bar at the top of a theme page on ohtuleht.ee: 100% wide, 46 px high, a colour or a picture, with a label. It is uploaded to `b.ohtuleht.ee` and shown on the site in an iframe.
 
-Live example: `https://b.ohtuleht.ee/html5/Ohtuleht/paised_uus/vallatud_joulud/`. Older hand-made version: `category/rubriik-4dimensioon`.
+Live example: `https://b.ohtuleht.ee/html5/Ohtuleht/paised_uus/vallatud_joulud/`. Older hand-made version: `tools/legacy/category-rubriik-4dimensioon`.
 
 ## Make one
 

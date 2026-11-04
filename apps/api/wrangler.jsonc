@@ -1,0 +1,22 @@
+{
+  // Cloudflare Worker "ohtuleht-api": stores briefs and clients in a D1 database.
+  "name": "ohtuleht-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-30",
+  "workers_dev": true,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "ohtuleht-db",
+      // The id of the database (not a secret).
+      "database_id": "7b1dc06d-9f9f-4c8c-9398-78a8db3f1670",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    // Addresses allowed to call the API from a browser.
+    "ALLOWED_ORIGINS": "https://deniss-ee.github.io,http://localhost:5173",
+    // "open" = no login yet, TEST DATA ONLY. Later "entra" = Microsoft login required.
+    "AUTH_MODE": "open"
+  }
+}

@@ -10,6 +10,8 @@ import { AppShell } from "@/layout/AppShell";
 import { newDraft } from "@/lib/banner";
 import { importHeaderZip, newHeaderDraft } from "@/lib/header";
 import { importSliderAny } from "@/lib/legacySlider";
+import { importFrameZip, newFrameDraft } from "@/lib/frames";
+import { importResponsiveZip, newResponsiveDraft } from "@/lib/responsive";
 import { newSliderDraft } from "@/lib/slider";
 import { buildSearch, parseRoute, type BrandTab } from "@/lib/route";
 import { clearWork, loadWork, savedInfo, saveWork, type SavedInfo, type Work } from "@/lib/storage";
@@ -17,6 +19,8 @@ import { importZip } from "@/lib/zip";
 import { BannerEditor } from "@/pages/BannerEditor";
 import { BrandManual } from "@/pages/BrandManual";
 import { ContentMarketingHome } from "@/pages/ContentMarketingHome";
+import { FrameBannerEditor } from "@/pages/FrameBannerEditor";
+import { ResponsiveBannerEditor } from "@/pages/ResponsiveBannerEditor";
 import { HeaderBarEditor } from "@/pages/HeaderBarEditor";
 import { Home, type Destination } from "@/pages/Home";
 import { ImageCropper } from "@/pages/ImageCropper";
@@ -25,8 +29,13 @@ import { MovieBanner } from "@/pages/MovieBanner";
 import { ToolsHome } from "@/pages/ToolsHome";
 import { ArticleScraper } from "@/pages/ArticleScraper";
 import { PictureConverter } from "@/pages/PictureConverter";
+import { TaskTracker } from "@/pages/TaskTracker";
+import { BannerRequest } from "@/pages/BannerRequest";
+import { Guide } from "@/pages/Guide";
+import { UtmBuilder } from "@/pages/UtmBuilder";
+import { SignatureGenerator } from "@/pages/SignatureGenerator";
 
-const newWork = (typeId: string): Work => (typeId === "header-bar" ? { kind: "header", draft: newHeaderDraft() } : typeId === "image-slider-1250x400" || typeId === "image-slider-600x500" ? { kind: "slider", draft: newSliderDraft(typeId) } : { kind: "banner", draft: newDraft(typeId === "articles-mobile" ? "articles-mobile" : "articles-1250x400") });
+const newWork = (typeId: string): Work => (typeId === "header-bar" ? { kind: "header", draft: newHeaderDraft() } : typeId === "frame-banner" ? { kind: "frames", draft: newFrameDraft() } : typeId === "responsive-banner" ? { kind: "responsive", draft: newResponsiveDraft() } : typeId === "image-slider-1250x400" || typeId === "image-slider-600x500" ? { kind: "slider", draft: newSliderDraft(typeId) } : { kind: "banner", draft: newDraft(typeId === "articles-mobile" ? "articles-mobile" : "articles-1250x400") });
 
 export function App() {
   const lang = useSyncExternalStore(subscribeLang, getLang); // render everything again when the language changes
@@ -34,6 +43,8 @@ export function App() {
   // The address says where to start; a plain address opens the Home page.
   const [page, setPage] = useState<PageId>(() => link.page ?? "home");
   const [tab, setTab] = useState<BrandTab>(link.tab);
+  const [topic, setTopic] = useState<string | null>(link.topic); // open topic of the guide
+  const [step, setStep] = useState<number | null>(link.step); // the step of that topic to scroll to
   const [work, setWork] = useState<Work>(() => (link.make ? newWork(link.make) : null)); // what is being edited: nothing (start screen), an articles banner or a header bar
   const [saved, setSaved] = useState<SavedInfo | null>(savedInfo); // unfinished work from an earlier visit
   const edited = useRef(false); // changed since it was opened and not downloaded yet
@@ -59,8 +70,16 @@ export function App() {
     try {
       const header = await importHeaderZip(file);
       const slider = header ? null : await importSliderAny(file);
+      const frames = header || slider ? null : await importFrameZip(file);
+      const responsive = header || slider || frames ? null : await importResponsiveZip(file);
       if (header) {
         start({ kind: "header", draft: header });
+        toast.success(editor.imported);
+      } else if (responsive) {
+        start({ kind: "responsive", draft: responsive });
+        toast.success(editor.imported);
+      } else if (frames) {
+        start({ kind: "frames", draft: frames });
         toast.success(editor.imported);
       } else if (slider) {
         start({ kind: "slider", draft: slider.draft });
@@ -104,11 +123,11 @@ export function App() {
   // changing only the language replaces the entry.
   const placeKey = useRef<string | null>(null);
   useEffect(() => {
-    const search = buildSearch(page, tool, tab, lang);
-    const key = `${page}/${tool}/${tab}`;
+    const search = buildSearch(page, tool, tab, lang, topic, step);
+    const key = `${page}/${tool}/${tab}/${topic}`;
     if (search !== location.search) history[placeKey.current === null || placeKey.current === key ? "replaceState" : "pushState"](null, "", search);
     placeKey.current = key;
-  }, [page, tool, tab, lang]);
+  }, [page, tool, tab, lang, topic, step]);
 
   // Back and Forward buttons of the browser.
   useEffect(() => {
@@ -121,6 +140,8 @@ export function App() {
       setPage(r.page ?? "home");
       setTool(r.tool);
       setTab(r.tab);
+      setTopic(r.topic);
+      setStep(r.step);
       if (r.lang && r.lang !== getLang()) setLang(r.lang);
     };
     window.addEventListener("popstate", onPop);
@@ -147,6 +168,8 @@ export function App() {
     setSaved(savedInfo());
     setPage(to.page);
     setTool(to.tool ?? null);
+    setTopic(null);
+    setStep(null);
     if (to.tab) setTab(to.tab);
     start(to.make ? newWork(to.make) : null);
     window.scrollTo(0, 0);
@@ -165,12 +188,18 @@ export function App() {
             setPage(p);
             close();
             setTool(null);
+            setTopic(null);
+            setStep(null);
           }}
         >
           {page === "home" && <Home saved={saved} onContinue={resume} onDiscard={discard} onGo={go} />}
           {page === "content" &&
             (work?.kind === "banner" ? (
               <BannerEditor draft={work.draft} onChange={(draft) => change({ kind: "banner", draft })} onBack={close} />
+            ) : work?.kind === "responsive" ? (
+              <ResponsiveBannerEditor draft={work.draft} onChange={(draft) => change({ kind: "responsive", draft })} onBack={close} />
+            ) : work?.kind === "frames" ? (
+              <FrameBannerEditor draft={work.draft} onChange={(draft) => change({ kind: "frames", draft })} onBack={close} />
             ) : work?.kind === "slider" ? (
               <SliderEditor draft={work.draft} onChange={(draft) => change({ kind: "slider", draft })} onBack={close} />
             ) : work?.kind === "header" ? (
@@ -178,7 +207,10 @@ export function App() {
             ) : (
               <ContentMarketingHome onCreate={create} onUpload={open} saved={saved} onContinue={resume} onDiscard={discard} />
             ))}
-          {page === "tools" && (tool === "image-cropper" ? <ImageCropper onBack={() => setTool(null)} /> : tool === "movie-banner" ? <MovieBanner onBack={() => setTool(null)} /> : tool === "article-scraper" ? <ArticleScraper onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "picture-converter" ? <PictureConverter onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : <ToolsHome onOpen={setTool} />)}
+          {page === "tools" && (tool === "image-cropper" ? <ImageCropper onBack={() => setTool(null)} /> : tool === "movie-banner" ? <MovieBanner onBack={() => setTool(null)} /> : tool === "article-scraper" ? <ArticleScraper onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "picture-converter" ? <PictureConverter onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "email-signature" ? <SignatureGenerator onBack={() => setTool(null)} /> : tool === "utm-builder" ? <UtmBuilder onBack={() => setTool(null)} /> : <ToolsHome onOpen={setTool} />)}
+          {page === "guide" && <Guide topic={topic} step={step} onTopic={(id, s) => (setTopic(id), setStep(s ?? null))} />}
+          {page === "request" && <BannerRequest onOpenBoard={() => go({ page: "tasks" })} onMake={(id) => go({ page: "content", make: id })} />}
+          {page === "tasks" && <TaskTracker onMake={(id) => go({ page: "content", make: id })} onNewRequest={() => go({ page: "request" })} />}
           {page === "brand" && <BrandManual tab={tab} onTab={setTab} />}
         </AppShell>
         <Dialog open={notes.length > 0} onOpenChange={(o) => !o && setNotes([])}>
