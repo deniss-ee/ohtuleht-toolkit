@@ -23,7 +23,7 @@ export function headerCss(config: ArticlesBannerConfig): string {
       ? `background:var(--header-bg) url("${config.header.src}") center/cover no-repeat` // picture fills the bar; main colour shows while it loads
       : "background:var(--header-bg)";
   return (
-    `.header{display:flex;align-items:center;height:46px;padding:0 16px;border-radius:6px;overflow:hidden;${header};cursor:pointer}` +
+    `.header{display:flex;align-items:center;height:46px;padding:0 16px;border-radius:6px;overflow:hidden;${header}}.header[onclick]{cursor:pointer}` +
     // Header (design: Figma "ikea-header-for-claude"): campaign name on a colour or a picture, Fira Sans Condensed Bold 16 px (line 24 px so the overflow clip does not cut dots and accents), uppercase, 16 px from the left.
     '.header-title{min-width:0;overflow:hidden;color:var(--header-text);font:700 16px/24px "Fira Sans Condensed",sans-serif;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap}' +
     // Logo: always on the right, with the same 16 px from the edge as the text has on the left (the header's side padding), 30 px high.
@@ -34,7 +34,9 @@ export function headerCss(config: ArticlesBannerConfig): string {
 export function headerHtml(config: ArticlesBannerConfig): string {
   // Old pictures have the text baked in: no campaign name on top, the link keeps its label for screen readers.
   const showName = !(config.header.type === "image" && config.header.textInPicture);
-  return `<a class="header" role="link" tabindex="0" aria-label="${escapeHtml(config.campaign)}" onclick="${clickAttr(escapeJsInAttr(config.header.href))}">${showName ? `<span class="header-title">${escapeHtml(config.campaign)}</span>` : ""}${config.headerLogo ? `<img class="header-logo" src="${escapeHtml(config.headerLogo)}" alt="">` : ""}</a>`;
+  // No link set: the header is plain (no click, no pointer, not a keyboard stop).
+  const link = config.header.href.trim() ? ` role="link" tabindex="0" aria-label="${escapeHtml(config.campaign)}" onclick="${clickAttr(escapeJsInAttr(config.header.href))}"` : "";
+  return `<div class="header"${link}>${showName ? `<span class="header-title">${escapeHtml(config.campaign)}</span>` : ""}${config.headerLogo ? `<img class="header-logo" src="${escapeHtml(config.headerLogo)}" alt="">` : ""}</div>`;
 }
 
 function css(config: ArticlesBannerConfig): string {
