@@ -24,8 +24,8 @@ export function headerCss(config: ArticlesBannerConfig): string {
       : "background:var(--header-bg)";
   return (
     `.header{display:flex;align-items:center;height:46px;padding:0 16px;border-radius:6px;overflow:hidden;${header};cursor:pointer}` +
-    // Header (design: Figma "ikea-header-for-claude"): campaign name on a colour or a picture, Fira Sans Condensed Bold 16/16, uppercase, 16 px from the left.
-    '.header-title{min-width:0;overflow:hidden;color:var(--header-text);font:700 16px/16px "Fira Sans Condensed",sans-serif;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap}' +
+    // Header (design: Figma "ikea-header-for-claude"): campaign name on a colour or a picture, Fira Sans Condensed Bold 16 px (line 24 px so the overflow clip does not cut dots and accents), uppercase, 16 px from the left.
+    '.header-title{min-width:0;overflow:hidden;color:var(--header-text);font:700 16px/24px "Fira Sans Condensed",sans-serif;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap}' +
     // Logo: always on the right, with the same 16 px from the edge as the text has on the left (the header's side padding), 30 px high.
     ".header-logo{flex:none;display:block;height:30px;width:auto;max-width:45%;margin-left:auto;object-fit:contain}"
   );

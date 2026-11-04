@@ -84,6 +84,9 @@ export function initSlider(root: HTMLElement): void {
 
   // Loop trick: copies of the edge slides so the strip looks endless.
   const pad = o.loop ? o.visible : 0;
+  // One more copy after the last real slide: a banner that shows a peek of the next card (mobile) would
+  // otherwise have an empty space on the right while it rests on the copy of the first slide.
+  const tail = o.loop ? 1 : 0;
   if (o.loop) {
     const copy = (s: HTMLElement) => {
       const c = s.cloneNode(true) as HTMLElement;
@@ -91,14 +94,14 @@ export function initSlider(root: HTMLElement): void {
       c.setAttribute("tabindex", "-1"); // copies are not keyboard stops
       return c;
     };
-    slides.slice(0, pad).forEach((s) => track.appendChild(copy(s)));
+    slides.slice(0, pad + tail).forEach((s) => track.appendChild(copy(s)));
     slides
       .slice(n - pad)
       .reverse()
       .forEach((s) => track.insertBefore(copy(s), track.firstChild));
   }
 
-  const maxIndex = n + 2 * pad - o.visible;
+  const maxIndex = n + 2 * pad + tail - o.visible;
   let index = pad;
   let step = 0;
   let timer = 0;
