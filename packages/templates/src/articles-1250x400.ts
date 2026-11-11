@@ -10,6 +10,9 @@ const VISIBLE_WITH_AD = 3;
 const GAP = 16;
 export const AD_HEIGHT = 338; // 400 minus the 46 px header and the 16 px gap
 
+// The desktop banner never shows the phone crop: an Õhtuleht picture link with the phone size (/webp/48/) becomes the desktop size (/webp/54/).
+export const forDesktop = (url: string) => url.replace(/\/webp\/48\//, "/webp/54/");
+
 export const FONTS_URL = "https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@700&family=Roboto:wght@700&display=swap";
 
 export function themeVars(t: ResolvedTheme): string {
@@ -73,13 +76,15 @@ function slide(a: ArticlesBannerConfig["articles"][number], defaultBadge: string
   const open = clickAttr(escapeJsInAttr(a.url));
   return (
     `<div class="ol-slide" role="link" tabindex="0" onclick="${open}">` +
-    `<div class="article"><div class="img" style="background-image:url(&quot;${escapeCssUrlInAttr(a.image)}&quot;)">` +
+    `<div class="article"><div class="img" style="background-image:url(&quot;${escapeCssUrlInAttr(forDesktop(a.image))}&quot;)">` +
     `<p class="badge"${color}>${escapeHtml(badge)}</p></div>` +
     `<p class="title">${escapeHtml(a.title)}</p></div></div>`
   );
 }
 
-export function renderArticles1250x400(config: ArticlesBannerConfig, assets: RuntimeAssets): string {
+export function renderArticles1250x400(input: ArticlesBannerConfig, assets: RuntimeAssets): string {
+  // The desktop banner (cards and saved settings alike) never carries the phone picture size.
+  const config = { ...input, articles: input.articles.map((a) => ({ ...a, image: forDesktop(a.image) })) };
   const b = config.behavior;
   const delay = b.autoplay ? b.delayMs : 0;
   const header = headerHtml(config);

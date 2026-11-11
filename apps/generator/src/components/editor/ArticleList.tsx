@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Bookmark, ChevronDown, ChevronRight, ChevronUp, ClipboardPaste, ImageOff, ImagePlus, Loader2, Newspaper, Plus, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import type { ArticleItem } from "@ohtuleht/templates";
-import { MIN_ARTICLES } from "@ohtuleht/templates";
+import { forDesktop, MIN_ARTICLES } from "@ohtuleht/templates";
 import { Button } from "@/components/ui/button";
 import { ColorPicker } from "@/components/editor/ColorPicker";
 import { IconChip } from "@/components/editor/IconChip";
@@ -89,7 +89,7 @@ function ArticleRow({
   const shownBadge = article.badge?.trim() || defaultBadge;
   // The picture of the open version: mobile uses its own address when set, else the /webp/48/ form of the desktop one.
   const fileInput = useRef<HTMLInputElement>(null);
-  const shownImage = mobile ? (article.imageMobile ?? (withPictureSize(article.image, 48) || article.image)) : article.image;
+  const shownImage = mobile ? (article.imageMobile ?? (withPictureSize(article.image, 48) || article.image)) : forDesktop(article.image);
   const shownSrc = files[shownImage.trim()]?.dataUrl ?? shownImage; // an uploaded picture shows from the browser's copy
   const ownFile = !!files[shownImage.trim()];
   const incomplete = !article.title.trim() || !article.url.trim() || !shownImage.trim();
