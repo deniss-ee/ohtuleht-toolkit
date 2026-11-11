@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { editor as t } from "@/content";
 import { emptyArticle } from "@/lib/banner";
 import { parseSnippets } from "@/lib/snippets";
+import { withPictureSize } from "@/lib/image";
 import { readableOn } from "@ohtuleht/templates";
 import { useTheme } from "@/components/theme-provider";
 
@@ -56,6 +57,7 @@ function MiniThumb({ src }: { src: string }) {
 function ArticleRow({
   index,
   total,
+  mobile,
   article,
   defaultBadge,
   defaultColor,
@@ -67,6 +69,7 @@ function ArticleRow({
 }: {
   index: number;
   total: number;
+  mobile: boolean;
   article: ArticleItem;
   defaultBadge: string;
   defaultColor: string;
@@ -78,12 +81,14 @@ function ArticleRow({
 }) {
   const id = `a${index}`;
   const shownBadge = article.badge?.trim() || defaultBadge;
-  const incomplete = !article.title.trim() || !article.url.trim() || !article.image.trim();
+  // The picture of the open version: mobile uses its own address when set, else the /webp/48/ form of the desktop one.
+  const shownImage = mobile ? (article.imageMobile ?? (withPictureSize(article.image, 48) || article.image)) : article.image;
+  const incomplete = !article.title.trim() || !article.url.trim() || !shownImage.trim();
   return (
     <li className="rounded-lg border bg-card">
       <div className="flex items-center gap-1 p-1.5">
         <button type="button" aria-expanded={open} aria-controls={`${id}-body`} className="flex min-w-0 flex-1 items-center gap-3 rounded-md p-1 text-left hover:bg-muted/60" onClick={onToggle}>
-          <MiniThumb src={article.image} />
+          <MiniThumb src={shownImage} />
           <span className="w-5 shrink-0 text-xs font-semibold text-muted-foreground">{index + 1}</span>
           <span className="min-w-0 flex-1 truncate text-sm font-medium">{article.title.trim() || t.untitledArticle}</span>
           {incomplete && <TriangleAlert className="size-4 shrink-0 text-yellow-600" aria-label={t.articleIncomplete} />}
@@ -103,7 +108,7 @@ function ArticleRow({
       </div>
       <div id={`${id}-body`} hidden={!open} className="border-t p-3 sm:p-4">
       <div className="flex flex-col gap-4 sm:flex-row">
-        <Thumb src={article.image} badge={shownBadge} badgeColor={article.badgeColor || defaultColor} />
+        <Thumb src={shownImage} badge={shownBadge} badgeColor={article.badgeColor || defaultColor} />
         <div className="grid flex-1 gap-3">
           <div className="space-y-1.5">
             <Label htmlFor={`${id}-title`}>{t.titleField}</Label>
@@ -115,8 +120,9 @@ function ArticleRow({
               <Input id={`${id}-url`} placeholder="https://www.ohtuleht.ee/…" value={article.url} onChange={(e) => onPatch({ url: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor={`${id}-img`}>{t.imageUrl}</Label>
-              <Input id={`${id}-img`} placeholder="https://p.ohtuleht.ee/…" value={article.image} onChange={(e) => onPatch({ image: e.target.value })} />
+              <Label htmlFor={`${id}-img`}>{mobile ? t.imageUrlMobile : t.imageUrl}</Label>
+              <Input id={`${id}-img`} placeholder="https://p.ohtuleht.ee/…" value={shownImage} onChange={(e) => onPatch(mobile ? { imageMobile: e.target.value } : { image: e.target.value })} />
+              <p className="text-xs text-muted-foreground">{mobile ? t.imageMobileHint : t.imageDesktopHint}</p>
             </div>
           </div>
           <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
@@ -143,12 +149,14 @@ function ArticleRow({
 
 export function ArticleList({
   articles,
+  mobile,
   defaultBadge,
   defaultColor,
   onChange,
   onOpenBookmark,
 }: {
   articles: ArticleItem[];
+  mobile: boolean;
   defaultBadge: string;
   defaultColor: string;
   onChange: (next: ArticleItem[]) => void;
@@ -240,6 +248,7 @@ export function ArticleList({
                 key={i}
                 index={i}
                 total={articles.length}
+                mobile={mobile}
                 article={a}
                 defaultBadge={defaultBadge}
                 defaultColor={defaultColor}

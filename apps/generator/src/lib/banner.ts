@@ -3,7 +3,6 @@ import type { ArticleItem, ArticlesBannerConfig, ArticlesFormat, Problem, ThemeC
 import runtimeJs from "../../../../packages/banner-runtime/dist/runtime.js?raw";
 import { getLang } from "@/content";
 import { stampedName } from "@/lib/format";
-import { withPictureSize } from "@/lib/image";
 import { readySignal } from "@/components/editor/SwapFrame";
 import sliderCssRaw from "../../../../packages/banner-runtime/src/slider.css?raw";
 
@@ -38,15 +37,12 @@ export const FORMATS: Record<ArticlesFormat, { label: string; width: number; hei
 
 // Same banner, other size: everything is kept (campaign, header, articles, colours, behaviour).
 // The dark background follows the new format unless it was changed by hand.
-// Õhtuleht picture links get the size of the new format (desktop /webp/54/, phone /webp/48/); other links stay as they are.
-const PICTURE_SIZE: Record<ArticlesFormat, number> = { "articles-1250x400": 54, "articles-mobile": 48 };
-
+// Pictures: `image` is the desktop one, `imageMobile` (optional) the phone one; the form shows and edits the one of the open version.
 export function switchFormat(draft: Draft, format: ArticlesFormat): Draft {
   const c = draft.config;
   if (c.format === format) return draft;
   const dark = c.theme.dark.bg === FORMATS[c.format].darkBg ? { ...c.theme.dark, bg: FORMATS[format].darkBg } : c.theme.dark;
-  const articles = c.articles.map((a) => ({ ...a, image: withPictureSize(a.image, PICTURE_SIZE[format]) ?? a.image }));
-  return { ...draft, config: { ...c, format, articles, theme: { ...c.theme, dark } } };
+  return { ...draft, config: { ...c, format, theme: { ...c.theme, dark } } };
 }
 
 const render = (c: ArticlesBannerConfig, assets: Parameters<typeof renderArticles1250x400>[1]) => (c.format === "articles-mobile" ? renderArticlesMobile({ ...c, ad: undefined }, assets) : renderArticles1250x400(c, assets));

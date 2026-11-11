@@ -62,7 +62,7 @@ function slide(a: ArticlesBannerConfig["articles"][number], defaultBadge: string
   const color = a.badgeColor ? ` style="background:${escapeHtml(a.badgeColor)};color:${onColor(a.badgeColor)}"` : "";
   return (
     `<div class="ol-slide" role="link" tabindex="0" onclick="${clickAttr(escapeJsInAttr(a.url))}">` +
-    `<div class="card" style="background-image:url(&quot;${escapeCssUrlInAttr(forMobile(a.image))}&quot;)">` +
+    `<div class="card" style="background-image:url(&quot;${escapeCssUrlInAttr(a.imageMobile?.trim() || forMobile(a.image))}&quot;)">` +
     `<div class="shade">${badge ? `<p class="badge"${color}>${escapeHtml(badge)}</p>` : ""}<p class="title">${escapeHtml(a.title)}</p></div></div></div>`
   );
 }

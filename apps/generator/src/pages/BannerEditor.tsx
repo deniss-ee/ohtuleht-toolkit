@@ -333,7 +333,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
               </div>
 
               <div className="min-w-0 md:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-span-3 lg:row-start-1">
-            <ArticleList articles={c.articles} defaultBadge={c.badge} defaultColor={c.format === "articles-mobile" ? (c.theme.light.badge ?? c.primary) : resolveTheme(c, "light").badge} onChange={(articles) => set({ articles })} onOpenBookmark={() => setBookmarkOpen(true)} />
+            <ArticleList articles={c.articles} mobile={c.format === "articles-mobile"} defaultBadge={c.badge} defaultColor={c.format === "articles-mobile" ? (c.theme.light.badge ?? c.primary) : resolveTheme(c, "light").badge} onChange={(articles) => set({ articles })} onOpenBookmark={() => setBookmarkOpen(true)} />
               </div>
 
             <BookmarkletDialog open={bookmarkOpen} onOpenChange={setBookmarkOpen} />
