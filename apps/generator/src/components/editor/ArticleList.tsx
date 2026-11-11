@@ -193,7 +193,9 @@ export function ArticleList({
       toast.error(t.pasteNothing);
       return;
     }
-    onChange([...articles, ...found]);
+    // New articles go first, so the newest one leads the banner.
+    onChange([...found, ...articles]);
+    if (open !== null) setOpen(open + found.length);
     setPaste("");
     toast.success(t.pasteAdded(found.length, skipped));
   };
@@ -257,8 +259,8 @@ export function ArticleList({
           variant="outline"
           className="gap-2"
           onClick={() => {
-            onChange([...articles, emptyArticle()]);
-            setOpen(articles.length);
+            onChange([emptyArticle(), ...articles]);
+            setOpen(0);
           }}
         >
           <Plus className="size-4" /> {t.addArticle}
