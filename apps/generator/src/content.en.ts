@@ -124,6 +124,8 @@ export const editor = {
   articleUrl: "Article link",
   imageUrl: "Picture address",
   imageUrlMobile: "Picture address (mobile)",
+  pictureUpload: "Upload a picture",
+  pictureChange: "Change the picture",
   imageMobileHint: "Mobile has its own picture: change it here without touching the desktop one. Leave it as it is to use the automatic /webp/48/ version.",
   imageDesktopHint: "This is the desktop picture. The mobile banner has its own: switch to Mobile at the top to change it.",
   badgeField: "Label on the picture",

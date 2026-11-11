@@ -21,6 +21,18 @@ export interface Draft {
   headerFile: HeaderFile | null;
   adFile?: HeaderFile | null; // picture of the static ad (desktop); same shape as the header picture
   logoFile?: HeaderFile | null; // logo on the right of the header
+  articleFiles?: Record<string, HeaderFile>; // pictures uploaded for single articles, by file name (pic-<id>.<ext>); the article's image / imageMobile holds the name
+}
+
+// The picture of an article for one version: the phone one is its own address or the desktop address.
+export const pictureOf = (a: ArticleItem, mobile: boolean): string => (mobile ? a.imageMobile?.trim() || a.image : a.image);
+
+// Uploaded files the exported banner really uses (only the shown version's pictures go into the zip).
+export function articleFilesOf(draft: Draft): HeaderFile[] {
+  const files = draft.articleFiles ?? {};
+  const mobile = draft.config.format === "articles-mobile";
+  const names = new Set(draft.config.articles.map((a) => pictureOf(a, mobile).trim()));
+  return Object.values(files).filter((f) => names.has(f.name));
 }
 
 // Starting colours copied from the existing banners' stylesheet: titles turn red on hover.
@@ -104,9 +116,12 @@ export function renderPreview(draft: Draft, theme: "light" | "dark", id: number)
   const header = draft.headerFile && c.header.type === "image" ? { ...c.header, src: draft.headerFile.dataUrl } : c.header;
   const ad = c.ad && draft.adFile ? { ...c.ad, src: draft.adFile.dataUrl } : c.ad;
   const headerLogo = c.headerLogo && draft.logoFile ? draft.logoFile.dataUrl : undefined;
+  // Uploaded article pictures show from the browser's copy.
+  const own = (s?: string) => (s && draft.articleFiles?.[s.trim()] ? draft.articleFiles[s.trim()]!.dataUrl : s);
+  const articles = c.articles.map((a) => ({ ...a, image: own(a.image) ?? a.image, ...(a.imageMobile ? { imageMobile: own(a.imageMobile) } : {}) }));
   // The phone banner's label is a block: its colour does not change in dark mode, so the dark tab keeps the light one.
   const colors = { ...(theme === "dark" ? c.theme.dark : c.theme.light), ...(c.format === "articles-mobile" ? { badge: c.theme.light.badge } : {}) };
-  const html = render({ ...c, header, ad, headerLogo, behavior: { ...c.behavior, shuffle: false }, theme: { light: colors, dark: colors } }, { runtimeJs, sliderCss });
+  const html = render({ ...c, articles, header, ad, headerLogo, behavior: { ...c.behavior, shuffle: false }, theme: { light: colors, dark: colors } }, { runtimeJs, sliderCss });
   return html.replace("</body>", readySignal(id) + "</body>");
 }
 

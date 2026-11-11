@@ -103,6 +103,8 @@ export const editor: typeof En.editor = {
   articleUrl: "Artikli link",
   imageUrl: "Pildi aadress",
   imageUrlMobile: "Pildi aadress (telefon)",
+  pictureUpload: "Lae pilt üles",
+  pictureChange: "Vaheta pilt",
   imageMobileHint: "Telefonil on oma pilt: muuda seda siin, töölaua oma jääb samaks. Jäta nii, nagu on, et kasutada automaatset /webp/48/ versiooni.",
   imageDesktopHint: "See on töölaua pilt. Telefonibänneril on oma pilt: selle muutmiseks vali üleval Telefon.",
   badgeField: "Silt pildil",

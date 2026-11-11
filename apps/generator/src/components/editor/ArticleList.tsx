@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Bookmark, ChevronDown, ChevronRight, ChevronUp, ClipboardPaste, ImageOff, Newspaper, Plus, Trash2, TriangleAlert } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Bookmark, ChevronDown, ChevronRight, ChevronUp, ClipboardPaste, ImageOff, ImagePlus, Loader2, Newspaper, Plus, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import type { ArticleItem } from "@ohtuleht/templates";
 import { MIN_ARTICLES } from "@ohtuleht/templates";
@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { editor as t } from "@/content";
-import { emptyArticle } from "@/lib/banner";
+import { emptyArticle, type HeaderFile } from "@/lib/banner";
 import { parseSnippets } from "@/lib/snippets";
 import { withPictureSize } from "@/lib/image";
 import { readableOn } from "@ohtuleht/templates";
@@ -58,6 +58,9 @@ function ArticleRow({
   index,
   total,
   mobile,
+  files,
+  busy,
+  onPicture,
   article,
   defaultBadge,
   defaultColor,
@@ -70,6 +73,9 @@ function ArticleRow({
   index: number;
   total: number;
   mobile: boolean;
+  files: Record<string, HeaderFile>;
+  busy: boolean;
+  onPicture: (file: File) => void;
   article: ArticleItem;
   defaultBadge: string;
   defaultColor: string;
@@ -82,13 +88,16 @@ function ArticleRow({
   const id = `a${index}`;
   const shownBadge = article.badge?.trim() || defaultBadge;
   // The picture of the open version: mobile uses its own address when set, else the /webp/48/ form of the desktop one.
+  const fileInput = useRef<HTMLInputElement>(null);
   const shownImage = mobile ? (article.imageMobile ?? (withPictureSize(article.image, 48) || article.image)) : article.image;
+  const shownSrc = files[shownImage.trim()]?.dataUrl ?? shownImage; // an uploaded picture shows from the browser's copy
+  const ownFile = !!files[shownImage.trim()];
   const incomplete = !article.title.trim() || !article.url.trim() || !shownImage.trim();
   return (
     <li className="rounded-lg border bg-card">
       <div className="flex items-center gap-1 p-1.5">
         <button type="button" aria-expanded={open} aria-controls={`${id}-body`} className="flex min-w-0 flex-1 items-center gap-3 rounded-md p-1 text-left hover:bg-muted/60" onClick={onToggle}>
-          <MiniThumb src={shownImage} />
+          <MiniThumb src={shownSrc} />
           <span className="w-5 shrink-0 text-xs font-semibold text-muted-foreground">{index + 1}</span>
           <span className="min-w-0 flex-1 truncate text-sm font-medium">{article.title.trim() || t.untitledArticle}</span>
           {incomplete && <TriangleAlert className="size-4 shrink-0 text-yellow-600" aria-label={t.articleIncomplete} />}
@@ -108,7 +117,7 @@ function ArticleRow({
       </div>
       <div id={`${id}-body`} hidden={!open} className="border-t p-3 sm:p-4">
       <div className="flex flex-col gap-4 sm:flex-row">
-        <Thumb src={shownImage} badge={shownBadge} badgeColor={article.badgeColor || defaultColor} />
+        <Thumb src={shownSrc} badge={shownBadge} badgeColor={article.badgeColor || defaultColor} />
         <div className="grid flex-1 gap-3">
           <div className="space-y-1.5">
             <Label htmlFor={`${id}-title`}>{t.titleField}</Label>
@@ -122,6 +131,17 @@ function ArticleRow({
             <div className="space-y-1.5">
               <Label htmlFor={`${id}-img`}>{mobile ? t.imageUrlMobile : t.imageUrl}</Label>
               <Input id={`${id}-img`} placeholder="https://p.ohtuleht.ee/…" value={shownImage} onChange={(e) => onPatch(mobile ? { imageMobile: e.target.value } : { image: e.target.value })} />
+              <div className="flex flex-wrap items-center gap-2">
+                <input ref={fileInput} type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" tabIndex={-1} aria-hidden onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) onPicture(f); }} />
+                <Button type="button" variant="outline" size="sm" className="gap-2" disabled={busy} onClick={() => fileInput.current?.click()}>
+                  {busy ? <Loader2 className="size-4 animate-spin" /> : <ImagePlus className="size-4" />} {busy ? t.preparing : ownFile ? t.pictureChange : t.pictureUpload}
+                </Button>
+                {mobile && article.imageMobile !== undefined && (
+                  <Button type="button" variant="ghost" size="sm" onClick={() => onPatch({ imageMobile: undefined })}>
+                    {t.useDefault}
+                  </Button>
+                )}
+              </div>
               <p className="text-xs text-muted-foreground">{mobile ? t.imageMobileHint : t.imageDesktopHint}</p>
             </div>
           </div>
@@ -150,6 +170,8 @@ function ArticleRow({
 export function ArticleList({
   articles,
   mobile,
+  files,
+  onPicture,
   defaultBadge,
   defaultColor,
   onChange,
@@ -157,12 +179,15 @@ export function ArticleList({
 }: {
   articles: ArticleItem[];
   mobile: boolean;
+  files: Record<string, HeaderFile>;
+  onPicture: (index: number, file: File) => Promise<void>;
   defaultBadge: string;
   defaultColor: string;
   onChange: (next: ArticleItem[]) => void;
   onOpenBookmark: () => void;
 }) {
   const [paste, setPaste] = useState("");
+  const [uploading, setUploading] = useState<number | null>(null); // the article whose picture is being prepared
   const [open, setOpen] = useState<number | null>(null); // one article open at a time keeps the list short
 
   // "To fix" links jump to a field inside a closed article: open it first.
@@ -249,6 +274,9 @@ export function ArticleList({
                 index={i}
                 total={articles.length}
                 mobile={mobile}
+                files={files}
+                busy={uploading === i}
+                onPicture={(file) => { setUploading(i); void onPicture(i, file).finally(() => setUploading(null)); }}
                 article={a}
                 defaultBadge={defaultBadge}
                 defaultColor={defaultColor}
