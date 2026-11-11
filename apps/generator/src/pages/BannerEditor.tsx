@@ -17,12 +17,12 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { editor as t, ui } from "@/content";
 import { Toggles } from "@/layout/AppShell";
-import { adFileOf, bytesOf, logoFileOf, exampleDraft, FORMATS, problems, renderExport, switchFormat, type Draft } from "@/lib/banner";
+import { adFileOf, articleFilesOf, bytesOf, logoFileOf, exampleDraft, FORMATS, problems, renderExport, switchFormat, type Draft } from "@/lib/banner";
 import { formatSize } from "@/lib/format";
 import type { Optimised } from "@/lib/optimise";
 import { Collapsible, Section, SwitchRow } from "@/components/editor/FormParts";
 import { useSaveShortcut } from "@/components/editor/useSaveShortcut";
-import { downloadZip, fileToAd, fileToHeader, fileToLogo } from "@/lib/zip";
+import { downloadZip, fileToAd, fileToArticle, fileToHeader, fileToLogo } from "@/lib/zip";
 
 const BUDGET_KB = 100;
 
@@ -75,7 +75,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
   const setBehavior = (patch: Partial<Draft["config"]["behavior"]>) => set({ behavior: { ...c.behavior, ...patch } });
 
   const issues = problems(draft);
-  const weightKb = useMemo(() => (bytesOf(renderExport(draft)) + (c.header.type === "image" ? (draft.headerFile?.bytes.length ?? 0) : 0) + (adFileOf(draft)?.bytes.length ?? 0) + (logoFileOf(draft)?.bytes.length ?? 0)) / 1024, [draft, c.header.type]);
+  const weightKb = useMemo(() => (bytesOf(renderExport(draft)) + (c.header.type === "image" ? (draft.headerFile?.bytes.length ?? 0) : 0) + (adFileOf(draft)?.bytes.length ?? 0) + (logoFileOf(draft)?.bytes.length ?? 0) + articleFilesOf(draft).reduce((n, f) => n + f.bytes.length, 0)) / 1024, [draft, c.header.type]);
 
   // Runs a slow job (pictures are optimised in the browser) and shows a spinner on its button meanwhile.
   const work = async (what: "header" | "ad" | "logo" | "example", job: () => Promise<void>) => {
@@ -112,6 +112,15 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
       reportOptimised(optimised);
       onChange({ ...draft, adFile, config: { ...c, ad: { ...c.ad!, src: adFile.name, width } } });
     });
+
+  // An own picture for one article, for the version being edited (desktop: image, mobile: imageMobile).
+  const onArticlePicture = async (index: number, file: File) => {
+    const { articleFile, optimised } = await fileToArticle(file);
+    reportOptimised(optimised);
+    const mobile = c.format === "articles-mobile";
+    const articles = c.articles.map((a, i) => (i === index ? { ...a, ...(mobile ? { imageMobile: articleFile.name } : { image: articleFile.name }) } : a));
+    onChange({ ...draft, articleFiles: { ...draft.articleFiles, [articleFile.name]: articleFile }, config: { ...c, articles } });
+  };
 
   const loadExample = () =>
     work("example", async () => {
@@ -333,7 +342,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
               </div>
 
               <div className="min-w-0 md:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-span-3 lg:row-start-1">
-            <ArticleList articles={c.articles} defaultBadge={c.badge} defaultColor={c.format === "articles-mobile" ? (c.theme.light.badge ?? c.primary) : resolveTheme(c, "light").badge} onChange={(articles) => set({ articles })} onOpenBookmark={() => setBookmarkOpen(true)} />
+            <ArticleList articles={c.articles} mobile={c.format === "articles-mobile"} files={draft.articleFiles ?? {}} onPicture={onArticlePicture} defaultBadge={c.badge} defaultColor={c.format === "articles-mobile" ? (c.theme.light.badge ?? c.primary) : resolveTheme(c, "light").badge} onChange={(articles) => set({ articles })} onOpenBookmark={() => setBookmarkOpen(true)} />
               </div>
 
             <BookmarkletDialog open={bookmarkOpen} onOpenChange={setBookmarkOpen} />
