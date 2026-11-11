@@ -2,7 +2,7 @@ import JSZip from "jszip";
 import type { ArticlesBannerConfig } from "@ohtuleht/templates";
 import { ui } from "@/content";
 import { adFileOf, articleFilesOf, logoFileOf, renderExport, zipName, type Draft, type HeaderFile } from "@/lib/banner";
-import { AD_HEIGHT, OWN_PICTURE } from "@ohtuleht/templates";
+import { AD_HEIGHT, forDesktop, OWN_PICTURE } from "@ohtuleht/templates";
 import { averageColor, imageSize, toDataUrl } from "@/lib/image";
 import { AD_LIMIT, ARTICLE_LIMIT, HEADER_LIMIT, LOGO_LIMIT, optimiseImage, type Optimised } from "@/lib/optimise";
 import { importLegacy } from "@/lib/legacy";
@@ -125,7 +125,8 @@ export async function importZip(file: File): Promise<{ draft: Draft; notes: stri
     return name.trim();
   };
   for (const a of config.articles) {
-    a.image = (await read(a.image)) ?? "";
+    // Banners made while a phone link was written into the desktop field: the desktop picture is the desktop size again.
+    a.image = forDesktop((await read(a.image)) ?? "");
     const own = await read(a.imageMobile);
     if (own === undefined) delete a.imageMobile;
     else a.imageMobile = own;
