@@ -1,6 +1,6 @@
 # Toolkit web app (generator)
 
-The web app of the toolkit, in English and Estonian (EN/ET switch): a static React 19 + Vite + Tailwind v4 + shadcn/ui site. Sections: **Home**, **Content marketing** (articles banners, image sliders, header bar), **Tools** (image cropper, movie banner, article scraper, picture link converter, email signature, tracking links), **Brand manual** (colours, logos, fonts, eye), **Guide** (new-employee handbook), and, switched off for now, **Banner request** and **Task tracker**. The overview with links to every document is in the [root README](../../README.md) and [docs/README.md](../../docs/README.md).
+The web app of the toolkit, in English and Estonian (EN/ET switch): a static React 19 + Vite + Tailwind v4 + shadcn/ui site. Sections: **Home**, **Content marketing** (articles banners, image sliders, picture loop, responsive banner, header bar), **Tools** (image cropper, movie banner, article scraper, picture link converter, email signature, tracking links), **Brand manual** (colours, logos, fonts, eye), **Guide** (new-employee handbook), and, switched off for now, **Banner request** and **Task tracker**. The overview with links to every document is in the [root README](../../README.md) and [docs/README.md](../../docs/README.md).
 
 ## Run locally
 
@@ -25,7 +25,7 @@ The contents of `apps/generator/dist/` to a static host.
 
 1. Content marketing -> **Create** on a banner type, or **Upload zip** to edit a banner made with this tool.
 2. Fill in campaign name, header (image or colour, plus link), badge text, colours (light and dark), behaviour.
-3. Add articles: paste snippets (JSON lines or the old HTML slide snippets), or add manually; reorder or remove.
+3. Add articles: paste snippets (JSON lines or the old HTML slide snippets), or add manually; new ones go to the top; reorder or remove. Each article can get its own picture for Desktop and for Mobile, as a link or an uploaded file.
 4. Check the live preview (light/dark) and the file weight meter.
 5. **Download zip**. The button enables when there are no problems listed.
 
@@ -47,4 +47,4 @@ HTTPS. The app is static. It calls the API (`lib/sync.ts`), which must allow the
 - Microsoft login, then switching on Banner request and Task tracker ([AUTH-MICROSOFT.md](../../docs/AUTH-MICROSOFT.md)).
 - Header font and size options (#64). Ad-format reference in the brand manual (#18).
 - The Estonian wording is a first draft: a native speaker should read it.
-- No automated tests yet (#5, #6).
+- No automated tests yet (#5, #6), and the first download is one large script: both are in [REFACTOR.md](../../docs/REFACTOR.md).

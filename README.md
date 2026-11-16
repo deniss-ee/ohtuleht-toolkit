@@ -2,7 +2,7 @@
 
 Internal tools for the Õhtuleht newsroom, ad sales and marketing, in one web app: banner makers, small helpers, the brand manual and a handbook for new employees. The interface is in English and Estonian (EN / ET switch).
 
-> **Status: work in progress.** The banner tools and the brand manual are in daily use. The Guide is being finished. Banner request and Task tracker are built but switched off until Microsoft login exists. See [docs/ROADMAP.md](docs/ROADMAP.md).
+> **Status (2026-11-16): in daily use, about to be refactored.** The banner tools and the brand manual are used every day. The Guide is being finished. Banner request and Task tracker are built but switched off until Microsoft login exists. The next stretch of work makes the project lighter and simpler without changing what people see: [docs/REFACTOR.md](docs/REFACTOR.md). The longer view: [docs/ROADMAP.md](docs/ROADMAP.md).
 
 **Taking over this repository?** Start with [docs/TRANSFER.md](docs/TRANSFER.md). Everything else is indexed in [docs/README.md](docs/README.md).
 
@@ -11,7 +11,7 @@ Internal tools for the Õhtuleht newsroom, ad sales and marketing, in one web ap
 | Section | What you can do | State |
 |---|---|---|
 | **Home** | One page with a card for everything, a search box (press `/`), "continue where you left off" | Live |
-| **Content marketing** | Make banner zips for the ad server: articles banner (desktop 1250x400, optional static ad; mobile), image slider (desktop and mobile), **picture loop** (pictures that fade into each other instead of a GIF, fixed or responsive), **responsive banner** (always 200 px high, 320 to 700 wide, a small and a large video or set of pictures), header bar for theme pages. Open and convert old Swiper banners | Live |
+| **Content marketing** | Make banner zips for the ad server: articles banner (desktop 1250x400, optional static ad; mobile), image slider (desktop and mobile), **picture loop** (pictures that fade into each other instead of a GIF, fixed or responsive), **responsive banner** (always 200 px high, 320 to 700 wide, a small and a large video or set of pictures), header bar for theme pages. Each article can have its own desktop and phone picture (a link or an uploaded file). Open and convert old Swiper banners | Live |
 | **Tools** | Image cropper (1920x1080 JPG), Movie banner (video on a picture), Article scraper and Picture link converter (marketing), Email signature, Tracking links (UTM) | Live |
 | **Brand manual** | Colours (copy in many formats), logos (SVG, PNG), fonts, the brand eye generator | Live |
 | **Guide** | Handbook for new employees: first-days checklist, steps with screenshot placeholders | In progress ([docs/GUIDE.md](docs/GUIDE.md)) |
@@ -39,7 +39,7 @@ yarn dev            # http://localhost:5173
 | Command | What it does |
 |---|---|
 | `yarn build` | Builds the app into `apps/generator/dist/` (upload that folder) |
-| `yarn typecheck` | Type check of the app |
+| `yarn typecheck` | Type check of the app (other workspaces: `yarn workspace @ohtuleht/templates typecheck`, also `api`, `banner-runtime`, `brand`) |
 | `yarn workspace @ohtuleht/banner-runtime dev` | Slider test page, port 5174 |
 | `yarn workspace @ohtuleht/banner-runtime size` | Fails when the slider script is over its 3 KB budget |
 | `yarn guide:docs` | Rebuilds the guide's screenshot table and key list in `docs/` |
@@ -80,5 +80,7 @@ The address follows the app, so any place can be sent to a colleague. Add it to 
 ## How we work
 
 Issue, branch from `develop`, pull request into `develop`, squash merge. `main` is for releases. Details in [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/WORKFLOW.md](docs/WORKFLOW.md). Changes are listed in [CHANGELOG.md](CHANGELOG.md).
+
+There are no automated tests, lint or CI yet; adding them is the first phase of [docs/REFACTOR.md](docs/REFACTOR.md).
 
 The project was built with an AI assistant (Claude Code). The rules it follows are in [CLAUDE.md](CLAUDE.md); you do not need it to work on the code ([docs/AI-ASSISTANT.md](docs/AI-ASSISTANT.md)).

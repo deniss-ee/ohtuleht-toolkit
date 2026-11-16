@@ -8,6 +8,7 @@ For the people who will own and run this project from now on (IT). Written when 
 - One small API on Cloudflare (Worker + D1 database) stores briefs, clients and private guide values. It is in **test mode without login**.
 - The site is **public** today (GitHub Pages) and so is the repository.
 - **Not done:** Microsoft login, sending mail as the person, Scoro link, lint/tests/CI, a final home for the site.
+- **Planned next:** a behaviour-preserving clean-up that adds tests and CI and makes the site lighter ([REFACTOR.md](REFACTOR.md)). Taking over is easier after its first phase.
 
 ## What exists, and who owns it
 
@@ -30,7 +31,7 @@ There are **no secrets in the repository** (checked 2026-11-02) and none are nee
 
 | What | Where it is | What to do |
 |---|---|---|
-| A fine-grained GitHub token used by the AI assistant (personal, expires 2026-11-05) | The author's computer and chat history | The author revokes it: GitHub, Settings, Developer settings, Personal access tokens |
+| Fine-grained GitHub tokens used by the AI assistant (personal; several were made in October and November 2026 and pasted into chat sessions) | The author's chat history | The author revokes **all** of them: GitHub, Settings, Developer settings, Personal access tokens. After phase 0 of [REFACTOR.md](REFACTOR.md) publishing needs no personal token |
 | Cloudflare login used with `wrangler login` | The author's computer (OAuth token in the user profile) | Invite IT as members of the Cloudflare account first, then the author runs `yarn wrangler logout` |
 | Cloudflare account membership | The author's company e-mail | Move to a shared/company-owned owner (see below) |
 | `ALLOWED_ORIGINS`, `AUTH_MODE` (Worker variables) | `apps/api/wrangler.jsonc` | Not secret; change when the site address changes |
@@ -76,7 +77,8 @@ There are **no secrets in the repository** (checked 2026-11-02) and none are nee
 
 - **The API has no login** (`AUTH_MODE=open`). Anyone who knows its address can read and change briefs and clients. Private guide values are not stored or served in this mode on purpose. Test data only.
 - **Publishing is manual** (a script of git commands in [DEPLOY.md](DEPLOY.md)). Automate it once the final host is chosen.
-- **No automated tests and no CI.** Checks are `yarn typecheck`, `yarn build`, the runtime size budget, and looking at the result.
+- **No automated tests and no CI.** Checks are `yarn typecheck`, `yarn build`, the runtime size budget, and looking at the result. Fixing this is phase 0 of [REFACTOR.md](REFACTOR.md).
+- **The site is heavier than it needs to be** (one 1 MB script, 12 MB of font zips in every publish); numbers and the plan are in [REFACTOR.md](REFACTOR.md).
 - **Estonian interface text** is a first draft, not read by a native speaker.
 - **Banner request and Task tracker** are switched off (`ready: false` in `nav`, see [TASK-TRACKER.md](TASK-TRACKER.md)).
 - **Guide**: screenshots are placeholders; names, phone numbers, passwords and amounts exist only as `[[keys]]` and must be filled in the private backend after login ([GUIDE.md](GUIDE.md)).
@@ -85,7 +87,7 @@ There are **no secrets in the repository** (checked 2026-11-02) and none are nee
 
 ## First week
 
-1. Read this file and [ARCHITECTURE.md](ARCHITECTURE.md); run `yarn install && yarn dev`.
+1. Read this file, [ARCHITECTURE.md](ARCHITECTURE.md) and [REFACTOR.md](REFACTOR.md); run `yarn install && yarn dev`.
 2. Transfer the repository and the Cloudflare account (above). Revoke the author's token.
 3. Turn on branch protection; add a simple CI (issues #5, #6).
 4. Decide visibility and hosting, then follow [DEPLOY.md](DEPLOY.md) and [AUTH-MICROSOFT.md](AUTH-MICROSOFT.md).

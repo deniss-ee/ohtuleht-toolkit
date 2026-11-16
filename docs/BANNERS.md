@@ -131,15 +131,37 @@ Design: Figma "Õhtuleht - Brand hub", frame "Mobile Content". Format id `articl
 - **Width is not fixed.** The banner fills the page (8 px margin each side). A narrow phone (iPhone SE, 375 px) shows a sliver of the next card, a wide one shows more.
 - **Everything inside has a fixed size:** header 46 px, 16 px gap, cards 267x400 (about 2:3) with 8 px between, 28 px gap, dots 8 px. Height is 498 px. The banner is centred vertically in the page.
 - Card: picture, black gradient behind the title (216 px), title in Fira Sans Condensed Bold 18/23, white. No hover colour.
-- **Category label** above the title (Figma "Article Label"): chip on the label colour, Inter Bold 12/15, uppercase, 4 px radius, 4 x 6 px padding, 4 px above the title. Same data as the desktop banner: the campaign label (default Sisuturundus), a different text or colour per article. The chip is the main colour with white text (brand rule: white on red 600 and darker, black on lighter), or the label colour set in Colours or on the article.
+- **Category label** above the title (Figma "Article Label"): chip on the label colour, Inter Bold 12/15, uppercase, 4 px radius, 4 x 6 px padding, 8 px above the title. Same data as the desktop banner: the campaign label (default Sisuturundus), a different text or colour per article. The chip is the main colour with white text (brand rule: white on red 600 and darker, black on lighter), or the label colour set in Colours or on the article.
 - Pagination: 6 dots in the design, one per article here; the active one is solid, the others 30 %. Black on light, white on dark. Dots are clickable (16 px touch area).
-- **Pictures:** the banner uses the `/webp/48/` version of each picture (cropped, higher resolution) whatever size was pasted: `/webp/54/` becomes `/webp/48/` when the banner is written. **The desktop banner never uses the phone size:** a `/webp/48/` link in the desktop picture becomes `/webp/54/` (`forDesktop` in `articles-1250x400.ts`; also when an older zip is opened). Other sizes you set by hand are kept. **Each version has its own picture field.** Desktop edits `image`; Mobile edits `imageMobile`, which starts as the automatic `/webp/48/` form of the desktop link. When the site's 48 crop looks wrong, switch to Mobile and paste another picture address for that article: it is used as it is and the desktop picture does not change. Instead of an address, **Upload a picture** puts your own file in: it is optimised in the browser, saved in the zip as `pic-<id>.<ext>` next to `index.html` and referred to by that name (`OWN_PICTURE` in `validate.ts`); only the files the exported version uses go into the zip, and Upload zip reads them back. New articles (pasted or added by hand) go to the top of the list.
+- **Pictures:** the phone crop `/webp/48/` of each article picture, or the article's own phone picture. See [Article pictures](#article-pictures).
 - Swipe, drag, autoplay, loop and shuffle as in the desktop banner. No arrows.
 - Theme: light background white, dark background `#1c1c1c`. Header colour and picture work as on desktop. Title and hover colours do not apply, so the editor hides them.
 - The editor preview has a phone width switch (375, 390, 430).
 - **Desktop and mobile are one campaign.** The editor has a Desktop 1250x400 / Mobile switch at the top: one click turns the banner into the other size and keeps everything (campaign, header, articles, colours, behaviour). Download each size separately. The dark background follows the format unless it was changed by hand.
 - The preview frame is 514 px high (8 px above and below the 498 px banner) so the dots are never cut by the frame edge. In the ad system give the slot at least 498 px.
 - Open: best header picture size for mobile (the hint still names the desktop size), 1 px line height rounding (18 x 1.3 = 23.4 is 23 px).
+
+## Article pictures
+
+Õhtuleht picture links carry a size number: `https://p.ohtuleht.ee/webp/54/i/...`. The same picture exists in many sizes; the two that matter here (checked 2026-11-11):
+
+| Number | Size | Used by |
+|---|---|---|
+| `54` | 540x360, horizontal | Desktop banner cards |
+| `48` | 600x900, vertical (cropped by the site) | Phone banner cards (267x400) |
+
+**The rules**
+
+1. Each article has two picture fields: **Desktop** (`image`) and **Mobile** (`imageMobile`, optional). The form shows the field of the version chosen at the top (Desktop 1250x400 / Mobile).
+2. **Desktop never uses 48.** A `/webp/48/` link in the desktop field is shown and written as `/webp/54/`, also when an older zip is opened. Other sizes set by hand (for example 59) are kept.
+3. **Mobile uses 48 automatically:** with no own phone picture, the banner takes the desktop link and swaps its size to `/webp/48/`.
+4. **When the site's crop is wrong,** switch to Mobile and give that article its own picture: paste another address (used exactly as pasted) or press **Upload a picture**. The desktop picture does not change. **Use default** goes back to the automatic one.
+5. **Uploaded pictures** (either version) are optimised in the browser (at most 800x800), saved in the zip as `pic-<id>.<ext>` next to `index.html` and counted by the weight pill. Only the files the downloaded version uses go into its zip.
+6. New articles, pasted or added by hand, go to the **top** of the list.
+
+Limit: a zip holds one version. Opening a mobile zip and switching to Desktop keeps web addresses, but an uploaded desktop-only picture is not in that zip and has to be added again.
+
+Code: `forDesktop` in `articles-1250x400.ts`, `forMobile` in `articles-mobile.ts`, `OWN_PICTURE` in `validate.ts`, `pictureOf` and `articleFilesOf` in `apps/generator/src/lib/banner.ts`, the fields in `components/editor/ArticleList.tsx`. Moving all of it into one module is step 5.1 of [REFACTOR.md](REFACTOR.md).
 
 ## Format 5: Picture loop (built)
 
@@ -151,11 +173,11 @@ Always 200 px high, 320 to 700 px wide; a small (540x200) and a large (700x200) 
 
 ## Picture optimiser
 
-Pictures chosen in the form (header, ad) and the pictures of an old zip are optimised in the browser with **jSquash**, the codecs of the Squoosh app as WebAssembly (`@jsquash/jpeg` MozJPEG, `@jsquash/oxipng`, `@jsquash/resize`). Nothing is uploaded. Code: `apps/generator/src/lib/optimise.ts`.
+Pictures chosen in the form (header, logo, ad, an article's own picture) and the pictures of an old zip are optimised in the browser with **jSquash**, the codecs of the Squoosh app as WebAssembly (`@jsquash/jpeg` MozJPEG, `@jsquash/oxipng`, `@jsquash/resize`). Nothing is uploaded. Code: `apps/generator/src/lib/optimise.ts`.
 
 | Picture | What happens |
 |---|---|
-| JPEG | Scaled down (Lanczos) when bigger than twice the shown size (header 2496x92, ad 800x676), then MozJPEG quality 75 |
+| JPEG | Scaled down (Lanczos) when bigger than twice the shown size (header 2496x92, ad 800x676, article picture 800x800), then MozJPEG quality 75 |
 | PNG | Scaled down the same way, then OxiPNG level 3 (lossless) |
 | SVG, WebP | Left as they are |
 | Result not smaller | The original is kept, so a picture is never made bigger |

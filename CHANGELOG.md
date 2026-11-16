@@ -4,6 +4,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+### Documentation and refactor preparation (2026-11-16)
+
+- New `docs/REFACTOR.md`: measured weight of the site, what repeats in the code, and a phased plan (safety net, weight, one banner model, one editor frame, routing, templates, hosting) with a ready prompt per phase.
+- `docs/ARCHITECTURE.md` rewritten to match the code (five banner kinds, zip contents, article pictures, how to add a banner type). `docs/AI-ASSISTANT.md` rewritten (which model for what, start prompts, token advice). `CLAUDE.md`, the READMEs, `ROADMAP`, `TRANSFER`, `CONTRIBUTING`, `WORKFLOW` and `BANNERS` (new section "Article pictures") brought up to date.
+
+### Articles banner: pictures (2026-11-11)
+
+- Each article has its own picture for **Desktop** and for **Mobile**. Mobile starts as the automatic `/webp/48/` crop; when that crop is wrong, paste another address or **upload a picture** for that article (#161).
+- Uploaded article pictures are optimised in the browser, saved in the zip as `pic-<id>.<ext>` and read back by Upload zip (#161).
+- The desktop banner never uses the phone size: a `/webp/48/` link becomes `/webp/54/`, also when an older zip is opened (#162). This replaces the link rewrite of #159, which had written phone links into the desktop field.
+- New articles, pasted or added by hand, go to the top of the list (#161).
+- Mobile banner: 8 px between the label and the title (was 4 px) (#160).
+- Picture loop: the zip name always carries the size, `name_970x250_date.zip`, also for a responsive banner (#158).
+
 ### Responsive banner
 
 - New banner type in Content marketing: **Responsive banner, 200 px**. Always 200 px high, as wide as its place (320 to 700 px). A small version (made 540x200, safe zone 320, shown up to 540 px wide) and a large version (700x200, safe zone 540, above 540), each a muted looping video (no controls; the first frame becomes the still) or pictures (one still, two or more fade into each other with the solid fade of the picture loop). Chosen by the banner's own width, only the shown version is loaded. Pictures at 1x or 2x accepted, with a warning for other shapes; the safe zone can be drawn on the preview. Doc: `docs/RESPONSIVE-BANNER.md`.
