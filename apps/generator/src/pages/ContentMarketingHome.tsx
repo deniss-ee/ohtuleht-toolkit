@@ -4,7 +4,7 @@ import { ContinueCard } from "@/components/editor/ContinueCard";
 import { PageHeader } from "@/components/editor/PageHeader";
 import { StartCard } from "@/components/editor/StartCard";
 import { bannerTypes, contentMarketing as t } from "@/content";
-import type { SavedInfo } from "@/lib/storage";
+import type { SavedInfo } from "@/lib/saved";
 
 // One icon per banner type (picked by id so new types only need an entry here).
 const ICONS: Record<string, LucideIcon> = {

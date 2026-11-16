@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/editor/PageHeader";
 import { home as t, nav, ui, type PageId, type ToolInfo } from "@/content";
 import type { BrandTab } from "@/lib/route";
-import type { SavedInfo } from "@/lib/storage";
+import type { SavedInfo } from "@/lib/saved";
 
 // Where a card leads. `make` opens a new banner of that type.
 export interface Destination {
