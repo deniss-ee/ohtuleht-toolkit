@@ -274,7 +274,7 @@ export function ResponsiveBannerEditor({ draft, onChange, onBack }: { draft: Res
       onBack={onBack}
       extra={
         <>
-          <HoverPill tone="plain" icon={<FileArchive className="size-3.5" />} label={`${worst.toFixed(0)} KB`}>
+          <HoverPill tone={worst > BUDGET_KB ? "warn" : "plain"} icon={<FileArchive className="size-3.5" />} label={`${worst.toFixed(0)} KB`}>
             {() => (
               <div className="space-y-2">
                 <div className="text-sm font-medium">{t.weightTitle}</div>
@@ -285,7 +285,7 @@ export function ResponsiveBannerEditor({ draft, onChange, onBack }: { draft: Res
                       <span className="font-mono">{weights[n].toFixed(0)} / {BUDGET_KB} KB</span>
                     </div>
                     <div className="h-2 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={Math.round(weights[n])} aria-valuemax={BUDGET_KB} aria-label={`${VERSION_WIDTH[n]}`}>
-                      <div className={weights[n] > BUDGET_KB ? "h-full bg-destructive" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weights[n] / BUDGET_KB) * 100)}%` }} />
+                      <div className={weights[n] > BUDGET_KB ? "h-full bg-yellow-400" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weights[n] / BUDGET_KB) * 100)}%` }} />
                     </div>
                   </div>
                 ))}

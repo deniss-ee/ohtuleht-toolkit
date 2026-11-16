@@ -4,11 +4,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
-### Version 2 (branch `v2`, test address `/v2/`, 2026-11-16)
+### Lighter and simpler (2026-11-16, tested as "v2" next to the old version, then merged)
 
 - **Removed:** Banner request and Task tracker (another in-house app will do this). Kept in the tag `archive/request-tracker`.
 - **Lighter:** pages, the banner code and the chosen language are loaded when needed. First download about 120 KB gzip (was 318 KB).
 - **Tests:** `yarn test` checks every banner format against a golden file and pins the picture, colour, validation and fade rules.
+- **Weight meters** never stop a download. Above the guide value (100 KB articles and slider, 150 KB picture loop, 250 KB per version of the responsive banner) the pill and the bar turn **yellow** (the bar was red).
+- Removed the 10 MB podcast bundle from `tools/legacy` (kept in the tag `legacy-podcast`); `shadcn` moved to dev dependencies.
 - A wrong guide topic in the address still opens the guide's start page, but the address keeps the wrong topic.
 
 ### Documentation and refactor preparation (2026-11-16)

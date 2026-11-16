@@ -4,30 +4,19 @@ The toolkit grew feature by feature in three weeks. Everything works, but the sa
 
 Each phase is one or more small pull requests; a ready prompt for the AI assistant is at the end of each phase.
 
-## Version 2 lives next to version 1
+## Progress
 
-The refactor happens on the long-lived branch **`v2`**, published to its own address, so both versions can be compared side by side and nothing in daily use can break.
-
-| | Version 1 (stable) | Version 2 (refactor) |
-|---|---|---|
-| Branch | `develop` | `v2` |
-| Address | `https://deniss-ee.github.io/ohtuleht-toolkit/` | `https://deniss-ee.github.io/ohtuleht-toolkit/v2/` |
-| Gets | Fixes people need today | Every refactor pull request |
-
-- A fix made on `develop` is merged into `v2` (`git checkout v2 && git merge develop`), never the other way round until v2 is accepted.
-- Both are published by `tools/publish.sh` ([DEPLOY.md](DEPLOY.md)); publishing one never touches the other.
-- **Accepting v2:** when it has been used for real work without problems, open one pull request `v2` into `develop`, merge, publish, and delete the `/v2/` folder.
-- Saved unfinished work is shared (same browser storage, same site address), which is intended: v2 must open what v1 saved.
-
-## Progress (on `v2`)
+The first round was built on a separate branch (`v2`, tested next to the old version at `/v2/`) and merged into `develop` on 2026-11-16. For a risky later phase the same can be done again: `bash tools/publish.sh v2` publishes any branch to `/v2/` without touching the site.
 
 | Done | Result |
 |---|---|
 | Banner request and Task tracker removed (2026-11-16; another in-house app does this; tag `archive/request-tracker`) | 16 files and one dependency gone; script 318 to 283 KB gzip |
 | Phase 0, steps 1 and 2: golden file per banner format, tests for picture, colour, validation and fade rules | 30 tests, `yarn test` |
 | Phase 1, steps 1.1 and 1.2: pages, banner code and the chosen language load on demand | First download **318 to about 120 KB gzip** (script 71, app 34, one language 15) |
+| Phase 1, steps 1.5 and 1.6 (part): the 10 MB podcast bundle removed from `tools/legacy` (tag `legacy-podcast`), `shadcn` is a dev dependency only | Repository 10 MB lighter. Closes #7 |
+| Weight meters never block a download; above the guide value the pill and the bar turn yellow | |
 
-**Next:** phase 0 steps 3 to 6 (zip round-trip tests, lint, CI, publish on merge), then phase 1 steps 1.3 to 1.6.
+**Next:** phase 0 steps 3 to 6 (zip round-trip tests, lint, CI, publish on merge), then phase 1 steps 1.3, 1.4 and the `cn` helper of 1.6.
 
 ## Where we are (measured)
 

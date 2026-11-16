@@ -164,7 +164,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
         />
         <div className="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:flex-nowrap lg:gap-3">
         <HoverPill
-          tone="plain"
+          tone={weightKb > BUDGET_KB ? "warn" : "plain"}
           icon={<FileArchive className="size-3.5" />}
           label={`${weightKb.toFixed(1)} KB`}
         >
@@ -175,7 +175,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                 <span className="font-mono">{weightKb.toFixed(1)} / {BUDGET_KB} KB</span>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={Math.round(weightKb)} aria-valuemax={BUDGET_KB} aria-label={t.weight}>
-                <div className={weightKb > BUDGET_KB ? "h-full bg-destructive" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weightKb / BUDGET_KB) * 100)}%` }} />
+                <div className={weightKb > BUDGET_KB ? "h-full bg-yellow-400" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weightKb / BUDGET_KB) * 100)}%` }} />
               </div>
               <p className="text-xs text-muted-foreground">{t.sizeHelp}</p>
             </div>

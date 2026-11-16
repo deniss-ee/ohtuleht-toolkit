@@ -6,7 +6,7 @@ Read this first in every session. Then, depending on the task: `docs/REFACTOR.md
 
 Internal toolkit for the Õhtuleht newsroom, ad sales and marketing: banner makers, small tools, the brand manual, a guide for new employees. A static React + Vite app (`apps/generator`) and a Cloudflare Worker with a D1 database (`apps/api`, test mode, no login yet). The repository and the site are **public**. Live: `https://deniss-ee.github.io/ohtuleht-toolkit/`.
 
-**Now:** the refactor in `docs/REFACTOR.md` is under way on the long-lived branch **`v2`** (test address `.../ohtuleht-toolkit/v2/`); `develop` stays the stable version until v2 is accepted. Refactor pull requests go into `v2`, fixes people need today into `develop` (then merge `develop` into `v2`). Banner request and Task tracker were removed (tag `archive/request-tracker`); another in-house app does that job.
+**Now:** the refactor in `docs/REFACTOR.md` is under way (its "Progress" table says what is done). A risky step can be tested next to the live site first: `bash tools/publish.sh v2` puts the current branch at `.../ohtuleht-toolkit/v2/`. Banner request and Task tracker were removed (tag `archive/request-tracker`); another in-house app does that job.
 
 ## The user
 

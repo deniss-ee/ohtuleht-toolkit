@@ -7,7 +7,7 @@ Specification for every banner format the generator produces.
 | Item | Rule |
 |---|---|
 | Delivery | Zip with `index.html` at the root, or a hosted URL tag (Phase 3) |
-| Weight | About 100 KB without images (soft limit). The generator shows the live total |
+| Weight | About 100 KB without images. A guide, never a block: the banner can always be downloaded; above the guide value the weight pill and its bar turn yellow |
 | External requests | Fonts (Google Fonts) and article images from `p.ohtuleht.ee` only |
 | ClickTag | Fixed helper in every template; never edited by hand. See [ARCHITECTURE.md](ARCHITECTURE.md#clicktag) |
 | Libraries | None. Swiper is removed |

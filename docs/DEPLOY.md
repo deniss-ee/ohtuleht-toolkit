@@ -20,11 +20,10 @@ bash tools/publish.sh          # version 1: the site root
 ```
 
 ```bash
-git checkout v2 && git pull && yarn install
-bash tools/publish.sh v2       # version 2: only the /v2/ folder
+bash tools/publish.sh v2       # a test copy of the branch you are on, at .../ohtuleht-toolkit/v2/
 ```
 
-The script builds the branch you are on, takes a copy of the live `gh-pages`, replaces the site root (keeping `v2/` and a `CNAME` file) or only `v2/`, and pushes. While the refactor runs ([REFACTOR.md](REFACTOR.md)) the two versions live side by side: `.../ohtuleht-toolkit/` and `.../ohtuleht-toolkit/v2/`. Git needs push access (your own login, or a token).
+The script builds the branch you are on, takes a copy of the live `gh-pages`, replaces the site root (keeping `v2/` and a `CNAME` file) or only `v2/`, and pushes. The `/v2/` address is for trying a risky change next to the live site ([REFACTOR.md](REFACTOR.md)); delete the folder from `gh-pages` when it is no longer needed. Git needs push access (your own login, or a token).
 
 Pages refreshes in one or two minutes. Check by opening the site and pressing Ctrl+F5.
 
