@@ -1,43 +1,17 @@
-// Small things the app remembers in this browser: the unfinished banner or header bar, the last section, tool settings.
-// Everything is wrapped so a blocked or full storage never breaks the app (the app simply forgets).
+// The unfinished banner kept in this browser: saving and loading it. This half knows every draft shape, so it is loaded
+// together with the editors; the start pages use the light half (saved.ts).
 import type { Draft, HeaderFile } from "@/lib/banner";
 import { newDraft } from "@/lib/banner";
 import { newHeaderDraft, type HeaderDraft } from "@/lib/header";
 import { newFrameDraft, tidy as tidyFrames, type FrameDraft } from "@/lib/frames";
 import { isVideoName, newResponsiveDraft, tidy as tidyResponsive, type ResponsiveDraft } from "@/lib/responsive";
 import { newSliderDraft, tidy, type SliderDraft } from "@/lib/slider";
-
-export function read<T>(key: string): T | null {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : null;
-  } catch {
-    return null;
-  }
-}
-
-export function write(key: string, value: unknown): boolean {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-export function remove(key: string) {
-  try {
-    localStorage.removeItem(key);
-  } catch {
-    // nothing to do
-  }
-}
+import { read, usable, WORK_KEY, write } from "@/lib/saved";
 
 // ---- Unfinished work (one slot) ----
 
 export type Work = { kind: "banner"; draft: Draft } | { kind: "header"; draft: HeaderDraft } | { kind: "slider"; draft: SliderDraft } | { kind: "frames"; draft: FrameDraft } | { kind: "responsive"; draft: ResponsiveDraft } | null;
 
-const WORK_KEY = "ol-work";
 
 // Picture bytes are kept as the data URL only (the bytes are rebuilt from it).
 interface StoredFile {
@@ -108,23 +82,6 @@ export function saveWork(work: Work) {
   const stored = { ...base, file: pack(file), savedAt: Date.now() } as Stored;
   // A big picture can fill the storage: keep the text work without it rather than losing everything.
   if (!write(WORK_KEY, stored)) write(WORK_KEY, { ...stored, file: null, ...(stored.kind === "banner" ? { adFile: null, logoFile: null, articleFiles: {} } : {}) });
-}
-
-export const clearWork = () => remove(WORK_KEY);
-
-export interface SavedInfo {
-  kind: "banner" | "header" | "slider" | "frames" | "responsive";
-  name: string; // campaign name or bar text ("" when not written yet)
-  savedAt: number;
-}
-
-// A saved slider from an older version of the tool has another shape: it is dropped instead of breaking the editor.
-const usable = (s: Stored | null): s is Stored => !!s && (s.kind !== "slider" || (typeof s.config?.background === "string" && !!s.config?.desktop && !!s.config?.mobile));
-
-export function savedInfo(): SavedInfo | null {
-  const s = read<Stored>(WORK_KEY);
-  if (!usable(s)) return null;
-  return { kind: s.kind, name: s.kind === "header" ? s.config.label : s.config.campaign, savedAt: s.savedAt };
 }
 
 export function loadWork(): Work {

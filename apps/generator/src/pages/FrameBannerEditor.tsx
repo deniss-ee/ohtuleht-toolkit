@@ -170,7 +170,7 @@ export function FrameBannerEditor({ draft, onChange, onBack }: { draft: FrameDra
       onBack={onBack}
       extra={
         <>
-          <HoverPill tone="plain" icon={<FileArchive className="size-3.5" />} label={`${weightKb.toFixed(0)} KB`}>
+          <HoverPill tone={weightKb > BUDGET_KB ? "warn" : "plain"} icon={<FileArchive className="size-3.5" />} label={`${weightKb.toFixed(0)} KB`}>
             {() => (
               <div className="space-y-2">
                 <div className="flex items-baseline justify-between text-sm font-medium">
@@ -180,7 +180,7 @@ export function FrameBannerEditor({ draft, onChange, onBack }: { draft: FrameDra
                   </span>
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={Math.round(weightKb)} aria-valuemax={BUDGET_KB} aria-label={e.weight}>
-                  <div className={weightKb > BUDGET_KB ? "h-full bg-destructive" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weightKb / BUDGET_KB) * 100)}%` }} />
+                  <div className={weightKb > BUDGET_KB ? "h-full bg-yellow-400" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weightKb / BUDGET_KB) * 100)}%` }} />
                 </div>
                 <p className="text-xs text-muted-foreground">{t.weightHelp}</p>
               </div>

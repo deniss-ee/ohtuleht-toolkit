@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Clapperboard, Crop, Eye, FileSearch, FileText, House, Images, BookOpen, Layers, Link2, MonitorSmartphone, ListChecks, Megaphone, Search, Lightbulb, Newspaper, Palette, PanelTop, PenLine, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
+import { Clapperboard, Crop, Eye, FileSearch, FileText, House, Images, BookOpen, Layers, Link2, MonitorSmartphone, Search, Lightbulb, Newspaper, Palette, PanelTop, PenLine, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
 import { ContinueCard } from "@/components/editor/ContinueCard";
 import { StartCard } from "@/components/editor/StartCard";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/editor/PageHeader";
 import { home as t, nav, ui, type PageId, type ToolInfo } from "@/content";
 import type { BrandTab } from "@/lib/route";
-import type { SavedInfo } from "@/lib/storage";
+import type { SavedInfo } from "@/lib/saved";
 
 // Where a card leads. `make` opens a new banner of that type.
 export interface Destination {
@@ -32,8 +32,6 @@ const ITEMS: Record<string, { icon: LucideIcon; to: Destination }> = {
   "utm-builder": { icon: Link2, to: { page: "tools", tool: "utm-builder" } },
   "email-signature": { icon: PenLine, to: { page: "tools", tool: "email-signature" } },
   guide: { icon: BookOpen, to: { page: "guide" } },
-  "banner-request": { icon: Megaphone, to: { page: "request" } },
-  "task-tracker": { icon: ListChecks, to: { page: "tasks" } },
   colours: { icon: Palette, to: { page: "brand", tab: "colours" } },
   logos: { icon: Shapes, to: { page: "brand", tab: "logos" } },
   fonts: { icon: Type, to: { page: "brand", tab: "fonts" } },

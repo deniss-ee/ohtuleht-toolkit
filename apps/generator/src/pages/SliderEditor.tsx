@@ -231,7 +231,7 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
           }}
         />
         <div className="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:flex-nowrap lg:gap-3">
-          <HoverPill tone="plain" icon={<FileArchive className="size-3.5" />} label={`${weightKb.toFixed(1)} KB`}>
+          <HoverPill tone={weightKb > BUDGET_KB ? "warn" : "plain"} icon={<FileArchive className="size-3.5" />} label={`${weightKb.toFixed(1)} KB`}>
             {() => (
               <div className="space-y-2">
                 <div className="flex items-baseline justify-between text-sm font-medium">
@@ -241,7 +241,7 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
                   </span>
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={Math.round(weightKb)} aria-valuemax={BUDGET_KB} aria-label={e.weight}>
-                  <div className={weightKb > BUDGET_KB ? "h-full bg-destructive" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weightKb / BUDGET_KB) * 100)}%` }} />
+                  <div className={weightKb > BUDGET_KB ? "h-full bg-yellow-400" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weightKb / BUDGET_KB) * 100)}%` }} />
                 </div>
                 <p className="text-xs text-muted-foreground">{e.sizeHelp}</p>
               </div>

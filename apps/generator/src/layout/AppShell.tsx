@@ -1,11 +1,11 @@
 import { useSyncExternalStore, type ReactNode } from "react";
-import { BookOpen, Construction, House, Languages, LayoutTemplate, ListChecks, Megaphone, Moon, Palette, Sun, Wrench } from "lucide-react";
+import { BookOpen, Construction, House, Languages, LayoutTemplate, Moon, Palette, Sun, Wrench } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getLang, LANGS, nav, setLang, subscribeLang, ui, type NavItem, type PageId } from "@/content";
 
-const icons = { home: House, content: LayoutTemplate, tools: Wrench, brand: Palette, guide: BookOpen, request: Megaphone, tasks: ListChecks } satisfies Record<PageId, unknown>;
+const icons = { home: House, content: LayoutTemplate, tools: Wrench, brand: Palette, guide: BookOpen } satisfies Record<PageId, unknown>;
 
 function NavButton({ item, active, onSelect }: { item: NavItem; active: boolean; onSelect: (id: PageId) => void }) {
   const Icon = icons[item.id];

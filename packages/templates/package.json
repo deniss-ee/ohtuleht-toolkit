@@ -6,12 +6,14 @@
   "scripts": {
     "typecheck": "tsc -p .",
     "example": "node scripts/render-example.ts",
-    "serve": "vite example-output --port 5175"
+    "serve": "vite example-output --port 5175",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
     "typescript": "^7.0.2",
-    "vite": "^8.3.5"
+    "vite": "^8.3.5",
+    "vitest": "^5.1.0"
   },
   "main": "src/index.ts",
   "types": "src/index.ts"

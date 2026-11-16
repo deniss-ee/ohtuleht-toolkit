@@ -11,7 +11,8 @@
     "build": "yarn workspace @ohtuleht/generator build",
     "typecheck": "yarn workspace @ohtuleht/generator typecheck",
     "guide:docs": "node tools/guide-docs.mjs",
-    "docs:check": "node tools/check-links.mjs"
+    "docs:check": "node tools/check-links.mjs",
+    "test": "yarn workspace @ohtuleht/templates test"
   },
   "engines": {
     "node": ">=20"

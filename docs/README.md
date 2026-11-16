@@ -12,6 +12,7 @@ Pick what you need. New to the project? Read the first group in order.
 | [CLOUDFLARE.md](CLOUDFLARE.md) | Run the API and the database (Worker + D1) |
 | [AUTH-MICROSOFT.md](AUTH-MICROSOFT.md) | Add Microsoft login, send mail from the person's own mailbox, show different content to signed-in people |
 | [ROADMAP.md](ROADMAP.md) | See what is done and what is planned |
+| [REFACTOR.md](REFACTOR.md) | The current main work: measured weight, what repeats, the phased plan with ready prompts |
 
 ## Working on the code
 
@@ -20,14 +21,14 @@ Pick what you need. New to the project? Read the first group in order.
 | [../CONTRIBUTING.md](../CONTRIBUTING.md) | Know the rules for changes, review checklist, good habits |
 | [WORKFLOW.md](WORKFLOW.md) | Follow the git flow step by step (issue, branch, PR, release) |
 | [LANGUAGES.md](LANGUAGES.md) | Add or change interface text in English and Estonian |
-| [AI-ASSISTANT.md](AI-ASSISTANT.md) | Work with an AI assistant on this repository (optional) |
+| [AI-ASSISTANT.md](AI-ASSISTANT.md) | Work with an AI assistant on this repository: which model for what, start prompts, habits (optional) |
 | [../SECURITY.md](../SECURITY.md) | Keep the public repository safe |
 
 ## The tools (how each one works)
 
 | Tool | Document |
 |---|---|
-| Banners: articles, static ad, image slider, mobile, old Swiper import, picture optimiser | [BANNERS.md](BANNERS.md) |
+| Banners: articles, static ad, image slider, mobile, article pictures (48 and 54, own pictures), old Swiper import, picture optimiser | [BANNERS.md](BANNERS.md) |
 | Picture loop banner (pictures that fade into each other, instead of a GIF) | [FRAME-BANNER.md](FRAME-BANNER.md) |
 | Responsive banner, 200 px high (small and large version, video or pictures; safe zones) | [RESPONSIVE-BANNER.md](RESPONSIVE-BANNER.md) |
 | Header bar for theme pages | [HEADER-BAR.md](HEADER-BAR.md) |
@@ -39,7 +40,6 @@ Pick what you need. New to the project? Read the first group in order.
 | Brand manual (colours, logos, fonts) | [BRAND-MANUAL.md](BRAND-MANUAL.md) |
 | Brand eye generator | [BRAND-EYE.md](BRAND-EYE.md) |
 | Guide for new employees | [GUIDE.md](GUIDE.md), generated: [GUIDE-SCREENSHOTS.md](GUIDE-SCREENSHOTS.md), [GUIDE-VALUES.md](GUIDE-VALUES.md) |
-| Banner request and Task tracker (switched off) | [TASK-TRACKER.md](TASK-TRACKER.md) |
 
 Package READMEs: [banner-runtime](../packages/banner-runtime/README.md), [templates](../packages/templates/README.md), [the web app](../apps/generator/README.md), [legacy tools](../tools/legacy/README.md).
 
