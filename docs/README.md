@@ -40,7 +40,6 @@ Pick what you need. New to the project? Read the first group in order.
 | Brand manual (colours, logos, fonts) | [BRAND-MANUAL.md](BRAND-MANUAL.md) |
 | Brand eye generator | [BRAND-EYE.md](BRAND-EYE.md) |
 | Guide for new employees | [GUIDE.md](GUIDE.md), generated: [GUIDE-SCREENSHOTS.md](GUIDE-SCREENSHOTS.md), [GUIDE-VALUES.md](GUIDE-VALUES.md) |
-| Banner request and Task tracker (switched off) | [TASK-TRACKER.md](TASK-TRACKER.md) |
 
 Package READMEs: [banner-runtime](../packages/banner-runtime/README.md), [templates](../packages/templates/README.md), [the web app](../apps/generator/README.md), [legacy tools](../tools/legacy/README.md).
 

@@ -2,7 +2,32 @@
 
 The toolkit grew feature by feature in three weeks. Everything works, but the same idea is now written several times and the site ships more than it needs. This is the plan to make it **lighter, simpler and safer to change** without changing what people see. Measured on `develop` on **2026-11-16**.
 
-Nothing in this document is built yet. Each phase is one or more small pull requests; a ready prompt for the AI assistant is at the end of each phase.
+Each phase is one or more small pull requests; a ready prompt for the AI assistant is at the end of each phase.
+
+## Version 2 lives next to version 1
+
+The refactor happens on the long-lived branch **`v2`**, published to its own address, so both versions can be compared side by side and nothing in daily use can break.
+
+| | Version 1 (stable) | Version 2 (refactor) |
+|---|---|---|
+| Branch | `develop` | `v2` |
+| Address | `https://deniss-ee.github.io/ohtuleht-toolkit/` | `https://deniss-ee.github.io/ohtuleht-toolkit/v2/` |
+| Gets | Fixes people need today | Every refactor pull request |
+
+- A fix made on `develop` is merged into `v2` (`git checkout v2 && git merge develop`), never the other way round until v2 is accepted.
+- Both are published by `tools/publish.sh` ([DEPLOY.md](DEPLOY.md)); publishing one never touches the other.
+- **Accepting v2:** when it has been used for real work without problems, open one pull request `v2` into `develop`, merge, publish, and delete the `/v2/` folder.
+- Saved unfinished work is shared (same browser storage, same site address), which is intended: v2 must open what v1 saved.
+
+## Progress (on `v2`)
+
+| Done | Result |
+|---|---|
+| Banner request and Task tracker removed (2026-11-16; another in-house app does this; tag `archive/request-tracker`) | 16 files and one dependency gone; script 318 to 283 KB gzip |
+| Phase 0, steps 1 and 2: golden file per banner format, tests for picture, colour, validation and fade rules | 30 tests, `yarn test` |
+| Phase 1, steps 1.1 and 1.2: pages, banner code and the chosen language load on demand | First download **318 to about 120 KB gzip** (script 71, app 34, one language 15) |
+
+**Next:** phase 0 steps 3 to 6 (zip round-trip tests, lint, CI, publish on merge), then phase 1 steps 1.3 to 1.6.
 
 ## Where we are (measured)
 
@@ -98,7 +123,7 @@ Read CLAUDE.md and docs/REFACTOR.md, phase 2. Write a one-page design note (docs
 
 1. `ToolShell` (used by the two newest editors) becomes the frame of all five: back button, name, version switch, weight pill, "to fix" list, download, preview column. `BannerEditor`, `SliderEditor` and `HeaderBarEditor` lose about 100 lines each.
 2. Shared parts that are now copied: the picture upload button with its hidden input and spinner (written again in every editor), `reportOptimised`, the weight calculation, the `work()` busy helper.
-3. `SliderEditor.tsx` (466 lines) and `TaskTracker.tsx` (411) split into the form sections they already have.
+3. `SliderEditor.tsx` (466 lines) splits into the form sections it already has.
 4. A file over 300 lines is a signal to split, not a rule.
 
 **Done when:** each editor file holds only its own fields; a visual check of all five editors at 375 px and 1440 px, light and dark, shows no difference.
@@ -125,8 +150,8 @@ Read CLAUDE.md and docs/REFACTOR.md, phase 2. Write a one-page design note (docs
 ## Phase 6: hosting and API (with IT)
 
 1. One Cloudflare Worker serves the built app and the API from one address ([DEPLOY.md](DEPLOY.md), option B); deploy from CI.
-2. Types shared by the app and the Worker (`Brief`, `Client`) move to a small package instead of being written twice.
-3. Microsoft login in front ([AUTH-MICROSOFT.md](AUTH-MICROSOFT.md)); then switch on Banner request and Task tracker.
+3. Microsoft login in front ([AUTH-MICROSOFT.md](AUTH-MICROSOFT.md)), if the site is to be internal or the guide is to show its private values.
+4. Remove the unused `briefs` and `clients` routes and tables from the Worker (the tools that used them are gone); the Worker then only serves guide values.
 
 **Model:** Opus for the login work, with a person from IT in the loop.
 
@@ -152,7 +177,7 @@ Read CLAUDE.md and docs/REFACTOR.md, phase 2. Write a one-page design note (docs
 | **Visual regression** screenshots per template in CI | Catches layout changes the golden HTML cannot | Small after phase 0 |
 | **Estonian review** by a native speaker of `content.et.ts` | It is a first draft | Small, a person |
 | **Accessibility pass** (#38): focus order and labels in the editors | Promised in the rules, never audited | Small |
-| **Close stale issues**: #39, #50 to #54, #3 are done or overtaken | A true issue list | Tiny |
+| **Close stale issues**: #39, #3 are done or overtaken; #50 to #58 (tracker) are dropped | A true issue list | Tiny |
 | **Versions**: tag `v0.3.0` after phase 1, keep `CHANGELOG.md` per release instead of one long Unreleased | Clear handover points for IT | Tiny |
 
 ## What not to do

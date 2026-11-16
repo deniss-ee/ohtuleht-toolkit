@@ -2,7 +2,7 @@
 
 Internal tools for the Õhtuleht newsroom, ad sales and marketing, in one web app: banner makers, small helpers, the brand manual and a handbook for new employees. The interface is in English and Estonian (EN / ET switch).
 
-> **Status (2026-11-16): in daily use, about to be refactored.** The banner tools and the brand manual are used every day. The Guide is being finished. Banner request and Task tracker are built but switched off until Microsoft login exists. The next stretch of work makes the project lighter and simpler without changing what people see: [docs/REFACTOR.md](docs/REFACTOR.md). The longer view: [docs/ROADMAP.md](docs/ROADMAP.md).
+> **Status (2026-11-16): in daily use, about to be refactored.** The banner tools and the brand manual are used every day. The Guide is being finished. The next stretch of work makes the project lighter and simpler without changing what people see: [docs/REFACTOR.md](docs/REFACTOR.md). The longer view: [docs/ROADMAP.md](docs/ROADMAP.md).
 
 **Taking over this repository?** Start with [docs/TRANSFER.md](docs/TRANSFER.md). Everything else is indexed in [docs/README.md](docs/README.md).
 
@@ -15,7 +15,6 @@ Internal tools for the Õhtuleht newsroom, ad sales and marketing, in one web ap
 | **Tools** | Image cropper (1920x1080 JPG), Movie banner (video on a picture), Article scraper and Picture link converter (marketing), Email signature, Tracking links (UTM) | Live |
 | **Brand manual** | Colours (copy in many formats), logos (SVG, PNG), fonts, the brand eye generator | Live |
 | **Guide** | Handbook for new employees: first-days checklist, steps with screenshot placeholders | In progress ([docs/GUIDE.md](docs/GUIDE.md)) |
-| **Banner request**, **Task tracker** | Unified request for banner jobs, a board with clients, one tidy email text | Built, **switched off** ([docs/TASK-TRACKER.md](docs/TASK-TRACKER.md)) |
 
 ## Where it runs
 

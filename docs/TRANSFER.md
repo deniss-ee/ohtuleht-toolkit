@@ -80,7 +80,7 @@ There are **no secrets in the repository** (checked 2026-11-02) and none are nee
 - **No automated tests and no CI.** Checks are `yarn typecheck`, `yarn build`, the runtime size budget, and looking at the result. Fixing this is phase 0 of [REFACTOR.md](REFACTOR.md).
 - **The site is heavier than it needs to be** (one 1 MB script, 12 MB of font zips in every publish); numbers and the plan are in [REFACTOR.md](REFACTOR.md).
 - **Estonian interface text** is a first draft, not read by a native speaker.
-- **Banner request and Task tracker** are switched off (`ready: false` in `nav`, see [TASK-TRACKER.md](TASK-TRACKER.md)).
+- Banner request and Task tracker were removed on 2026-11-16: another in-house app will do that job. The code is kept in the tag `archive/request-tracker`.
 - **Guide**: screenshots are placeholders; names, phone numbers, passwords and amounts exist only as `[[keys]]` and must be filled in the private backend after login ([GUIDE.md](GUIDE.md)).
 - **Old tools** are archived in `tools/legacy/` (not maintained). The tag `legacy-tools-final` has the older ones that were rebuilt.
 - Issues #9 and #11 are open although their core work is done: close them when you agree.

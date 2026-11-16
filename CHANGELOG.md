@@ -4,6 +4,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+### Version 2 (branch `v2`, test address `/v2/`, 2026-11-16)
+
+- **Removed:** Banner request and Task tracker (another in-house app will do this). Kept in the tag `archive/request-tracker`.
+- **Lighter:** pages, the banner code and the chosen language are loaded when needed. First download about 120 KB gzip (was 318 KB).
+- **Tests:** `yarn test` checks every banner format against a golden file and pins the picture, colour, validation and fade rules.
+- A wrong guide topic in the address still opens the guide's start page, but the address keeps the wrong topic.
+
 ### Documentation and refactor preparation (2026-11-16)
 
 - New `docs/REFACTOR.md`: measured weight of the site, what repeats in the code, and a phased plan (safety net, weight, one banner model, one editor frame, routing, templates, hosting) with a ready prompt per phase.

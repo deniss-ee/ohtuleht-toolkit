@@ -11,7 +11,7 @@ What is done, what is next, and what is only an idea. Work is tracked as GitHub 
 | 1 Static generators and tools | **Done**: articles banner (desktop, mobile, with static ad, own picture per article and version), image slider (desktop and mobile), picture loop, responsive banner (200 px), header bar, old Swiper import, picture optimiser, image cropper, movie banner, article scraper, picture link converter, email signature, tracking links, guide. Open: header font options (#64), accessibility pass (#38), IT README (#39 is this handover) |
 | 2 API on Cloudflare | **Started**: Worker with D1 for briefs, clients and guide values, test mode. Open: article by number (#40, #119), paste article URL in the generator (#42), feed (#41), final domain and account (#43) |
 | 3 Login and hosting | **Next**: Microsoft login, one address for app and API, private data behind login ([AUTH-MICROSOFT.md](AUTH-MICROSOFT.md)); hosted banners and campaign storage (#44 to #47) |
-| 4 Banner request and Task tracker | **Built, switched off** until login; Scoro link and mail sending planned ([TASK-TRACKER.md](TASK-TRACKER.md)) |
+| 4 Banner request and Task tracker | **Dropped** (2026-11-16): another in-house app will do this. Code kept in the tag `archive/request-tracker` |
 
 ## Next steps (suggested order)
 
@@ -19,7 +19,6 @@ What is done, what is next, and what is only an idea. Work is tracked as GitHub 
 2. **Handover** ([TRANSFER.md](TRANSFER.md)): transfer the repository and the Cloudflare account, revoke the author's tokens, branch protection. Easier once CI exists.
 3. **Refactor, phase 2 to 5**: one banner model, one editor frame, routing, templates.
 4. **Hosting and visibility decision**, then **Microsoft login** and the Worker's token check ([AUTH-MICROSOFT.md](AUTH-MICROSOFT.md)).
-5. Switch on **Banner request** and **Task tracker**; add mail sending from the person's mailbox; Scoro clients.
 6. Fill the **Guide**: screenshots ([GUIDE-SCREENSHOTS.md](GUIDE-SCREENSHOTS.md)) and the private values.
 7. A native speaker reads the Estonian interface text (`content.et.ts`).
 8. Article by number (#119): the Worker route and the field in the article scraper.
@@ -52,7 +51,7 @@ Microsoft login for the toolkit, the app and API under one address, private cont
 
 ## Phase 4: Banner request and Task tracker (M4)
 
-Built as prototypes ([TASK-TRACKER.md](TASK-TRACKER.md)). To do after login: switch on, send mail from the person's mailbox, Scoro clients, roles, assignee and comments, reports.
+Banner request and Task tracker were removed on 2026-11-16: another in-house app will do that job. The code is kept in the tag `archive/request-tracker`.
 
 ## Ideas (not planned)
 

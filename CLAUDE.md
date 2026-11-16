@@ -6,7 +6,7 @@ Read this first in every session. Then, depending on the task: `docs/REFACTOR.md
 
 Internal toolkit for the Õhtuleht newsroom, ad sales and marketing: banner makers, small tools, the brand manual, a guide for new employees. A static React + Vite app (`apps/generator`) and a Cloudflare Worker with a D1 database (`apps/api`, test mode, no login yet). The repository and the site are **public**. Live: `https://deniss-ee.github.io/ohtuleht-toolkit/`.
 
-**Now:** features work; the next stretch is the refactor in `docs/REFACTOR.md` (safety net first, then weight, then one banner model). Banner request and Task tracker are built but switched off (`ready: false` in `nav`) until Microsoft login exists (`docs/AUTH-MICROSOFT.md`).
+**Now:** the refactor in `docs/REFACTOR.md` is under way on the long-lived branch **`v2`** (test address `.../ohtuleht-toolkit/v2/`); `develop` stays the stable version until v2 is accepted. Refactor pull requests go into `v2`, fixes people need today into `develop` (then merge `develop` into `v2`). Banner request and Task tracker were removed (tag `archive/request-tracker`); another in-house app does that job.
 
 ## The user
 
@@ -37,12 +37,12 @@ apps/generator/            React 19 + Vite + Tailwind v4 + shadcn/ui (port 5173)
   src/App.tsx              the shell: which page, which draft, the address
   src/pages/               Home, ContentMarketingHome, the five editors (Banner, Slider, FrameBanner, ResponsiveBanner, HeaderBar),
                            tools (ImageCropper, MovieBanner, ArticleScraper, PictureConverter, SignatureGenerator, UtmBuilder),
-                           BrandManual, BrandFonts, BrandEye, Guide, BannerRequest, TaskTracker
+                           BrandManual, BrandFonts, BrandEye, Guide
   src/components/editor/   shared parts: ArticleList, Preview, SwapFrame, ToolShell, ColorPicker, FormParts, Fields ...
-  src/lib/                 one module per draft kind (banner, slider, frames, responsive, header), zip, storage (saved work),
+  src/lib/                 one module per draft kind (banner, slider, frames, responsive, header), work (new, open zip), zip, storage + saved (saved work),
                            route (direct links), optimise (pictures), legacy* (old zips), sync (API) ...
   src/content.*.ts         every UI string (en, et) + content.ts picker;  src/guide-content.ts  the guide
-apps/api/                  Cloudflare Worker + D1 (briefs, clients, guide values), wrangler.jsonc, migrations/
+apps/api/                  Cloudflare Worker + D1 (guide values; the briefs and clients routes are unused now), wrangler.jsonc, migrations/
 packages/banner-runtime/   vanilla slider script inside the banners; test page on port 5174
 packages/templates/        banner and header-bar HTML/CSS templates, colour logic, validation, messages
 packages/brand/            brand.json (colours, logos, fonts) + logo SVGs
@@ -56,6 +56,7 @@ docs/                      index in docs/README.md
 yarn install
 yarn dev                                          # app, http://localhost:5173 (builds the runtime first)
 yarn typecheck                                    # app only
+yarn test                                         # golden banners and rule tests (packages/templates)
 yarn workspace @ohtuleht/templates typecheck      # also: api, banner-runtime, brand
 yarn build                                        # writes apps/generator/dist/
 yarn docs:check                                   # every link and anchor in the Markdown files
@@ -64,7 +65,7 @@ yarn workspace @ohtuleht/banner-runtime size      # fails above the 3 KB budget
 cd apps/api && yarn wrangler dev --port 8788      # API locally
 ```
 
-There are no automated tests, lint or CI yet (phase 0 of the refactor). Until then: typecheck, build, and check the change in the browser (375 px and desktop, console clean).
+Tests exist for the templates (`yarn test`: every banner format against a golden file, plus the picture, colour and fade rules). A deliberate template change: `yarn workspace @ohtuleht/templates test -u`, then explain the golden diff in the PR. There is no lint or CI yet, and no tests for the app: typecheck, build, and check the change in the browser (375 px and desktop, console clean).
 
 ## Which model for what
 
