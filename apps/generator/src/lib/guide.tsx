@@ -1,7 +1,9 @@
 import { createContext, Fragment, useContext, useEffect, useState, type ReactNode } from "react";
 import { Lock } from "lucide-react";
 import { guide as t } from "@/content";
-import { API_URL } from "@/lib/sync";
+
+// The API (apps/api) serves the private values of the guide after login. Not secret: it ends up in the build.
+export const API_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? "https://ohtuleht-api.ohtuleht-api.workers.dev";
 
 // Values that are not public (names, phone numbers, passwords, Wi-Fi, amounts). The guide text only holds [[key]] placeholders;
 // the real values come from the private backend and only after sign-in. Until that exists the backend answers with nothing,

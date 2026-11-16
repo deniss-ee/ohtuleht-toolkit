@@ -72,7 +72,6 @@ export const imageCropper = section("imageCropper");
 export const movieBanner = section("movieBanner");
 export const marketing = section("marketing");
 export const signature = section("signature");
-export const tracker = section("tracker");
 export const guide = section("guide");
 export const frameEditor = section("frameEditor");
 export const responsiveEditor = section("responsiveEditor");
