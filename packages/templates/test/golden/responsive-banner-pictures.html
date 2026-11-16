@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+<meta charset="UTF-8">
+<title>Responsive campaign</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script>var olBanner={getQueryStringValue:function(k){return decodeURIComponent(window.location.search.replace(new RegExp("^(?:.*[&?]"+encodeURIComponent(k).replace(/[.+*]/g,"$&")+"(?:=([^&]*))?)?.*$","i"),"$1"))},getClickTag:function(u){this.clickMacro=this.getQueryStringValue('clickMacro');this.clickTag=this.getQueryStringValue('clickTag');return u!==undefined&&u.length>0?this.clickMacro+u:this.clickTag}};var clickTag="";</script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{cursor:pointer}
+.rb{position:relative;display:block;width:100%;min-width:320px;max-width:700px;height:200px;margin:0 auto;overflow:hidden;background:#000}
+.rb-g{display:none;position:absolute;left:0;top:0;width:100%;height:100%}
+.rb[data-v="small"] .rb-g[data-g="small"],.rb[data-v="large"] .rb-g[data-g="large"]{display:block}
+.rb video,.rb img{position:absolute;left:0;top:0;width:100%;height:100%;display:block;object-fit:cover;object-position:center;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.rb img{opacity:0;z-index:0;will-change:opacity;backface-visibility:hidden;transform:translateZ(0)}
+.ol-first{opacity:1;z-index:2}
+.rb-g[data-g="large"] .ol-fr{opacity:1;z-index:2}
+@keyframes so0{0%{opacity:1}50%{opacity:1}60.5263%{opacity:0}89.4737%{opacity:0}100%{opacity:1}}@keyframes sz0{0%{z-index:2}50%{z-index:1}60.5263%{z-index:0}89.4737%{z-index:3}100%{z-index:3}}@keyframes so1{0%{opacity:1}10.5263%{opacity:0}39.4737%{opacity:0}50%{opacity:1}100%{opacity:1}}@keyframes sz1{0%{z-index:1}10.5263%{z-index:0}39.4737%{z-index:3}50%{z-index:2}100%{z-index:2}}.rb-g[data-g="small"] .ol-fr:nth-of-type(1){animation:so0 7600ms linear -800ms infinite both,sz0 7600ms step-end -800ms infinite both}.rb-g[data-g="small"] .ol-fr:nth-of-type(2){animation:so1 7600ms linear -800ms infinite both,sz1 7600ms step-end -800ms infinite both}
+</style>
+</head>
+<body onclick="window.open(olBanner.getClickTag(''),'_blank')">
+<div class="rb" id="rb" role="img" aria-label="Responsive campaign">
+<div class="rb-g" data-g="small"><img class="ol-fr ol-first" alt="" draggable="false" decoding="async" data-src="540-1.jpg"><img class="ol-fr" alt="" draggable="false" decoding="async" data-src="540-2.jpg"></div>
+<div class="rb-g" data-g="large"><img class="ol-fr ol-first" alt="" draggable="false" decoding="async" data-src="700-1.jpg"></div>
+</div>
+<script>
+(function(){var rb=document.getElementById('rb'),BP=540,cur='';
+function g(n){return rb.querySelector('[data-g="'+n+'"]')}
+function show(n){if(n===cur)return;var old=cur&&g(cur);if(old){var ov=old.querySelector('video');if(ov)ov.pause()}
+cur=n;rb.setAttribute('data-v',n);var el=g(n),v=el.querySelector('video');
+if(v){if(!v.getAttribute('src'))v.src=v.getAttribute('data-src');var p=v.play();if(p&&p.catch)p.catch(function(){})}
+var im=el.querySelectorAll('img[data-src]');for(var i=0;i<im.length;i++){if(!im[i].getAttribute('src'))im[i].src=im[i].getAttribute('data-src')}}
+function pick(w){var want=Math.round(w)<=BP?'small':'large';if(!g(want))want=want==='small'?'large':'small';if(g(want))show(want)}
+pick(rb.getBoundingClientRect().width);
+if(window.ResizeObserver)new ResizeObserver(function(e){pick(e[0].contentRect.width)}).observe(rb)})();
+</script>
+<script type="application/json" id="ol-banner">{"v":1,"kind":"responsive-banner","format":"responsive-banner","campaign":"Responsive campaign","small":{"kind":"pictures","video":"","poster":"","pictures":["540-1.jpg","540-2.jpg"]},"large":{"kind":"pictures","video":"","poster":"","pictures":["700-1.jpg"]},"holdMs":3000,"fadeMs":800,"href":""}</script>
+</body>
+</html>

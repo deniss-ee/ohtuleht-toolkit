@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="et">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Näidiskampaania</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@400;700&display=swap" media="print" onload="this.media='all'" />
+    <link href="style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <a class="banner" href="https://example.com/campaign" role="banner" target="_blank" rel="noopener">
+      <span class="banner__label">Näidiskampaania</span>
+    </a>
+    <script type="application/json" id="ol-header">{"v":1,"format":"header-bar","label":"Näidiskampaania","href":"https://example.com/campaign","primary":"#99e300"}</script>
+  </body>
+</html>
