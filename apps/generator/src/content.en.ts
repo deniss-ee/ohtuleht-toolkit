@@ -469,9 +469,9 @@ export const giftCard = {
   downloadPdf: "PDF",
   downloadMail: "E-mail picture",
   pdfDone: (cards: number) => `PDF with ${cards} card${cards === 1 ? "" : "s"} downloaded.`,
-  mailDone: (n: number) => (n === 1 ? "Picture downloaded." : `${n} pictures downloaded as a zip.`),
+  mailDone: (n: number, size: string) => (n === 1 ? `Picture downloaded (${size}).` : `${n} pictures downloaded as a zip (${size} together).`),
   failed: "Could not make the file. Try again.",
-  note: "The text in the PDF is drawn as shapes: nothing to install, always the same letters. It cannot be selected or searched. The PDF is A4. Black is pure black ink (CMYK 0,0,0,100) and white is no ink; the other colours are RGB. No pictures.",
+  note: "The PDF is A4 and in CMYK: black is pure black ink (0,0,0,100), greys are black ink only, white is no ink; the colours are converted from the screen colours with a simple formula, so exact brand colours should be checked with the print shop. The text is drawn as shapes: nothing to install, always the same letters, and it cannot be selected or searched.",
 };
 
 export const utmTool = {

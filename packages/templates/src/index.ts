@@ -15,6 +15,7 @@ export { renderResponsiveBanner, validateResponsiveBanner, pictureFits, hasConte
 export type { ResponsiveBannerConfig, RbVersion, RbKind } from "./responsive-banner.ts";
 export type { MovieBannerConfig, VideoPosition } from "./movie-banner.ts";
 export type { Lang } from "./messages.ts";
-export { layoutCard, layoutBack, PRINT_STYLES, EMAIL_STYLES, cardText, fillCopy, parsePathData, logoShapes, fromGlyphCmds, faceFrom, A4, EMAIL } from "./giftcard.ts";
+export { layoutCard, layoutBack, PRINT_STYLES, EMAIL_STYLES, cardText, fillCopy, parsePathData, logoShapes, recolourLogo, fromGlyphCmds, faceFrom, A4, EMAIL } from "./giftcard.ts";
 export type { Drawing, Shape, Cmd, GlyphCmd, FontFace, FontLike, Fonts, FontStyle, CardCopy, GiftCardSpec, Kind, PrintStyle, EmailStyle } from "./giftcard.ts";
-export { renderPdf, contentOf } from "./pdf.ts";
+export { renderPdf, contentOf, toCmyk } from "./pdf.ts";
+export type { CmykTable, PdfColour } from "./pdf.ts";

@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { giftCard as t, ui } from "@/content";
+import { formatSize } from "@/lib/format";
 import { COPY, PERIODS } from "@/giftcard-content";
 import { EMAIL_STYLES, PRINT_STYLES, codesOf, downloadEmailPictures, downloadPdf, formatUntil, loadFonts, loadLogos, logoAddress, MAX_CARDS, newForm, paint, titleOf, titles, validEmail, withTitle, type CardForm } from "@/lib/giftcard";
 
@@ -119,13 +120,15 @@ export function GiftCard({ onBack }: { onBack: () => void }) {
   const color = form.color || title.main;
   const until = formatUntil(form.until);
 
-  const specFor = (c: string): GiftCardSpec => ({ header: form.header, logo: logo!.colour, logoWhite: logo!.white, logoBlack: logo!.black, color, code: c, email: form.email, until, copy: COPY, printStyle: form.printStyle, emailStyle: form.emailStyle });
+  // how the logo and the text go on the title's colour: the title's own setting (its text colour only while its own colour is used)
+  const onColour = { logoOnColour: { mode: title.onColour, main: title.main }, textOnColour: color.toLowerCase() === title.main.toLowerCase() ? title.textOnColour : undefined };
+  const specFor = (c: string): GiftCardSpec => ({ ...onColour, header: form.header, logo: logo!.colour, logoWhite: logo!.white, logoBlack: logo!.black, color, code: c, email: form.email, until, copy: COPY, printStyle: form.printStyle, emailStyle: form.emailStyle });
   const ready = !!fonts && !!logo && logo.id === title.id;
 
   // Only the card on show is laid out while typing; all of them are made when a file is made.
   const shown = useMemo(() => {
     if (!fonts || !logo || logo.id !== title.id) return null;
-    const spec: GiftCardSpec = { header: form.header, logo: logo.colour, logoWhite: logo.white, logoBlack: logo.black, color, code, email: form.email, until, copy: COPY, printStyle: form.printStyle, emailStyle: form.emailStyle };
+    const spec: GiftCardSpec = { ...onColour, header: form.header, logo: logo.colour, logoWhite: logo.white, logoBlack: logo.black, color, code, email: form.email, until, copy: COPY, printStyle: form.printStyle, emailStyle: form.emailStyle };
     return { print: layoutCard("print", spec, fonts), mail: layoutCard("email", spec, fonts) };
   }, [fonts, logo, title.id, form.header, color, code, form.email, until, form.printStyle, form.emailStyle]);
 
@@ -149,15 +152,15 @@ export function GiftCard({ onBack }: { onBack: () => void }) {
     ready &&
     make(async () => {
       const pages = codes.flatMap((c) => [layoutCard("print", specFor(c), fonts), ...(form.back ? [layoutBack(specFor(c))] : [])]);
-      await downloadPdf(pages, title.id);
+      await downloadPdf(pages, title, color);
       toast.success(t.pdfDone(codes.length));
     });
 
   const saveMail = () =>
     ready &&
     make(async () => {
-      await downloadEmailPictures(codes.map((c) => ({ code: c, drawing: layoutCard("email", specFor(c), fonts) })), title.id, form.sharp);
-      toast.success(t.mailDone(codes.length));
+      const bytes = await downloadEmailPictures(codes.map((c) => ({ code: c, drawing: layoutCard("email", specFor(c), fonts) })), title.id, form.sharp);
+      toast.success(t.mailDone(codes.length, formatSize(bytes)));
     });
 
   const second = form.header.split("\n")[1]?.trim() ?? "";

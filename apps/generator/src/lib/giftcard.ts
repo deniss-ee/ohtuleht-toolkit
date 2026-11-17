@@ -13,6 +13,7 @@ import interExt600 from "@fontsource/inter/files/inter-latin-ext-600-normal.woff
 import interExt700 from "@fontsource/inter/files/inter-latin-ext-700-normal.woff?url";
 import { DEFAULT_PERIOD, suggestHeader } from "@/giftcard-content";
 import { stampedName } from "@/lib/format";
+import { smallPng } from "@/lib/png";
 import { download } from "@/lib/zip";
 
 export { EMAIL_STYLES, PRINT_STYLES, titles, type Title };
@@ -135,29 +136,48 @@ export function paint(canvas: HTMLCanvasElement, d: Drawing, pixelWidth: number)
   }
 }
 
-const png = (d: Drawing, pixelWidth: number) =>
-  new Promise<Blob>((resolve, reject) => {
-    const canvas = document.createElement("canvas");
-    paint(canvas, d, pixelWidth);
-    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("png"))), "image/png");
-  });
+// The picture as a small PNG: at most 256 colours (the artwork is flat, so that is the same picture) squeezed by OxiPNG, 4 to 6 KB instead of
+// 17 to 24 KB from the canvas. If anything fails, the canvas's own PNG is used.
+async function png(d: Drawing, pixelWidth: number, level: number): Promise<Blob> {
+  const canvas = document.createElement("canvas");
+  paint(canvas, d, pixelWidth);
+  try {
+    const img = canvas.getContext("2d")!.getImageData(0, 0, canvas.width, canvas.height);
+    return new Blob([(await smallPng(img, 256, level)) as BlobPart], { type: "image/png" });
+  } catch {
+    return new Promise<Blob>((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("png"))), "image/png"));
+  }
+}
 
 // A file name part from a code: letters, digits, dash and underscore.
 const part = (s: string) => s.replace(/[^\w-]+/g, "-").replace(/^-+|-+$/g, "").toLowerCase();
 
-export async function downloadPdf(pages: Drawing[], titleId: string) {
-  const bytes = await renderPdf(pages, { title: "Kinkekaart" });
-  download(new Blob([bytes as BlobPart], { type: "application/pdf" }), stampedName(`kinkekaart_${titleId}`, "pdf"));
+export async function downloadPdf(pages: Drawing[], title: Title, color: string) {
+  // the brand's own CMYK numbers for the title colour, when titles.json has them and the colour was not changed by hand
+  const cmyk = title.cmyk && color.toLowerCase() === title.main.toLowerCase() ? { [title.main.toLowerCase()]: title.cmyk } : undefined;
+  const bytes = await renderPdf(pages, { title: "Kinkekaart", cmyk });
+  download(new Blob([bytes as BlobPart], { type: "application/pdf" }), stampedName(`kinkekaart_${title.id}`, "pdf"));
 }
 
-// One picture: a PNG. Several (one per code): a zip of PNGs.
-export async function downloadEmailPictures(cards: { code: string; drawing: Drawing }[], titleId: string, sharp: boolean) {
+// One picture: a PNG. Several (one per code): a zip of PNGs. Returns the size of the files, to tell the person.
+export async function downloadEmailPictures(cards: { code: string; drawing: Drawing }[], titleId: string, sharp: boolean): Promise<number> {
   const width = sharp ? EMAIL.width * 2 : EMAIL.width;
   const size = `${EMAIL.width}x${EMAIL.height}${sharp ? "@2x" : ""}`;
   const name = (code: string) => stampedName(`kinkekaart_${titleId}${code ? `_${part(code)}` : ""}_${size}`, "png");
-  if (cards.length === 1) return download(await png(cards[0]!.drawing, width), name(cards[0]!.code));
+  const level = cards.length > 3 ? 2 : 4; // a batch is made a little less thoroughly, to be quicker
+  if (cards.length === 1) {
+    const blob = await png(cards[0]!.drawing, width, level);
+    download(blob, name(cards[0]!.code));
+    return blob.size;
+  }
   const { default: JSZip } = await import("jszip");
   const zip = new JSZip();
-  for (const c of cards) zip.file(name(c.code), await png(c.drawing, width));
+  let total = 0;
+  for (const c of cards) {
+    const blob = await png(c.drawing, width, level);
+    total += blob.size;
+    zip.file(name(c.code), blob);
+  }
   download(await zip.generateAsync({ type: "blob" }), stampedName(`kinkekaart_${titleId}_email_${size}`, "zip"));
+  return total;
 }

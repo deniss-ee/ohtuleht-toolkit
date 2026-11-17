@@ -147,6 +147,15 @@ export const place = (cmds: Cmd[], scale: number, dx: number, dy: number): Cmd[]
 
 const hex6 = (c: string) => (/^#[0-9a-f]{3}$/i.test(c) ? "#" + [...c.slice(1)].map((h) => h + h).join("") : c).toLowerCase();
 
+// The logo with some fill colours replaced: the map is "#rrggbb" (lower case) to "#rrggbb". Used to turn a logo's own colours into the right ones
+// for a coloured page, for example the box of the title colour into white.
+export function recolourLogo(svg: string, map: Record<string, string>): string {
+  return svg.replace(/(\sfill=")([^"]*)(")/g, (all, a: string, value: string, c: string) => {
+    const to = map[hex6(value)];
+    return to ? a + to + c : all;
+  });
+}
+
 // A logo SVG (made by packages/brand/scripts/import-titles.mjs: plain paths) as shapes in its own units.
 // A path takes its fill and fill rule from itself or from the nearest <g> or <svg> around it, as in SVG.
 export function logoShapes(svg: string): { shapes: Shape[]; width: number; height: number } {
@@ -358,6 +367,8 @@ export interface GiftCardSpec {
   logo: string; // the SVG text of the title's logo
   logoWhite?: string; // its white version, used on the title's colour when the text there is white
   logoBlack?: string; // its black version, when the text there is black
+  logoOnColour?: { mode: "white" | "swap"; main: string }; // how the logo goes on the title's colour: its one-colour version, or the coloured logo with `main` (the logo's own main colour) and white exchanged
+  textOnColour?: "white" | "black"; // the text colour on the title's colour, when the usual rule is not right
   color: string; // main colour: the circle, the header
   code: string; // secret code, "" = none (no code box)
   email: string; // where to send the order (print only), "" = none
@@ -604,7 +615,13 @@ function paletteOf(spec: GiftCardSpec, variant: "white" | "colour", print = fals
     const accent = readableOn(color, WHITE, 3);
     return { page, head: readableOn(color, page, 3), label: quiet, body: { text: ink, highlight: readableOn(color, page, 4.5) }, muted: quiet, date: ink, block: { fill: WHITE, line: accent, label: accent, code: ink }, logo: spec.logo };
   }
-  const c = onCircle(color);
+  const rule = onCircle(color);
+  const text = spec.textOnColour ? (spec.textOnColour === "white" ? WHITE : BLACK) : rule.text;
+  const c = { text, highlight: contrast(YELLOW, color) >= 3 && text === WHITE ? YELLOW : text };
+  // the logo on the page of the title's colour: swap the title colour and white in the coloured logo (a box becomes white with letters in the page colour),
+  // or use the one-colour version that goes with the text colour
+  const on = spec.logoOnColour;
+  const logo = on?.mode === "swap" ? recolourLogo(spec.logo, { [on.main.toLowerCase()]: WHITE, [WHITE]: color }) : ((text === WHITE ? spec.logoWhite : spec.logoBlack) ?? spec.logo);
   return {
     page: color,
     head: c.text,
@@ -612,8 +629,8 @@ function paletteOf(spec: GiftCardSpec, variant: "white" | "colour", print = fals
     body: c,
     muted: print ? c.text : mix(color, c.text, 0.85),
     date: c.text,
-    block: { fill: mix(color, c.text, 0.1), line: c.text, label: print ? c.text : mix(color, c.text, 0.85), code: c.text },
-    logo: (c.text === WHITE ? spec.logoWhite : spec.logoBlack) ?? spec.logo,
+    block: { fill: mix(color, WHITE, 0.14), line: c.text, label: print ? c.text : mix(color, c.text, 0.85), code: c.text },
+    logo,
   };
 }
 

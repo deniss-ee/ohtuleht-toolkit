@@ -1,4 +1,4 @@
-// A small PDF writer for drawings made of filled shapes (see giftcard.ts). Vector only: no fonts, no pictures, flat RGB colours.
+// A small PDF writer for drawings made of filled shapes (see giftcard.ts). Vector only: no fonts, no pictures, flat colours in CMYK (or RGB).
 // One page per drawing, the page is as big as the drawing (points). The structure is the plain PDF 1.4 one: catalog, pages, one
 // content stream per page, a cross-reference table.
 import type { Drawing } from "./giftcard.ts";
@@ -7,24 +7,41 @@ const enc = new TextEncoder();
 
 const n = (v: number) => (Math.round(v * 1000) / 1000).toString();
 
-// "#rrggbb" as a PDF colour operator. Pure black is written as CMYK 0,0,0,100 (black ink only: no grey and no mixing of four inks
-// in print) and pure white as CMYK 0,0,0,0 (the paper: no ink). Every other colour is RGB. `fill` is true for a fill colour, false for a line.
-function colour(hex: string, fill: boolean): string {
-  if (hex === "#000000") return fill ? "0 0 0 1 k" : "0 0 0 1 K";
-  if (hex === "#ffffff") return fill ? "0 0 0 0 k" : "0 0 0 0 K";
+export type PdfColour = "cmyk" | "rgb";
+
+// Exact CMYK values (percent) for colours ("#rrggbb" in lower case), used instead of the formula.
+export type CmykTable = Record<string, [number, number, number, number]>;
+
+// "#rrggbb" as CMYK percentages (0 to 100, whole numbers). Neutrals use black ink only: pure black is 0,0,0,100, a grey is K only (no
+// mixing of four inks), white is no ink. A saturated colour gets no black ink (the brand red #F50000 is 0,100,100,0); a dull or dark
+// colour gets some, in proportion to how little saturated it is. This is a plain formula, not a colour profile: it gives values close
+// to what a print shop's converter would give, but exact brand colours should come from the brand owner's CMYK values.
+export function toCmyk(hex: string): [number, number, number, number] {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255) as [number, number, number];
+  const max = Math.max(r, g, b);
+  if (max === 0) return [0, 0, 0, 100];
+  const saturation = (max - Math.min(r, g, b)) / max;
+  const k = (1 - max) * (1 - saturation);
+  const ink = (v: number) => Math.round(((1 - v - k) / (1 - k)) * 100);
+  return [ink(r), ink(g), ink(b), Math.round(k * 100)];
+}
+
+// "#rrggbb" as a PDF colour operator: DeviceCMYK (k, K) or, for the screen, DeviceRGB (rg, RG). `fill` is true for a fill, false for a line.
+function colour(hex: string, fill: boolean, mode: PdfColour, exact: CmykTable): string {
+  if (mode === "cmyk") return `${(exact[hex] ?? toCmyk(hex)).map((p) => n(p / 100)).join(" ")} ${fill ? "k" : "K"}`;
   const v = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
   return v.map((x) => n(Math.round(x * 10000) / 10000)).join(" ") + (fill ? " rg" : " RG");
 }
 
 // The drawing as PDF drawing operators. PDF counts y from the bottom, the drawing from the top, so y is turned over.
-export function contentOf(d: Drawing): string {
+export function contentOf(d: Drawing, mode: PdfColour = "cmyk", exact: CmykTable = {}): string {
   const out: string[] = [];
   const y = (v: number) => n(d.height - v);
   for (const shape of d.shapes) {
     const s = shape.stroke;
     if (s) out.push("q");
-    if (shape.fill) out.push(colour(shape.fill, true));
-    if (s) out.push(`${colour(s.color, false)} ${n(s.width)} w 0 J 0 j ${s.dash ? `[${n(s.dash[0])} ${n(s.dash[1])}] 0 d` : "[] 0 d"}`);
+    if (shape.fill) out.push(colour(shape.fill, true, mode, exact));
+    if (s) out.push(`${colour(s.color, false, mode, exact)} ${n(s.width)} w 0 J 0 j ${s.dash ? `[${n(s.dash[0])} ${n(s.dash[1])}] 0 d` : "[] 0 d"}`);
     for (const c of shape.cmds) {
       if (c[0] === "M") out.push(`${n(c[1])} ${y(c[2])} m`);
       else if (c[0] === "L") out.push(`${n(c[1])} ${y(c[2])} l`);
@@ -53,6 +70,8 @@ function textString(s: string): string {
 export interface PdfOptions {
   title?: string;
   compress?: boolean; // default true; the tests read the plain stream
+  colour?: PdfColour; // default "cmyk" (print); "rgb" for a PDF meant for the screen
+  cmyk?: CmykTable; // exact CMYK values (percent) for chosen colours, such as the brand's own numbers for a title colour
 }
 
 export async function renderPdf(pages: Drawing[], options: PdfOptions = {}): Promise<Uint8Array> {
@@ -80,7 +99,7 @@ export async function renderPdf(pages: Drawing[], options: PdfOptions = {}): Pro
   object(3, `<< /Title ${textString(options.title ?? "")} /Producer ${textString("Õhtuleht Toolkit")} >>`);
   for (const [i, page] of pages.entries()) {
     object(pageNum(i), `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${n(page.width)} ${n(page.height)}] /Contents ${pageNum(i) + 1} 0 R /Resources << >> >>`);
-    const raw = enc.encode(contentOf(page));
+    const raw = enc.encode(contentOf(page, options.colour ?? "cmyk", options.cmyk));
     const packed = options.compress === false ? raw : await deflate(raw);
     object(pageNum(i) + 1, () => {
       push(`<< /Length ${packed.length}${options.compress === false ? "" : " /Filter /FlateDecode"} >>\nstream\n`);

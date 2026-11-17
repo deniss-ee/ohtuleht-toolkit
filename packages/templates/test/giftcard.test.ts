@@ -1,7 +1,7 @@
 // The gift card: path reading, the logo, the texts, the layout and the PDF. A stand-in font (every letter a box half an em wide)
 // is used, so the tests do not depend on font files and the layout can be compared with a stored copy.
 import { describe, expect, test } from "vitest";
-import { A4, EMAIL, EMAIL_STYLES, PRINT_STYLES, cardText, contentOf, layoutBack, layoutCard, logoShapes, parsePathData, renderPdf } from "../src/index.ts";
+import { A4, EMAIL, EMAIL_STYLES, PRINT_STYLES, cardText, contentOf, layoutBack, layoutCard, logoShapes, parsePathData, recolourLogo, renderPdf, toCmyk } from "../src/index.ts";
 import type { CardCopy, FontFace, Fonts, GiftCardSpec } from "../src/index.ts";
 
 const box: FontFace = {
@@ -194,18 +194,81 @@ describe("print colours", () => {
     expect(fills(layoutCard("email", { ...spec, emailStyle: "white" }, fonts)).has("#2a2a2d")).toBe(true);
   });
 
-  test("the PDF writes pure black as CMYK 0,0,0,100 and pure white as 0,0,0,0, and no black or white in RGB", async () => {
-    const text = new TextDecoder("latin1").decode(await renderPdf([layoutCard("print", { ...spec, printStyle: "white" }, fonts), layoutCard("print", { ...spec, printStyle: "colour" }, fonts)], { compress: false }));
+  test("the whole PDF is CMYK: pure black is 0,0,0,100, white is 0,0,0,0, and there is no RGB in it", async () => {
+    const pages = [layoutCard("print", { ...spec, printStyle: "white" }, fonts), layoutCard("print", { ...spec, printStyle: "colour" }, fonts), layoutBack(spec)];
+    const text = new TextDecoder("latin1").decode(await renderPdf(pages, { compress: false }));
     expect(text).toMatch(/^0 0 0 1 k$/m);
     expect(text).toMatch(/^0 0 0 0 k$/m);
-    expect(text).not.toMatch(/^0 0 0 rg$/m);
-    expect(text).not.toMatch(/^1 1 1 rg$/m);
+    expect(text).not.toMatch(/ rg$| RG /m);
+    // a colour: the brand red (R is 245, so a little cyan)
+    expect(new TextDecoder("latin1").decode(await renderPdf([layoutCard("print", { ...spec, color: "#f50000", printStyle: "colour" }, fonts)], { compress: false }))).toMatch(/^0.04 1 1 0 k$/m);
+  });
+
+  test("exact CMYK values replace the formula for the colours they name", async () => {
+    const text = new TextDecoder("latin1").decode(await renderPdf([layoutCard("print", { ...spec, color: "#2d3291", printStyle: "colour" }, fonts)], { compress: false, cmyk: { "#2d3291": [100, 95, 5, 15] } }));
+    expect(text).toMatch(/^1 0.95 0.05 0.15 k$/m);
+  });
+
+  test("the RGB version is still there for a PDF meant for the screen", async () => {
+    const text = new TextDecoder("latin1").decode(await renderPdf([layoutCard("print", spec, fonts)], { compress: false, colour: "rgb" }));
+    expect(text).toMatch(/ rg$/m);
+    expect(text).not.toMatch(/ k$/m);
+  });
+
+  test("RGB to CMYK: black is K only, greys are K only, white is no ink, colours get their three inks", () => {
+    expect(toCmyk("#000000")).toEqual([0, 0, 0, 100]);
+    expect(toCmyk("#ffffff")).toEqual([0, 0, 0, 0]);
+    const grey = toCmyk("#808080");
+    expect(grey.slice(0, 3)).toEqual([0, 0, 0]);
+    expect(toCmyk("#f50000")).toEqual([4, 100, 100, 0]); // saturated: no black ink
+    expect(toCmyk("#2d3291")[3]).toBeLessThan(20); // a dark blue is mostly the three inks, not black
+    expect(toCmyk("#ffe500")).toEqual([0, 10, 100, 0]);
   });
 
   test("the printed card is 1.2 times larger than the first design: the code block is 82 % of the page wide", () => {
     const d = layoutCard("print", { ...spec, printStyle: "white" }, fonts);
     const box = d.shapes.find((x) => x.stroke)!.cmds.filter((c) => c[0] !== "Z").map((c) => c[1] as number);
     expect((Math.max(...box) - Math.min(...box)) / A4.width).toBeCloseTo(0.82, 1);
+  });
+});
+
+describe("the logo on the title's colour", () => {
+  const boxed = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 120 40"><g fill="#f5911e"><path d="M0 0h120v40H0z"/></g><path fill="#fff" d="M20 10h40v20H20z"/><path fill="#ffe500" d="M70 10h30v20H70z"/></svg>';
+  const fillsOf = (d: ReturnType<typeof layoutCard>) => d.shapes.slice(1).map((x) => x.fill);
+
+  test("recolourLogo exchanges colours in one pass, including shorthand and group fills, and leaves the rest", () => {
+    const out = recolourLogo(boxed, { "#f5911e": "#ffffff", "#ffffff": "#2d3291" });
+    expect(logoShapes(out).shapes.map((x) => x.fill)).toEqual(["#ffffff", "#2d3291", "#ffe500"]); // no chain: the new white is not turned blue
+  });
+
+  test("swap: the box of the title colour becomes white, the white letters take the page colour, other colours stay", () => {
+    const d = layoutCard("email", { ...spec, logo: boxed, color: "#f5911e", emailStyle: "colour", logoOnColour: { mode: "swap", main: "#f5911e" } }, fonts);
+    const logoFills = fillsOf(d).slice(0, 3);
+    expect(logoFills).toEqual(["#ffffff", "#f5911e", "#ffe500"]);
+  });
+
+  test("white: the white version is used when the text there is white, the black one when it is black", () => {
+    const base = { ...spec, logo: boxed, logoWhite: '<svg viewBox="0 0 10 10"><path fill="#fff" d="M0 0h1v1z"/></svg>', logoBlack: '<svg viewBox="0 0 10 10"><path fill="#000" d="M0 0h1v1z"/></svg>', emailStyle: "colour" as const, logoOnColour: { mode: "white" as const, main: "#f5911e" } };
+    expect(fillsOf(layoutCard("email", { ...base, color: "#2d3291" }, fonts))[0]).toBe("#ffffff"); // dark page: white text, white logo
+    expect(fillsOf(layoutCard("email", { ...base, color: "#ffe500" }, fonts))[0]).toBe("#000000"); // light page: black text, black logo
+  });
+
+  test("textOnColour overrides the rule (Ripsik: white on orange)", () => {
+    const orange = { ...spec, color: "#f5911e", printStyle: "colour" as const };
+    expect(new Set(layoutCard("print", orange, fonts).shapes.map((x) => x.fill)).has("#ffffff")).toBe(false); // the rule gives black text on orange
+    expect(new Set(layoutCard("print", { ...orange, textOnColour: "white" }, fonts).shapes.map((x) => x.fill)).has("#ffffff")).toBe(true);
+  });
+
+  test("every title has a setting, and a swapped logo keeps the layout (same points as the coloured logo)", async () => {
+    const { readFileSync } = await import("node:fs");
+    const titles = JSON.parse(readFileSync(new URL("../../brand/titles.json", import.meta.url), "utf8")) as { id: string; file: string; main: string; onColour: string }[];
+    expect(titles).toHaveLength(16);
+    for (const t of titles) {
+      expect(["white", "swap"], t.id).toContain(t.onColour);
+      const svg = readFileSync(new URL("../../brand/titles/" + t.file, import.meta.url), "utf8");
+      const swapped = recolourLogo(svg, { [t.main.toLowerCase()]: "#ffffff", "#ffffff": "#123456" });
+      expect(logoShapes(swapped).shapes.map((x) => x.cmds), t.id).toEqual(logoShapes(svg).shapes.map((x) => x.cmds));
+    }
   });
 });
 
@@ -217,8 +280,9 @@ describe("pdf", () => {
     expect(text.match(/\/Type \/Page /g)).toHaveLength(2);
     expect(text).toContain("/MediaBox [0 0 595.276 841.89]");
     expect(text).toContain("/Count 2");
-    // flat RGB colour, no fonts or pictures
-    expect(text).toMatch(/ rg\n/);
+    // flat colours in CMYK (black ink only for black and greys), no fonts or pictures
+    expect(text).toMatch(/ k$/m);
+    expect(text).not.toMatch(/ rg$| RG /m);
     expect(text).not.toMatch(/\/Font|\/Image|\/CMYK|DeviceCMYK/);
     // every offset in the table is the start of that object, and startxref is the start of the table
     const start = Number(/startxref\n(\d+)/.exec(text)![1]);

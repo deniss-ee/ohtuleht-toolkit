@@ -8,7 +8,7 @@ import type { Fonts, GiftCardSpec } from "../src/index.ts";
 import { COPY, suggestHeader } from "../../../apps/generator/src/giftcard-content.ts";
 
 const [id = "ripsik", code = "M_1"] = process.argv.slice(2);
-const titles = JSON.parse(readFileSync(new URL("../../brand/titles.json", import.meta.url), "utf8")) as { id: string; name: string; file: string; white: string; black: string; main: string }[];
+const titles = JSON.parse(readFileSync(new URL("../../brand/titles.json", import.meta.url), "utf8")) as { id: string; name: string; file: string; white: string; black: string; main: string; onColour: "white" | "swap"; textOnColour?: "white" | "black" }[];
 const title = titles.find((t) => t.id === id);
 if (!title) throw new Error(`No title "${id}". Ids: ${titles.map((t) => t.id).join(", ")}`);
 
@@ -26,6 +26,8 @@ const spec: GiftCardSpec = {
   logo: readFileSync(new URL(`../../brand/titles/${title.file}`, import.meta.url), "utf8"),
   logoWhite: readFileSync(new URL(`../../brand/titles/${title.white}`, import.meta.url), "utf8"),
   logoBlack: readFileSync(new URL(`../../brand/titles/${title.black}`, import.meta.url), "utf8"),
+  logoOnColour: { mode: title.onColour, main: title.main },
+  textOnColour: title.textOnColour,
   color: title.main,
   code,
   email: "nimi@example.com",

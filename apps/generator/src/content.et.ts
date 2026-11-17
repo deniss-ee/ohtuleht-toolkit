@@ -435,9 +435,9 @@ export const giftCard: typeof En.giftCard = {
   downloadPdf: "PDF",
   downloadMail: "E-kirja pilt",
   pdfDone: (cards: number) => `PDF ${cards} kaardiga on alla laaditud.`,
-  mailDone: (n: number) => (n === 1 ? "Pilt on alla laaditud." : `${n} pilti on alla laaditud zip-failina.`),
+  mailDone: (n: number, size: string) => (n === 1 ? `Pilt on alla laaditud (${size}).` : `${n} pilti on alla laaditud zip-failina (kokku ${size}).`),
   failed: "Faili tegemine ebaõnnestus. Proovi uuesti.",
-  note: "PDF-i tekst on joonistatud kujunditena: midagi pole vaja installida ja tähed on alati samad. Teksti ei saa valida ega otsida. PDF on A4. Must on puhas mustriks (CMYK 0,0,0,100) ja valge on ilma värvita; teised värvid on RGB. Pilte pole.",
+  note: "PDF on A4 ja CMYK-is: must on puhas mustriks (0,0,0,100), hallid on ainult musta tindiga, valge on ilma värvita; värvid on ekraanivärvidest teisendatud lihtsa valemiga, seega täpsed brändivärvid tasub trükikojaga üle kontrollida. Tekst on joonistatud kujunditena: midagi pole vaja installida, tähed on alati samad ja teksti ei saa valida ega otsida.",
 };
 
 export const utmTool: typeof En.utmTool = {
