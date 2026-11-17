@@ -8,10 +8,17 @@ import { brandTextColor, contrast, readableOn } from "./colors.ts";
 // Absolute path commands, y pointing down, units of the drawing (points for the print card, pixels for the e-mail picture).
 export type Cmd = ["M", number, number] | ["L", number, number] | ["C", number, number, number, number, number, number] | ["Z"];
 
-// A filled shape. The colour is #rrggbb.
+// A filled shape, a line, or both. Colours are #rrggbb.
+export interface Stroke {
+  color: string;
+  width: number;
+  dash?: [number, number]; // dash and gap
+}
+
 export interface Shape {
   cmds: Cmd[];
-  fill: string;
+  fill?: string;
+  stroke?: Stroke;
   evenOdd?: boolean;
 }
 
@@ -311,13 +318,15 @@ type Align = "center" | "left";
 
 // Paragraphs of styled words, centred on x or starting at x. Returns the shapes (one per colour) and the height of the block;
 // the first baseline is at y.
-function paragraphs(fonts: Fonts, paras: Seg[][], size: number, lineHeight: number, gap: number, x0: number, y: number, maxWidth: number, align: Align = "center"): { shapes: Shape[]; height: number } {
+function paragraphs(fonts: Fonts, paras: Seg[][], size: number, lineHeight: number, gap: number, x0: number, y: number, maxWidth: number, align: Align = "center"): { shapes: Shape[]; height: number; lines: number } {
   const byFill = new Map<string, Cmd[]>();
   const add = (fill: string, cmds: Cmd[]) => byFill.set(fill, [...(byFill.get(fill) ?? []), ...cmds]);
   const space = fonts.regular.advance(" ", size);
   let baseline = y;
+  let count = 0;
   paras.forEach((para, pi) => {
     for (const line of breakLines(fonts, wordsOf(para), size, maxWidth)) {
+      count++;
       const lw = line.reduce((sum, word, i) => sum + wordWidth(fonts, word, size) + (i ? space : 0), 0);
       let x = align === "center" ? x0 - lw / 2 : x0;
       line.forEach((word, wi) => {
@@ -331,7 +340,7 @@ function paragraphs(fonts: Fonts, paras: Seg[][], size: number, lineHeight: numb
     }
     if (pi < paras.length - 1) baseline += gap;
   });
-  return { shapes: [...byFill].map(([fill, cmds]) => ({ cmds, fill })), height: baseline - y - size * (lineHeight - 1) };
+  return { shapes: [...byFill].map(([fill, cmds]) => ({ cmds, fill })), height: baseline - y - size * (lineHeight - 1), lines: count };
 }
 
 // ---- Copy -----------------------------------------------------------------------------------------------------------------
@@ -347,6 +356,8 @@ export type Kind = "print" | "email";
 export interface GiftCardSpec {
   header: string; // the title of the card, lines separated by a line break
   logo: string; // the SVG text of the title's logo
+  logoWhite?: string; // its white version, used on the title's colour when the text there is white
+  logoBlack?: string; // its black version, when the text there is black
   color: string; // main colour: the circle, the header
   code: string; // secret code, "" = none (no code box)
   email: string; // where to send the order (print only), "" = none
@@ -434,10 +445,15 @@ function onCircle(color: string): { text: string; highlight: string } {
 const segs = (pieces: Piece[], c: { text: string; highlight: string }): Seg[] => pieces.map((p) => (p.value ? { text: p.text, style: "semibold" as FontStyle, fill: c.highlight } : { text: p.text, style: "regular" as FontStyle, fill: c.text }));
 
 // ---- Building blocks: pieces that know their height, stacked and centred ----------------------------------------------------
+// Heights are measured from the top of the capitals to the baseline (and a little under it where letters have tails), so that equal
+// gaps between pieces look equal.
 interface Item {
   height: number;
   draw(top: number): Shape[];
 }
+
+const CAP = 0.727; // capital height of Inter, as a part of the font size
+const TAIL = 0.2; // room under the baseline for letters with tails
 
 // Items one below the other with `gap` between them.
 function stack(items: Item[], gap: number): Item {
@@ -467,86 +483,95 @@ function fitSize(fonts: Fonts, text: string, style: FontStyle, maxW: number, max
   return size;
 }
 
-// One line of text. x is its centre, or its left edge.
-function lineItem(fonts: Fonts, text: string, style: FontStyle, size: number, x: number, fill: string, align: Align = "center", tracking = 0): Item {
+// The shapes moved sideways so that the ink (the real left and right edge of the letters, from the points on the outline) is centred on cx.
+// Centring by the advance widths would leave a "1" or a "J" looking off to one side.
+function centred(cmds: Cmd[], cx: number): Cmd[] {
+  const xs = cmds.filter((c) => c[0] !== "Z").map((c) => c[c.length - 2] as number);
+  if (!xs.length) return cmds;
+  return place(cmds, 1, cx - (Math.min(...xs) + Math.max(...xs)) / 2, 0);
+}
+
+// One line of text, centred on x. Capitals and figures have no tails, so the height stops at the baseline.
+function lineItem(fonts: Fonts, text: string, style: FontStyle, size: number, x: number, fill: string, tracking = 0): Item {
   return {
-    height: size * 0.8,
-    draw: (top) => {
-      const w = width(fonts, text, style, size, tracking) - tracking * size;
-      return [{ cmds: outline(fonts, text, style, size, align === "center" ? x - w / 2 : x, top + size * 0.78, tracking), fill }];
-    },
+    height: size * CAP,
+    draw: (top) => [{ cmds: centred(outline(fonts, text, style, size, 0, top + size * CAP, tracking), x), fill }],
   };
 }
 
 // The label above the header: small capitals, spaced.
-const labelItem = (fonts: Fonts, text: string, size: number, x: number, fill: string, align: Align = "center") => lineItem(fonts, text, "semibold", size, x, fill, align, 0.16);
+const labelItem = (fonts: Fonts, text: string, size: number, x: number, fill: string) => lineItem(fonts, text, "semibold", size, x, fill, 0.16);
 
-// The header: every line the same size, Fira Sans. The size is the largest that fits.
-function headerItem(fonts: Fonts, text: string, fill: string, x: number, maxW: number, maxH: number, maxSize: number, minSize: number, align: Align): Item {
+// The header: every line the same size, Fira Sans, centred. The size is the largest that fits.
+function headerItem(fonts: Fonts, text: string, fill: string, x: number, maxW: number, maxH: number, maxSize: number, minSize: number): Item {
   const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
   const lineHeight = 1.18;
   let size = maxSize;
   while (size > minSize && (Math.max(0, ...lines.map((l) => width(fonts, l, "title", size))) > maxW || lines.length * size * lineHeight > maxH)) size -= 0.5;
   return {
-    height: lines.length ? (lines.length - 1) * size * lineHeight + size * 0.9 : 0,
+    height: lines.length ? size * CAP + (lines.length - 1) * size * lineHeight + size * TAIL : 0,
     draw: (top) =>
-      lines.map((line, i) => {
-        const w = width(fonts, line, "title", size);
-        return { cmds: outline(fonts, line, "title", size, align === "center" ? x - w / 2 : x, top + size * 0.82 + i * size * lineHeight), fill };
-      }),
+      lines.map((line, i) => ({ cmds: centred(outline(fonts, line, "title", size, 0, top + size * CAP + i * size * lineHeight), x), fill })),
   };
 }
 
-// A paragraph (the pieces are styled words), wrapped to maxW.
-function paragraphItem(fonts: Fonts, parts: Seg[], size: number, x: number, maxW: number, align: Align = "center"): Item {
-  const m = paragraphs(fonts, [parts], size, 1.35, 0, x, 0, maxW, align);
-  return { height: parts.length ? m.height : 0, draw: (top) => paragraphs(fonts, [parts], size, 1.35, 0, x, top + size * 0.78, maxW, align).shapes };
+// A paragraph (the pieces are styled words), centred, wrapped to maxW.
+function paragraphItem(fonts: Fonts, parts: Seg[], size: number, x: number, maxW: number): Item {
+  const lineHeight = 1.35;
+  const m = paragraphs(fonts, [parts], size, lineHeight, 0, x, 0, maxW);
+  return {
+    height: parts.length ? size * CAP + (m.lines - 1) * size * lineHeight + size * TAIL : 0,
+    draw: (top) => paragraphs(fonts, [parts], size, lineHeight, 0, x, top + size * CAP, maxW).shapes,
+  };
 }
 
-// The logo, as large as the box allows. x is its centre, its left edge or its right edge.
-function logoItem(svg: string, x: number, maxW: number, maxH: number, align: Align | "right" = "center"): Item & { width: number } {
+// The logo, as large as the box allows, centred on x.
+function logoItem(svg: string, x: number, maxW: number, maxH: number): Item {
   const logo = logoShapes(svg);
   const scale = Math.min(maxW / logo.width, maxH / logo.height);
-  const w = logo.width * scale;
-  const dx = align === "center" ? x - w / 2 : align === "left" ? x : x - w;
-  return { height: logo.height * scale, width: w, draw: (top) => logo.shapes.map((s) => ({ ...s, cmds: place(s.cmds, scale, dx, top) })) };
+  return { height: logo.height * scale, draw: (top) => logo.shapes.map((s) => ({ ...s, cmds: place(s.cmds, scale, x - (logo.width * scale) / 2, top) })) };
 }
 
-// The logo on a white rounded plate, for when the page behind it is coloured.
-function logoPlateItem(svg: string, cx: number, maxW: number, maxH: number, pad: number): Item {
-  const logo = logoItem(svg, cx, maxW, maxH);
-  const w = logo.width + 2 * pad;
-  const h = logo.height + 2 * pad;
-  return { height: h, draw: (top) => [{ cmds: roundRect(cx - w / 2, top, w, h, Math.min(22, h * 0.14)), fill: WHITE }, ...logo.draw(top + pad)] };
+// A dash pattern that fits the length of a closed line exactly, so the dashes meet cleanly where the line closes.
+function dashFor(length: number, dash: number, gap: number): [number, number] {
+  const n = Math.max(1, Math.round(length / (dash + gap)));
+  const unit = length / n;
+  return [(unit * dash) / (dash + gap), (unit * gap) / (dash + gap)];
 }
+const roundRectLength = (w: number, h: number, r: number) => 2 * (w + h - 4 * r) + 2 * Math.PI * r;
 
-interface BoxLook {
-  box: string; // the box
+interface BlockLook {
+  fill: string; // inside the dashed line
+  line: string; // the dashed line
   label: string; // the small word above the code
   code: string;
 }
 
-// The secret code in a box: a small label above, the code big. The code gets as large as the box allows.
-function codeBoxItem(fonts: Fonts, cx: number, w: number, h: number, label: string, code: string, look: BoxLook, maxCode: number, labelSize: number): Item {
+// The code block: a dashed outline with the label and the code in it, both centred, with the same room above and below.
+function codeBlockItem(fonts: Fonts, cx: number, w: number, h: number, label: string, code: string, look: BlockLook, maxCode: number, labelSize: number, lineWidth: number): Item {
   const tracking = 0.16;
-  const size = fitSize(fonts, code, "bold", w - 48, maxCode, 14);
+  const size = fitSize(fonts, code, "bold", w - 64, maxCode, 14);
+  const gap = Math.max(10, size * 0.3);
+  const group = labelSize * CAP + gap + size * CAP;
+  const radius = Math.min(18, h * 0.16);
+  const inset = lineWidth / 2;
   return {
     height: h,
     draw: (top) => {
-      const lw = width(fonts, label, "semibold", labelSize, tracking) - tracking * labelSize;
-      const cw = width(fonts, code, "bold", size);
+      const first = top + (h - group) / 2 + labelSize * CAP; // baseline of the label
       return [
-        { cmds: roundRect(cx - w / 2, top, w, h, Math.min(18, h * 0.2)), fill: look.box },
-        { cmds: outline(fonts, label, "semibold", labelSize, cx - lw / 2, top + h * 0.3, tracking), fill: look.label },
-        { cmds: outline(fonts, code, "bold", size, cx - cw / 2, top + h * 0.8), fill: look.code },
+        { cmds: roundRect(cx - w / 2 + inset, top + inset, w - lineWidth, h - lineWidth, radius), fill: look.fill, stroke: { color: look.line, width: lineWidth, dash: dashFor(roundRectLength(w - lineWidth, h - lineWidth, radius), lineWidth * 4.5, lineWidth * 3.2) } },
+        { cmds: centred(outline(fonts, label, "semibold", labelSize, 0, first, tracking), cx), fill: look.label },
+        { cmds: centred(outline(fonts, code, "bold", size, 0, first + gap + size * CAP), cx), fill: look.code },
       ];
     },
   };
 }
 
-// ---- The card as an object ------------------------------------------------------------------------------------------------
-// One design, two sizes: a rounded card with a soft shadow and a punched slot, lying on a page that is a light tint of the title's colour.
-// Two looks: a white card with the colour in the details, or a card in the title's colour.
+// ---- The card ---------------------------------------------------------------------------------------------------------------
+// The page is the card: nothing around it, nothing cut out. It is printed as it is, or put into a letter as it is.
+// Two looks with exactly the same layout, only the colours differ: "white" (a 6 % tint of the title's colour as the page, the colour in
+// the header and the dashed line) and "colour" (the page in the title's colour, the one-colour logo of the title on it).
 export const A4 = { width: 595.276, height: 841.89 }; // points (210 x 297 mm)
 export const EMAIL = { width: 600, height: 400 }; // pixels
 
@@ -557,132 +582,64 @@ export type EmailStyle = (typeof EMAIL_STYLES)[number];
 
 type Look = { text: string; highlight: string };
 
-// The page: white with 6 % of the title's colour in it.
-const page = (w: number, h: number, color: string): Shape => ({ cmds: rect(0, 0, w, h), fill: tint(color) });
-
-// A soft shadow under a rounded box: layers from the outside in, each a little darker, so the edge is smooth.
-// The shadow is the page colour darkened towards the title's colour, never grey.
-function shadowShapes(x: number, y: number, w: number, h: number, r: number, color: string, spread: number, drop: number): Shape[] {
-  const layers = 30;
-  const dark = mix(color, BLACK, 0.6);
-  const shapes: Shape[] = [];
-  for (let i = layers; i >= 1; i--) {
-    const k = i / layers; // 1 = outermost
-    const grow = spread * k;
-    shapes.push({ cmds: roundRect(x - grow, y - grow + drop * (1 - 0.5 * k), w + 2 * grow, h + 2 * grow, r + grow), fill: mix(tint(color), dark, 0.17 * (1 - k) ** 2.1) });
-  }
-  return shapes;
-}
-
-// The punched slot at the top of the card, as on a hanging gift card: a little darker on its upper edge, as if it had depth.
-function slotShapes(cx: number, y: number, w: number, h: number, color: string): Shape[] {
-  return [
-    { cmds: roundRect(cx - w / 2, y - 1.2, w, h, h / 2), fill: mix(tint(color), BLACK, 0.12) },
-    { cmds: roundRect(cx - w / 2, y, w, h, h / 2), fill: mix(tint(color), BLACK, 0.035) },
-  ];
-}
-
-// A small rounded label with text in it, centred on cx.
-function pillItem(fonts: Fonts, text: string, cx: number, size: number, fill: string, textFill: string): Item {
-  const h = size * 2.05;
-  const tw = width(fonts, text, "semibold", size);
-  const w = tw + size * 2;
-  return {
-    height: h,
-    draw: (top) => [
-      { cmds: roundRect(cx - w / 2, top, w, h, h / 2), fill },
-      { cmds: outline(fonts, text, "semibold", size, cx - tw / 2, top + h / 2 + size * 0.36), fill: textFill },
-    ],
-  };
-}
-
-interface Face {
-  w: number;
-  h: number;
-  card: { x: number; y: number; w: number; h: number; r: number };
-  slot: { y: number; w: number; h: number }; // y from the top of the card
-  shadow: { spread: number; drop: number };
-  pad: number;
-  gap: number;
-}
-
-// The card itself, and what stands in it; `items` get the colours of the look.
-function cardDrawing(face: Face, spec: GiftCardSpec, variant: "white" | "colour", items: (k: Palette) => Item[]): Drawing {
-  const color = spec.color;
-  const c = onCircle(color);
-  const colour = variant === "colour";
-  const palette: Palette = colour
-    ? { head: c.text, label: mix(color, c.text, 0.78), body: { text: c.text, highlight: c.highlight }, muted: mix(color, c.text, 0.85), pill: mix(color, c.text, 0.2), pillText: c.text, plate: true, box: { box: WHITE, label: readableOn(color, WHITE, 3), code: INK } }
-    : { head: readableOn(color, WHITE, 3), label: MUTED, body: { text: INK, highlight: INK }, muted: MUTED, pill: color, pillText: c.text, plate: false, box: { box: mix(WHITE, color, 0.09), label: readableOn(color, mix(WHITE, color, 0.09), 3), code: INK } };
-  const { card, slot } = face;
-  const cx = card.x + card.w / 2;
-  const top = card.y + slot.y + slot.h + face.gap;
-  const bottom = card.y + card.h - face.pad;
-  return {
-    width: face.w,
-    height: face.h,
-    shapes: [
-      page(face.w, face.h, color),
-      ...shadowShapes(card.x, card.y, card.w, card.h, card.r, color, face.shadow.spread, face.shadow.drop),
-      { cmds: roundRect(card.x, card.y, card.w, card.h, card.r), fill: colour ? color : WHITE },
-      ...slotShapes(cx, card.y + slot.y, slot.w, slot.h, color),
-      ...between(items(palette), face.gap, top, bottom),
-    ],
-  };
-}
-
 interface Palette {
+  page: string;
   head: string; // the header
   label: string; // the small capitals
   body: Look; // the sentence
   muted: string; // the date
-  pill: string;
-  pillText: string;
-  plate: boolean; // the logo on a white plate (when the card is coloured)
-  box: BoxLook; // the code box
+  block: BlockLook;
+  logo: string; // the SVG of the logo to use
 }
 
-const logoOn = (spec: GiftCardSpec, cx: number, maxW: number, maxH: number, k: Palette): Item => (k.plate ? logoPlateItem(spec.logo, cx, maxW, maxH, 14) : logoItem(spec.logo, cx, maxW, maxH));
+// White: dark text on a light tint. Colour: white or black text (by the brand rule) on the title's colour, with the logo's one-colour version.
+function paletteOf(spec: GiftCardSpec, variant: "white" | "colour"): Palette {
+  const color = spec.color;
+  if (variant === "white") {
+    const page = tint(color);
+    const accent = readableOn(color, WHITE, 3);
+    return { page, head: readableOn(color, page, 3), label: MUTED, body: { text: INK, highlight: INK }, muted: MUTED, block: { fill: WHITE, line: accent, label: accent, code: INK }, logo: spec.logo };
+  }
+  const c = onCircle(color);
+  return {
+    page: color,
+    head: c.text,
+    label: mix(color, c.text, 0.8),
+    body: c,
+    muted: mix(color, c.text, 0.85),
+    block: { fill: mix(color, c.text, 0.1), line: c.text, label: mix(color, c.text, 0.85), code: c.text },
+    logo: (c.text === WHITE ? spec.logoWhite : spec.logoBlack) ?? spec.logo,
+  };
+}
 
-// The printed card: label, logo, header, the code, what to do and until when. In the middle of the page.
+const fullPage = (w: number, h: number, fill: string): Shape => ({ cmds: rect(0, 0, w, h), fill });
+
+// The printed card: label, logo, header, the code, what to do, until when: one column, in the middle of the page.
 function printCard(spec: GiftCardSpec, fonts: Fonts, variant: "white" | "colour"): Drawing {
   const { width: w, height: h } = A4;
-  const cw = 0.78 * w;
-  const ch = 0.72 * h;
-  const face: Face = { w, h, card: { x: (w - cw) / 2, y: (h - ch) / 2, w: cw, h: ch, r: 34 }, slot: { y: 24, w: 66, h: 14 }, shadow: { spread: 40, drop: 16 }, pad: 42, gap: 24 };
   const cx = w / 2;
+  const k = paletteOf(spec, variant);
   const code = spec.code.trim();
-  return cardDrawing(face, spec, variant, (k) => {
-    const text = cardText(spec);
-    return [
-      labelItem(fonts, spec.copy.label, 13, cx, k.label),
-      logoOn(spec, cx, 0.5 * w, 0.085 * h, k),
-      headerItem(fonts, spec.header, k.head, cx, cw - 2 * face.pad, 0.15 * h, 36, 22, "center"),
-      ...(code ? [codeBoxItem(fonts, cx, cw - 2 * face.pad, 112, spec.copy.codeLabel, code, k.box, 54, 9.5)] : []),
-      paragraphItem(fonts, segs(text.order, k.body), 16, cx, cw - 2 * face.pad - 20),
-      ...(text.valid.length ? [paragraphItem(fonts, segs(text.valid, { text: k.muted, highlight: k.muted }), 14.5, cx, cw - 2 * face.pad)] : []),
-    ];
-  });
+  const text = cardText(spec);
+  const items: Item[] = [
+    labelItem(fonts, spec.copy.label, 13, cx, k.label),
+    logoItem(k.logo, cx, 0.5 * w, 0.095 * h),
+    headerItem(fonts, spec.header, k.head, cx, 0.8 * w, 0.16 * h, 40, 22),
+    ...(code ? [codeBlockItem(fonts, cx, 0.7 * w, 118, spec.copy.codeLabel, code, k.block, 54, 10, 1.6)] : []),
+    paragraphItem(fonts, segs(text.order, k.body), 17, cx, 0.62 * w),
+    ...(text.valid.length ? [paragraphItem(fonts, segs(text.valid, { text: k.muted, highlight: k.muted }), 15, cx, 0.7 * w)] : []),
+  ];
+  return { width: w, height: h, shapes: [fullPage(w, h, k.page), ...between(items, 30, 0, h)] };
 }
 
-// The picture for e-mail: only the logo, how long (the header without its first line: the logo already says the title) and the code, all big.
-// On a phone this picture is about 60 % of its size. Until when and what to do belong in the letter.
-function emailLines(header: string): string {
-  const lines = header.split("\n").map((l) => l.trim()).filter(Boolean);
-  return (lines.length > 1 ? lines.slice(1) : lines).join(" ");
-}
-
+// The picture for e-mail: only the logo and the code, as large as it goes. How long, until when and what to do are in the letter.
 function emailCard(spec: GiftCardSpec, fonts: Fonts, variant: "white" | "colour"): Drawing {
   const { width: w, height: h } = EMAIL;
-  const face: Face = { w, h, card: { x: 36, y: 22, w: w - 72, h: 330, r: 26 }, slot: { y: 18, w: 46, h: 11 }, shadow: { spread: 24, drop: 10 }, pad: 28, gap: 18 };
   const cx = w / 2;
+  const k = paletteOf(spec, variant);
   const code = spec.code.trim();
-  const how = emailLines(spec.header);
-  return cardDrawing(face, spec, variant, (k) => [
-    logoOn(spec, cx, 250, 68, k),
-    ...(how ? [pillItem(fonts, how, cx, 19, k.pill, k.pillText)] : []),
-    ...(code ? [codeBoxItem(fonts, cx, w - 72 - 2 * 28, 104, spec.copy.codeLabel, code, k.box, 52, 11)] : []),
-  ]);
+  const items: Item[] = code ? [logoItem(k.logo, cx, 340, 120), codeBlockItem(fonts, cx, 452, 132, spec.copy.codeLabel, code, k.block, 64, 12, 2.2)] : [logoItem(k.logo, cx, 400, 170)];
+  return { width: w, height: h, shapes: [fullPage(w, h, k.page), ...between(items, 36, 0, h)] };
 }
 
 const PRINT: Record<PrintStyle, (spec: GiftCardSpec, fonts: Fonts) => Drawing> = { white: (s, f) => printCard(s, f, "white"), colour: (s, f) => printCard(s, f, "colour") };
@@ -693,9 +650,10 @@ export function layoutCard(kind: Kind, spec: GiftCardSpec, fonts: Fonts): Drawin
   return kind === "print" ? PRINT[spec.printStyle ?? "white"](spec, fonts) : MAIL[spec.emailStyle ?? "white"](spec, fonts);
 }
 
-// The back of the card, for printing on both sides: the logo alone on the tinted page.
+// The back of the card, for printing on both sides: the logo alone in the middle of the page, in the colours of the look.
 export function layoutBack(spec: GiftCardSpec): Drawing {
   const { width: w, height: h } = A4;
-  const logo = logoItem(spec.logo, w / 2, 0.55 * w, 0.28 * h);
-  return { width: w, height: h, shapes: [page(w, h, spec.color), ...logo.draw(h / 2 - logo.height / 2)] };
+  const k = paletteOf(spec, spec.printStyle ?? "white");
+  const logo = logoItem(k.logo, w / 2, 0.55 * w, 0.28 * h);
+  return { width: w, height: h, shapes: [fullPage(w, h, k.page), ...logo.draw(h / 2 - logo.height / 2)] };
 }

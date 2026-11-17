@@ -124,7 +124,9 @@ export function safeZone(logo: LogoVariant): number {
 export interface Title {
   id: string;
   name: string;
-  file: string;
+  file: string; // the coloured logo
+  white: string; // the white version, for a coloured background
+  black: string; // the black version, for a light coloured background
   width: number;
   height: number;
   main: string;

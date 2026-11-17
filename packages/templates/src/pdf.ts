@@ -7,7 +7,7 @@ const enc = new TextEncoder();
 
 const n = (v: number) => (Math.round(v * 1000) / 1000).toString();
 
-// "#rrggbb" to the PDF colour operands, for example "0.9608 0 0"; add rg for a fill colour
+// "#rrggbb" to the PDF colour operands, for example "0.9608 0 0"; add rg for a fill colour, RG for a line
 function rgb(hex: string): string {
   const v = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
   return v.map((x) => n(Math.round(x * 10000) / 10000)).join(" ");
@@ -18,14 +18,19 @@ export function contentOf(d: Drawing): string {
   const out: string[] = [];
   const y = (v: number) => n(d.height - v);
   for (const shape of d.shapes) {
-    out.push(`${rgb(shape.fill)} rg`);
+    const s = shape.stroke;
+    if (s) out.push("q");
+    if (shape.fill) out.push(`${rgb(shape.fill)} rg`);
+    if (s) out.push(`${rgb(s.color)} RG ${n(s.width)} w 0 J 0 j ${s.dash ? `[${n(s.dash[0])} ${n(s.dash[1])}] 0 d` : "[] 0 d"}`);
     for (const c of shape.cmds) {
       if (c[0] === "M") out.push(`${n(c[1])} ${y(c[2])} m`);
       else if (c[0] === "L") out.push(`${n(c[1])} ${y(c[2])} l`);
       else if (c[0] === "C") out.push(`${n(c[1])} ${y(c[2])} ${n(c[3])} ${y(c[4])} ${n(c[5])} ${y(c[6])} c`);
       else out.push("h");
     }
-    out.push(shape.evenOdd ? "f*" : "f");
+    const paint = shape.fill && s ? "B" : s ? "S" : "f";
+    out.push(shape.evenOdd && paint !== "S" ? paint + "*" : paint);
+    if (s) out.push("Q");
   }
   return out.join("\n");
 }

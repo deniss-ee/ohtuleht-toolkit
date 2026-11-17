@@ -3,6 +3,8 @@
     "id": "ohtuleht",
     "name": "Õhtuleht",
     "file": "ohtuleht.svg",
+    "white": "ohtuleht-white.svg",
+    "black": "ohtuleht-black.svg",
     "width": 336,
     "height": 64,
     "main": "#F50000"
@@ -11,6 +13,8 @@
     "id": "ol-ristsonad",
     "name": "Õhtulehe ristsõnad",
     "file": "ol-ristsonad.svg",
+    "white": "ol-ristsonad-white.svg",
+    "black": "ol-ristsonad-black.svg",
     "width": 336,
     "height": 138,
     "main": "#F50000"
@@ -19,6 +23,8 @@
     "id": "naisteleht",
     "name": "Naisteleht",
     "file": "naisteleht.svg",
+    "white": "naisteleht-white.svg",
+    "black": "naisteleht-black.svg",
     "width": 368,
     "height": 96,
     "main": "#E60073"
@@ -27,6 +33,8 @@
     "id": "naisteleht-55",
     "name": "Naisteleht 55+",
     "file": "naisteleht-55.svg",
+    "white": "naisteleht-55-white.svg",
+    "black": "naisteleht-55-black.svg",
     "width": 208,
     "height": 160,
     "main": "#A51982"
@@ -35,6 +43,8 @@
     "id": "naistelehe-ristsonad",
     "name": "Naistelehe ristsõnad",
     "file": "naistelehe-ristsonad.svg",
+    "white": "naistelehe-ristsonad-white.svg",
+    "black": "naistelehe-ristsonad-black.svg",
     "width": 480,
     "height": 128,
     "main": "#E60073"
@@ -43,6 +53,8 @@
     "id": "teleleht",
     "name": "Teleleht",
     "file": "teleleht.svg",
+    "white": "teleleht-white.svg",
+    "black": "teleleht-black.svg",
     "width": 166,
     "height": 160,
     "main": "#2D3291"
@@ -51,6 +63,8 @@
     "id": "tiiu",
     "name": "Tiiu",
     "file": "tiiu.svg",
+    "white": "tiiu-white.svg",
+    "black": "tiiu-black.svg",
     "width": 230,
     "height": 96,
     "main": "#E63223"
@@ -59,6 +73,8 @@
     "id": "tiiu-ristsonad",
     "name": "Tiiu ristsõnad",
     "file": "tiiu-ristsonad.svg",
+    "white": "tiiu-ristsonad-white.svg",
+    "black": "tiiu-ristsonad-black.svg",
     "width": 330,
     "height": 160,
     "main": "#E63223"
@@ -67,6 +83,8 @@
     "id": "avesta",
     "name": "Avesta",
     "file": "avesta.svg",
+    "white": "avesta-white.svg",
+    "black": "avesta-black.svg",
     "width": 320,
     "height": 78,
     "main": "#E60073"
@@ -75,6 +93,8 @@
     "id": "ristik",
     "name": "Ristik",
     "file": "ristik.svg",
+    "white": "ristik-white.svg",
+    "black": "ristik-black.svg",
     "width": 320,
     "height": 128,
     "main": "#F50000"
@@ -83,6 +103,8 @@
     "id": "miniristik",
     "name": "Miniristik",
     "file": "miniristik.svg",
+    "white": "miniristik-white.svg",
+    "black": "miniristik-black.svg",
     "width": 352,
     "height": 128,
     "main": "#F50000"
@@ -91,6 +113,8 @@
     "id": "megaristik",
     "name": "Megaristik",
     "file": "megaristik.svg",
+    "white": "megaristik-white.svg",
+    "black": "megaristik-black.svg",
     "width": 432,
     "height": 110,
     "main": "#F50000"
@@ -99,6 +123,8 @@
     "id": "meistriristik",
     "name": "Meistriristik",
     "file": "meistriristik.svg",
+    "white": "meistriristik-white.svg",
+    "black": "meistriristik-black.svg",
     "width": 328,
     "height": 160,
     "main": "#F50000"
@@ -107,6 +133,8 @@
     "id": "meluristik",
     "name": "Meluristik",
     "file": "meluristik.svg",
+    "white": "meluristik-white.svg",
+    "black": "meluristik-black.svg",
     "width": 264,
     "height": 192,
     "main": "#F50000"
@@ -115,6 +143,8 @@
     "id": "sudoku",
     "name": "Ristiku Sudoku",
     "file": "sudoku.svg",
+    "white": "sudoku-white.svg",
+    "black": "sudoku-black.svg",
     "width": 384,
     "height": 128,
     "main": "#F50000"
@@ -123,6 +153,8 @@
     "id": "ripsik",
     "name": "Ripsik",
     "file": "ripsik.svg",
+    "white": "ripsik-white.svg",
+    "black": "ripsik-black.svg",
     "width": 304,
     "height": 128,
     "main": "#F5911E"

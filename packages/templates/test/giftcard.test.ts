@@ -25,7 +25,7 @@ const copy: CardCopy = {
 // A tiny logo as the brand script writes them: the fill sits on the group, a clip path in <defs> must not be drawn.
 const logo = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 120 40"><g clip-path="url(#a)" fill="#f5911e"><path d="M0 0h60v40H0z"/><path fill="#000" d="M70 0l40 0 0 40-40 0z"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h120v40H0z"/></clipPath></defs></svg>`;
 
-const spec: GiftCardSpec = { header: "Ristsõnaajakirja Ripsik\nkuue kuu tellimus", logo, color: "#f5911e", code: "M-1", email: "nimi@example.com", until: "31.12.2026", copy };
+const spec: GiftCardSpec = { header: "Ristsõnaajakirja Ripsik\nkuue kuu tellimus", logo, logoWhite: logo, logoBlack: logo, color: "#f5911e", code: "M-1", email: "nimi@example.com", until: "31.12.2026", copy };
 
 describe("path data", () => {
   test("absolute and relative commands, implicit repeats", () => {
@@ -102,31 +102,67 @@ describe("layout", () => {
     for (const { name, d, w, h } of every(spec)) expect(d, name).toMatchObject({ width: w, height: h });
   });
 
-  test("every number is finite, and nothing but the page and the circle is drawn outside the card", () => {
+  test("every number is finite, and nothing is drawn outside the page", () => {
     for (const { name, d, w, h } of every(spec)) {
-      d.shapes.forEach((s, i) => {
+      for (const s of d.shapes) {
         for (const c of s.cmds) for (const v of c.slice(1) as number[]) expect(Number.isFinite(v), name).toBe(true);
-        // the page (first) and a circle (a move, four curves, a close: it may run off the page) are the only shapes allowed past the edges
-        const circle = s.cmds.length === 6 && s.cmds[1]?.[0] === "C";
-        if (i === 0 || circle || s.cmds.length > 40) return;
+        if (s.cmds.length > 40) continue; // the letters and the logo are checked by eye: they follow the font
         for (const c of s.cmds) if (c[0] !== "Z") expect((c[c.length - 2] as number) >= -0.5 && (c[c.length - 2] as number) <= w + 0.5 && (c[c.length - 1] as number) >= -0.5 && (c[c.length - 1] as number) <= h + 0.5, name).toBe(true);
-      });
+      }
     }
   });
 
-  test("the code box (a box, its label and the code) is only there when there is a code", () => {
-    for (const { name, d } of every(spec)) {
-      if (name === "back") continue;
-      const style = name.split(" ")[1]!;
-      const without = name.startsWith("print") ? layoutCard("print", { ...spec, code: "", printStyle: style as never }, fonts) : layoutCard("email", { ...spec, code: "", emailStyle: style as never }, fonts);
-      expect(d.shapes.length - without.shapes.length, name).toBeGreaterThanOrEqual(2);
+  const dashed = (d: ReturnType<typeof layoutCard>) => d.shapes.filter((s) => s.stroke?.dash);
+
+  test("the page is the card: the page, then letters and the logo, and one dashed code block - nothing else", () => {
+    for (const kind of ["print", "email"] as const) {
+      const d = layoutCard(kind, spec, fonts);
+      expect(d.shapes[0]).toMatchObject({ fill: expect.stringMatching(/^#[0-9a-f]{6}$/) }); // the page, first
+      expect(d.shapes[0]!.cmds).toHaveLength(5); // a plain rectangle: no rounded card, no slot, no shadow
+      expect(dashed(d)).toHaveLength(1);
+      expect(dashed(layoutCard(kind, { ...spec, code: "" }, fonts))).toHaveLength(0);
     }
   });
 
-  test("the e-mail picture carries only the logo, how long and the code: far fewer shapes than the printed card", () => {
-    const print = layoutCard("print", spec, fonts).shapes.length;
-    for (const style of EMAIL_STYLES) expect(layoutCard("email", { ...spec, emailStyle: style }, fonts).shapes.length).toBeLessThan(print);
+  test("the two looks have exactly the same layout: only the colours differ", () => {
+    for (const kind of ["print", "email"] as const) {
+      const white = layoutCard(kind, { ...spec, printStyle: "white", emailStyle: "white" }, fonts);
+      const colour = layoutCard(kind, { ...spec, printStyle: "colour", emailStyle: "colour" }, fonts);
+      expect(colour.shapes.length).toBe(white.shapes.length);
+      // the code block (the dashed line) is at the same place, and so is every letter and every logo path
+      expect(dashed(colour)[0]!.cmds).toEqual(dashed(white)[0]!.cmds);
+      colour.shapes.forEach((s, i) => expect(s.cmds, kind + " shape " + i).toEqual(white.shapes[i]!.cmds));
+    }
   });
+
+  test("the code block: the label and the code are centred in it, with the same room above and below", () => {
+    const d = layoutCard("email", spec, fonts);
+    const box = dashed(d)[0]!.cmds as [string, number, number][];
+    const ys = box.filter((c) => c[0] !== "Z").map((c) => c[c.length - 1] as number);
+    const [top, bottom] = [Math.min(...ys), Math.max(...ys)];
+    // the two text shapes after the box: label, code (stand-in letters are boxes, 0.7 high, standing on the baseline)
+    const [label, code] = d.shapes.slice(d.shapes.indexOf(dashed(d)[0]!) + 1);
+    const span = (s: typeof label) => {
+      const v = s!.cmds.filter((c) => c[0] !== "Z").map((c) => c[c.length - 1] as number);
+      return [Math.min(...v), Math.max(...v)] as const;
+    };
+    const [labelTop] = span(label);
+    const [, codeBottom] = span(code);
+    expect(labelTop - top).toBeCloseTo(bottom - codeBottom, 0);
+    // and across: the code is in the middle of the box
+    const xs = (s: typeof label) => s!.cmds.filter((c) => c[0] !== "Z").map((c) => c[1] as number);
+    const bx = box.filter((c) => c[0] !== "Z").map((c) => c[1]);
+    const [left, right] = [Math.min(...bx), Math.max(...bx)];
+    expect((Math.min(...xs(code)) - left) - (right - Math.max(...xs(code)))).toBeCloseTo(0, 0);
+  });
+
+  test("the e-mail picture carries only the logo and the code: the page, the logo's paths, the dashed block, its label and its code", () => {
+    for (const style of EMAIL_STYLES) {
+      const d = layoutCard("email", { ...spec, emailStyle: style }, fonts);
+      expect(d.shapes).toHaveLength(1 + logoShapes(logo).shapes.length + 3);
+    }
+  });
+
 
   test("the header: one long line is made smaller until it fits", () => {
     for (const { name, d } of every({ ...spec, header: "Ristsõnaajakirja Ripsik Ristsõnaajakirja Ripsik" })) if (name !== "back") expect(d.shapes.length, name).toBeGreaterThan(3);

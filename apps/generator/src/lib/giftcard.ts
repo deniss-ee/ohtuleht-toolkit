@@ -42,8 +42,12 @@ const logoText = import.meta.glob("../../../../packages/brand/titles/*.svg", { q
 const logoUrl = import.meta.glob("../../../../packages/brand/titles/*.svg", { query: "?url", import: "default", eager: true }) as Record<string, string>;
 const byFile = <T>(map: Record<string, T>, file: string) => map[`../../../../packages/brand/titles/${file}`];
 
-// The SVG text of a title's logo (for the drawing) and its address (for the small pictures in the list).
-export const loadLogo = async (t: Title): Promise<string> => byFile(logoText, t.file)!();
+// The SVG text of a title's logos (for the drawing: coloured, white and black) and the address of the coloured one (for the small pictures in the list).
+export const loadLogos = async (t: Title): Promise<{ colour: string; white: string; black: string }> => {
+  const load = (file: string) => byFile(logoText, file)!();
+  const [colour, white, black] = await Promise.all([load(t.file), load(t.white), load(t.black)]);
+  return { colour, white, black };
+};
 export const logoAddress = (t: Title): string => byFile(logoUrl, t.file) ?? "";
 
 // ---- The form ---------------------------------------------------------------------------------------------------------------
@@ -116,8 +120,18 @@ export function paint(canvas: HTMLCanvasElement, d: Drawing, pixelWidth: number)
       else if (c[0] === "C") ctx.bezierCurveTo(c[1], c[2], c[3], c[4], c[5], c[6]);
       else ctx.closePath();
     }
-    ctx.fillStyle = shape.fill;
-    ctx.fill(shape.evenOdd ? "evenodd" : "nonzero");
+    if (shape.fill) {
+      ctx.fillStyle = shape.fill;
+      ctx.fill(shape.evenOdd ? "evenodd" : "nonzero");
+    }
+    if (shape.stroke) {
+      ctx.strokeStyle = shape.stroke.color;
+      ctx.lineWidth = shape.stroke.width;
+      ctx.lineCap = "butt";
+      ctx.setLineDash(shape.stroke.dash ?? []);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
   }
 }
 

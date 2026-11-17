@@ -14,26 +14,24 @@ The form is remembered in the browser. The preview shows the card and the pictur
 
 ## What the card looks like
 
-The card is designed like a card of the toolkit's own interface (rounded corners, Inter, Fira Sans for the header), and then made to feel like an **object you could pick up**: it lies on a page that is a **6 % tint of the title's colour**, has a soft layered shadow (tinted, never grey) and a **punched slot** at the top, like a hanging gift card. Nothing else is drawn: no outlines, no patterns, no circles.
+**The page is the card.** The PDF and the picture are what they are: a plain printout and a plain picture for a letter. Nothing is drawn around the card, nothing is cut out, there is no shadow and no card lying on a background. The type is Fira Sans (the header) and Inter (everything else), as in the brand manual.
 
 | | Printed card (A4) | E-mail picture (600x400) |
 |---|---|---|
-| Card | 78 % of the page wide, 72 % high, in the middle | 528 x 330 px |
-| Contents | Label `KINKEKAART`, logo, header (both lines, Fira Sans), the code in a big field, what to do (with the e-mail address), valid until | Only the **logo**, **how long** (the header without its first line, in a pill) and the **code**, all big |
+| Contents, top to bottom | Label `KINKEKAART`, logo, header (both lines), the **code block**, what to do (with the e-mail address), valid until | The **logo** and the **code block**. Nothing else: how long, until when and what to do are in the letter |
+| Layout | One column, centred, in the middle of the page, with the same gap (30 pt) between all parts | The same, with a 36 px gap; the code is 64 px |
 
-Two looks, chosen separately for the print card and the picture (**Look** in the form):
+**The code block** is a rounded box with a **dashed outline**; the small word `SALAKOOD` and the code stand in it, both centred (by the real edges of the letters, not by their advance widths) with the same room above and below. The code gets as large as the box allows. Without a code the block is left out (on the picture the logo then stands alone, larger).
 
-- **White card:** a white card; the title's colour is in the header, the pill and the label of the code field; the code field is a 9 % tint.
-- **Colour card:** the card is in the title's colour; the logo sits on a white plate, the code field is white; text is white or black by the brand rule.
+**Two looks, one layout.** Only the colours change, nothing moves (a test checks that every letter and logo path is at the same place):
 
-The e-mail picture has no sentence, no date and no address and no second `KINKEKAART`: those belong in the letter. On a phone the picture is about 60 % of its size, so the type is big (the code 52 px). Without a code the picture shows just the logo and the pill.
+- **Light:** the page is a 6 % tint of the title's colour; the header, the label and the dashed line are in the title's colour; the code box is white.
+- **Colour:** the page is the title's colour; text is white or black by the brand rule (white from step 600; for other colours white when it reads at 3:1, else black); the logo is the title's **white or black version** (the design team's one-colour files, `titles/<id>-white.svg` and `-black.svg`), so no plate is needed behind it; the code box is a lighter tint with a dashed line in the text colour. Values (address, date) are yellow where yellow reads.
 
-- **Fonts:** Fira Sans semibold for the header, Inter for everything else (as in the brand manual).
-- **Text colour on the colour:** white or black by the brand rule (white from step 600; for other colours white when it reads at 3:1, else black). Values (address, date) are yellow on a coloured card where yellow reads. The header is the title's colour, made a little darker only if it is too pale to read.
 - **Words** (Estonian) are in `apps/generator/src/giftcard-content.ts`: the label, `SALAKOOD`, the sentences of the printed card, the second-line buttons and the suggested header of each title. A part without a value is left out: no code, no "and the code"; no address, no "to the e-mail"; no date, no validity line.
-- **Flat colours only:** no gradients and no transparency. The shadow is made of 30 stacked flat shapes. That keeps the PDF plain and the PNG small when it is reduced to 256 colours.
+- **Flat colours only:** no gradients, no transparency, no shadows. That keeps the PDF plain and the PNG small when it is reduced to 256 colours.
 
-How the look was reached: first drafts used circles, panels and outlines, which looked decorated. A web search found little specific to gift cards (general advice: white space, bold sans-serif type, simple palettes, a large code; for e-mail one column and big type), so the look follows the toolkit's own cards and the idea of a physical card with a slot and a soft shadow.
+How it was reached: the first drafts used circles, panels and a card with a shadow and a slot, which looked decorated and changed shape between the looks. The final design keeps the toolkit's calm style: full page, one column, one dashed block.
 
 ## The files
 
@@ -43,7 +41,7 @@ How the look was reached: first drafts used circles, panels and outlines, which 
 
 ## Logos of the titles
 
-`packages/brand/titles/` holds the coloured logo of each of the 16 titles and `titles.json` (name, size, main colour). They come from the design team's zips through `packages/brand/scripts/import-titles.mjs` (`yarn workspace @ohtuleht/brand import-titles <folder with the unzipped logo folders>`): SVGO-optimised, **the old red `#E3000F` replaced by the brand red `#F50000`**. To add a title: add a line to the list in that script, run it, and add its suggested header to `HEADERS` in `giftcard-content.ts`.
+`packages/brand/titles/` holds, for each of the 16 titles, the coloured logo (`<id>.svg`) and its white and black versions (`<id>-white.svg`, `<id>-black.svg`), and `titles.json` (name, size, main colour). They come from the design team's zips through `packages/brand/scripts/import-titles.mjs` (`yarn workspace @ohtuleht/brand import-titles <folder with the unzipped logo folders>`): SVGO-optimised, **the old red `#E3000F` replaced by the brand red `#F50000`**. To add a title: add a line to the list in that script, run it, and add its suggested header to `HEADERS` in `giftcard-content.ts`.
 
 ## How it is built
 
@@ -63,7 +61,7 @@ The tool loads about 245 KB of script (`opentype.js`, only when it is opened) an
 
 ## Limits and ideas
 
-- The looks are variants of one function per size in `giftcard.ts` (`printCard`, `emailCard`, each with `"white"` or `"colour"`); another look is one more name in `PRINT_STYLES` / `EMAIL_STYLES`, a branch in `cardDrawing` and the interface texts.
+- The looks are variants of one function per size in `giftcard.ts` (`printCard`, `emailCard`, each with `"white"` or `"colour"`, colours from `paletteOf`); another look is one more name in `PRINT_STYLES` / `EMAIL_STYLES`, a branch in `paletteOf` and the interface texts. The layout is shared, so a new look cannot move anything.
 - The code is not checked for being unique or stored anywhere: it is only printed.
 - Logos with arcs in their paths are refused (`import-titles.mjs` writes none).
 - The PDF is RGB; a print-ready CMYK version needs a converter.

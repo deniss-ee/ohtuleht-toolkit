@@ -1,7 +1,7 @@
 // Imports the logos of the publisher's titles (magazines and puzzle books) from the design team's zips.
 // Usage: yarn workspace @ohtuleht/brand import-titles <folder with the unzipped logo folders>
-//   <folder>/<zip name>/svg/<file>.svg  ->  titles/<id>.svg  and  titles.json
-// Only the coloured logo of each title is kept (arcs are not made: the card tool draws curves and lines only). The old red of the logos (#E3000F) becomes the brand red (Primary Red 600, the production value).
+//   <folder>/<zip name>/svg/<file>.svg (and _w, _b)  ->  titles/<id>.svg, <id>-white.svg, <id>-black.svg  and  titles.json
+// Three files for each title: the coloured logo, and its white and black versions (arcs are not made: the card tool draws curves and lines only). The old red of the logos (#E3000F) becomes the brand red (Primary Red 600, the production value).
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { optimize } from "svgo";
 
@@ -35,18 +35,25 @@ if (!dir) {
 }
 mkdirSync(new URL("../titles/", import.meta.url), { recursive: true });
 
+const optimise = (source) => optimize(source, { multipass: true, plugins: [{ name: "preset-default", params: { overrides: { convertPathData: { makeArcs: false } } } }, "removeDimensions"] }).data;
+
 const out = [];
 let before = 0;
 let after = 0;
 for (const [id, name, folder, file, main] of TITLES) {
   const source = readFileSync(`${dir}/${folder}/svg/${file}`, "utf8").replace(OLD_RED, NEW_RED);
-  const { data } = optimize(source, { multipass: true, plugins: [{ name: "preset-default", params: { overrides: { convertPathData: { makeArcs: false } } } }, "removeDimensions"] });
   const [, w, h] = /viewBox="0 0 ([\d.]+) ([\d.]+)"/.exec(source) ?? [];
   if (!w || !h) throw new Error(`${file}: no viewBox`);
-  writeFileSync(new URL(`../titles/${id}.svg`, import.meta.url), data);
-  out.push({ id, name, file: `${id}.svg`, width: Number(w), height: Number(h), main });
-  before += source.length;
-  after += data.length;
+  const entry = { id, name, file: `${id}.svg`, white: `${id}-white.svg`, black: `${id}-black.svg`, width: Number(w), height: Number(h), main };
+  // the coloured logo, and the one-colour versions of the design team (_w white, _b black) for use on a coloured background
+  for (const [suffix, target] of [["", entry.file], ["_w", entry.white], ["_b", entry.black]]) {
+    const text = readFileSync(`${dir}/${folder}/svg/${file.replace(".svg", suffix + ".svg")}`, "utf8").replace(OLD_RED, NEW_RED);
+    const data = optimise(text);
+    writeFileSync(new URL(`../titles/${target}`, import.meta.url), data);
+    before += text.length;
+    after += data.length;
+  }
+  out.push(entry);
 }
 writeFileSync(new URL("../titles.json", import.meta.url), JSON.stringify(out, null, 2) + "\n");
-console.log(`${out.length} logos, ${before} B -> ${after} B`);
+console.log(`${out.length} titles, ${out.length * 3} files, ${before} B -> ${after} B`);

@@ -13,7 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Textarea } from "@/components/ui/textarea";
 import { giftCard as t, ui } from "@/content";
 import { COPY, PERIODS } from "@/giftcard-content";
-import { EMAIL_STYLES, PRINT_STYLES, codesOf, downloadEmailPictures, downloadPdf, formatUntil, loadFonts, loadLogo, logoAddress, MAX_CARDS, newForm, paint, titleOf, titles, validEmail, withTitle, type CardForm } from "@/lib/giftcard";
+import { EMAIL_STYLES, PRINT_STYLES, codesOf, downloadEmailPictures, downloadPdf, formatUntil, loadFonts, loadLogos, logoAddress, MAX_CARDS, newForm, paint, titleOf, titles, validEmail, withTitle, type CardForm } from "@/lib/giftcard";
 
 const KEY = "ol-giftcard";
 
@@ -89,7 +89,7 @@ export function GiftCard({ onBack }: { onBack: () => void }) {
   const [form, setForm] = useState<CardForm>(load);
   const set = (patch: Partial<CardForm>) => setForm((f) => ({ ...f, ...patch }));
   const [fonts, setFonts] = useState<Fonts | null>(null);
-  const [logo, setLogo] = useState<{ id: string; svg: string } | null>(null);
+  const [logo, setLogo] = useState<{ id: string; colour: string; white: string; black: string } | null>(null);
   const [pick, setPick] = useState(0); // which code the preview shows
   const [busy, setBusy] = useState(false);
 
@@ -108,7 +108,7 @@ export function GiftCard({ onBack }: { onBack: () => void }) {
   const title = titleOf(form.title);
   useEffect(() => {
     let current = true;
-    void loadLogo(title).then((svg) => current && setLogo({ id: title.id, svg }));
+    void loadLogos(title).then((l) => current && setLogo({ id: title.id, ...l }));
     return () => {
       current = false;
     };
@@ -119,13 +119,13 @@ export function GiftCard({ onBack }: { onBack: () => void }) {
   const color = form.color || title.main;
   const until = formatUntil(form.until);
 
-  const specFor = (c: string): GiftCardSpec => ({ header: form.header, logo: logo!.svg, color, code: c, email: form.email, until, copy: COPY, printStyle: form.printStyle, emailStyle: form.emailStyle });
+  const specFor = (c: string): GiftCardSpec => ({ header: form.header, logo: logo!.colour, logoWhite: logo!.white, logoBlack: logo!.black, color, code: c, email: form.email, until, copy: COPY, printStyle: form.printStyle, emailStyle: form.emailStyle });
   const ready = !!fonts && !!logo && logo.id === title.id;
 
   // Only the card on show is laid out while typing; all of them are made when a file is made.
   const shown = useMemo(() => {
     if (!fonts || !logo || logo.id !== title.id) return null;
-    const spec: GiftCardSpec = { header: form.header, logo: logo.svg, color, code, email: form.email, until, copy: COPY, printStyle: form.printStyle, emailStyle: form.emailStyle };
+    const spec: GiftCardSpec = { header: form.header, logo: logo.colour, logoWhite: logo.white, logoBlack: logo.black, color, code, email: form.email, until, copy: COPY, printStyle: form.printStyle, emailStyle: form.emailStyle };
     return { print: layoutCard("print", spec, fonts), mail: layoutCard("email", spec, fonts) };
   }, [fonts, logo, title.id, form.header, color, code, form.email, until, form.printStyle, form.emailStyle]);
 
