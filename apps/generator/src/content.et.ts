@@ -437,7 +437,7 @@ export const giftCard: typeof En.giftCard = {
   pdfDone: (cards: number) => `PDF ${cards} kaardiga on alla laaditud.`,
   mailDone: (n: number) => (n === 1 ? "Pilt on alla laaditud." : `${n} pilti on alla laaditud zip-failina.`),
   failed: "Faili tegemine ebaõnnestus. Proovi uuesti.",
-  note: "PDF-i tekst on joonistatud kujunditena: midagi pole vaja installida ja tähed on alati samad. Teksti ei saa valida ega otsida. PDF on A4, ühtlased RGB-värvid, pilte pole.",
+  note: "PDF-i tekst on joonistatud kujunditena: midagi pole vaja installida ja tähed on alati samad. Teksti ei saa valida ega otsida. PDF on A4. Must on puhas mustriks (CMYK 0,0,0,100) ja valge on ilma värvita; teised värvid on RGB. Pilte pole.",
 };
 
 export const utmTool: typeof En.utmTool = {

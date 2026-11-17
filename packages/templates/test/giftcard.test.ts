@@ -177,6 +177,38 @@ describe("layout", () => {
 });
 
 
+describe("print colours", () => {
+  const fills = (d: ReturnType<typeof layoutCard>) => new Set(d.shapes.map((x) => x.fill));
+
+  test("on the printed card every neutral text is pure black: no greys", () => {
+    for (const printStyle of PRINT_STYLES) {
+      const f = fills(layoutCard("print", { ...spec, printStyle }, fonts));
+      expect(f.has("#2a2a2d"), printStyle).toBe(false); // the toolkit's ink grey
+      expect(f.has("#67686f"), printStyle).toBe(false); // the quiet grey
+    }
+    expect(fills(layoutCard("print", { ...spec, printStyle: "white" }, fonts)).has("#000000")).toBe(true);
+    expect(fills(layoutBack({ ...spec, printStyle: "white" })).has("#2a2a2d")).toBe(false);
+  });
+
+  test("the picture for e-mail keeps the toolkit's ink (it is for the screen)", () => {
+    expect(fills(layoutCard("email", { ...spec, emailStyle: "white" }, fonts)).has("#2a2a2d")).toBe(true);
+  });
+
+  test("the PDF writes pure black as CMYK 0,0,0,100 and pure white as 0,0,0,0, and no black or white in RGB", async () => {
+    const text = new TextDecoder("latin1").decode(await renderPdf([layoutCard("print", { ...spec, printStyle: "white" }, fonts), layoutCard("print", { ...spec, printStyle: "colour" }, fonts)], { compress: false }));
+    expect(text).toMatch(/^0 0 0 1 k$/m);
+    expect(text).toMatch(/^0 0 0 0 k$/m);
+    expect(text).not.toMatch(/^0 0 0 rg$/m);
+    expect(text).not.toMatch(/^1 1 1 rg$/m);
+  });
+
+  test("the printed card is 1.2 times larger than the first design: the code block is 82 % of the page wide", () => {
+    const d = layoutCard("print", { ...spec, printStyle: "white" }, fonts);
+    const box = d.shapes.find((x) => x.stroke)!.cmds.filter((c) => c[0] !== "Z").map((c) => c[1] as number);
+    expect((Math.max(...box) - Math.min(...box)) / A4.width).toBeCloseTo(0.82, 1);
+  });
+});
+
 describe("pdf", () => {
   test("a plain PDF with the A4 page size, one page per drawing, and a cross-reference table that points at the right places", async () => {
     const bytes = await renderPdf([layoutCard("print", spec, fonts), layoutBack(spec)], { title: "Kinkekaart", compress: false });

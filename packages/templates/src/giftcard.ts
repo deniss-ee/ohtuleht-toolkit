@@ -2,7 +2,7 @@
 // shapes (the logo's paths, the text as outlines, a big circle at the bottom). The PDF writer and the canvas both just fill them,
 // so the preview, the PDF and the PNG can never disagree. No dependencies: fonts come in through the FontFace interface.
 import brand from "../../brand/brand.json" with { type: "json" };
-import { brandTextColor, contrast, readableOn } from "./colors.ts";
+import { brandTextColor, contrast, readableOn, withLightness } from "./colors.ts";
 
 // ---- Shapes ---------------------------------------------------------------------------------------------------------------
 // Absolute path commands, y pointing down, units of the drawing (points for the print card, pixels for the e-mail picture).
@@ -408,8 +408,8 @@ const mix = (a: string, b: string, t: number) => {
   const [r2, g2, b2] = rgbOf(b);
   return "#" + rgbOf(a).map((v, i) => Math.round(v + ([r2, g2, b2][i]! - v) * t).toString(16).padStart(2, "0")).join("");
 };
-// The page: white with 6 % of the title's colour in it.
-const tint = (color: string) => mix(WHITE, color, 0.06);
+// The page of the light look: the title's colour at 98 % lightness. Clean and pale: mixing a little of a dark colour into white goes grey.
+const tint = (color: string) => withLightness(color, 0.98);
 
 const K = 0.5522847498;
 
@@ -594,22 +594,25 @@ interface Palette {
 }
 
 // White: dark text on a light tint. Colour: white or black text (by the brand rule) on the title's colour, with the logo's one-colour version.
-function paletteOf(spec: GiftCardSpec, variant: "white" | "colour"): Palette {
+// For print (`print`) every neutral text is pure black, with no greys: the PDF writes it as CMYK 0,0,0,100.
+function paletteOf(spec: GiftCardSpec, variant: "white" | "colour", print = false): Palette {
   const color = spec.color;
+  const ink = print ? BLACK : INK;
+  const quiet = print ? BLACK : MUTED;
   if (variant === "white") {
     const page = tint(color);
     const accent = readableOn(color, WHITE, 3);
-    return { page, head: readableOn(color, page, 3), label: MUTED, body: { text: INK, highlight: readableOn(color, page, 4.5) }, muted: MUTED, date: INK, block: { fill: WHITE, line: accent, label: accent, code: INK }, logo: spec.logo };
+    return { page, head: readableOn(color, page, 3), label: quiet, body: { text: ink, highlight: readableOn(color, page, 4.5) }, muted: quiet, date: ink, block: { fill: WHITE, line: accent, label: accent, code: ink }, logo: spec.logo };
   }
   const c = onCircle(color);
   return {
     page: color,
     head: c.text,
-    label: mix(color, c.text, 0.8),
+    label: print ? c.text : mix(color, c.text, 0.8),
     body: c,
-    muted: mix(color, c.text, 0.85),
+    muted: print ? c.text : mix(color, c.text, 0.85),
     date: c.text,
-    block: { fill: mix(color, c.text, 0.1), line: c.text, label: mix(color, c.text, 0.85), code: c.text },
+    block: { fill: mix(color, c.text, 0.1), line: c.text, label: print ? c.text : mix(color, c.text, 0.85), code: c.text },
     logo: (c.text === WHITE ? spec.logoWhite : spec.logoBlack) ?? spec.logo,
   };
 }
@@ -620,18 +623,19 @@ const fullPage = (w: number, h: number, fill: string): Shape => ({ cmds: rect(0,
 function printCard(spec: GiftCardSpec, fonts: Fonts, variant: "white" | "colour"): Drawing {
   const { width: w, height: h } = A4;
   const cx = w / 2;
-  const k = paletteOf(spec, variant);
+  const k = paletteOf(spec, variant, true);
+  const S = 1.2; // everything 1.2 times larger than the first design; the page stays A4
   const code = spec.code.trim();
   const text = cardText(spec);
   const items: Item[] = [
-    labelItem(fonts, spec.copy.label, 13, cx, k.label),
-    logoItem(k.logo, cx, 0.5 * w, 0.095 * h),
-    headerItem(fonts, spec.header, k.head, cx, 0.8 * w, 0.16 * h, 40, 22),
-    ...(code ? [codeBlockItem(fonts, cx, 0.7 * w, 118, spec.copy.codeLabel, code, k.block, 54, 10, 1.6)] : []),
-    paragraphItem(fonts, segs(text.order, k.body), 17, cx, 0.62 * w),
-    ...(text.valid.length ? [paragraphItem(fonts, segs(text.valid, { text: k.muted, highlight: k.date }, "bold"), 15, cx, 0.7 * w)] : []),
+    labelItem(fonts, spec.copy.label, 13 * S, cx, k.label),
+    logoItem(k.logo, cx, 0.5 * S * w, 0.095 * S * h),
+    headerItem(fonts, spec.header, k.head, cx, 0.88 * w, 0.16 * S * h, 40 * S, 22 * S),
+    ...(code ? [codeBlockItem(fonts, cx, 0.82 * w, 118 * S, spec.copy.codeLabel, code, k.block, 54 * S, 10 * S, 1.6 * S)] : []),
+    paragraphItem(fonts, segs(text.order, k.body), 17 * S, cx, 0.74 * w),
+    ...(text.valid.length ? [paragraphItem(fonts, segs(text.valid, { text: k.muted, highlight: k.date }, "bold"), 15 * S, cx, 0.8 * w)] : []),
   ];
-  return { width: w, height: h, shapes: [fullPage(w, h, k.page), ...between(items, 30, 0, h)] };
+  return { width: w, height: h, shapes: [fullPage(w, h, k.page), ...between(items, 30 * S, 0, h)] };
 }
 
 // The picture for e-mail: only the logo and the code, as large as it goes. How long, until when and what to do are in the letter.
@@ -655,7 +659,7 @@ export function layoutCard(kind: Kind, spec: GiftCardSpec, fonts: Fonts): Drawin
 // The back of the card, for printing on both sides: the logo alone in the middle of the page, in the colours of the look.
 export function layoutBack(spec: GiftCardSpec): Drawing {
   const { width: w, height: h } = A4;
-  const k = paletteOf(spec, spec.printStyle ?? "white");
+  const k = paletteOf(spec, spec.printStyle ?? "white", true);
   const logo = logoItem(k.logo, w / 2, 0.55 * w, 0.28 * h);
   return { width: w, height: h, shapes: [fullPage(w, h, k.page), ...logo.draw(h / 2 - logo.height / 2)] };
 }

@@ -471,7 +471,7 @@ export const giftCard = {
   pdfDone: (cards: number) => `PDF with ${cards} card${cards === 1 ? "" : "s"} downloaded.`,
   mailDone: (n: number) => (n === 1 ? "Picture downloaded." : `${n} pictures downloaded as a zip.`),
   failed: "Could not make the file. Try again.",
-  note: "The text in the PDF is drawn as shapes: nothing to install, always the same letters. It cannot be selected or searched. The PDF is A4, flat RGB colours, no pictures.",
+  note: "The text in the PDF is drawn as shapes: nothing to install, always the same letters. It cannot be selected or searched. The PDF is A4. Black is pure black ink (CMYK 0,0,0,100) and white is no ink; the other colours are RGB. No pictures.",
 };
 
 export const utmTool = {

@@ -7,10 +7,13 @@ const enc = new TextEncoder();
 
 const n = (v: number) => (Math.round(v * 1000) / 1000).toString();
 
-// "#rrggbb" to the PDF colour operands, for example "0.9608 0 0"; add rg for a fill colour, RG for a line
-function rgb(hex: string): string {
+// "#rrggbb" as a PDF colour operator. Pure black is written as CMYK 0,0,0,100 (black ink only: no grey and no mixing of four inks
+// in print) and pure white as CMYK 0,0,0,0 (the paper: no ink). Every other colour is RGB. `fill` is true for a fill colour, false for a line.
+function colour(hex: string, fill: boolean): string {
+  if (hex === "#000000") return fill ? "0 0 0 1 k" : "0 0 0 1 K";
+  if (hex === "#ffffff") return fill ? "0 0 0 0 k" : "0 0 0 0 K";
   const v = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
-  return v.map((x) => n(Math.round(x * 10000) / 10000)).join(" ");
+  return v.map((x) => n(Math.round(x * 10000) / 10000)).join(" ") + (fill ? " rg" : " RG");
 }
 
 // The drawing as PDF drawing operators. PDF counts y from the bottom, the drawing from the top, so y is turned over.
@@ -20,8 +23,8 @@ export function contentOf(d: Drawing): string {
   for (const shape of d.shapes) {
     const s = shape.stroke;
     if (s) out.push("q");
-    if (shape.fill) out.push(`${rgb(shape.fill)} rg`);
-    if (s) out.push(`${rgb(s.color)} RG ${n(s.width)} w 0 J 0 j ${s.dash ? `[${n(s.dash[0])} ${n(s.dash[1])}] 0 d` : "[] 0 d"}`);
+    if (shape.fill) out.push(colour(shape.fill, true));
+    if (s) out.push(`${colour(s.color, false)} ${n(s.width)} w 0 J 0 j ${s.dash ? `[${n(s.dash[0])} ${n(s.dash[1])}] 0 d` : "[] 0 d"}`);
     for (const c of shape.cmds) {
       if (c[0] === "M") out.push(`${n(c[1])} ${y(c[2])} m`);
       else if (c[0] === "L") out.push(`${n(c[1])} ${y(c[2])} l`);

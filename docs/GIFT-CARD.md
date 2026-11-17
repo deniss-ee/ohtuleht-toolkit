@@ -19,13 +19,13 @@ The form is remembered in the browser. The preview shows the card and the pictur
 | | Printed card (A4) | E-mail picture (600x400) |
 |---|---|---|
 | Contents, top to bottom | Label `KINKEKAART`, logo, header (both lines), the **code block**, what to do (with the e-mail address), valid until | The **logo** and the **code block**. Nothing else: how long, until when and what to do are in the letter |
-| Layout | One column, centred, in the middle of the page, with the same gap (30 pt) between all parts | The same, with a 36 px gap; the code is 64 px |
+| Layout | One column, centred, in the middle of the page, with the same gap (36 pt) between all parts. Everything is drawn **1.2 times larger** than the first design (the page stays A4): code 65 pt, header up to 48 pt, code block 82 % of the page wide | The same, with a 36 px gap; the code is 64 px |
 
 **The code block** is a rounded box with a **dashed outline**; the small word `SALAKOOD` and the code stand in it, both centred (by the real edges of the letters, not by their advance widths) with the same room above and below. The code gets as large as the box allows. Without a code the block is left out (on the picture the logo then stands alone, larger).
 
 **Two looks, one layout.** Only the colours change, nothing moves (a test checks that every letter and logo path is at the same place):
 
-- **Light:** the page is a 6 % tint of the title's colour; the header, the label, the dashed line and the **e-mail address** are in the title's colour; the code box is white.
+- **Light:** the page is the title's colour at 98 % lightness (a clean pale tint; mixing a little of a dark colour into white goes grey); the header, the label, the dashed line and the **e-mail address** are in the title's colour; the code box is white.
 - **Colour:** the page is the title's colour; text is white or black by the brand rule (white from step 600; for other colours white when it reads at 3:1, else black); the logo is the title's **white or black version** (the design team's one-colour files, `titles/<id>-white.svg` and `-black.svg`), so no plate is needed behind it; the code box is a lighter tint with a dashed line in the text colour. The e-mail address is yellow where yellow reads, otherwise bold. In both looks the **date is set in bold**.
 
 - **Words** (Estonian) are in `apps/generator/src/giftcard-content.ts`: the label, `SALAKOOD`, the sentences of the printed card, the second-line buttons and the suggested header of each title. A part without a value is left out: no code, no "and the code"; no address, no "to the e-mail"; no date, no validity line.
@@ -35,7 +35,7 @@ How it was reached: the first drafts used circles, panels and a card with a shad
 
 ## The files
 
-- **PDF:** A4 exactly (595.276 x 841.89 pt, 210 x 297 mm). Vector, flat **RGB** colours, no pictures, no fonts to embed: the text is drawn as shapes, so it looks the same everywhere and cannot be selected or searched. About 30 KB a page. For a print shop that needs CMYK the PDF has to be converted there.
+- **PDF:** A4 exactly (595.276 x 841.89 pt, 210 x 297 mm). Vector, flat colours, no pictures, no fonts to embed: the text is drawn as shapes, so it looks the same everywhere and cannot be selected or searched. About 30 KB a page. **Colours:** on the printed card every neutral text (label, sentences, code, date) is **pure black, written as CMYK 0,0,0,100** (black ink only, no grey and no mixing of four inks); pure white is written as CMYK 0,0,0,0 (the paper). The header, the dashed line, the pages in the title's colour and the logo's colours are **RGB**: the print shop's converter turns them into CMYK, so for exact brand colours give the shop the CMYK values. The picture for e-mail is screen only and keeps the toolkit's ink grey.
 - **Picture:** PNG, 600x400 (or 1200x800). Flat colours and text stay clean in PNG, and a palette reduction (256 colours, for example in Squoosh) shrinks it a lot. Convert if the mail program wants JPG. The code is inside the picture: put it in the text of the letter too, because many mail programs block pictures at first.
 - File names: `kinkekaart_<title>_<date>.pdf`, `kinkekaart_<title>_<code>_600x400_<date>.png`.
 
@@ -64,4 +64,4 @@ The tool loads about 245 KB of script (`opentype.js`, only when it is opened) an
 - The looks are variants of one function per size in `giftcard.ts` (`printCard`, `emailCard`, each with `"white"` or `"colour"`, colours from `paletteOf`); another look is one more name in `PRINT_STYLES` / `EMAIL_STYLES`, a branch in `paletteOf` and the interface texts. The layout is shared, so a new look cannot move anything.
 - The code is not checked for being unique or stored anywhere: it is only printed.
 - Logos with arcs in their paths are refused (`import-titles.mjs` writes none).
-- The PDF is RGB; a print-ready CMYK version needs a converter.
+- Only black and white are CMYK in the PDF; the colours of the titles are RGB. A fully CMYK PDF would need exact CMYK values for each title colour from the brand owner.
