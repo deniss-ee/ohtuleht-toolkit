@@ -65,7 +65,7 @@ yarn workspace @ohtuleht/banner-runtime size      # fails above the 3 KB budget
 cd apps/api && yarn wrangler dev --port 8788      # API locally
 ```
 
-Tests exist for the templates (`yarn test`: every banner format against a golden file, plus the picture, colour and fade rules). A deliberate template change: `yarn workspace @ohtuleht/templates test -u`, then explain the golden diff in the PR. There is no lint or CI yet, and no tests for the app: typecheck, build, and check the change in the browser (375 px and desktop, console clean).
+Tests exist for the templates (`yarn test`: every banner format against a golden file, plus the picture, colour and fade rules). A deliberate template change: `yarn workspace @ohtuleht/templates test -u`, then explain the golden diff in the PR. There is no lint or CI yet, and only the zip round trips as tests for the app (`apps/generator/test`): typecheck, build, and check the change in the browser (375 px and desktop, console clean).
 
 ## Which model for what
 
