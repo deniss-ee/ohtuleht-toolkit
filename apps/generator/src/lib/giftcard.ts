@@ -2,7 +2,7 @@
 // The drawing itself (layout, the PDF writer) is in packages/templates: the preview, the PDF and the PNG all come from one drawing.
 import { parse } from "opentype.js";
 import { titles, type Title } from "@ohtuleht/brand";
-import { EMAIL, faceFrom, renderPdf, type Drawing, type FontStyle, type Fonts } from "@ohtuleht/templates";
+import { EMAIL, EMAIL_STYLES, PRINT_STYLES, faceFrom, renderPdf, type Drawing, type EmailStyle, type FontStyle, type Fonts, type PrintStyle } from "@ohtuleht/templates";
 import firaLatin600 from "@fontsource/fira-sans/files/fira-sans-latin-600-normal.woff?url";
 import firaExt600 from "@fontsource/fira-sans/files/fira-sans-latin-ext-600-normal.woff?url";
 import interLatin400 from "@fontsource/inter/files/inter-latin-400-normal.woff?url";
@@ -15,7 +15,7 @@ import { DEFAULT_PERIOD, suggestHeader } from "@/giftcard-content";
 import { stampedName } from "@/lib/format";
 import { download } from "@/lib/zip";
 
-export { titles, type Title };
+export { EMAIL_STYLES, PRINT_STYLES, titles, type Title };
 
 // ---- Fonts and logos (fetched when the tool is opened, not before) ------------------------------------------------------------
 const FONT_URLS: Record<FontStyle, string[]> = {
@@ -58,6 +58,8 @@ export interface CardForm {
   until: string; // yyyy-mm-dd, as the date box gives it
   back: boolean; // also a back page with the logo (printing on both sides)
   sharp: boolean; // the picture for e-mail at twice the size (1200x800, shown at 600x400)
+  printStyle: PrintStyle; // the look of the printed card
+  emailStyle: EmailStyle; // the look of the picture for e-mail
 }
 
 const lastDayOfYear = () => `${new Date().getFullYear()}-12-31`;
@@ -65,7 +67,7 @@ const FIRST = titles[0]!;
 
 export function newForm(): CardForm {
   const t = titles.find((x) => x.id === "ripsik") ?? FIRST;
-  return { title: t.id, header: suggestHeader(t.id, t.name), headerEdited: false, color: "", code: "", count: 1, email: "", until: lastDayOfYear(), back: false, sharp: false };
+  return { title: t.id, header: suggestHeader(t.id, t.name), headerEdited: false, color: "", code: "", count: 1, email: "", until: lastDayOfYear(), back: false, sharp: false, printStyle: PRINT_STYLES[0], emailStyle: EMAIL_STYLES[0] };
 }
 
 export const titleOf = (id: string): Title => titles.find((t) => t.id === id) ?? FIRST;

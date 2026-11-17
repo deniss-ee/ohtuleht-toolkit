@@ -3,6 +3,7 @@ import { ChevronsUpDown, Download, FileText, Gift, Image, Loader2, Mail, Palette
 import { toast } from "sonner";
 import { layoutBack, layoutCard, type Drawing, type Fonts, type GiftCardSpec } from "@ohtuleht/templates";
 import { AutoColorField } from "@/components/editor/ColorField";
+import { Choice } from "@/components/editor/Fields";
 import { Section, SwitchRow } from "@/components/editor/FormParts";
 import { ToolShell } from "@/components/editor/ToolShell";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Textarea } from "@/components/ui/textarea";
 import { giftCard as t, ui } from "@/content";
 import { COPY, PERIODS } from "@/giftcard-content";
-import { codesOf, downloadEmailPictures, downloadPdf, formatUntil, loadFonts, loadLogo, logoAddress, MAX_CARDS, newForm, paint, titleOf, titles, validEmail, withTitle, type CardForm } from "@/lib/giftcard";
+import { EMAIL_STYLES, PRINT_STYLES, codesOf, downloadEmailPictures, downloadPdf, formatUntil, loadFonts, loadLogo, logoAddress, MAX_CARDS, newForm, paint, titleOf, titles, validEmail, withTitle, type CardForm } from "@/lib/giftcard";
 
 const KEY = "ol-giftcard";
 
@@ -20,7 +21,14 @@ const KEY = "ol-giftcard";
 function load(): CardForm {
   try {
     const saved = JSON.parse(localStorage.getItem(KEY) ?? "{}") as Partial<CardForm>;
-    return { ...newForm(), ...saved, title: titles.some((x) => x.id === saved.title) ? saved.title! : newForm().title };
+    const fresh = newForm();
+    return {
+      ...fresh,
+      ...saved,
+      title: titles.some((x) => x.id === saved.title) ? saved.title! : fresh.title,
+      printStyle: PRINT_STYLES.find((s) => s === saved.printStyle) ?? fresh.printStyle,
+      emailStyle: EMAIL_STYLES.find((s) => s === saved.emailStyle) ?? fresh.emailStyle,
+    };
   } catch {
     return newForm();
   }
@@ -111,15 +119,15 @@ export function GiftCard({ onBack }: { onBack: () => void }) {
   const color = form.color || title.main;
   const until = formatUntil(form.until);
 
-  const specFor = (c: string): GiftCardSpec => ({ header: form.header, logo: logo!.svg, color, code: c, email: form.email, until, copy: COPY });
+  const specFor = (c: string): GiftCardSpec => ({ header: form.header, logo: logo!.svg, color, code: c, email: form.email, until, copy: COPY, printStyle: form.printStyle, emailStyle: form.emailStyle });
   const ready = !!fonts && !!logo && logo.id === title.id;
 
   // Only the card on show is laid out while typing; all of them are made when a file is made.
   const shown = useMemo(() => {
     if (!fonts || !logo || logo.id !== title.id) return null;
-    const spec: GiftCardSpec = { header: form.header, logo: logo.svg, color, code, email: form.email, until, copy: COPY };
+    const spec: GiftCardSpec = { header: form.header, logo: logo.svg, color, code, email: form.email, until, copy: COPY, printStyle: form.printStyle, emailStyle: form.emailStyle };
     return { print: layoutCard("print", spec, fonts), mail: layoutCard("email", spec, fonts) };
-  }, [fonts, logo, title.id, form.header, color, code, form.email, until]);
+  }, [fonts, logo, title.id, form.header, color, code, form.email, until, form.printStyle, form.emailStyle]);
 
   const problems = [
     ...(form.header.trim() ? [] : [{ field: "gc-header", message: t.needHeader }]),
@@ -227,6 +235,13 @@ export function GiftCard({ onBack }: { onBack: () => void }) {
                   <Label htmlFor="gc-until">{t.untilLabel}</Label>
                   <Input id="gc-until" type="date" value={form.until} onChange={(e) => set({ until: e.target.value })} />
                 </div>
+              </div>
+            </Section>
+
+            <Section title={t.styleSection} description={t.styleHint} icon={Palette} tone="yellow">
+              <div className="space-y-4">
+                <Choice label={t.printStyleLabel} value={form.printStyle} options={PRINT_STYLES.map((id) => ({ id, label: t.printStyles[id].name, hint: t.printStyles[id].hint }))} onChange={(printStyle) => set({ printStyle })} />
+                <Choice label={t.emailStyleLabel} value={form.emailStyle} options={EMAIL_STYLES.map((id) => ({ id, label: t.emailStyles[id].name, hint: t.emailStyles[id].hint }))} onChange={(emailStyle) => set({ emailStyle })} />
               </div>
             </Section>
 

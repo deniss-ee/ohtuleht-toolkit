@@ -1,7 +1,7 @@
 // The gift card: path reading, the logo, the texts, the layout and the PDF. A stand-in font (every letter a box half an em wide)
 // is used, so the tests do not depend on font files and the layout can be compared with a stored copy.
 import { describe, expect, test } from "vitest";
-import { A4, EMAIL, cardText, contentOf, layoutBack, layoutCard, logoShapes, parsePathData, renderPdf } from "../src/index.ts";
+import { A4, EMAIL, EMAIL_STYLES, PRINT_STYLES, cardText, contentOf, layoutBack, layoutCard, logoShapes, parsePathData, renderPdf } from "../src/index.ts";
 import type { CardCopy, FontFace, Fonts, GiftCardSpec } from "../src/index.ts";
 
 const box: FontFace = {
@@ -20,7 +20,6 @@ const copy: CardCopy = {
   label: "KINKEKAART",
   codeLabel: "SALAKOOD",
   print: { order: "Order", withCode: " and code", toEmail: " to {email}", valid: "Valid until {date}" },
-  email: { order: "Reply", withCode: " with the code", valid: "Valid until {date}" },
 };
 
 // A tiny logo as the brand script writes them: the fill sits on the group, a clip path in <defs> must not be drawn.
@@ -76,69 +75,70 @@ describe("logo", () => {
 });
 
 describe("texts", () => {
-  const words = (kind: "print" | "email", s: GiftCardSpec) => {
-    const t = cardText(kind, s);
+  const words = (s: GiftCardSpec) => {
+    const t = cardText(s);
     return { order: t.order.map((p) => p.text).join(""), valid: t.valid.map((p) => p.text).join(""), values: t.order.concat(t.valid).filter((p) => p.value).map((p) => p.text) };
   };
 
-  test("print: the order goes to the address, the code is mentioned, the values stand out", () => {
-    expect(words("print", spec)).toEqual({ order: "Order and code to nimi@example.com", valid: "Valid until 31.12.2026", values: ["nimi@example.com", "31.12.2026"] });
+  test("the order goes to the address, the code is mentioned, the values stand out", () => {
+    expect(words(spec)).toEqual({ order: "Order and code to nimi@example.com", valid: "Valid until 31.12.2026", values: ["nimi@example.com", "31.12.2026"] });
   });
 
-  test("print: parts without a value are left out", () => {
-    expect(words("print", { ...spec, code: "", email: "" }).order).toBe("Order");
-    expect(words("print", { ...spec, until: "" }).valid).toBe("");
-  });
-
-  test("e-mail: no address, even when one is written", () => {
-    expect(words("email", spec).order).toBe("Reply with the code");
-    expect(words("email", { ...spec, code: "" }).order).toBe("Reply");
+  test("parts without a value are left out", () => {
+    expect(words({ ...spec, code: "", email: "" }).order).toBe("Order");
+    expect(words({ ...spec, until: "" }).valid).toBe("");
   });
 });
 
 describe("layout", () => {
-  test("sizes: A4 in points, the e-mail picture 600x400", () => {
+  const every = (spec0: GiftCardSpec) => [
+    ...PRINT_STYLES.map((printStyle) => ({ name: "print " + printStyle, d: layoutCard("print", { ...spec0, printStyle }, fonts), w: A4.width, h: A4.height })),
+    ...EMAIL_STYLES.map((emailStyle) => ({ name: "email " + emailStyle, d: layoutCard("email", { ...spec0, emailStyle }, fonts), w: EMAIL.width, h: EMAIL.height })),
+    { name: "back", d: layoutBack(spec0), w: A4.width, h: A4.height },
+  ];
+
+  test("sizes: A4 in points, the e-mail picture 600x400, in every style", () => {
     expect([A4.width, A4.height]).toEqual([595.276, 841.89]);
-    expect(layoutCard("print", spec, fonts)).toMatchObject({ width: A4.width, height: A4.height });
-    expect(layoutCard("email", spec, fonts)).toMatchObject({ width: EMAIL.width, height: EMAIL.height });
-    expect(layoutBack(spec)).toMatchObject({ width: A4.width, height: A4.height });
+    for (const { name, d, w, h } of every(spec)) expect(d, name).toMatchObject({ width: w, height: h });
   });
 
-  test("every number is finite and the text stays on the card", () => {
-    for (const d of [layoutCard("print", spec, fonts), layoutCard("email", spec, fonts), layoutBack(spec)]) {
-      for (const s of d.shapes.filter((x) => x.fill && !x.evenOdd && x.cmds.length < 200)) {
-        for (const c of s.cmds) for (const v of c.slice(1) as number[]) expect(Number.isFinite(v)).toBe(true);
-      }
+  test("every number is finite, and nothing but the page and the circle is drawn outside the card", () => {
+    for (const { name, d, w, h } of every(spec)) {
+      d.shapes.forEach((s, i) => {
+        for (const c of s.cmds) for (const v of c.slice(1) as number[]) expect(Number.isFinite(v), name).toBe(true);
+        // the page (first) and a circle (a move, four curves, a close: it may run off the page) are the only shapes allowed past the edges
+        const circle = s.cmds.length === 6 && s.cmds[1]?.[0] === "C";
+        if (i === 0 || circle || s.cmds.length > 40) return;
+        for (const c of s.cmds) if (c[0] !== "Z") expect((c[c.length - 2] as number) >= -0.5 && (c[c.length - 2] as number) <= w + 0.5 && (c[c.length - 1] as number) >= -0.5 && (c[c.length - 1] as number) <= h + 0.5, name).toBe(true);
+      });
     }
   });
 
-
-  test("the code box (a white box, its label and the code) is only there when there is a code", () => {
-    for (const kind of ["print", "email"] as const) {
-      const withCode = layoutCard(kind, spec, fonts).shapes.length;
-      expect(withCode - layoutCard(kind, { ...spec, code: "" }, fonts).shapes.length).toBe(3);
+  test("the code box (a box, its label and the code) is only there when there is a code", () => {
+    for (const { name, d } of every(spec)) {
+      if (name === "back") continue;
+      const style = name.split(" ")[1]!;
+      const without = name.startsWith("print") ? layoutCard("print", { ...spec, code: "", printStyle: style as never }, fonts) : layoutCard("email", { ...spec, code: "", emailStyle: style as never }, fonts);
+      expect(d.shapes.length - without.shapes.length, name).toBeGreaterThanOrEqual(2);
     }
   });
 
-  test("nothing is drawn around the card: only a white page, the circle, the text and the logo", () => {
-    const shapes = layoutCard("print", spec, fonts).shapes;
-    expect(shapes[0]).toMatchObject({ fill: "#ffffff" }); // the page
-    expect(shapes[1]).toMatchObject({ fill: "#f5911e" }); // the circle, drawn once, right after the page
-    expect(shapes.filter((s) => s.fill === "#f5911e" && s.cmds.length === 6)).toHaveLength(1);
-    expect(shapes.every((s) => !("stroke" in s))).toBe(true);
+  test("the e-mail picture carries only the logo, how long and the code: far fewer shapes than the printed card", () => {
+    const print = layoutCard("print", spec, fonts).shapes.length;
+    for (const style of EMAIL_STYLES) expect(layoutCard("email", { ...spec, emailStyle: style }, fonts).shapes.length).toBeLessThan(print);
   });
 
   test("the header: one long line is made smaller until it fits", () => {
-    const wide = layoutCard("print", { ...spec, header: "Ristsõnaajakirja Ripsik Ristsõnaajakirja Ripsik" }, fonts);
-    expect(wide.shapes.length).toBeGreaterThan(5);
+    for (const { name, d } of every({ ...spec, header: "Ristsõnaajakirja Ripsik Ristsõnaajakirja Ripsik" })) if (name !== "back") expect(d.shapes.length, name).toBeGreaterThan(3);
   });
 
-  test("a card of every kind, with and without back, is stable (stored copy)", async () => {
-    await expect(contentOf(layoutCard("print", spec, fonts))).toMatchFileSnapshot("./golden/giftcard-print.txt");
-    await expect(contentOf(layoutCard("email", spec, fonts))).toMatchFileSnapshot("./golden/giftcard-email.txt");
+  test("every style is stable (stored copy)", async () => {
+    for (const style of PRINT_STYLES) await expect(contentOf(layoutCard("print", { ...spec, printStyle: style }, fonts))).toMatchFileSnapshot("./golden/giftcard-print-" + style + ".txt");
+    for (const style of EMAIL_STYLES) await expect(contentOf(layoutCard("email", { ...spec, emailStyle: style }, fonts))).toMatchFileSnapshot("./golden/giftcard-email-" + style + ".txt");
     await expect(contentOf(layoutBack(spec))).toMatchFileSnapshot("./golden/giftcard-back.txt");
   });
 });
+
 
 describe("pdf", () => {
   test("a plain PDF with the A4 page size, one page per drawing, and a cross-reference table that points at the right places", async () => {

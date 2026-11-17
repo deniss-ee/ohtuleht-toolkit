@@ -339,8 +339,7 @@ function paragraphs(fonts: Fonts, paras: Seg[][], size: number, lineHeight: numb
 export interface CardCopy {
   label: string; // KINKEKAART
   codeLabel: string; // SALAKOOD, above the code in its box
-  print: { order: string; withCode: string; toEmail: string; valid: string };
-  email: { order: string; withCode: string; valid: string };
+  print: { order: string; withCode: string; toEmail: string; valid: string }; // the sentences of the printed card
 }
 
 export type Kind = "print" | "email";
@@ -348,11 +347,13 @@ export type Kind = "print" | "email";
 export interface GiftCardSpec {
   header: string; // the title of the card, lines separated by a line break
   logo: string; // the SVG text of the title's logo
-  color: string; // main colour: the circle, the header and the lines around the card
+  color: string; // main colour: the circle, the header
   code: string; // secret code, "" = none (no code box)
   email: string; // where to send the order (print only), "" = none
   until: string; // valid until, as it is written on the card, "" = none
   copy: CardCopy;
+  printStyle?: PrintStyle; // the look of the printed card (default: the first)
+  emailStyle?: EmailStyle; // the look of the picture for e-mail (default: the first)
 }
 
 export interface Piece {
@@ -371,12 +372,12 @@ export function fillCopy(template: string, values: Record<string, string>): Piec
     });
 }
 
-// The two texts on the card (also what the tests read): what to do to order, and until when the card is valid.
+// The two texts of the printed card (also what the tests read): what to do to order, and until when the card is valid.
 // A part without a value is left out: no code, no "and the code"; no address, no "to e-mail"; no date, no validity line.
-export function cardText(kind: Kind, spec: GiftCardSpec): { order: Piece[]; valid: Piece[] } {
+export function cardText(spec: GiftCardSpec): { order: Piece[]; valid: Piece[] } {
   const values = { email: spec.email.trim(), date: spec.until.trim() };
-  const c = spec.copy[kind];
-  const order = c.order + (spec.code.trim() ? c.withCode : "") + (kind === "print" && values.email ? spec.copy.print.toEmail : "");
+  const c = spec.copy.print;
+  const order = c.order + (spec.code.trim() ? c.withCode : "") + (values.email ? c.toEmail : "");
   return { order: fillCopy(order, values), valid: values.date ? fillCopy(c.valid, values) : [] };
 }
 
@@ -389,6 +390,15 @@ const YELLOW = "#ffe500"; // the highlight on dark colours
 const ink = (step: string) => (brand.colors.find((c) => c.name === "Ink Gray")!.steps as Record<string, string>)[step]!.toLowerCase();
 const INK = ink("950");
 const MUTED = ink("700");
+
+const rgbOf = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+// t = 0 is a, t = 1 is b
+const mix = (a: string, b: string, t: number) => {
+  const [r2, g2, b2] = rgbOf(b);
+  return "#" + rgbOf(a).map((v, i) => Math.round(v + ([r2, g2, b2][i]! - v) * t).toString(16).padStart(2, "0")).join("");
+};
+// The page: white with 6 % of the title's colour in it.
+const tint = (color: string) => mix(WHITE, color, 0.06);
 
 const K = 0.5522847498;
 
@@ -423,19 +433,9 @@ function roundRect(x: number, y: number, w: number, h: number, r: number): Cmd[]
   ];
 }
 
-// The logo fitted into a box. x is its centre, its left edge or its right edge, as align says.
-function logoDrawing(svg: string, x: number, top: number, bottom: number, maxW: number, align: "center" | "left" | "right" = "center"): Shape[] {
-  const logo = logoShapes(svg);
-  const scale = Math.min(maxW / logo.width, (bottom - top) / logo.height);
-  const w = logo.width * scale;
-  const dx = align === "center" ? x - w / 2 : align === "left" ? x : x - w;
-  const dy = (top + bottom) / 2 - (logo.height * scale) / 2;
-  return logo.shapes.map((s) => ({ ...s, cmds: place(s.cmds, scale, dx, dy) }));
-}
-
 // ---- The look --------------------------------------------------------------------------------------------------------------
-// The look of the toolkit: white, plenty of room, Inter for the text, Fira Sans for the headline, the colour of the title in one big
-// circle at the bottom. Nothing around the card.
+// The look of the toolkit: a light tint of the title's colour as the page, Inter for the text, Fira Sans for the headline, the colour of
+// the title in one big circle (or one panel). Nothing around the card.
 
 // The text colour on the circle: white or black as the brand rule says (for other colours: white when it reads at 3:1, else black);
 // the values stand out in yellow where that reads, else just bold.
@@ -446,136 +446,294 @@ function onCircle(color: string): { text: string; highlight: string } {
 
 const segs = (pieces: Piece[], c: { text: string; highlight: string }): Seg[] => pieces.map((p) => (p.value ? { text: p.text, style: "semibold" as FontStyle, fill: c.highlight } : { text: p.text, style: "regular" as FontStyle, fill: c.text }));
 
-// The secret code in a white box on the circle: a small label above, the code big.
-function codeBox(fonts: Fonts, cx: number, top: number, w: number, h: number, label: string, code: string, color: string, size: { label: number; code: number }): Shape[] {
-  const accent = readableOn(color, WHITE, 3);
-  const tracking = 0.16;
-  const lw = width(fonts, label, "semibold", size.label, tracking) - tracking * size.label;
-  const cw = width(fonts, code, "bold", size.code);
-  return [
-    { cmds: roundRect(cx - w / 2, top, w, h, Math.min(16, h * 0.2)), fill: WHITE },
-    { cmds: outline(fonts, label, "semibold", size.label, cx - lw / 2, top + h * 0.3, tracking), fill: accent },
-    { cmds: outline(fonts, code, "bold", size.code, cx - cw / 2, top + h * 0.8), fill: INK },
-  ];
+// ---- Building blocks: pieces that know their height, stacked and centred ----------------------------------------------------
+interface Item {
+  height: number;
+  draw(top: number): Shape[];
 }
 
-// The header: every line the same size, in the title's colour, in Fira Sans. The size is the largest that fits.
-function header(fonts: Fonts, text: string, color: string, x: number, top: number, maxW: number, maxH: number, maxSize: number, minSize: number, align: Align): { shapes: Shape[]; bottom: number } {
+// Items one below the other with `gap` between them.
+function stack(items: Item[], gap: number): Item {
+  const height = items.reduce((sum, it) => sum + it.height, 0) + gap * Math.max(0, items.length - 1);
+  return {
+    height,
+    draw(top) {
+      let y = top;
+      return items.flatMap((it) => {
+        const shapes = it.draw(y);
+        y += it.height + gap;
+        return shapes;
+      });
+    },
+  };
+}
+
+// The items stacked and placed in the middle of the space between `from` and `to`.
+const between = (items: Item[], gap: number, from: number, to: number): Shape[] => {
+  const s = stack(items, gap);
+  return s.draw(from + (to - from - s.height) / 2);
+};
+
+function fitSize(fonts: Fonts, text: string, style: FontStyle, maxW: number, maxSize: number, minSize = 10): number {
+  let size = maxSize;
+  while (size > minSize && width(fonts, text, style, size) > maxW) size -= 0.5;
+  return size;
+}
+
+// One line of text. x is its centre, or its left edge.
+function lineItem(fonts: Fonts, text: string, style: FontStyle, size: number, x: number, fill: string, align: Align = "center", tracking = 0): Item {
+  return {
+    height: size * 0.8,
+    draw: (top) => {
+      const w = width(fonts, text, style, size, tracking) - tracking * size;
+      return [{ cmds: outline(fonts, text, style, size, align === "center" ? x - w / 2 : x, top + size * 0.78, tracking), fill }];
+    },
+  };
+}
+
+// The label above the header: small capitals, spaced.
+const labelItem = (fonts: Fonts, text: string, size: number, x: number, fill: string, align: Align = "center") => lineItem(fonts, text, "semibold", size, x, fill, align, 0.16);
+
+// The header: every line the same size, Fira Sans. The size is the largest that fits.
+function headerItem(fonts: Fonts, text: string, fill: string, x: number, maxW: number, maxH: number, maxSize: number, minSize: number, align: Align): Item {
   const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
-  if (!lines.length) return { shapes: [], bottom: top };
   const lineHeight = 1.18;
   let size = maxSize;
-  while (size > minSize && (Math.max(...lines.map((l) => width(fonts, l, "title", size))) > maxW || lines.length * size * lineHeight > maxH)) size -= 0.5;
-  const fill = readableOn(color, WHITE, 3); // large text: 3:1 is enough
-  const shapes = lines.map((line, i) => {
-    const w = width(fonts, line, "title", size);
-    return { cmds: outline(fonts, line, "title", size, align === "center" ? x - w / 2 : x, top + size * 0.82 + i * size * lineHeight), fill };
-  });
-  return { shapes, bottom: top + size * 0.82 + (lines.length - 1) * size * lineHeight + size * 0.2 };
+  while (size > minSize && (Math.max(0, ...lines.map((l) => width(fonts, l, "title", size))) > maxW || lines.length * size * lineHeight > maxH)) size -= 0.5;
+  return {
+    height: lines.length ? (lines.length - 1) * size * lineHeight + size * 0.9 : 0,
+    draw: (top) =>
+      lines.map((line, i) => {
+        const w = width(fonts, line, "title", size);
+        return { cmds: outline(fonts, line, "title", size, align === "center" ? x - w / 2 : x, top + size * 0.82 + i * size * lineHeight), fill };
+      }),
+  };
 }
 
-// ---- The cards ------------------------------------------------------------------------------------------------------------
+// A paragraph (the pieces are styled words), wrapped to maxW.
+function paragraphItem(fonts: Fonts, parts: Seg[], size: number, x: number, maxW: number, align: Align = "center"): Item {
+  const m = paragraphs(fonts, [parts], size, 1.35, 0, x, 0, maxW, align);
+  return { height: parts.length ? m.height : 0, draw: (top) => paragraphs(fonts, [parts], size, 1.35, 0, x, top + size * 0.78, maxW, align).shapes };
+}
+
+// The logo, as large as the box allows. x is its centre, its left edge or its right edge.
+function logoItem(svg: string, x: number, maxW: number, maxH: number, align: Align | "right" = "center"): Item & { width: number } {
+  const logo = logoShapes(svg);
+  const scale = Math.min(maxW / logo.width, maxH / logo.height);
+  const w = logo.width * scale;
+  const dx = align === "center" ? x - w / 2 : align === "left" ? x : x - w;
+  return { height: logo.height * scale, width: w, draw: (top) => logo.shapes.map((s) => ({ ...s, cmds: place(s.cmds, scale, dx, top) })) };
+}
+
+// The logo on a white rounded plate, for when the page behind it is coloured.
+function logoPlateItem(svg: string, cx: number, maxW: number, maxH: number, pad: number): Item {
+  const logo = logoItem(svg, cx, maxW, maxH);
+  const w = logo.width + 2 * pad;
+  const h = logo.height + 2 * pad;
+  return { height: h, draw: (top) => [{ cmds: roundRect(cx - w / 2, top, w, h, Math.min(22, h * 0.14)), fill: WHITE }, ...logo.draw(top + pad)] };
+}
+
+interface BoxLook {
+  box: string; // the box
+  label: string; // the small word above the code
+  code: string;
+}
+
+// The secret code in a box: a small label above, the code big. The code gets as large as the box allows.
+function codeBoxItem(fonts: Fonts, cx: number, w: number, h: number, label: string, code: string, look: BoxLook, maxCode: number, labelSize: number): Item {
+  const tracking = 0.16;
+  const size = fitSize(fonts, code, "bold", w - 48, maxCode, 14);
+  return {
+    height: h,
+    draw: (top) => {
+      const lw = width(fonts, label, "semibold", labelSize, tracking) - tracking * labelSize;
+      const cw = width(fonts, code, "bold", size);
+      return [
+        { cmds: roundRect(cx - w / 2, top, w, h, Math.min(18, h * 0.2)), fill: look.box },
+        { cmds: outline(fonts, label, "semibold", labelSize, cx - lw / 2, top + h * 0.3, tracking), fill: look.label },
+        { cmds: outline(fonts, code, "bold", size, cx - cw / 2, top + h * 0.8), fill: look.code },
+      ];
+    },
+  };
+}
+
+// ---- The printed card: three styles -----------------------------------------------------------------------------------------
 export const A4 = { width: 595.276, height: 841.89 }; // points (210 x 297 mm)
 export const EMAIL = { width: 600, height: 400 }; // pixels
 
-// The printed card: label, header, the logo, then the circle with what to do, the code and the date.
-function printCard(spec: GiftCardSpec, fonts: Fonts): Drawing {
+export const PRINT_STYLES = ["disc", "panel", "top"] as const;
+export type PrintStyle = (typeof PRINT_STYLES)[number];
+export const EMAIL_STYLES = ["disc", "centre", "split"] as const;
+export type EmailStyle = (typeof EMAIL_STYLES)[number];
+
+// The page: a very light tint of the title's colour, so the card is not sterile white.
+const page = (w: number, h: number, color: string): Shape => ({ cmds: rect(0, 0, w, h), fill: tint(color) });
+
+type Look = { text: string; highlight: string };
+
+// What goes below the logo on the printed card: what to do, the code, until when. `maxW` is the width of the sentence.
+function details(fonts: Fonts, spec: GiftCardSpec, cx: number, c: Look, box: BoxLook, maxW: number): Item[] {
+  const text = cardText(spec);
+  const code = spec.code.trim();
+  return [
+    paragraphItem(fonts, segs(text.order, c), 18, cx, maxW),
+    ...(code ? [codeBoxItem(fonts, cx, Math.max(230, width(fonts, code, "bold", 34) + 80), 82, spec.copy.codeLabel, code, box, 34, 9.5)] : []),
+    ...(text.valid.length ? [paragraphItem(fonts, segs(text.valid, c), 16, cx, 0.7 * A4.width)] : []),
+  ];
+}
+
+// The label, the header and the logo: one tight group.
+const printGroup = (fonts: Fonts, spec: GiftCardSpec, cx: number, fill: string, label: string): Item[] => [
+  labelItem(fonts, spec.copy.label, 14, cx, label),
+  headerItem(fonts, spec.header, fill, cx, 0.82 * A4.width, 0.18 * A4.height, 40, 24, "center"),
+  logoItem(spec.logo, cx, 0.56 * A4.width, 0.13 * A4.height),
+];
+
+// "disc": everything in one column in the middle of the page; the sentence, the code and the date sit on a full circle.
+function printDisc(spec: GiftCardSpec, fonts: Fonts): Drawing {
   const { width: w, height: h } = A4;
   const cx = w / 2;
   const color = spec.color;
   const c = onCircle(color);
-  const circleTop = 0.53 * h;
-  const shapes: Shape[] = [
-    { cmds: rect(0, 0, w, h), fill: WHITE },
-    { cmds: circle(cx, circleTop + 1.27 * w, 1.27 * w), fill: color },
-  ];
-
-  const label = spec.copy.label;
-  const labelSize = 15;
-  const tracking = 0.16;
-  const lw = width(fonts, label, "semibold", labelSize, tracking) - tracking * labelSize;
-  shapes.push({ cmds: outline(fonts, label, "semibold", labelSize, cx - lw / 2, 0.095 * h, tracking), fill: MUTED });
-
-  const head = header(fonts, spec.header, color, cx, 0.125 * h, 0.84 * w, 0.2 * h, 42, 24, "center");
-  shapes.push(...head.shapes);
-  shapes.push(...logoDrawing(spec.logo, cx, Math.max(head.bottom + 36, 0.33 * h), circleTop - 40, 0.6 * w));
-
-  // in the circle: what to do, the code, until when; the block stands in the middle of the circle
-  const text = cardText("print", spec);
-  const orderSegs = segs(text.order, c);
-  const validSegs = segs(text.valid, c);
-  const orderSize = 19;
-  const validSize = 17;
-  const gap = 28;
-  const boxH = 88;
-  const code = spec.code.trim();
-  const order = paragraphs(fonts, [orderSegs], orderSize, 1.35, 0, cx, 0, 0.64 * w);
-  const valid = validSegs.length ? paragraphs(fonts, [validSegs], validSize, 1.3, 0, cx, 0, 0.7 * w) : null;
-  const total = order.height + (code ? gap + boxH : 0) + (valid ? gap + valid.height : 0);
-  const regionTop = circleTop + 40;
-  const regionBottom = h - 48;
-  let y = regionTop + (regionBottom - regionTop - total) / 2;
-  shapes.push(...paragraphs(fonts, [orderSegs], orderSize, 1.35, 0, cx, y + orderSize * 0.78, 0.64 * w).shapes);
-  y += order.height;
-  if (code) {
-    shapes.push(...codeBox(fonts, cx, y + gap, Math.max(230, width(fonts, code, "bold", 36) + 80), boxH, spec.copy.codeLabel, code, color, { label: 9.5, code: 36 }));
-    y += gap + boxH;
-  }
-  if (valid) shapes.push(...paragraphs(fonts, [validSegs], validSize, 1.3, 0, cx, y + gap + validSize * 0.78, 0.7 * w).shapes);
-  return { width: w, height: h, shapes };
+  const r = 0.34 * w;
+  const group = stack(printGroup(fonts, spec, cx, readableOn(color, tint(color), 3), MUTED), 26);
+  const gap = 30;
+  const top = (h - (group.height + gap + 2 * r)) / 2;
+  const cy = top + group.height + gap + r;
+  return {
+    width: w,
+    height: h,
+    shapes: [
+      page(w, h, color),
+      ...group.draw(top),
+      { cmds: circle(cx, cy, r), fill: color },
+      ...between(details(fonts, spec, cx, c, { box: WHITE, label: readableOn(color, WHITE, 3), code: INK }, 0.5 * w), 18, cy - 0.8 * r, cy + 0.8 * r),
+    ],
+  };
 }
 
-// The picture for e-mail is small on a phone, so the type is big. The label and the header on the top left, the logo on the top right,
-// the circle across the bottom: the words on its left, the code on its right.
-function emailCard(spec: GiftCardSpec, fonts: Fonts): Drawing {
-  const { width: w, height: h } = EMAIL;
-  const pad = 32;
+// "panel": the group, then one rounded panel of the title's colour with the details, like a card of the toolkit.
+function printPanel(spec: GiftCardSpec, fonts: Fonts): Drawing {
+  const { width: w, height: h } = A4;
+  const cx = w / 2;
   const color = spec.color;
   const c = onCircle(color);
-  const circleTop = 190;
-  const shapes: Shape[] = [
-    { cmds: rect(0, 0, w, h), fill: WHITE },
-    { cmds: circle(w / 2, circleTop + 1.3 * w, 1.3 * w), fill: color },
-  ];
+  const group = stack(printGroup(fonts, spec, cx, readableOn(color, tint(color), 3), MUTED), 26);
+  const inner = stack(details(fonts, spec, cx, c, { box: WHITE, label: readableOn(color, WHITE, 3), code: INK }, 0.5 * w), 20);
+  const panelH = inner.height + 2 * 44;
+  const panelW = 0.8 * w;
+  const gap = 34;
+  const top = (h - (group.height + gap + panelH)) / 2;
+  const panelTop = top + group.height + gap;
+  return {
+    width: w,
+    height: h,
+    shapes: [page(w, h, color), ...group.draw(top), { cmds: roundRect(cx - panelW / 2, panelTop, panelW, panelH, 30), fill: color }, ...inner.draw(panelTop + 44)],
+  };
+}
 
-  const label = spec.copy.label;
-  const labelSize = 13;
-  const tracking = 0.16;
-  shapes.push({ cmds: outline(fonts, label, "semibold", labelSize, pad, 48, tracking), fill: MUTED });
+// "top": the circle is at the top with the group on it (the logo on a white plate); the details are below, close under it.
+function printTop(spec: GiftCardSpec, fonts: Fonts): Drawing {
+  const { width: w, height: h } = A4;
+  const cx = w / 2;
+  const color = spec.color;
+  const c = onCircle(color);
+  const ink: Look = { text: INK, highlight: INK };
+  const group = stack([labelItem(fonts, spec.copy.label, 14, cx, c.text), headerItem(fonts, spec.header, c.text, cx, 0.82 * w, 0.18 * h, 40, 24, "center"), logoPlateItem(spec.logo, cx, 0.44 * w, 0.11 * h, 18)], 26);
+  const below = stack(details(fonts, spec, cx, ink, { box: color, label: c.text, code: c.text }, 0.6 * w), 22);
+  const discH = group.height + 2 * 0.06 * h;
+  const gap = 0.05 * h;
+  const used = discH + gap + below.height;
+  const start = Math.max(0, (h - used) / 2 - 0.12 * h); // the disc may start above the page: it is a circle running off the top
+  const R = 1.27 * w;
+  return {
+    width: w,
+    height: h,
+    shapes: [
+      page(w, h, color),
+      { cmds: circle(cx, start + discH - R, R), fill: color },
+      ...group.draw(start + 0.06 * h),
+      ...below.draw(start + discH + gap),
+    ],
+  };
+}
 
-  const logoW = 150;
-  shapes.push(...logoDrawing(spec.logo, w - pad, 32, 138, logoW, "right"));
-  shapes.push(...header(fonts, spec.header, color, pad, 62, w - 2 * pad - logoW - 24, 112, 38, 22, "left").shapes);
+// ---- The picture for e-mail: three styles -----------------------------------------------------------------------------------
+// Only the logo, how long (the header without its first line: the logo already says the title) and the code, all big: on a phone this
+// picture is about 60 % of its size. Until when and what to do belong in the letter. The page is a light tint of the title's colour.
+function emailLines(header: string): string {
+  const lines = header.split("\n").map((l) => l.trim()).filter(Boolean);
+  return (lines.length > 1 ? lines.slice(1) : lines).join("\n");
+}
 
-  const text = cardText("email", spec);
-  const orderSegs = segs(text.order, c);
-  const validSegs = segs(text.valid, c);
+// A soft circle: the title's colour thinned out towards the page colour.
+const soft = (color: string, t: number) => mix(tint(color), color, t);
+
+// "centre": a column in the middle: the logo, how long, the code in a big box of the title's colour; soft circles run off the corners.
+function emailCentre(spec: GiftCardSpec, fonts: Fonts): Drawing {
+  const { width: w, height: h } = EMAIL;
+  const cx = w / 2;
+  const color = spec.color;
+  const c = onCircle(color);
   const code = spec.code.trim();
-  const orderSize = 18;
-  const validSize = 17;
-  if (code) {
-    // words and date on the left, the code on the right
-    const colW = 292;
-    const order = paragraphs(fonts, [orderSegs], orderSize, 1.35, 0, pad, 0, colW, "left");
-    shapes.push(...paragraphs(fonts, [orderSegs], orderSize, 1.35, 0, pad, 272, colW, "left").shapes);
-    if (validSegs.length) shapes.push(...paragraphs(fonts, [validSegs], validSize, 1.3, 0, pad, 272 + order.height + 14 + validSize * 0.78, colW, "left").shapes);
-    shapes.push(...codeBox(fonts, 462, 252, 210, 96, spec.copy.codeLabel, code, color, { label: 9.5, code: 38 }));
-  } else {
-    // no code: the words in the middle of the circle
-    const order = paragraphs(fonts, [orderSegs], orderSize, 1.35, 0, w / 2, 0, 460);
-    shapes.push(...paragraphs(fonts, [orderSegs], orderSize, 1.35, 0, w / 2, 282, 460).shapes);
-    if (validSegs.length) shapes.push(...paragraphs(fonts, [validSegs], validSize, 1.3, 0, w / 2, 282 + order.height + 18 + validSize * 0.78, 460).shapes);
-  }
-  return { width: w, height: h, shapes };
+  const items: Item[] = [
+    logoItem(spec.logo, cx, 270, 100),
+    headerItem(fonts, emailLines(spec.header), readableOn(color, tint(color), 3), cx, 520, 80, 34, 18, "center"),
+    ...(code ? [codeBoxItem(fonts, cx, Math.max(340, width(fonts, code, "bold", 56) + 100), 112, spec.copy.codeLabel, code, { box: color, label: c.text, code: c.text }, 58, 11)] : []),
+  ];
+  return {
+    width: w,
+    height: h,
+    shapes: [page(w, h, color), { cmds: circle(24, 20, 130), fill: soft(color, 0.14) }, { cmds: circle(w - 10, h - 6, 170), fill: soft(color, 0.14) }, ...between(items, 24, 24, h - 24)],
+  };
 }
 
-// The whole card of one kind.
+// "split": the page on the left with the logo and how long, the title's colour on the right with the code in white.
+function emailSplit(spec: GiftCardSpec, fonts: Fonts): Drawing {
+  const code = spec.code.trim();
+  if (!code) return emailCentre(spec, fonts);
+  const { width: w, height: h } = EMAIL;
+  const color = spec.color;
+  const c = onCircle(color);
+  const px = 336; // where the colour starts
+  const left = [logoItem(spec.logo, 36, 264, 130, "left"), headerItem(fonts, emailLines(spec.header), readableOn(color, tint(color), 3), 36, 280, 90, 32, 18, "left")];
+  const cx = (px + w) / 2;
+  const right = [labelItem(fonts, spec.copy.codeLabel, 12, cx, c.text), lineItem(fonts, code, "bold", fitSize(fonts, code, "bold", w - px - 44, 66, 22), cx, c.text)];
+  return {
+    width: w,
+    height: h,
+    shapes: [page(w, h, color), { cmds: rect(px, 0, w - px, h), fill: color }, { cmds: circle(px, h + 30, 120), fill: soft(color, 0.14) }, ...between(left, 26, 28, h - 28), ...between(right, 16, 28, h - 28)],
+  };
+}
+
+// "disc": a big circle of the title's colour on the right with the code in it, a second one behind it, the logo and how long on the left.
+function emailDisc(spec: GiftCardSpec, fonts: Fonts): Drawing {
+  const code = spec.code.trim();
+  if (!code) return emailCentre(spec, fonts);
+  const { width: w, height: h } = EMAIL;
+  const color = spec.color;
+  const c = onCircle(color);
+  const dx = 462;
+  const left = [logoItem(spec.logo, 36, 200, 110, "left"), headerItem(fonts, emailLines(spec.header), readableOn(color, tint(color), 3), 36, 224, 90, 28, 16, "left")];
+  const right = [labelItem(fonts, spec.copy.codeLabel, 12, dx, c.text), lineItem(fonts, code, "bold", fitSize(fonts, code, "bold", 240, 68, 22), dx, c.text)];
+  return {
+    width: w,
+    height: h,
+    shapes: [page(w, h, color), { cmds: circle(dx + 128, 64, 110), fill: soft(color, 0.3) }, { cmds: circle(dx + 22, h / 2 + 8, 196), fill: color }, ...between(left, 26, 28, h - 28), ...between(right, 16, 28, h - 28)],
+  };
+}
+
+const PRINT: Record<PrintStyle, (spec: GiftCardSpec, fonts: Fonts) => Drawing> = { disc: printDisc, panel: printPanel, top: printTop };
+const MAIL: Record<EmailStyle, (spec: GiftCardSpec, fonts: Fonts) => Drawing> = { disc: emailDisc, centre: emailCentre, split: emailSplit };
+
+// The whole card of one kind, in the style the spec names (the first of each list when it names none).
 export function layoutCard(kind: Kind, spec: GiftCardSpec, fonts: Fonts): Drawing {
-  return kind === "print" ? printCard(spec, fonts) : emailCard(spec, fonts);
+  return kind === "print" ? PRINT[spec.printStyle ?? "disc"](spec, fonts) : MAIL[spec.emailStyle ?? "disc"](spec, fonts);
 }
 
-// The back of the card, for printing on both sides: the logo alone on a white page.
+// The back of the card, for printing on both sides: the logo alone on the tinted page.
 export function layoutBack(spec: GiftCardSpec): Drawing {
   const { width: w, height: h } = A4;
-  return { width: w, height: h, shapes: [{ cmds: rect(0, 0, w, h), fill: WHITE }, ...logoDrawing(spec.logo, w / 2, 0.36 * h, 0.64 * h, 0.55 * w)] };
+  const logo = logoItem(spec.logo, w / 2, 0.55 * w, 0.28 * h);
+  return { width: w, height: h, shapes: [page(w, h, spec.color), ...logo.draw(h / 2 - logo.height / 2)] };
 }

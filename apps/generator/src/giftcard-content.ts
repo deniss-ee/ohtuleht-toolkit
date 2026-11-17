@@ -7,17 +7,12 @@ import type { CardCopy } from "@ohtuleht/templates";
 export const COPY: CardCopy = {
   label: "KINKEKAART",
   codeLabel: "SALAKOOD",
-  // the printed card: the order goes to an e-mail address; the address and the code are left out when they are empty
+  // the printed card: the order goes to an e-mail address; the address and the code are left out when they are empty.
+  // (The picture for e-mail has no sentences: only the logo, how long and the code; the rest is in the letter.)
   print: {
     order: "Kinkekaardi tellimuse vormistamiseks palun saada andmed",
     withCode: " ja salakood",
     toEmail: " e-postile {email}",
-    valid: "Kinkekaart kehtib kuni {date}",
-  },
-  // the picture inside the e-mail: the person already has the mail, so there is no address, only "reply"
-  email: {
-    order: "Kinkekaardi tellimuse vormistamiseks palun vasta sellele kirjale",
-    withCode: " ja lisa salakood",
     valid: "Kinkekaart kehtib kuni {date}",
   },
 };

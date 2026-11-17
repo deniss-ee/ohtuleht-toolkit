@@ -1,9 +1,9 @@
-// Renders an example gift card (print and e-mail picture, both as PDF) into example-output/ with the real fonts and logos.
+// Renders an example gift card in every style (print and e-mail picture, as PDFs) into example-output/ with the real fonts and logos.
 // Run: yarn workspace @ohtuleht/templates giftcard [title id] [secret code]   (ids are in packages/brand/titles.json)
 // A quick way to see the layout without the app: open the PDFs, or turn them into pictures with pdftoppm.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import opentype from "opentype.js";
-import { faceFrom, layoutBack, layoutCard, renderPdf } from "../src/index.ts";
+import { EMAIL_STYLES, PRINT_STYLES, faceFrom, layoutBack, layoutCard, renderPdf } from "../src/index.ts";
 import type { Fonts, GiftCardSpec } from "../src/index.ts";
 import { COPY, suggestHeader } from "../../../apps/generator/src/giftcard-content.ts";
 
@@ -33,8 +33,8 @@ const spec: GiftCardSpec = {
 
 const out = new URL("../example-output/", import.meta.url);
 mkdirSync(out, { recursive: true });
-const print = layoutCard("print", spec, fonts);
-const mail = layoutCard("email", spec, fonts);
-writeFileSync(new URL(`giftcard-${id}.pdf`, out), await renderPdf([print, layoutBack(spec)], { title: "Kinkekaart" }));
-writeFileSync(new URL(`giftcard-${id}-email.pdf`, out), await renderPdf([mail], { title: "Kinkekaart (e-kiri)" }));
-console.log(`example-output/giftcard-${id}.pdf (A4, front and back) and giftcard-${id}-email.pdf (600x400)`);
+// one PDF page per style of the printed card, and one per style of the picture for e-mail (the picture as a 600x400 page)
+for (const style of PRINT_STYLES) writeFileSync(new URL(`giftcard-${id}-print-${style}.pdf`, out), await renderPdf([layoutCard("print", { ...spec, printStyle: style }, fonts)], { title: "Kinkekaart" }));
+for (const style of EMAIL_STYLES) writeFileSync(new URL(`giftcard-${id}-email-${style}.pdf`, out), await renderPdf([layoutCard("email", { ...spec, emailStyle: style }, fonts)], { title: "Kinkekaart (e-kiri)" }));
+writeFileSync(new URL(`giftcard-${id}-back.pdf`, out), await renderPdf([layoutBack(spec)], { title: "Kinkekaart (tagakülg)" }));
+console.log(`example-output/giftcard-${id}-print-*.pdf (A4), -email-*.pdf (600x400), -back.pdf`);
