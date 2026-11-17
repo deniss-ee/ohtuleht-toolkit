@@ -35,6 +35,7 @@ Pick what you need. New to the project? Read the first group in order.
 | Image cropper | [IMAGE-CROPPER.md](IMAGE-CROPPER.md) |
 | Movie banner | [MOVIE-BANNER.md](MOVIE-BANNER.md) |
 | Article scraper, Picture link converter, Tracking links | [MARKETING-TOOLS.md](MARKETING-TOOLS.md) |
+| Gift card (A4 PDF and e-mail picture, logos of all titles) | [GIFT-CARD.md](GIFT-CARD.md) |
 | Article bookmarks | [BOOKMARKLET.md](BOOKMARKLET.md) |
 | Email signature | [EMAIL-SIGNATURE.md](EMAIL-SIGNATURE.md) |
 | Brand manual (colours, logos, fonts) | [BRAND-MANUAL.md](BRAND-MANUAL.md) |

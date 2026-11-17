@@ -15,3 +15,6 @@ export { renderResponsiveBanner, validateResponsiveBanner, pictureFits, hasConte
 export type { ResponsiveBannerConfig, RbVersion, RbKind } from "./responsive-banner.ts";
 export type { MovieBannerConfig, VideoPosition } from "./movie-banner.ts";
 export type { Lang } from "./messages.ts";
+export { layoutCard, layoutBack, cardText, fillCopy, parsePathData, logoShapes, fromGlyphCmds, faceFrom, A4, EMAIL } from "./giftcard.ts";
+export type { Drawing, Shape, Cmd, GlyphCmd, FontFace, FontLike, Fonts, FontStyle, CardCopy, GiftCardSpec, Kind } from "./giftcard.ts";
+export { renderPdf, contentOf } from "./pdf.ts";

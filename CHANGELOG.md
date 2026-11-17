@@ -4,6 +4,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+### Gift card (new tool in Tools)
+
+- Makes a gift card for any of the 16 titles: an **A4 PDF** (vector, flat RGB, one page per card, optional back page with the logo) and a **600x400 picture for e-mail** (PNG, or 1200x800). Choose the title from its logos, write the header, one secret code and the number of cards (the tool adds -1, -2, ... to the code), the e-mail for the order and the date. The picture for e-mail has no address and big type. Doc: `docs/GIFT-CARD.md`.
+- New in `packages/brand`: `titles/` and `titles.json`, the logos of all titles, SVGO-optimised, with the old red `#E3000F` replaced by the brand red `#F50000` (`yarn workspace @ohtuleht/brand import-titles`).
+- New in `packages/templates`: `giftcard.ts` (layout, SVG path reading, text as outlines) and `pdf.ts` (PDF writer); 19 new tests. New dependencies: `opentype.js` (reads the font files, loaded only when the tool opens) and `@fontsource/inter` (static Inter files).
+
 ### Lighter and simpler (2026-11-16, tested as "v2" next to the old version, then merged)
 
 - **Removed:** Banner request and Task tracker (another in-house app will do this). Kept in the tag `archive/request-tracker`.

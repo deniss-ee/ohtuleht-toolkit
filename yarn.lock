@@ -515,6 +515,11 @@
   resolved "https://registry.yarnpkg.com/@fontsource/fira-sans/-/fira-sans-5.3.0.tgz#b3c8f83028bf5a8b85792b50f2f0c65976e665cc"
   integrity sha512-z1SKSG7eRhm3srlb7rQ3j77QP4TP7OFxCZ4wUWhCdt+3hOF9K0AyvybpAsz6+JWNcCVV7AqC7dbOT3e67P2r5A==
 
+"@fontsource/inter@^5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-5.3.0.tgz#866278dc2357659f8be1755c8b67f29d3697b440"
+  integrity sha512-RofMylZmjlJEfELXeNHFWBRcSs75rGU/6bV2S2jfnvv/3rPXPGe0LgUJTklcHZ9lM4OZmAVFhcJPnACfb91A3g==
+
 "@img/colour@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@img/colour/-/colour-1.1.0.tgz#b0c2c2fa661adf75effd6b4964497cd80010bb9d"
@@ -3053,6 +3058,11 @@ open@^8.4.2:
     define-lazy-prop "^2.0.0"
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
+
+opentype.js@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/opentype.js/-/opentype.js-2.0.0.tgz#b87fcec8107075aabb6f50fe5e6bb4d8db6c8c7d"
+  integrity sha512-kCyjv6xdDY1W/jLWZ/L3QhhTlKUqDZMQ5+Jdlw12b3dXkKNpYBqqlMMj0YDQPShWFTMwgZI1hG14kN3XUDSg/A==
 
 ora@^8.2.0:
   version "8.2.0"

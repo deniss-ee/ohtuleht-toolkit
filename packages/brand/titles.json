@@ -1,0 +1,130 @@
+[
+  {
+    "id": "ohtuleht",
+    "name": "Õhtuleht",
+    "file": "ohtuleht.svg",
+    "width": 336,
+    "height": 64,
+    "main": "#F50000"
+  },
+  {
+    "id": "ol-ristsonad",
+    "name": "Õhtulehe ristsõnad",
+    "file": "ol-ristsonad.svg",
+    "width": 336,
+    "height": 138,
+    "main": "#F50000"
+  },
+  {
+    "id": "naisteleht",
+    "name": "Naisteleht",
+    "file": "naisteleht.svg",
+    "width": 368,
+    "height": 96,
+    "main": "#E60073"
+  },
+  {
+    "id": "naisteleht-55",
+    "name": "Naisteleht 55+",
+    "file": "naisteleht-55.svg",
+    "width": 208,
+    "height": 160,
+    "main": "#A51982"
+  },
+  {
+    "id": "naistelehe-ristsonad",
+    "name": "Naistelehe ristsõnad",
+    "file": "naistelehe-ristsonad.svg",
+    "width": 480,
+    "height": 128,
+    "main": "#E60073"
+  },
+  {
+    "id": "teleleht",
+    "name": "Teleleht",
+    "file": "teleleht.svg",
+    "width": 166,
+    "height": 160,
+    "main": "#2D3291"
+  },
+  {
+    "id": "tiiu",
+    "name": "Tiiu",
+    "file": "tiiu.svg",
+    "width": 230,
+    "height": 96,
+    "main": "#E63223"
+  },
+  {
+    "id": "tiiu-ristsonad",
+    "name": "Tiiu ristsõnad",
+    "file": "tiiu-ristsonad.svg",
+    "width": 330,
+    "height": 160,
+    "main": "#E63223"
+  },
+  {
+    "id": "avesta",
+    "name": "Avesta",
+    "file": "avesta.svg",
+    "width": 320,
+    "height": 78,
+    "main": "#E60073"
+  },
+  {
+    "id": "ristik",
+    "name": "Ristik",
+    "file": "ristik.svg",
+    "width": 320,
+    "height": 128,
+    "main": "#F50000"
+  },
+  {
+    "id": "miniristik",
+    "name": "Miniristik",
+    "file": "miniristik.svg",
+    "width": 352,
+    "height": 128,
+    "main": "#F50000"
+  },
+  {
+    "id": "megaristik",
+    "name": "Megaristik",
+    "file": "megaristik.svg",
+    "width": 432,
+    "height": 110,
+    "main": "#F50000"
+  },
+  {
+    "id": "meistriristik",
+    "name": "Meistriristik",
+    "file": "meistriristik.svg",
+    "width": 328,
+    "height": 160,
+    "main": "#F50000"
+  },
+  {
+    "id": "meluristik",
+    "name": "Meluristik",
+    "file": "meluristik.svg",
+    "width": 264,
+    "height": 192,
+    "main": "#F50000"
+  },
+  {
+    "id": "sudoku",
+    "name": "Ristiku Sudoku",
+    "file": "sudoku.svg",
+    "width": 384,
+    "height": 128,
+    "main": "#F50000"
+  },
+  {
+    "id": "ripsik",
+    "name": "Ripsik",
+    "file": "ripsik.svg",
+    "width": 304,
+    "height": 128,
+    "main": "#F5911E"
+  }
+]

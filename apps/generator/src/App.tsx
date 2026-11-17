@@ -27,6 +27,7 @@ const ArticleScraper = page(() => import("@/pages/ArticleScraper"), "ArticleScra
 const PictureConverter = page(() => import("@/pages/PictureConverter"), "PictureConverter");
 const SignatureGenerator = page(() => import("@/pages/SignatureGenerator"), "SignatureGenerator");
 const UtmBuilder = page(() => import("@/pages/UtmBuilder"), "UtmBuilder");
+const GiftCard = page(() => import("@/pages/GiftCard"), "GiftCard");
 const BrandManual = page(() => import("@/pages/BrandManual"), "BrandManual");
 const Guide = page(() => import("@/pages/Guide"), "Guide");
 
@@ -195,7 +196,7 @@ export function App() {
             ) : (
               <ContentMarketingHome onCreate={create} onUpload={open} saved={saved} onContinue={resume} onDiscard={discard} />
             ))}
-          {page === "tools" && (tool === "image-cropper" ? <ImageCropper onBack={() => setTool(null)} /> : tool === "movie-banner" ? <MovieBanner onBack={() => setTool(null)} /> : tool === "article-scraper" ? <ArticleScraper onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "picture-converter" ? <PictureConverter onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "email-signature" ? <SignatureGenerator onBack={() => setTool(null)} /> : tool === "utm-builder" ? <UtmBuilder onBack={() => setTool(null)} /> : <ToolsHome onOpen={setTool} />)}
+          {page === "tools" && (tool === "image-cropper" ? <ImageCropper onBack={() => setTool(null)} /> : tool === "movie-banner" ? <MovieBanner onBack={() => setTool(null)} /> : tool === "article-scraper" ? <ArticleScraper onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "picture-converter" ? <PictureConverter onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "email-signature" ? <SignatureGenerator onBack={() => setTool(null)} /> : tool === "utm-builder" ? <UtmBuilder onBack={() => setTool(null)} /> : tool === "gift-card" ? <GiftCard onBack={() => setTool(null)} /> : <ToolsHome onOpen={setTool} />)}
           {page === "guide" && <Guide topic={topic} step={step} onTopic={(id, s) => (setTopic(id), setStep(s ?? null))} />}
           {page === "brand" && <BrandManual tab={tab} onTab={setTab} />}
           </Suspense>
