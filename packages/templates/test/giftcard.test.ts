@@ -128,10 +128,11 @@ describe("layout", () => {
     for (const kind of ["print", "email"] as const) {
       const white = layoutCard(kind, { ...spec, printStyle: "white", emailStyle: "white" }, fonts);
       const colour = layoutCard(kind, { ...spec, printStyle: "colour", emailStyle: "colour" }, fonts);
-      expect(colour.shapes.length).toBe(white.shapes.length);
       // the code block (the dashed line) is at the same place, and so is every letter and every logo path
       expect(dashed(colour)[0]!.cmds).toEqual(dashed(white)[0]!.cmds);
-      colour.shapes.forEach((s, i) => expect(s.cmds, kind + " shape " + i).toEqual(white.shapes[i]!.cmds));
+      // texts of one colour are one shape, so two looks may group the letters differently: compare every point of every shape
+      const points = (d: ReturnType<typeof layoutCard>) => d.shapes.flatMap((s) => s.cmds.map((c) => c.join(","))).sort();
+      expect(points(colour), kind).toEqual(points(white));
     }
   });
 

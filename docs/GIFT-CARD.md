@@ -25,8 +25,8 @@ The form is remembered in the browser. The preview shows the card and the pictur
 
 **Two looks, one layout.** Only the colours change, nothing moves (a test checks that every letter and logo path is at the same place):
 
-- **Light:** the page is a 6 % tint of the title's colour; the header, the label and the dashed line are in the title's colour; the code box is white.
-- **Colour:** the page is the title's colour; text is white or black by the brand rule (white from step 600; for other colours white when it reads at 3:1, else black); the logo is the title's **white or black version** (the design team's one-colour files, `titles/<id>-white.svg` and `-black.svg`), so no plate is needed behind it; the code box is a lighter tint with a dashed line in the text colour. Values (address, date) are yellow where yellow reads.
+- **Light:** the page is a 6 % tint of the title's colour; the header, the label, the dashed line and the **e-mail address** are in the title's colour; the code box is white.
+- **Colour:** the page is the title's colour; text is white or black by the brand rule (white from step 600; for other colours white when it reads at 3:1, else black); the logo is the title's **white or black version** (the design team's one-colour files, `titles/<id>-white.svg` and `-black.svg`), so no plate is needed behind it; the code box is a lighter tint with a dashed line in the text colour. The e-mail address is yellow where yellow reads, otherwise bold. In both looks the **date is set in bold**.
 
 - **Words** (Estonian) are in `apps/generator/src/giftcard-content.ts`: the label, `SALAKOOD`, the sentences of the printed card, the second-line buttons and the suggested header of each title. A part without a value is left out: no code, no "and the code"; no address, no "to the e-mail"; no date, no validity line.
 - **Flat colours only:** no gradients, no transparency, no shadows. That keeps the PDF plain and the PNG small when it is reduced to 256 colours.

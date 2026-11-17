@@ -442,7 +442,7 @@ function onCircle(color: string): { text: string; highlight: string } {
   return { text, highlight: contrast(YELLOW, color) >= 3 && text === WHITE ? YELLOW : text };
 }
 
-const segs = (pieces: Piece[], c: { text: string; highlight: string }): Seg[] => pieces.map((p) => (p.value ? { text: p.text, style: "semibold" as FontStyle, fill: c.highlight } : { text: p.text, style: "regular" as FontStyle, fill: c.text }));
+const segs = (pieces: Piece[], c: { text: string; highlight: string }, valueStyle: FontStyle = "semibold"): Seg[] => pieces.map((p) => (p.value ? { text: p.text, style: valueStyle, fill: c.highlight } : { text: p.text, style: "regular" as FontStyle, fill: c.text }));
 
 // ---- Building blocks: pieces that know their height, stacked and centred ----------------------------------------------------
 // Heights are measured from the top of the capitals to the baseline (and a little under it where letters have tails), so that equal
@@ -587,7 +587,8 @@ interface Palette {
   head: string; // the header
   label: string; // the small capitals
   body: Look; // the sentence
-  muted: string; // the date
+  muted: string; // the sentence about the date
+  date: string; // the date itself, in bold
   block: BlockLook;
   logo: string; // the SVG of the logo to use
 }
@@ -598,7 +599,7 @@ function paletteOf(spec: GiftCardSpec, variant: "white" | "colour"): Palette {
   if (variant === "white") {
     const page = tint(color);
     const accent = readableOn(color, WHITE, 3);
-    return { page, head: readableOn(color, page, 3), label: MUTED, body: { text: INK, highlight: INK }, muted: MUTED, block: { fill: WHITE, line: accent, label: accent, code: INK }, logo: spec.logo };
+    return { page, head: readableOn(color, page, 3), label: MUTED, body: { text: INK, highlight: readableOn(color, page, 4.5) }, muted: MUTED, date: INK, block: { fill: WHITE, line: accent, label: accent, code: INK }, logo: spec.logo };
   }
   const c = onCircle(color);
   return {
@@ -607,6 +608,7 @@ function paletteOf(spec: GiftCardSpec, variant: "white" | "colour"): Palette {
     label: mix(color, c.text, 0.8),
     body: c,
     muted: mix(color, c.text, 0.85),
+    date: c.text,
     block: { fill: mix(color, c.text, 0.1), line: c.text, label: mix(color, c.text, 0.85), code: c.text },
     logo: (c.text === WHITE ? spec.logoWhite : spec.logoBlack) ?? spec.logo,
   };
@@ -627,7 +629,7 @@ function printCard(spec: GiftCardSpec, fonts: Fonts, variant: "white" | "colour"
     headerItem(fonts, spec.header, k.head, cx, 0.8 * w, 0.16 * h, 40, 22),
     ...(code ? [codeBlockItem(fonts, cx, 0.7 * w, 118, spec.copy.codeLabel, code, k.block, 54, 10, 1.6)] : []),
     paragraphItem(fonts, segs(text.order, k.body), 17, cx, 0.62 * w),
-    ...(text.valid.length ? [paragraphItem(fonts, segs(text.valid, { text: k.muted, highlight: k.muted }), 15, cx, 0.7 * w)] : []),
+    ...(text.valid.length ? [paragraphItem(fonts, segs(text.valid, { text: k.muted, highlight: k.date }, "bold"), 15, cx, 0.7 * w)] : []),
   ];
   return { width: w, height: h, shapes: [fullPage(w, h, k.page), ...between(items, 30, 0, h)] };
 }
