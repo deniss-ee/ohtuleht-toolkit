@@ -181,7 +181,7 @@ export function App() {
           }}
         >
           <Suspense fallback={null}>
-          {page === "home" && <Home saved={saved} onContinue={resume} onDiscard={discard} onGo={go} />}
+          {page === "home" && <Home saved={saved} onContinue={resume} onDiscard={discard} onGo={go} onUpload={open} />}
           {page === "content" &&
             (work?.kind === "banner" ? (
               <BannerEditor draft={work.draft} onChange={(draft) => change({ kind: "banner", draft })} onBack={close} />

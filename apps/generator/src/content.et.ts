@@ -433,7 +433,7 @@ export const giftCard: typeof En.giftCard = {
   needEmail: "E-posti aadress ei näi õige.",
   doneText: "Laadi alla PDF printimiseks. E-kirja pildil on oma nupp.",
   downloadPdf: "PDF",
-  downloadMail: "E-kirja pilt",
+  downloadMail: "e-kirja pilt",
   pdfDone: (cards: number) => `PDF ${cards} kaardiga on alla laaditud.`,
   mailDone: (n: number, size: string) => (n === 1 ? `Pilt on alla laaditud (${size}).` : `${n} pilti on alla laaditud zip-failina (kokku ${size}).`),
   failed: "Faili tegemine ebaõnnestus. Proovi uuesti.",
