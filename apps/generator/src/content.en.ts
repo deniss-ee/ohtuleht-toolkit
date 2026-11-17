@@ -467,7 +467,7 @@ export const giftCard = {
   needEmail: "The e-mail address does not look right.",
   doneText: "Download the PDF for printing. The picture for e-mail has its own button.",
   downloadPdf: "PDF",
-  downloadMail: "E-mail picture",
+  downloadMail: "e-mail picture",
   pdfDone: (cards: number) => `PDF with ${cards} card${cards === 1 ? "" : "s"} downloaded.`,
   mailDone: (n: number, size: string) => (n === 1 ? `Picture downloaded (${size}).` : `${n} pictures downloaded as a zip (${size} together).`),
   failed: "Could not make the file. Try again.",

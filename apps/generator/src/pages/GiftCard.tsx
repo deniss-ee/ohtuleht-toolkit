@@ -179,11 +179,17 @@ export function GiftCard({ onBack }: { onBack: () => void }) {
       busy={busy || !ready}
       onDownload={() => void savePdf()}
       onBack={onBack}
-      extra={
-        <Button variant="outline" className="gap-2" disabled={problems.length > 0 || busy || !ready} onClick={() => void saveMail()}>
-          <Image className="size-4" /> {t.downloadMail}
-        </Button>
-      }
+      moreDownloads={[
+        {
+          key: "mail",
+          onClick: () => void saveMail(),
+          label: (
+            <>
+              <Image className="size-4" /> {ui.downloadWord} {t.downloadMail}
+            </>
+          ),
+        },
+      ]}
       downloadLabel={
         <>
           {busy ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />} {ui.downloadWord} {t.downloadPdf}
