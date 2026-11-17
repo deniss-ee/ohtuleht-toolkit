@@ -128,7 +128,8 @@ export function paint(canvas: HTMLCanvasElement, d: Drawing, pixelWidth: number)
     if (shape.stroke) {
       ctx.strokeStyle = shape.stroke.color;
       ctx.lineWidth = shape.stroke.width;
-      ctx.lineCap = "butt";
+      ctx.lineCap = shape.stroke.round ? "round" : "butt";
+      ctx.lineJoin = shape.stroke.round ? "round" : "miter";
       ctx.setLineDash(shape.stroke.dash ?? []);
       ctx.stroke();
       ctx.setLineDash([]);

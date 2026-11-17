@@ -6,24 +6,26 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { optimize } from "svgo";
 
 // id, name shown in the app, folder and file of the source, main colour (from the logo; the old red is replaced below),
-// how the logo goes on a page of the title's colour: "white" (the white version of the design team) or "swap" (the coloured logo with the title
-// colour and white exchanged: a box becomes a white box with letters in the title colour, yellow and other colours stay), and, when the
-// default (white text where it reads at 3:1, else black) is not right, the text colour on that page.
+// how the logo goes on a page of the title's colour, and, when the usual rule (white text where it reads at 3:1, else black) is not right, the text colour there:
+//   "white"    the white version of the design team (a single-colour logo)
+//   "original" the logo in its own colours, as designed, with only a thin white edge so that it stands out from a page of its own colour
+//   "swap"     the logo with the title colour and white exchanged (a box becomes a white box with letters in the title colour). Only for the
+//              logos where the owner asked for it: Naisteleht, Naisteleht 55+, Naistelehe ristsõnad.
 const TITLES = [
   ["ohtuleht", "Õhtuleht", "ohtuleht", "ohtuleht.svg", "#F50000", "white"],
-  ["ol-ristsonad", "Õhtulehe ristsõnad", "ohtulehe_ristsonad", "ol_rist.svg", "#F50000", "swap"],
+  ["ol-ristsonad", "Õhtulehe ristsõnad", "ohtulehe_ristsonad", "ol_rist.svg", "#F50000", "original"],
   ["naisteleht", "Naisteleht", "naisteleht", "nl.svg", "#E60073", "swap"],
   ["naisteleht-55", "Naisteleht 55+", "naisteleht_55", "nl55.svg", "#A51982", "swap"],
   ["naistelehe-ristsonad", "Naistelehe ristsõnad", "naistelehe_ristsonad", "nl_rist.svg", "#E60073", "swap"],
-  ["teleleht", "Teleleht", "teleleht", "tv.svg", "#2D3291", "swap"],
+  ["teleleht", "Teleleht", "teleleht", "tv.svg", "#2D3291", "original"],
   ["tiiu", "Tiiu", "tiiu", "tiiu.svg", "#E63223", "white"],
-  ["tiiu-ristsonad", "Tiiu ristsõnad", "tiiu_ristsonad", "tiiu_rist.svg", "#E63223", "swap"],
+  ["tiiu-ristsonad", "Tiiu ristsõnad", "tiiu_ristsonad", "tiiu_rist.svg", "#E63223", "original"],
   ["avesta", "Avesta", "avesta", "avesta.svg", "#E60073", "white"],
-  ["ristik", "Ristik", "ristik", "ristik.svg", "#F50000", "swap"],
-  ["miniristik", "Miniristik", "miniristik", "miniristik.svg", "#F50000", "swap"],
-  ["megaristik", "Megaristik", "megaristik", "megaristik.svg", "#F50000", "swap"],
-  ["meistriristik", "Meistriristik", "meistriristik", "meistriristik.svg", "#F50000", "swap"],
-  ["meluristik", "Meluristik", "meluristik", "meluristik.svg", "#F50000", "swap"],
+  ["ristik", "Ristik", "ristik", "ristik.svg", "#F50000", "original"],
+  ["miniristik", "Miniristik", "miniristik", "miniristik.svg", "#F50000", "original"],
+  ["megaristik", "Megaristik", "megaristik", "megaristik.svg", "#F50000", "original"],
+  ["meistriristik", "Meistriristik", "meistriristik", "meistriristik.svg", "#F50000", "original"],
+  ["meluristik", "Meluristik", "meluristik", "meluristik.svg", "#F50000", "original"],
   ["sudoku", "Ristiku Sudoku", "sudoku", "sudoku.svg", "#F50000", "white"],
   ["ripsik", "Ripsik", "ripsik", "ripsik.svg", "#F5911E", "white", "white"],
 ];

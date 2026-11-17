@@ -259,12 +259,29 @@ describe("the logo on the title's colour", () => {
     expect(new Set(layoutCard("print", { ...orange, textOnColour: "white" }, fonts).shapes.map((x) => x.fill)).has("#ffffff")).toBe(true);
   });
 
+  test("original: the logo keeps every one of its colours; only a thin white edge is added behind it", () => {
+    const d = layoutCard("email", { ...spec, logo: boxed, color: "#f5911e", emailStyle: "colour", logoOnColour: { mode: "original", main: "#f5911e" } }, fonts);
+    const withEdge = d.shapes.slice(1).filter((x) => x.stroke?.round);
+    expect(withEdge).toHaveLength(3); // one band for each of the logo's three shapes
+    expect(withEdge.every((x) => x.fill === "#ffffff" && x.stroke!.color === "#ffffff")).toBe(true);
+    const logoFills = d.shapes.slice(1).filter((x) => !x.stroke).slice(0, 3).map((x) => x.fill);
+    expect(logoFills).toEqual(["#f5911e", "#ffffff", "#ffe500"]); // the colours of the logo, unchanged
+  });
+
+  test("only the logos the owner named are recoloured: Naisteleht, Naisteleht 55+ and Naistelehe ristsõnad", async () => {
+    const { readFileSync } = await import("node:fs");
+    const titles = JSON.parse(readFileSync(new URL("../../brand/titles.json", import.meta.url), "utf8")) as { id: string; onColour: string }[];
+    expect(titles.filter((t) => t.onColour === "swap").map((t) => t.id).sort()).toEqual(["naistelehe-ristsonad", "naisteleht", "naisteleht-55"]);
+    // the ristik family, Teleleht and the other boxed logos are used as designed
+    for (const id of ["ristik", "miniristik", "megaristik", "meistriristik", "meluristik", "teleleht", "ol-ristsonad", "tiiu-ristsonad"]) expect(titles.find((t) => t.id === id)!.onColour, id).toBe("original");
+  });
+
   test("every title has a setting, and a swapped logo keeps the layout (same points as the coloured logo)", async () => {
     const { readFileSync } = await import("node:fs");
     const titles = JSON.parse(readFileSync(new URL("../../brand/titles.json", import.meta.url), "utf8")) as { id: string; file: string; main: string; onColour: string }[];
     expect(titles).toHaveLength(16);
     for (const t of titles) {
-      expect(["white", "swap"], t.id).toContain(t.onColour);
+      expect(["white", "original", "swap"], t.id).toContain(t.onColour);
       const svg = readFileSync(new URL("../../brand/titles/" + t.file, import.meta.url), "utf8");
       const swapped = recolourLogo(svg, { [t.main.toLowerCase()]: "#ffffff", "#ffffff": "#123456" });
       expect(logoShapes(swapped).shapes.map((x) => x.cmds), t.id).toEqual(logoShapes(svg).shapes.map((x) => x.cmds));

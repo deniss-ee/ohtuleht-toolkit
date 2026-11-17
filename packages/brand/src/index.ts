@@ -130,7 +130,7 @@ export interface Title {
   width: number;
   height: number;
   main: string;
-  onColour: "white" | "swap"; // the logo on a page of the title's colour: its white version, or the coloured logo with the title colour and white exchanged
+  onColour: "white" | "original" | "swap"; // the logo on a page of the title's colour: the white version; the original with a thin white edge; or (only where asked for) with the title colour and white exchanged
   textOnColour?: "white" | "black"; // the text colour on that page, when the usual rule (white if it reads at 3:1) is not right
   cmyk?: [number, number, number, number]; // the brand owner's own CMYK values (percent) of `main`, when known: used in the print PDF instead of a computed value
 }

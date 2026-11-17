@@ -13,6 +13,7 @@ export interface Stroke {
   color: string;
   width: number;
   dash?: [number, number]; // dash and gap
+  round?: boolean; // round corners and ends (the edge of a logo)
 }
 
 export interface Shape {
@@ -367,7 +368,7 @@ export interface GiftCardSpec {
   logo: string; // the SVG text of the title's logo
   logoWhite?: string; // its white version, used on the title's colour when the text there is white
   logoBlack?: string; // its black version, when the text there is black
-  logoOnColour?: { mode: "white" | "swap"; main: string }; // how the logo goes on the title's colour: its one-colour version, or the coloured logo with `main` (the logo's own main colour) and white exchanged
+  logoOnColour?: { mode: "white" | "original" | "swap"; main: string }; // how the logo goes on the title's colour: its white or black version, its own colours with a thin white edge, or (only where asked for) with `main` (the logo's own main colour) and white exchanged
   textOnColour?: "white" | "black"; // the text colour on the title's colour, when the usual rule is not right
   color: string; // main colour: the circle, the header
   code: string; // secret code, "" = none (no code box)
@@ -536,11 +537,24 @@ function paragraphItem(fonts: Fonts, parts: Seg[], size: number, x: number, maxW
   };
 }
 
-// The logo, as large as the box allows, centred on x.
-function logoItem(svg: string, x: number, maxW: number, maxH: number): Item {
+// The logo, as large as the box allows, centred on x. With `edge`, a thin band of that colour around the logo, like the cut edge of a sticker (the
+// shapes drawn again, a little fat, underneath): it separates a logo from a page of its own colour without changing a single colour of the logo.
+interface Edge {
+  color: string;
+  width: number; // in the logo's own units, so it grows with the logo
+}
+function logoItem(svg: string, x: number, maxW: number, maxH: number, edge?: Edge): Item {
   const logo = logoShapes(svg);
   const scale = Math.min(maxW / logo.width, maxH / logo.height);
-  return { height: logo.height * scale, draw: (top) => logo.shapes.map((s) => ({ ...s, cmds: place(s.cmds, scale, x - (logo.width * scale) / 2, top) })) };
+  return {
+    height: logo.height * scale,
+    draw: (top) => {
+      const moved = logo.shapes.map((s) => ({ ...s, cmds: place(s.cmds, scale, x - (logo.width * scale) / 2, top) }));
+      if (!edge) return moved;
+      const band = moved.map((s) => ({ cmds: s.cmds, fill: edge.color, stroke: { color: edge.color, width: 2 * edge.width * scale, round: true } }));
+      return [...band, ...moved];
+    },
+  };
 }
 
 // A dash pattern that fits the length of a closed line exactly, so the dashes meet cleanly where the line closes.
@@ -602,6 +616,7 @@ interface Palette {
   date: string; // the date itself, in bold
   block: BlockLook;
   logo: string; // the SVG of the logo to use
+  edge?: Edge; // a thin edge around it
 }
 
 // White: dark text on a light tint. Colour: white or black text (by the brand rule) on the title's colour, with the logo's one-colour version.
@@ -621,7 +636,8 @@ function paletteOf(spec: GiftCardSpec, variant: "white" | "colour", print = fals
   // the logo on the page of the title's colour: swap the title colour and white in the coloured logo (a box becomes white with letters in the page colour),
   // or use the one-colour version that goes with the text colour
   const on = spec.logoOnColour;
-  const logo = on?.mode === "swap" ? recolourLogo(spec.logo, { [on.main.toLowerCase()]: WHITE, [WHITE]: color }) : ((text === WHITE ? spec.logoWhite : spec.logoBlack) ?? spec.logo);
+  const logo = on?.mode === "swap" ? recolourLogo(spec.logo, { [on.main.toLowerCase()]: WHITE, [WHITE]: color }) : on?.mode === "original" ? spec.logo : ((text === WHITE ? spec.logoWhite : spec.logoBlack) ?? spec.logo);
+  const edge = on?.mode === "original" ? { color: WHITE, width: 3.2 } : undefined;
   return {
     page: color,
     head: c.text,
@@ -631,6 +647,7 @@ function paletteOf(spec: GiftCardSpec, variant: "white" | "colour", print = fals
     date: c.text,
     block: { fill: mix(color, WHITE, 0.14), line: c.text, label: print ? c.text : mix(color, c.text, 0.85), code: c.text },
     logo,
+    edge,
   };
 }
 
@@ -646,7 +663,7 @@ function printCard(spec: GiftCardSpec, fonts: Fonts, variant: "white" | "colour"
   const text = cardText(spec);
   const items: Item[] = [
     labelItem(fonts, spec.copy.label, 13 * S, cx, k.label),
-    logoItem(k.logo, cx, 0.5 * S * w, 0.095 * S * h),
+    logoItem(k.logo, cx, 0.5 * S * w, 0.095 * S * h, k.edge),
     headerItem(fonts, spec.header, k.head, cx, 0.88 * w, 0.16 * S * h, 40 * S, 22 * S),
     ...(code ? [codeBlockItem(fonts, cx, 0.82 * w, 118 * S, spec.copy.codeLabel, code, k.block, 54 * S, 10 * S, 1.6 * S)] : []),
     paragraphItem(fonts, segs(text.order, k.body), 17 * S, cx, 0.74 * w),
@@ -661,7 +678,7 @@ function emailCard(spec: GiftCardSpec, fonts: Fonts, variant: "white" | "colour"
   const cx = w / 2;
   const k = paletteOf(spec, variant);
   const code = spec.code.trim();
-  const items: Item[] = code ? [logoItem(k.logo, cx, 340, 120), codeBlockItem(fonts, cx, 452, 132, spec.copy.codeLabel, code, k.block, 64, 12, 2.2)] : [logoItem(k.logo, cx, 400, 170)];
+  const items: Item[] = code ? [logoItem(k.logo, cx, 340, 120, k.edge), codeBlockItem(fonts, cx, 452, 132, spec.copy.codeLabel, code, k.block, 64, 12, 2.2)] : [logoItem(k.logo, cx, 400, 170, k.edge)];
   return { width: w, height: h, shapes: [fullPage(w, h, k.page), ...between(items, 36, 0, h)] };
 }
 
@@ -677,6 +694,6 @@ export function layoutCard(kind: Kind, spec: GiftCardSpec, fonts: Fonts): Drawin
 export function layoutBack(spec: GiftCardSpec): Drawing {
   const { width: w, height: h } = A4;
   const k = paletteOf(spec, spec.printStyle ?? "white", true);
-  const logo = logoItem(k.logo, w / 2, 0.55 * w, 0.28 * h);
+  const logo = logoItem(k.logo, w / 2, 0.55 * w, 0.28 * h, k.edge);
   return { width: w, height: h, shapes: [fullPage(w, h, k.page), ...logo.draw(h / 2 - logo.height / 2)] };
 }

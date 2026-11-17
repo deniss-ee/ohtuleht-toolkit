@@ -19,7 +19,7 @@
     "width": 336,
     "height": 138,
     "main": "#F50000",
-    "onColour": "swap"
+    "onColour": "original"
   },
   {
     "id": "naisteleht",
@@ -63,7 +63,7 @@
     "width": 166,
     "height": 160,
     "main": "#2D3291",
-    "onColour": "swap"
+    "onColour": "original"
   },
   {
     "id": "tiiu",
@@ -85,7 +85,7 @@
     "width": 330,
     "height": 160,
     "main": "#E63223",
-    "onColour": "swap"
+    "onColour": "original"
   },
   {
     "id": "avesta",
@@ -107,7 +107,7 @@
     "width": 320,
     "height": 128,
     "main": "#F50000",
-    "onColour": "swap"
+    "onColour": "original"
   },
   {
     "id": "miniristik",
@@ -118,7 +118,7 @@
     "width": 352,
     "height": 128,
     "main": "#F50000",
-    "onColour": "swap"
+    "onColour": "original"
   },
   {
     "id": "megaristik",
@@ -129,7 +129,7 @@
     "width": 432,
     "height": 110,
     "main": "#F50000",
-    "onColour": "swap"
+    "onColour": "original"
   },
   {
     "id": "meistriristik",
@@ -140,7 +140,7 @@
     "width": 328,
     "height": 160,
     "main": "#F50000",
-    "onColour": "swap"
+    "onColour": "original"
   },
   {
     "id": "meluristik",
@@ -151,7 +151,7 @@
     "width": 264,
     "height": 192,
     "main": "#F50000",
-    "onColour": "swap"
+    "onColour": "original"
   },
   {
     "id": "sudoku",
