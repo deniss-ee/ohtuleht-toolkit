@@ -14,9 +14,10 @@ The first round was built on a separate branch (`v2`, tested next to the old ver
 | Phase 0, steps 1 and 2: golden file per banner format, tests for picture, colour, validation and fade rules | 30 tests, `yarn test` |
 | Phase 1, steps 1.1 and 1.2: pages, banner code and the chosen language load on demand | First download **318 to about 120 KB gzip** (script 71, app 34, one language 15) |
 | Phase 1, steps 1.5 and 1.6 (part): the 10 MB podcast bundle removed from `tools/legacy` (tag `legacy-podcast`), `shadcn` is a dev dependency only | Repository 10 MB lighter. Closes #7 |
+| Phase 0, step 5: GitHub Actions `Checks` on every pull request and push to `develop`/`main` (types of all workspaces, tests, build, banner script size, first-load script budget 90 KB gzip, docs links). Publishes nothing | `.github/workflows/checks.yml`, `tools/check-bundle.mjs` |
 | Weight meters never block a download; above the guide value the pill and the bar turn yellow | |
 
-**Next:** phase 0 steps 3 to 6 (zip round-trip tests, lint, CI, publish on merge), then phase 1 steps 1.3, 1.4 and the `cn` helper of 1.6.
+**Next:** phase 0 steps 3, 4 and 6 (zip round-trip tests, lint, publish on merge), then phase 1 steps 1.3, 1.4 and the `cn` helper of 1.6.
 
 ## Where we are (measured)
 
