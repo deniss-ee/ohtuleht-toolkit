@@ -34,7 +34,21 @@ const Guide = page(() => import("@/pages/Guide"), "Guide");
 // The banner code (drafts, templates, zip, saved work): loaded with the first banner, then kept.
 const workLib = () => import("@/lib/work");
 
+// While the first screen is read, the parts people open most (the start screens and the banner code) are fetched quietly in the background,
+// so a click does not wait for a download. Heavier or rarer pages (gift card, brand manual, guide) still load when opened.
+function prefetchCommon() {
+  const run = () => {
+    void import("@/pages/ContentMarketingHome");
+    void import("@/pages/ToolsHome");
+    void import("@/pages/BannerEditor");
+    void workLib();
+  };
+  if ("requestIdleCallback" in window) window.requestIdleCallback(run, { timeout: 4000 });
+  else setTimeout(run, 2000);
+}
+
 export function App() {
+  useEffect(prefetchCommon, []);
   const lang = useSyncExternalStore(subscribeLang, getLang); // render everything again when the language changes
   const link = useRef(parseRoute(location.search)).current; // where the address says to start
   // The address says where to start; a plain address opens the Home page.
