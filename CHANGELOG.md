@@ -4,6 +4,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+### Tests for opening saved banners
+
+- `yarn test` also runs `apps/generator/test`: every banner kind is built as a zip and opened again the way "Open a banner you made before" does it, and must give the same kind and settings.
+
 ### Gift card (new tool in Tools)
 
 - **PNG for e-mail made small in the tool:** at most 256 colours (lossless for this flat artwork) and OxiPNG: 4 to 6 KB at 600x400 instead of 17 to 24 KB (14 to 18 KB instead of 61 to 72 KB at 1200x800). The tool tells the size.
