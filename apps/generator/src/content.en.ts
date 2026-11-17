@@ -445,14 +445,12 @@ export const giftCard = {
   printStyleLabel: "Printed card",
   emailStyleLabel: "E-mail picture",
   printStyles: {
-    disc: { name: "Circle", hint: "Details on a circle" },
-    panel: { name: "Panel", hint: "Details on a panel" },
-    top: { name: "Top circle", hint: "Title on a circle" },
+    white: { name: "White card", hint: "Colour in the details" },
+    colour: { name: "Colour card", hint: "The card in the title colour" },
   },
   emailStyles: {
-    disc: { name: "Circle", hint: "Code in a circle" },
-    centre: { name: "Centre", hint: "One column" },
-    split: { name: "Split", hint: "Code on a colour" },
+    white: { name: "White card", hint: "Colour in the details" },
+    colour: { name: "Colour card", hint: "The card in the title colour" },
   },
   filesSection: "Files",
   back: "Back page with the logo (for printing on both sides)",

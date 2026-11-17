@@ -411,14 +411,12 @@ export const giftCard: typeof En.giftCard = {
   printStyleLabel: "Trükitud kaart",
   emailStyleLabel: "E-kirja pilt",
   printStyles: {
-    disc: { name: "Ring", hint: "Andmed ringil" },
-    panel: { name: "Paneel", hint: "Andmed paneelil" },
-    top: { name: "Ring üleval", hint: "Pealkiri ringil" },
+    white: { name: "Valge kaart", hint: "Värv detailides" },
+    colour: { name: "Värviline kaart", hint: "Kaart väljaande värvis" },
   },
   emailStyles: {
-    disc: { name: "Ring", hint: "Kood ringis" },
-    centre: { name: "Keskel", hint: "Üks veerg" },
-    split: { name: "Poolitatud", hint: "Kood värvil" },
+    white: { name: "Valge kaart", hint: "Värv detailides" },
+    colour: { name: "Värviline kaart", hint: "Kaart väljaande värvis" },
   },
   filesSection: "Failid",
   back: "Tagakülg logoga (kahepoolseks printimiseks)",

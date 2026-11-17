@@ -14,32 +14,26 @@ The form is remembered in the browser. The preview shows the card and the pictur
 
 ## What the card looks like
 
-Plain, like the rest of the toolkit: nothing around the card, a page that is a **6 % tint of the title's colour** (so it is not sterile white), and the colour itself in one big shape. The look of the printed card and of the e-mail picture is chosen separately (**Look** in the form); the preview changes at once.
+The card is designed like a card of the toolkit's own interface (rounded corners, Inter, Fira Sans for the header), and then made to feel like an **object you could pick up**: it lies on a page that is a **6 % tint of the title's colour**, has a soft layered shadow (tinted, never grey) and a **punched slot** at the top, like a hanging gift card. Nothing else is drawn: no outlines, no patterns, no circles.
 
-**Printed card (A4)**: label `KINKEKAART`, the header, the logo and the details sit in one tight column in the middle of the page. The details are the sentence (what to do, with the e-mail address), the code in a white box and "valid until".
+| | Printed card (A4) | E-mail picture (600x400) |
+|---|---|---|
+| Card | 78 % of the page wide, 72 % high, in the middle | 528 x 330 px |
+| Contents | Label `KINKEKAART`, logo, header (both lines, Fira Sans), the code in a big field, what to do (with the e-mail address), valid until | Only the **logo**, **how long** (the header without its first line, in a pill) and the **code**, all big |
 
-| Style | What it is |
-|---|---|
-| **Circle** (first) | The details lie on one full circle in the title's colour, right under the logo |
-| **Panel** | The details lie on one rounded panel, like a card of the toolkit |
-| **Top circle** | The title (label, header, logo on a white plate) is on a circle running off the top; the details are under it on the page |
+Two looks, chosen separately for the print card and the picture (**Look** in the form):
 
-**E-mail picture (600x400)**: only the **logo, how long and the code**, all big (on a phone the picture is about 60 % of its size). How long is the header without its first line (the logo already says the title). There is no sentence, no date and no address: those belong in the letter. No second `KINKEKAART`.
+- **White card:** a white card; the title's colour is in the header, the pill and the label of the code field; the code field is a 9 % tint.
+- **Colour card:** the card is in the title's colour; the logo sits on a white plate, the code field is white; text is white or black by the brand rule.
 
-| Style | What it is |
-|---|---|
-| **Circle** (first) | Logo and how long on the left, the code in a big circle on the right with a second soft circle behind it |
-| **Centre** | One column: logo, how long, the code in a big box; soft circles run off two corners |
-| **Split** | The logo and how long on the left, a panel in the title's colour on the right with the code |
-
-Without a code the picture falls back to **Centre** (nothing to put in the circle or the panel).
+The e-mail picture has no sentence, no date and no address and no second `KINKEKAART`: those belong in the letter. On a phone the picture is about 60 % of its size, so the type is big (the code 52 px). Without a code the picture shows just the logo and the pill.
 
 - **Fonts:** Fira Sans semibold for the header, Inter for everything else (as in the brand manual).
-- **Text colour on the colour:** white or black by the brand rule (white from step 600; for other colours white when it reads at 3:1, else black). Values (address, date) are yellow on dark colours where yellow reads, otherwise bold. The header is the title's colour, made a little darker only if it is too pale to read.
+- **Text colour on the colour:** white or black by the brand rule (white from step 600; for other colours white when it reads at 3:1, else black). Values (address, date) are yellow on a coloured card where yellow reads. The header is the title's colour, made a little darker only if it is too pale to read.
 - **Words** (Estonian) are in `apps/generator/src/giftcard-content.ts`: the label, `SALAKOOD`, the sentences of the printed card, the second-line buttons and the suggested header of each title. A part without a value is left out: no code, no "and the code"; no address, no "to the e-mail"; no date, no validity line.
-- **Flat colours only:** no gradients, no outlines, no shadows. That also keeps the PNG small when it is reduced to 256 colours.
+- **Flat colours only:** no gradients and no transparency. The shadow is made of 30 stacked flat shapes. That keeps the PDF plain and the PNG small when it is reduced to 256 colours.
 
-How the looks were chosen: a short look at what is common (clean layouts with white space, bold sans-serif type, simple palettes, the code in a large bold face; for e-mail one column, big type, small image) and then three tries of each, compared in the app. The research found little that is specific to gift cards, so treat the styles as a starting point and drop the ones that are not used.
+How the look was reached: first drafts used circles, panels and outlines, which looked decorated. A web search found little specific to gift cards (general advice: white space, bold sans-serif type, simple palettes, a large code; for e-mail one column and big type), so the look follows the toolkit's own cards and the idea of a physical card with a slot and a soft shadow.
 
 ## The files
 
@@ -69,7 +63,7 @@ The tool loads about 245 KB of script (`opentype.js`, only when it is opened) an
 
 ## Limits and ideas
 
-- Each look is one function in `giftcard.ts` (`printDisc`, `printPanel`, `printTop`, `emailDisc`, `emailCentre`, `emailSplit`); adding a look is one more function and one more name in `PRINT_STYLES` / `EMAIL_STYLES` and in the interface texts.
+- The looks are variants of one function per size in `giftcard.ts` (`printCard`, `emailCard`, each with `"white"` or `"colour"`); another look is one more name in `PRINT_STYLES` / `EMAIL_STYLES`, a branch in `cardDrawing` and the interface texts.
 - The code is not checked for being unique or stored anywhere: it is only printed.
 - Logos with arcs in their paths are refused (`import-titles.mjs` writes none).
 - The PDF is RGB; a print-ready CMYK version needs a converter.
