@@ -53,6 +53,12 @@ function hslToRgb([h, s, l]: [number, number, number]): Rgb {
   return [f(0) * 255, f(8) * 255, f(4) * 255];
 }
 
+// The colour with its lightness set (0 to 1), hue and saturation kept: a clean pale tint of a colour, not a grey one.
+export function withLightness(color: string, lightness: number): string {
+  const [h, s] = rgbToHsl(parseHex(color));
+  return toHex(hslToRgb([h, s, lightness]));
+}
+
 // Moves a colour lighter or darker (keeping its hue) until it reads on the background.
 // Dark backgrounds lighten dark colours; light backgrounds darken pale ones.
 export function readableOn(color: string, background: string, minRatio = 4.5): string {

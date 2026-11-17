@@ -371,7 +371,7 @@ export const brandManual = {
 
 // Tools section: small stand-alone helpers (not banners made from articles).
 export interface ToolInfo {
-  id: "image-cropper" | "movie-banner" | "article-scraper" | "picture-converter" | "email-signature" | "utm-builder";
+  id: "image-cropper" | "movie-banner" | "article-scraper" | "picture-converter" | "email-signature" | "utm-builder" | "gift-card";
   name: string;
   description: string;
   tag: string;
@@ -390,6 +390,7 @@ export const tools = {
     { id: "picture-converter", name: "Picture link converter", description: "Change the size number of CMS picture links to the banner sizes (54 and 48).", tag: "54 and 48", ready: true },
     { id: "email-signature", name: "Email signature", description: "Name, job title, phone and logo as a signature for Outlook or any mail program.", tag: "Outlook", ready: true },
     { id: "utm-builder", name: "Tracking links", description: "Add UTM labels to links, so the statistics show where each visit came from.", tag: "UTM", ready: true },
+    { id: "gift-card", name: "Gift card", description: "A4 gift card for printing and a 600x400 picture for e-mail, for any of our titles.", tag: "A4 + 600x400", ready: true },
   ] satisfies ToolInfo[],
 };
 
@@ -416,6 +417,61 @@ export const signature = {
     "Make a new signature and paste (Ctrl+V). Save.",
   ],
   logoNote: "The logo is loaded from the toolkit site, so it shows in the mail only after the site is published.",
+};
+
+export const giftCard = {
+  title: "Gift card",
+  subtitle: "A4 card for printing and a picture for e-mail",
+  intro: "Choose the title, write the header and the details. You get an A4 PDF for printing and a 600x400 picture for e-mail.",
+  titleSection: "Title and header",
+  titleHint: "The logo and the main colour come from the title.",
+  titleLabel: "Title",
+  titleChoose: "Choose the title",
+  headerLabel: "Header",
+  headerHint: "Two lines work best: what it is, and for how long.",
+  periodLabel: "Second line",
+  color: "Main colour",
+  detailsSection: "Order details",
+  detailsHint: "What the person needs to order the gift. Empty fields are left out of the card.",
+  codeLabel: "Secret code",
+  codeHint: "Leave it empty for a card without a code.",
+  countLabel: "Cards",
+  codesMade: (first: string, last: string, n: number) => `${n} cards, one for each code: ${first} to ${last}. Each is a page in the PDF and its own picture.`,
+  emailLabel: "E-mail for the order",
+  emailHint: "Printed card only. The picture for e-mail has no address: the person already has the mail.",
+  untilLabel: "Valid until",
+  styleSection: "Look",
+  styleHint: "Same layout, other colours. The preview changes at once.",
+  printStyleLabel: "Printed card",
+  emailStyleLabel: "E-mail picture",
+  printStyles: {
+    white: { name: "Light", hint: "Light page, colour in the details" },
+    colour: { name: "Colour", hint: "Page in the title colour" },
+  },
+  emailStyles: {
+    white: { name: "Light", hint: "Light page, colour in the details" },
+    colour: { name: "Colour", hint: "Page in the title colour" },
+  },
+  filesSection: "Files",
+  back: "Back page with the logo (for printing on both sides)",
+  sharp: "E-mail picture twice as sharp (1200x800, shown at 600x400)",
+  previewTitle: "Preview",
+  previewCard: "Card, A4",
+  previewMail: "Picture for e-mail, 600x400",
+  previewCode: "Preview of code",
+  cardLabel: "Preview of the printed gift card",
+  mailLabel: "Preview of the picture for e-mail",
+  loading: "Preparing the card…",
+  loadFailed: "Could not load the fonts. Check the connection and try again.",
+  needHeader: "Write the header of the card.",
+  needEmail: "The e-mail address does not look right.",
+  doneText: "Download the PDF for printing. The picture for e-mail has its own button.",
+  downloadPdf: "PDF",
+  downloadMail: "E-mail picture",
+  pdfDone: (cards: number) => `PDF with ${cards} card${cards === 1 ? "" : "s"} downloaded.`,
+  mailDone: (n: number, size: string) => (n === 1 ? `Picture downloaded (${size}).` : `${n} pictures downloaded as a zip (${size} together).`),
+  failed: "Could not make the file. Try again.",
+  note: "The PDF is A4 and in CMYK: black is pure black ink (0,0,0,100), greys are black ink only, white is no ink; the colours are converted from the screen colours with a simple formula, so exact brand colours should be checked with the print shop. The text is drawn as shapes: nothing to install, always the same letters, and it cannot be selected or searched.",
 };
 
 export const utmTool = {
@@ -850,6 +906,7 @@ export const home = {
       items: [
         { id: "article-scraper", name: "Article scraper", text: "Title, lead, link and picture link of an article." },
         { id: "utm-builder", name: "Tracking links", text: "UTM labels on links, for the statistics." },
+        { id: "gift-card", name: "Gift card", text: "A4 gift card and an e-mail picture for any title." },
         { id: "email-signature", name: "Email signature", text: "Your details and the logo as a signature for Outlook." },
         { id: "picture-converter", name: "Picture link converter", text: "CMS picture links to the banner sizes." },
       ],

@@ -1,6 +1,6 @@
 // Direct links. The address after the "?" says where the app is, so a link can be sent to a colleague:
 //   ?section=home | content | tools | brand   (no section = home)
-//   &tool=image-cropper | movie-banner | article-scraper | picture-converter | email-signature       (with section=tools)
+//   &tool=image-cropper | movie-banner | article-scraper | picture-converter | email-signature | utm-builder | gift-card   (with section=tools)
 //   &tab=colours | logos | fonts | eye                     (with section=brand)
 //   &make=header-bar | articles-1250x400 | articles-mobile | image-slider-1250x400 | image-slider-600x500   (with section=content: opens a new banner of that type)
 //   &topic=<topic id>&step=<n>   (with section=guide: opens that topic and scrolls to its step n)
@@ -11,7 +11,7 @@ import { nav, type Lang, type PageId, type ToolInfo } from "@/content";
 export type BrandTab = "colours" | "logos" | "fonts" | "eye";
 // Only pages that are switched on (see nav in content) can be opened by a link.
 export const PAGES: PageId[] = nav.filter((n) => n.ready).map((n) => n.id);
-export const TOOL_IDS: ToolInfo["id"][] = ["image-cropper", "movie-banner", "article-scraper", "picture-converter", "email-signature", "utm-builder"];
+export const TOOL_IDS: ToolInfo["id"][] = ["image-cropper", "movie-banner", "article-scraper", "picture-converter", "email-signature", "utm-builder", "gift-card"];
 export const MAKE_IDS = ["header-bar", "articles-1250x400", "articles-mobile", "image-slider-1250x400", "image-slider-600x500", "frame-banner", "responsive-banner"];
 
 export interface Route {

@@ -1,4 +1,5 @@
 import brandData from "../brand.json";
+import titlesData from "../titles.json";
 
 export interface ColorScale {
   id: string;
@@ -117,3 +118,21 @@ export function tokensJson(): string {
 export function safeZone(logo: LogoVariant): number {
   return Math.round(logo.height * brand.clearSpace.ratio * 100) / 100;
 }
+
+// The logos of the publisher's titles (magazines and puzzle books): the coloured logo of each, in titles/<file>.
+// `main` is the colour of the logo that stands for the title. Made by scripts/import-titles.mjs.
+export interface Title {
+  id: string;
+  name: string;
+  file: string; // the coloured logo
+  white: string; // the white version, for a coloured background
+  black: string; // the black version, for a light coloured background
+  width: number;
+  height: number;
+  main: string;
+  onColour: "white" | "original" | "swap"; // the logo on a page of the title's colour: the white version; the original with a thin white edge; or (only where asked for) with the title colour and white exchanged
+  textOnColour?: "white" | "black"; // the text colour on that page, when the usual rule (white if it reads at 3:1) is not right
+  cmyk?: [number, number, number, number]; // the brand owner's own CMYK values (percent) of `main`, when known: used in the print PDF instead of a computed value
+}
+
+export const titles = titlesData as Title[];

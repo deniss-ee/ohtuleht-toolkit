@@ -36,7 +36,7 @@ Internal toolkit for the Õhtuleht newsroom, ad sales and marketing: banner make
 apps/generator/            React 19 + Vite + Tailwind v4 + shadcn/ui (port 5173)
   src/App.tsx              the shell: which page, which draft, the address
   src/pages/               Home, ContentMarketingHome, the five editors (Banner, Slider, FrameBanner, ResponsiveBanner, HeaderBar),
-                           tools (ImageCropper, MovieBanner, ArticleScraper, PictureConverter, SignatureGenerator, UtmBuilder),
+                           tools (ImageCropper, MovieBanner, ArticleScraper, PictureConverter, SignatureGenerator, UtmBuilder, GiftCard),
                            BrandManual, BrandFonts, BrandEye, Guide
   src/components/editor/   shared parts: ArticleList, Preview, SwapFrame, ToolShell, ColorPicker, FormParts, Fields ...
   src/lib/                 one module per draft kind (banner, slider, frames, responsive, header), work (new, open zip), zip, storage + saved (saved work),
@@ -44,8 +44,8 @@ apps/generator/            React 19 + Vite + Tailwind v4 + shadcn/ui (port 5173)
   src/content.*.ts         every UI string (en, et) + content.ts picker;  src/guide-content.ts  the guide
 apps/api/                  Cloudflare Worker + D1 (guide values; the briefs and clients routes are unused now), wrangler.jsonc, migrations/
 packages/banner-runtime/   vanilla slider script inside the banners; test page on port 5174
-packages/templates/        banner and header-bar HTML/CSS templates, colour logic, validation, messages
-packages/brand/            brand.json (colours, logos, fonts) + logo SVGs
+packages/templates/        banner and header-bar HTML/CSS templates, the gift card drawing and PDF writer (giftcard.ts, pdf.ts), colour logic, validation, messages
+packages/brand/            brand.json (colours, logos, fonts) + logo SVGs; titles/ = logos of the 16 titles (old red already the brand red)
 tools/bookmarklet/         sources of the two bookmarks;  tools/legacy/  archived old tools;  tools/*.mjs  doc scripts
 docs/                      index in docs/README.md
 ```

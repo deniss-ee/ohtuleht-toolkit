@@ -4,6 +4,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+### Gift card (new tool in Tools)
+
+- **PNG for e-mail made small in the tool:** at most 256 colours (lossless for this flat artwork) and OxiPNG: 4 to 6 KB at 600x400 instead of 17 to 24 KB (14 to 18 KB instead of 61 to 72 KB at 1200x800). The tool tells the size.
+- **PDF in CMYK:** the whole PDF is DeviceCMYK (pure black 0,0,0,100, greys black ink only, white no ink, other colours by a plain formula without black ink for saturated colours); exact brand values can be added as `cmyk` in `titles.json`.
+- **Logos on the title's colour:** set for each title in `titles.json` (`onColour`, `textOnColour`). The logo's colours are not changed except for Naisteleht, Naisteleht 55+ and Naistelehe ristsõnad (title colour and white exchanged); the other boxed logos keep their own colours with a thin white edge; text logos use the white version; Ripsik is white on orange.
+
+- Makes a gift card for any of the 16 titles: an **A4 PDF** (vector, flat RGB, one page per card, optional back page with the logo) and a **600x400 picture for e-mail** (PNG, or 1200x800). Choose the title from its logos, write the header, one secret code and the number of cards (the tool adds -1, -2, ... to the code), the e-mail for the order and the date. The page is the card (no frame, no cut-out, no shadow): one centred column with the logo, the header, a **code block with a dashed outline** and the sentences; two looks with exactly the same layout (light: a 6 % tint of the title's colour; colour: the title's colour with the white or black version of the logo), chosen in the form. The e-mail picture is only the logo and the code, in big type. The printed card is 1.2 times larger than the first design (still A4), the whole PDF is CMYK (pure black 0,0,0,100, greys black ink only, white no ink, other colours converted by a plain formula), and the light page is a cleaner, paler tint. Doc: `docs/GIFT-CARD.md`.
+- New in `packages/brand`: `titles/` and `titles.json`, the logos of all titles (coloured, white and black versions), SVGO-optimised, with the old red `#E3000F` replaced by the brand red `#F50000` (`yarn workspace @ohtuleht/brand import-titles`).
+- New in `packages/templates`: `giftcard.ts` (layout, SVG path reading, text as outlines) and `pdf.ts` (PDF writer); 19 new tests. New dependencies: `opentype.js` (reads the font files, loaded only when the tool opens) and `@fontsource/inter` (static Inter files).
+
 ### Lighter and simpler (2026-11-16, tested as "v2" next to the old version, then merged)
 
 - **Removed:** Banner request and Task tracker (another in-house app will do this). Kept in the tag `archive/request-tracker`.
