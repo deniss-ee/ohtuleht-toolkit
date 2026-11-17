@@ -4,6 +4,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+### Checks on every pull request
+
+- A GitHub Actions workflow (`.github/workflows/checks.yml`) runs the type checks, tests, build, banner script size, first-load script budget (`tools/check-bundle.mjs`, 90 KB gzip) and the document link check. It publishes nothing.
+
 ### Gift card (new tool in Tools)
 
 - **PNG for e-mail made small in the tool:** at most 256 colours (lossless for this flat artwork) and OxiPNG: 4 to 6 KB at 600x400 instead of 17 to 24 KB (14 to 18 KB instead of 61 to 72 KB at 1200x800). The tool tells the size.
