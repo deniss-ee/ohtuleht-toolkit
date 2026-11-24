@@ -76,7 +76,7 @@ export const editor: typeof En.editor = {
   articlesTitle: "Artiklid",
   articlesHint: (min) => `Lisa vähemalt ${min}. Korraga on näha kuni 4; kui neid on rohkem, tulevad nooled ja automaatne libisemine.`,
   pasteLabel: "Kleebi siia see, mille järjehoidja kopeeris",
-  pastePlaceholder: "Vajuta siia ja siis Ctrl+V. Korraga võib kleepida palju artikleid.",
+  pastePlaceholder: "Vajuta lihtsalt Ctrl+V kuskil sellel lehel: järjehoidja kopeeritud artikkel lisatakse kohe. Korraga võib kleepida palju artikleid. (Või kleebi siia ja vajuta nuppu.)",
   pasteButton: "Lisa artiklid",
   howToSnippet: "Seadista kõigepealt järjehoidja",
   firstTime: "Oled siin esimest korda? Seadista järjehoidja ühe korra ära. Pärast seda võtab artikli kopeerimine ühe klõpsu.",
