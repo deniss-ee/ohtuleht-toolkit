@@ -12,11 +12,12 @@ import { slug, type HeaderFile } from "@/lib/banner";
 export interface HeaderDraft {
   config: HeaderBarConfig;
   picture: HeaderFile | null; // bytes for the zip, data URL for the preview
+  logo: HeaderFile | null; // the logo on the right: same
   embedUrl: string; // where the files will be hosted, used only for the iframe code
 }
 
 export function newHeaderDraft(): HeaderDraft {
-  return { config: { v: 1, format: "header-bar", label: "", href: "", primary: "#f50000" }, picture: null, embedUrl: "" };
+  return { config: { v: 1, format: "header-bar", label: "", href: "", primary: "#f50000" }, picture: null, logo: null, embedUrl: "" };
 }
 
 // Real values of a live header (b.ohtuleht.ee/html5/Ohtuleht/paised_uus/vallatud_joulud/), for trying the tool.
@@ -24,6 +25,7 @@ export function exampleHeaderDraft(): HeaderDraft {
   return {
     config: { v: 1, format: "header-bar", label: "Näidiskampaania", href: "https://example.com/campaign", primary: "#99e300" },
     picture: null,
+    logo: null,
     embedUrl: "https://b.ohtuleht.ee/html5/Ohtuleht/paised_uus/vallatud_joulud/",
   };
 }
@@ -34,7 +36,7 @@ export const headerZipName = (d: HeaderDraft) => stampedName(`header_${slug(d.co
 
 // What goes into the zip: the picture is the file next to the page.
 function exportConfig(d: HeaderDraft): HeaderBarConfig {
-  return { ...d.config, picture: d.picture ? { src: d.picture.name, avg: d.picture.avg } : undefined };
+  return { ...d.config, picture: d.picture ? { src: d.picture.name, avg: d.picture.avg } : undefined, logo: d.logo ? { src: d.logo.name, height: d.config.logo?.height } : undefined };
 }
 
 export function renderHeaderFiles(d: HeaderDraft) {
@@ -43,7 +45,7 @@ export function renderHeaderFiles(d: HeaderDraft) {
 
 // One page for the preview frame: the stylesheet is inlined and the picture becomes a data URL.
 export function renderHeaderPreview(d: HeaderDraft, id: number): string {
-  const config: HeaderBarConfig = { ...d.config, picture: d.picture ? { src: d.picture.dataUrl, avg: d.picture.avg } : undefined };
+  const config: HeaderBarConfig = { ...d.config, picture: d.picture ? { src: d.picture.dataUrl, avg: d.picture.avg } : undefined, logo: d.logo ? { src: d.logo.dataUrl, height: d.config.logo?.height } : undefined };
   const { html, css } = renderHeaderBar(config);
   // In the editor the page behind the bar is transparent, so no grey shows around the rounded corners.
   return html.replace('<link href="style.css" rel="stylesheet" />', `<style>${css}html,body{background:transparent!important}</style>`).replace("</body>", readySignal(id) + "</body>");
@@ -57,12 +59,21 @@ export async function fileToPicture(file: File): Promise<HeaderFile> {
   return { name, bytes, dataUrl, avg: await averageColor(dataUrl) };
 }
 
+// The logo on the right (a PNG, WebP, JPG or SVG, best with a clear background).
+export async function fileToLogo(file: File): Promise<HeaderFile> {
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const ext = file.name.split(".").pop()?.toLowerCase() ?? "png";
+  const name = `logo.${ext}`;
+  return { name, bytes, dataUrl: toDataUrl(bytes, name) };
+}
+
 export async function buildHeaderZip(d: HeaderDraft): Promise<Blob> {
   const { html, css } = renderHeaderFiles(d);
   const zip = new JSZip();
   zip.file("index.html", html);
   zip.file("style.css", css);
   if (d.picture) zip.file(d.picture.name, d.picture.bytes);
+  if (d.logo) zip.file(d.logo.name, d.logo.bytes);
   return zip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 9 } });
 }
 
@@ -85,5 +96,13 @@ export async function importHeaderZip(file: File): Promise<HeaderDraft | null> {
       picture = { name: config.picture.src, bytes, dataUrl: toDataUrl(bytes, config.picture.src), avg: config.picture.avg };
     }
   }
-  return { config, picture, embedUrl: "" };
+  let logo: HeaderFile | null = null;
+  if (config.logo) {
+    const entry = zip.file(config.logo.src);
+    if (entry) {
+      const bytes = await entry.async("uint8array");
+      logo = { name: config.logo.src, bytes, dataUrl: toDataUrl(bytes, config.logo.src) };
+    }
+  }
+  return { config, picture, logo, embedUrl: "" };
 }

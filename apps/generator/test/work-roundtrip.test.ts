@@ -18,6 +18,17 @@ describe("opening a zip finds the right kind and keeps the settings", () => {
     expect(work.draft.config).toEqual(draft.config);
   });
 
+  test("header bar with a logo of its own height", async () => {
+    const draft = exampleHeaderDraft();
+    const bytes = new Uint8Array([137, 80, 78, 71]);
+    draft.logo = { name: "logo.png", bytes, dataUrl: "data:image/png;base64,iVBORw==" };
+    draft.config.logo = { src: "logo.png", height: 20 };
+    const { work } = await openZip(asFile(await buildHeaderZip(draft)));
+    expect(work.kind).toBe("header");
+    expect(work.draft.config.logo).toEqual({ src: "logo.png", height: 20 });
+    expect((work.draft as typeof draft).logo?.bytes).toEqual(bytes);
+  });
+
   test("image slider, desktop", async () => {
     const draft = newSliderDraft();
     draft.config.campaign = "Round trip";
