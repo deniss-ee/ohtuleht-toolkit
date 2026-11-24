@@ -96,7 +96,7 @@ export const editor = {
   articlesTitle: "Articles",
   articlesHint: (min: number) => `Add at least ${min}. Up to 4 show at once; with more, arrows and automatic sliding appear.`,
   pasteLabel: "Paste what the bookmark copied",
-  pastePlaceholder: "Click here, then press Ctrl+V. You can paste many articles at once.",
+  pastePlaceholder: "Just press Ctrl+V anywhere on this page: what the bookmark copied is added at once. You can paste many articles at once. (Or paste here and press the button.)",
   pasteButton: "Add articles",
   howToSnippet: "Set up the bookmark first",
   firstTime: "First time here? Set up the bookmark once. After that, copying an article takes one click.",

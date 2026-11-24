@@ -220,18 +220,38 @@ export function ArticleList({
     if (open === i) setOpen(j);
     else if (open === j) setOpen(i);
   };
-  const addSnippets = () => {
-    const { articles: found, skipped } = parseSnippets(paste);
-    if (!found.length) {
-      toast.error(t.pasteNothing);
-      return;
-    }
+  // Articles copied by the bookmark are added from the text. Returns false when the text holds none.
+  const addFrom = (text: string): boolean => {
+    const { articles: found, skipped } = parseSnippets(text);
+    if (!found.length) return false;
     // New articles go first, so the newest one leads the banner.
     onChange([...found, ...articles]);
     if (open !== null) setOpen(open + found.length);
-    setPaste("");
     toast.success(t.pasteAdded(found.length, skipped));
+    return true;
   };
+  const addSnippets = () => {
+    if (!addFrom(paste)) {
+      toast.error(t.pasteNothing);
+      return;
+    }
+    setPaste("");
+  };
+
+  // Ctrl+V anywhere on the page, when no field has the focus: what the bookmark copied is added at once, with no click in the box and no button.
+  // Text that is not from the bookmark is left alone (no message), and so is a paste into a field.
+  const latest = useRef(addFrom);
+  latest.current = addFrom;
+  useEffect(() => {
+    const onPaste = (e: ClipboardEvent) => {
+      const el = e.target as HTMLElement | null;
+      if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable)) return;
+      const text = e.clipboardData?.getData("text/plain") ?? "";
+      if (text.trim() && latest.current(text)) e.preventDefault();
+    };
+    window.addEventListener("paste", onPaste);
+    return () => window.removeEventListener("paste", onPaste);
+  }, []);
 
   return (
     <Card>

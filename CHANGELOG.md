@@ -4,6 +4,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+### Ctrl+V adds the copied article
+
+- In the articles banner editor, pressing Ctrl+V anywhere (no field selected) adds the article the bookmark copied: no click in the box and no button. Pastes into fields and text that is not from the bookmark are left alone.
+
 ### Header bar: logo on the right
 
 - A logo can be added at the right end of the bar (PNG, WebP, JPG or SVG). Its height is optional: empty uses the usual 28 px, any other value from 8 to 46 px. It is saved in the zip (`logo.<ext>`) and comes back when the zip is opened again. A bar without a logo is byte-identical to before.
