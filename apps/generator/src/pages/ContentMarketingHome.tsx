@@ -1,7 +1,7 @@
-import { useRef } from "react";
-import { ChevronRight, FileUp, Layers, LayoutTemplate, Images, MonitorSmartphone, Newspaper, PanelTop, Smartphone, type LucideIcon } from "lucide-react";
+import { ChevronRight, Layers, LayoutTemplate, Images, MonitorSmartphone, Newspaper, PanelTop, Smartphone, type LucideIcon } from "lucide-react";
 import { ContinueCard } from "@/components/editor/ContinueCard";
 import { PageHeader } from "@/components/editor/PageHeader";
+import { OpenZipCard } from "@/components/editor/OpenZipCard";
 import { StartCard } from "@/components/editor/StartCard";
 import { bannerTypes, contentMarketing as t } from "@/content";
 import type { SavedInfo } from "@/lib/saved";
@@ -22,12 +22,13 @@ const ICONS: Record<string, LucideIcon> = {
 // Start screen of the category: pick a banner type or open an existing zip.
 // Every card is built the same way (title, details, button at the bottom) so rows line up.
 export function ContentMarketingHome({ onCreate, onUpload, saved, onContinue, onDiscard }: { onCreate: (typeId: string) => void; onUpload: (file: File) => void; saved: SavedInfo | null; onContinue: () => void; onDiscard: () => void }) {
-  const input = useRef<HTMLInputElement>(null);
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <PageHeader icon={LayoutTemplate} title={t.title} intro={t.intro} />
 
       {saved && <ContinueCard saved={saved} onContinue={onContinue} onDiscard={onDiscard} />}
+
+      <OpenZipCard onUpload={onUpload} />
 
       <ol className="flex flex-col gap-3 rounded-xl border border-dashed bg-muted/50 p-4 sm:flex-row sm:items-stretch sm:gap-2">
         {t.steps.map((s, i) => (
@@ -46,31 +47,6 @@ export function ContentMarketingHome({ onCreate, onUpload, saved, onContinue, on
         {bannerTypes.map((b) => (
           <StartCard key={b.id} icon={ICONS[b.id] ?? Newspaper} title={b.name} text={b.description} badges={[b.size, b.device]} action={b.ready ? t.create : t.soon} disabled={!b.ready} onAction={() => onCreate(b.id)} />
         ))}
-        <StartCard
-          icon={FileUp}
-          tone="yellow"
-          variant="outline"
-          title={t.uploadTitle}
-          text={t.uploadText}
-          badges={[".zip"]}
-          action={t.uploadButton}
-          onAction={() => input.current?.click()}
-          extra={
-            <input
-              ref={input}
-              type="file"
-              accept=".zip,application/zip"
-              className="sr-only"
-              aria-label={t.uploadButton}
-              onClick={(e) => e.stopPropagation()}
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                e.target.value = "";
-                if (f) onUpload(f);
-              }}
-            />
-          }
-        />
       </div>
     </div>
   );
