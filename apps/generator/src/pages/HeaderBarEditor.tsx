@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { ArrowLeft, CheckCircle2, Copy, Download, FlaskConical, ImagePlus, Link2, PanelTop, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
-import { headerTextColor } from "@ohtuleht/templates";
+import { BAR_HEIGHT, headerTextColor, LOGO_HEIGHT, LOGO_MIN } from "@ohtuleht/templates";
 import { AutoColorField, ColorField } from "@/components/editor/ColorField";
 import { goTo, HoverPill } from "@/components/editor/HoverPill";
 import { IconChip } from "@/components/editor/IconChip";
@@ -14,7 +14,7 @@ import { headerBar as t, ui } from "@/content";
 import { Toggles } from "@/layout/AppShell";
 import { useSaveShortcut } from "@/components/editor/useSaveShortcut";
 import { copyText } from "@/lib/clipboard";
-import { downloadHeaderZip, exampleHeaderDraft, fileToPicture, headerEmbedCode, headerProblems, renderHeaderPreview, type HeaderDraft } from "@/lib/header";
+import { downloadHeaderZip, exampleHeaderDraft, fileToLogo, fileToPicture, headerEmbedCode, headerProblems, renderHeaderPreview, type HeaderDraft } from "@/lib/header";
 
 // The bar is fluid (100% wide), so it is previewed at three real widths.
 const widths = () => [
@@ -27,6 +27,7 @@ const widths = () => [
 export function HeaderBarEditor({ draft, onChange, onBack }: { draft: HeaderDraft; onChange: (d: HeaderDraft) => void; onBack: () => void }) {
   const [busy, setBusy] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
+  const logoInput = useRef<HTMLInputElement>(null);
   const c = draft.config;
   const set = (patch: Partial<HeaderDraft["config"]>) => onChange({ ...draft, config: { ...c, ...patch } });
   const issues = headerProblems(draft);
@@ -37,6 +38,17 @@ export function HeaderBarEditor({ draft, onChange, onBack }: { draft: HeaderDraf
     if (!file) return;
     const picture = await fileToPicture(file);
     onChange({ ...draft, picture, config: { ...c, picture: { src: picture.name, avg: picture.avg } } });
+  };
+  const onLogo = async (file: File | undefined) => {
+    if (!file) return;
+    const logo = await fileToLogo(file);
+    onChange({ ...draft, logo, config: { ...c, logo: { src: logo.name, height: c.logo?.height } } });
+  };
+  const removeLogo = () => onChange({ ...draft, logo: null, config: { ...c, logo: undefined } });
+  // Empty = the usual height; otherwise a whole number of pixels, kept between the minimum and the height of the bar.
+  const setLogoHeight = (text: string) => {
+    const n = Math.round(Number(text));
+    set({ logo: { src: draft.logo?.name ?? "", height: text.trim() === "" || !Number.isFinite(n) ? undefined : Math.min(BAR_HEIGHT, Math.max(LOGO_MIN, n)) } });
   };
   const removePicture = () => onChange({ ...draft, picture: null, config: { ...c, picture: undefined } });
 
@@ -174,6 +186,35 @@ export function HeaderBarEditor({ draft, onChange, onBack }: { draft: HeaderDraf
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground">{t.pictureHint}</p>
+                </div>
+                <div className="space-y-2">
+                  <Label>{t.logo}</Label>
+                  <input ref={logoInput} type="file" className="sr-only" aria-label={t.logo} accept="image/png,image/webp,image/svg+xml,image/jpeg" onChange={(e) => onLogo(e.target.files?.[0])} />
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant="outline" size="sm" className="gap-2" onClick={() => logoInput.current?.click()}>
+                      <ImagePlus className="size-4" /> {draft.logo ? t.logoChange : t.logoChoose}
+                    </Button>
+                    {draft.logo && (
+                      <Button variant="ghost" size="sm" className="gap-2" onClick={removeLogo}>
+                        <Trash2 className="size-4" /> {t.logoRemove}
+                      </Button>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">{t.logoHint}</p>
+                  {draft.logo && (
+                    <div className="space-y-1.5">
+                      <Label htmlFor="hb-logo-height">{t.logoHeight}</Label>
+                      <div className="flex items-center gap-2">
+                        <Input id="hb-logo-height" type="number" inputMode="numeric" min={LOGO_MIN} max={BAR_HEIGHT} step={1} className="w-28" placeholder={String(LOGO_HEIGHT)} value={c.logo?.height ?? ""} onChange={(e) => setLogoHeight(e.target.value)} />
+                        {c.logo?.height !== undefined && (
+                          <Button variant="ghost" size="sm" onClick={() => setLogoHeight("")}>
+                            {t.logoHeightReset}
+                          </Button>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground">{t.logoHeightHint(LOGO_HEIGHT, BAR_HEIGHT)}</p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

@@ -1,6 +1,6 @@
 // The rules that have already broken once, pinned.
 import { describe, expect, test } from "vitest";
-import { brandTextColor, contrast, forDesktop, frameTimeline, OWN_PICTURE, pictureFits, readableOn, renderArticles1250x400, renderArticlesMobile, validate } from "../src/index.ts";
+import { BAR_HEIGHT, brandTextColor, contrast, forDesktop, frameTimeline, LOGO_HEIGHT, LOGO_MIN, logoHeight, OWN_PICTURE, pictureFits, readableOn, renderArticles1250x400, renderHeaderBar, renderArticlesMobile, validate } from "../src/index.ts";
 import { fadeRamp, frameStops } from "../src/frame-banner.ts";
 import * as f from "./fixtures.ts";
 
@@ -101,4 +101,27 @@ test("responsive banner accepts a picture at 1x and 2x only", () => {
   expect(pictureFits("large", 700, 200)).toBe(true);
   expect(pictureFits("large", 1400, 400)).toBe(true);
   expect(pictureFits("small", 700, 200)).toBe(false);
+});
+
+describe("header bar logo", () => {
+  const withLogo = (height?: number) => renderHeaderBar({ ...f.headerBar, logo: { src: "logo.png", height } });
+
+  test("no logo: nothing about a logo in the files", () => {
+    const { html, css } = renderHeaderBar(f.headerBar);
+    expect(html).not.toContain("banner__logo");
+    expect(css).not.toContain("banner__logo");
+  });
+
+  test("the logo is an image at the right end, the usual height when none is chosen", () => {
+    const { html, css } = withLogo();
+    expect(html).toContain('<img class="banner__logo" src="logo.png" alt="" />');
+    expect(html.indexOf("banner__label")).toBeLessThan(html.indexOf("banner__logo"));
+    expect(css).toContain(`height: ${LOGO_HEIGHT}px;`);
+  });
+
+  test("a chosen height is used, and kept between the minimum and the height of the bar", () => {
+    expect(withLogo(20).css).toContain("height: 20px;");
+    expect(logoHeight({ ...f.headerBar, logo: { src: "x", height: 500 } })).toBe(BAR_HEIGHT);
+    expect(logoHeight({ ...f.headerBar, logo: { src: "x", height: 1 } })).toBe(LOGO_MIN);
+  });
 });

@@ -8,6 +8,7 @@ export { CLICKTAG_JS } from "./clicktag.ts";
 export { resolveTheme, readableOn, onColor, brandTextColor, contrast } from "./colors.ts";
 export { renderHeaderBar, validateHeaderBar, headerTextColor, iframeCode } from "./header-bar.ts";
 export type { HeaderBarConfig, HeaderBarFiles } from "./header-bar.ts";
+export { BAR_HEIGHT, LOGO_HEIGHT, LOGO_MIN, logoHeight } from "./header-bar.ts";
 export { renderMovieBanner } from "./movie-banner.ts";
 export { renderFrameBanner, validateFrameBanner, frameTimeline, frameStops, frameAnimationCss, effectiveHolds, FRAME_MIN_HOLD_MS, FRAME_SIZE_MIN, FRAME_SIZE_MAX } from "./frame-banner.ts";
 export type { FrameBannerConfig, FrameFit } from "./frame-banner.ts";

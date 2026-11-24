@@ -15,6 +15,7 @@ In the generator: Content marketing, **Make this banner** on **Header bar** (or 
 | Bar colour | Fills the bar |
 | Text colour | Automatic: brand colours follow the brand rule (black on steps 50 to 500, white from 600 up); other colours get white unless they are very light (luminance above 0.55 or HSL lightness above 0.78), which get a dark tint. Can be set by hand |
 | Background picture | Optional. Shown at the left, `cover`. The bar colour shows behind it. Use a picture without text |
+| Logo on the right | Optional. A PNG, WebP, JPG or SVG at the right end of the bar. Height in px is optional: empty = 28 px (`LOGO_HEIGHT`), at most 46 (the bar), at least 8. Saved in the config as `logo: { src, height? }` |
 
 The preview shows the bar at 1248, 768 and 375 px wide.
 
@@ -25,6 +26,7 @@ The preview shows the bar at 1248, 768 and 375 px wide.
 | `index.html` | `<a class="banner">` with `<span class="banner__label">`; fonts load without blocking; config embedded (`#ol-header`) so the zip can be re-opened |
 | `style.css` | CSS variables (`--banner-background`, `--banner-text-color`, `--banner-background-image`...), same as the live file |
 | `bg.<ext>` | The picture, when used |
+| `logo.<ext>` | The logo, when used |
 
 Behaviour: 16 px side padding, Fira Sans Condensed 700 16 px uppercase, 6 px rounded corners at every width, page behind the bar `#f4f4f4` (`#0f0f0f` in dark mode). The live bar rounds its corners only from 1023 px wide; this tool rounds them everywhere.
 

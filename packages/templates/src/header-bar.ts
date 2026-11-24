@@ -14,7 +14,15 @@ export interface HeaderBarConfig {
   primary: string; // bar colour
   textColor?: string; // when empty, picked for contrast
   picture?: { src: string; avg?: string }; // optional background picture; src is the file name in the zip; avg = its average colour
+  logo?: { src: string; height?: number }; // optional logo on the right; src is the file name in the zip; height in px (LOGO_HEIGHT when empty)
 }
+
+export const BAR_HEIGHT = 46;
+export const LOGO_HEIGHT = 28; // default height of the logo on the bar
+export const LOGO_MIN = 8;
+
+// The logo height that is really used: the chosen one, kept between the minimum and the height of the bar.
+export const logoHeight = (c: HeaderBarConfig): number => Math.min(BAR_HEIGHT, Math.max(LOGO_MIN, Math.round(c.logo?.height ?? LOGO_HEIGHT)));
 
 const FONTS_URL = "https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@400;700&display=swap";
 const isUrl = (s: string) => /^https?:\/\//.test(s.trim());
@@ -37,6 +45,18 @@ export interface HeaderBarFiles {
 }
 
 export function renderHeaderBar(c: HeaderBarConfig): HeaderBarFiles {
+  const logoCss = c.logo
+    ? `.banner__logo {
+  display: block;
+  flex-shrink: 0;
+  width: auto;
+  height: ${logoHeight(c)}px;
+  max-width: 50%;
+  margin-left: var(--banner-padding-inline);
+  object-fit: contain;
+}
+`
+    : "";
   const image = c.picture ? `url("${c.picture.src}")` : "none";
   const css = `:root {
   --banner-background: ${c.primary};
@@ -81,7 +101,7 @@ body {
   text-transform: uppercase;
   color: inherit;
 }
-@media (prefers-color-scheme: dark) {
+${logoCss}@media (prefers-color-scheme: dark) {
   body,
   html {
     background-color: #0f0f0f;
@@ -102,7 +122,8 @@ body {
   </head>
   <body>
     <a class="banner" href="${escapeHtml(c.href)}" role="banner" target="_blank" rel="noopener">
-      <span class="banner__label">${escapeHtml(c.label)}</span>
+      <span class="banner__label">${escapeHtml(c.label)}</span>${c.logo ? `
+      <img class="banner__logo" src="${escapeHtml(c.logo.src)}" alt="" />` : ""}
     </a>
     <script type="application/json" id="ol-header">${jsonForScript(c)}</script>
   </body>
