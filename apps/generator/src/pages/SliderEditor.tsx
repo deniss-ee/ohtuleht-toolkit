@@ -379,13 +379,13 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
                           {sort.grip(i)}
                           <Thumb src={draft.files[s.image]?.dataUrl} />
                           <div className="min-w-0 flex-1 text-sm font-medium">{t.slideN(i + 1)}</div>
-                          <Button variant="ghost" size="icon" aria-label={t.slideEarlier} disabled={i === 0} onClick={() => move(i, -1)}>
+                          <Button variant="ghost" size="icon-sm" aria-label={t.slideEarlier} disabled={i === 0} onClick={() => move(i, -1)}>
                             <ArrowUp className="size-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" aria-label={t.slideLater} disabled={i === c.slides.length - 1} onClick={() => move(i, 1)}>
+                          <Button variant="ghost" size="icon-sm" aria-label={t.slideLater} disabled={i === c.slides.length - 1} onClick={() => move(i, 1)}>
                             <ArrowDown className="size-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" aria-label={t.slideRemove} onClick={() => set({ slides: c.slides.filter((_, j) => j !== i) })}>
+                          <Button variant="ghost" size="icon-sm" aria-label={t.slideRemove} onClick={() => set({ slides: c.slides.filter((_, j) => j !== i) })}>
                             <Trash2 className="size-4" />
                           </Button>
                         </div>

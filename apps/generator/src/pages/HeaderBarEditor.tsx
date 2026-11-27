@@ -4,10 +4,9 @@ import { toast } from "sonner";
 import { BAR_HEIGHT, headerTextColor, LOGO_HEIGHT, LOGO_MIN } from "@ohtuleht/templates";
 import { AutoColorField, ColorField } from "@/components/editor/ColorField";
 import { goTo, HoverPill } from "@/components/editor/HoverPill";
-import { IconChip } from "@/components/editor/IconChip";
+import { Section } from "@/components/editor/FormParts";
 import { SwapFrame } from "@/components/editor/SwapFrame";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { headerBar as t, ui } from "@/content";
@@ -143,17 +142,7 @@ export function HeaderBarEditor({ draft, onChange, onBack }: { draft: HeaderDraf
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <IconChip icon={PanelTop} tone="red" />
-                  <div>
-                    <CardTitle>{t.barTitle}</CardTitle>
-                    <CardDescription>{t.barHint}</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            <Section title={t.barTitle} description={t.barHint} icon={PanelTop} tone="red">
                 <div className="space-y-1.5">
                   <Label htmlFor="hb-label">{t.label}</Label>
                   <Input id="hb-label" value={c.label} onChange={(e) => set({ label: e.target.value })} />
@@ -216,20 +205,9 @@ export function HeaderBarEditor({ draft, onChange, onBack }: { draft: HeaderDraf
                     </div>
                   )}
                 </div>
-              </CardContent>
-            </Card>
+            </Section>
 
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <IconChip icon={Link2} tone="yellow" />
-                  <div>
-                    <CardTitle>{t.embedTitle}</CardTitle>
-                    <CardDescription>{t.embedHint}</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            <Section title={t.embedTitle} description={t.embedHint} icon={Link2} tone="yellow">
                 <ol className="space-y-2 text-sm">
                   {t.embedSteps.map((text, i) => (
                     <li key={i} className="flex items-start gap-3">
@@ -254,8 +232,7 @@ export function HeaderBarEditor({ draft, onChange, onBack }: { draft: HeaderDraf
                     <Copy className="size-4" /> {t.copy}
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
+            </Section>
           </div>
         </div>
       </div>

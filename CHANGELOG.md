@@ -14,6 +14,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 - New button **Download desktop + mobile** in the articles banner editor: one zip whose page is the desktop banner from 1248 px wide and the mobile banner below that. Each layout keeps its own picture sizes, the ad stays desktop only, and the zip opens again in the editor. The two separate downloads stay. The two templates were split into parts to share them; their output is byte-identical (golden files unchanged), and a new golden file covers the combined page.
 
+### Editors look alike (step 1)
+
+- Every list has the same small up, down and remove buttons (arrows); the header bar editor uses the same section blocks as the other editors.
+
 ### Image slider, mobile
 
 - A new mobile slider is a **cube with arrows** by default (was: slide, no arrows). Opened zips keep their own settings.
