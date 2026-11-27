@@ -4,67 +4,103 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
-### Fixed (hover picture, drag)
+## [0.3.0] - 2026-11-27
+
+### Highlights
+
+A new **Gift card** tool, **one articles banner for desktop and mobile**, a header bar **logo**, and a faster, friendlier editor: **Ctrl+V** adds a copied article, lists can be **reordered by dragging**, and pictures show **big on hover**.
+
+### Added
+
+- **Gift card** (Tools): an A4 print PDF in CMYK and a small 600x400 e-mail picture for every title, two looks, many cards from one code.
+- **Download desktop + mobile** in the articles banner: one zip that is the desktop banner from 1248 px wide and the mobile banner below.
+- **Header bar logo** on the right, with an optional height.
+- **Ctrl+V anywhere** in the articles editor adds the article copied by the bookmark.
+- **Drag and drop** to reorder articles, slides and pictures.
+- **Big picture on hover** in every picture list, cut as the banner cuts it.
+- **Open a banner you made before** on the first screen, with drag and drop of the zip.
+- **Release notes**: `yarn release:notes` and [docs/RELEASES.md](docs/RELEASES.md).
+- **Tests** for the zip round trip of every banner kind; `yarn verify` runs every check in one go.
+
+### Changed
+
+- **Mobile image slider** starts as a cube with arrows; nothing black behind the turning cube.
+- **Faster opening**: the common pages load quietly in the background; the first download is about 120 KB instead of 318 KB.
+- **Same look in every editor list**: same small up, down and remove buttons; the header bar uses the same blocks as the other editors; download buttons of the same rank sit together and look the same.
+
+### Fixed
+
+- The desktop banner never uses the phone picture size.
+- Hover picture shows the right crop; the drop line is no longer cut off.
+
+### Removed
+
+- Banner request and Task tracker (another in-house app does this; tag `archive/request-tracker`).
+- The GitHub Actions check (GitHub does not start it on this account); use `yarn verify`.
+
+### In detail
+
+#### Fixed (hover picture, drag)
 
 - The big picture of an article shows the crop of the banner being edited (wide on desktop, tall on mobile), not the whole file.
 - No small black arrow next to the big picture.
 - While dragging, the place to drop is the item's own border turned red, so it is no longer cut off at the edge of the list.
 
-### One articles banner for desktop and mobile
+#### One articles banner for desktop and mobile
 
 - New button **Download desktop + mobile** in the articles banner editor: one zip whose page is the desktop banner from 1248 px wide and the mobile banner below that. Each layout keeps its own picture sizes, the ad stays desktop only, and the zip opens again in the editor. The two separate downloads stay. The two templates were split into parts to share them; their output is byte-identical (golden files unchanged), and a new golden file covers the combined page.
 
-### Editors look alike (step 1)
+#### Editors look alike (step 1)
 
 - Every list has the same small up, down and remove buttons (arrows); the header bar editor uses the same section blocks as the other editors.
 
-### Checks run on your own machine
+#### Checks run on your own machine
 
 - The GitHub Actions check was removed: GitHub would not start it on this account, so every pull request showed a red mark. The same checks are one command, `yarn verify`, run before every merge.
 
-### Image slider, mobile
+#### Image slider, mobile
 
 - A new mobile slider is a **cube with arrows** by default (was: slide, no arrows). Opened zips keep their own settings.
 - **No black behind the cube:** the page behind the slider is transparent, so the site background shows while the cube turns. Golden files of the four slider formats changed in that one rule (`background:#000` to `background:transparent`).
 
-### Drag and drop to put things in order
+#### Drag and drop to put things in order
 
 - Articles, slider pictures, picture-loop frames and responsive-banner pictures can be dragged by the grip (six dots) to a new place. The up and down buttons stay for the keyboard. One shared helper (`components/editor/useDragSort.tsx`), no library.
 
-### Big picture on hover
+#### Big picture on hover
 
 - Rest the pointer on a small picture in a list (articles, slider pictures, picture-loop frames, responsive pictures) and a big version opens next to it, so the text in a picture can be read (`components/editor/ZoomPicture.tsx`).
 
-### Release notes
+#### Release notes
 
 - `yarn release:notes` writes GitHub-style release notes from the merged pull requests since the last version, grouped as New, Faster, Fixed, Under the hood; how to make a release is in `docs/RELEASES.md`.
 
-### Ctrl+V adds the copied article
+#### Ctrl+V adds the copied article
 
 - In the articles banner editor, pressing Ctrl+V anywhere (no field selected) adds the article the bookmark copied: no click in the box and no button. Pastes into fields and text that is not from the bookmark are left alone.
 
-### Header bar: logo on the right
+#### Header bar: logo on the right
 
 - A logo can be added at the right end of the bar (PNG, WebP, JPG or SVG). Its height is optional: empty uses the usual 28 px, any other value from 8 to 46 px. It is saved in the zip (`logo.<ext>`) and comes back when the zip is opened again. A bar without a logo is byte-identical to before.
 
-### Interface order
+#### Interface order
 
 - **Downloads of the same rank sit together and look the same:** the gift card PDF and e-mail picture buttons are now side by side, both red (`moreDownloads` in `ToolShell`).
 - **Open a banner you made before** is now a strip on the first screen (under "Continue where you left off") and on Content marketing, with drag and drop of the zip (`components/editor/OpenZipCard.tsx`). It was a card at the end of the banner list.
 
-### Tests for opening saved banners
+#### Tests for opening saved banners
 
 - `yarn test` also runs `apps/generator/test`: every banner kind is built as a zip and opened again the way "Open a banner you made before" does it, and must give the same kind and settings.
 
-### Faster opening of banners and tools
+#### Faster opening of banners and tools
 
 - The start screens, the banner editor and the banner code are fetched quietly in the background while the first screen is shown (`prefetchCommon` in `App.tsx`), so the first click does not wait for a download. Heavier pages (gift card, brand manual, guide) still load when opened.
 
-### Checks on every pull request
+#### Checks on every pull request
 
 - A GitHub Actions workflow (`.github/workflows/checks.yml`) runs the type checks, tests, build, banner script size, first-load script budget (`tools/check-bundle.mjs`, 90 KB gzip) and the document link check. It publishes nothing.
 
-### Gift card (new tool in Tools)
+#### Gift card (new tool in Tools)
 
 - **PNG for e-mail made small in the tool:** at most 256 colours (lossless for this flat artwork) and OxiPNG: 4 to 6 KB at 600x400 instead of 17 to 24 KB (14 to 18 KB instead of 61 to 72 KB at 1200x800). The tool tells the size.
 - **PDF in CMYK:** the whole PDF is DeviceCMYK (pure black 0,0,0,100, greys black ink only, white no ink, other colours by a plain formula without black ink for saturated colours); exact brand values can be added as `cmyk` in `titles.json`.
@@ -74,7 +110,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 - New in `packages/brand`: `titles/` and `titles.json`, the logos of all titles (coloured, white and black versions), SVGO-optimised, with the old red `#E3000F` replaced by the brand red `#F50000` (`yarn workspace @ohtuleht/brand import-titles`).
 - New in `packages/templates`: `giftcard.ts` (layout, SVG path reading, text as outlines) and `pdf.ts` (PDF writer); 19 new tests. New dependencies: `opentype.js` (reads the font files, loaded only when the tool opens) and `@fontsource/inter` (static Inter files).
 
-### Lighter and simpler (2026-11-16, tested as "v2" next to the old version, then merged)
+#### Lighter and simpler (2026-11-16, tested as "v2" next to the old version, then merged)
 
 - **Removed:** Banner request and Task tracker (another in-house app will do this). Kept in the tag `archive/request-tracker`.
 - **Lighter:** pages, the banner code and the chosen language are loaded when needed. First download about 120 KB gzip (was 318 KB).
@@ -83,12 +119,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 - Removed the 10 MB podcast bundle from `tools/legacy` (kept in the tag `legacy-podcast`); `shadcn` moved to dev dependencies.
 - A wrong guide topic in the address still opens the guide's start page, but the address keeps the wrong topic.
 
-### Documentation and refactor preparation (2026-11-16)
+#### Documentation and refactor preparation (2026-11-16)
 
 - New `docs/REFACTOR.md`: measured weight of the site, what repeats in the code, and a phased plan (safety net, weight, one banner model, one editor frame, routing, templates, hosting) with a ready prompt per phase.
 - `docs/ARCHITECTURE.md` rewritten to match the code (five banner kinds, zip contents, article pictures, how to add a banner type). `docs/AI-ASSISTANT.md` rewritten (which model for what, start prompts, token advice). `CLAUDE.md`, the READMEs, `ROADMAP`, `TRANSFER`, `CONTRIBUTING`, `WORKFLOW` and `BANNERS` (new section "Article pictures") brought up to date.
 
-### Articles banner: pictures (2026-11-11)
+#### Articles banner: pictures (2026-11-11)
 
 - Each article has its own picture for **Desktop** and for **Mobile**. Mobile starts as the automatic `/webp/48/` crop; when that crop is wrong, paste another address or **upload a picture** for that article (#161).
 - Uploaded article pictures are optimised in the browser, saved in the zip as `pic-<id>.<ext>` and read back by Upload zip (#161).
@@ -97,16 +133,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 - Mobile banner: 8 px between the label and the title (was 4 px) (#160).
 - Picture loop: the zip name always carries the size, `name_970x250_date.zip`, also for a responsive banner (#158).
 
-### Responsive banner
+#### Responsive banner
 
 - New banner type in Content marketing: **Responsive banner, 200 px**. Always 200 px high, as wide as its place (320 to 700 px). A small version (made 540x200, safe zone 320, shown up to 540 px wide) and a large version (700x200, safe zone 540, above 540), each a muted looping video (no controls; the first frame becomes the still) or pictures (one still, two or more fade into each other with the solid fade of the picture loop). Chosen by the banner's own width, only the shown version is loaded. Pictures at 1x or 2x accepted, with a warning for other shapes; the safe zone can be drawn on the preview. Doc: `docs/RESPONSIVE-BANNER.md`.
 - The picture loop's fade is now one reusable function (`groupAnimationCss`).
 
-### Picture loop banner
+#### Picture loop banner
 
 - New banner type in Content marketing: **Picture loop**, pictures (PNG, JPG, WebP) that fade into each other in place of a GIF. Fixed size or responsive (100% wide), fit (fill, whole picture, stretch), a colour and/or picture background under transparent PNGs, time per picture and fade, repeat forever or a number of rounds, pause on hover, optional reduced-motion. The fade keeps the old picture solid until the new one is fully in, so the background never shows and nothing jumps. Pure CSS. Zip with the settings embedded, opens again. Doc: `docs/FRAME-BANNER.md`.
 
-### Handover preparation (2026-11-02)
+#### Handover preparation (2026-11-02)
 
 - Documentation rewritten for the handover to IT: new README, docs index (`docs/README.md`), `docs/TRANSFER.md` (owners, accounts, moving the repository and the API, first week), `docs/AUTH-MICROSOFT.md` (Microsoft login, sending mail as the person, who sees what), `SECURITY.md`, `docs/AI-ASSISTANT.md`. `docs/CLOUDFLARE.md`, `docs/DEPLOY.md`, `docs/ROADMAP.md`, `docs/TASK-TRACKER.md`, `CONTRIBUTING.md`, `CLAUDE.md` and the package READMEs brought up to date.
 - Removed `docs/HANDOFF.md` and `docs/RECOMMENDATIONS.md` (their content moved into the new documents).
