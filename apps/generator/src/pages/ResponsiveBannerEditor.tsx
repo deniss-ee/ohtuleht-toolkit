@@ -15,7 +15,11 @@ import { editor as e, responsiveEditor as t, ui } from "@/content";
 import { formatSize } from "@/lib/format";
 import { imageSize } from "@/lib/image";
 import { downloadResponsiveZip, exampleResponsiveDraft, fileToPicture, fileToVideo, isVideoName, renderResponsivePreview, responsiveProblems, tidy, VERSION_WIDTH, versionWeightKb, type ResponsiveDraft, type VersionName } from "@/lib/responsive";
+<<<<<<< HEAD
 import { DRAG_CLASSES, reorder, useDragSort } from "@/components/editor/useDragSort";
+=======
+import { ZoomPicture } from "@/components/editor/ZoomPicture";
+>>>>>>> 7dd6629 (feat: big picture on hover in the picture lists)
 
 const BUDGET_KB = 250; // a soft guide for what one viewer downloads
 const PREVIEW_WIDTHS = [320, 430, 540, 600, 700];
@@ -188,7 +192,11 @@ function VersionCard({ name, draft, dims, onChange, onDims, onTask }: { name: Ve
                   <li key={k + i} {...sort.item(i)} className={"flex items-center gap-2 rounded-lg border bg-card p-1.5 " + DRAG_CLASSES}>
                     {sort.grip(i)}
                     <span className="w-4 text-center text-xs font-semibold text-muted-foreground">{i + 1}</span>
-                    {draft.files[k] && <img src={draft.files[k]!.dataUrl} alt="" className="h-10 w-28 rounded border object-cover" />}
+                    {draft.files[k] && (
+                      <ZoomPicture src={draft.files[k]!.dataUrl}>
+                        <img src={draft.files[k]!.dataUrl} alt="" className="h-10 w-28 rounded border object-cover" />
+                      </ZoomPicture>
+                    )}
                     <div className="min-w-0 flex-1">
                       <div className="text-xs text-muted-foreground">{draft.files[k] ? formatSize(draft.files[k]!.bytes.length) : ""}</div>
                       {sizeNote(k)}

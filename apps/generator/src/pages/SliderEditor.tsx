@@ -18,6 +18,7 @@ import { Toggles } from "@/layout/AppShell";
 import { formatSize } from "@/lib/format";
 import type { Optimised } from "@/lib/optimise";
 import { downloadSliderZip, exampleSliderDraft, fileToSliderPicture, renderSliderPreview, sliderProblems, sliderWeightKb, switchSliderFormat, tidy, type SliderDraft } from "@/lib/slider";
+import { ZoomPicture } from "@/components/editor/ZoomPicture";
 
 const BUDGET_KB = 100;
 const PHONES = [375, 390, 430];
@@ -119,7 +120,11 @@ function SliderPreview({ draft, pinned, onPin, onTryExample, working }: { draft:
 
 // Small picture in a list row.
 function Thumb({ src }: { src?: string }) {
-  return <div className="aspect-[6/5] h-12 shrink-0 overflow-hidden rounded bg-muted">{src && <img src={src} alt="" className="h-full w-full object-cover" />}</div>;
+  return (
+    <ZoomPicture src={src}>
+      <div className="aspect-[6/5] h-12 shrink-0 overflow-hidden rounded bg-muted">{src && <img src={src} alt="" className="h-full w-full object-cover" />}</div>
+    </ZoomPicture>
+  );
 }
 
 // Full-screen editor for the image slider.

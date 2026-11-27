@@ -14,7 +14,11 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { editor as e, frameEditor as t, ui } from "@/content";
 import { formatSize } from "@/lib/format";
 import { downloadFrameZip, exampleFrameDraft, fileToFramePicture, frameProblems, frameWeightKb, renderFramePreview, SIZE_PRESETS, tidy, type FrameDraft } from "@/lib/frames";
+<<<<<<< HEAD
 import { DRAG_CLASSES, reorder, useDragSort } from "@/components/editor/useDragSort";
+=======
+import { ZoomPicture } from "@/components/editor/ZoomPicture";
+>>>>>>> 7dd6629 (feat: big picture on hover in the picture lists)
 
 const BUDGET_KB = 150;
 const PREVIEW_WIDTHS = [0, 600, 320]; // responsive only: 0 = as designed
@@ -225,9 +229,11 @@ export function FrameBannerEditor({ draft, onChange, onBack }: { draft: FrameDra
                       <li key={f.image + i} {...sort.item(i)} className={"flex items-center gap-3 rounded-xl border bg-card p-2 " + DRAG_CLASSES}>
                         {sort.grip(i)}
                         <span className="w-5 shrink-0 text-center text-sm font-semibold text-muted-foreground">{i + 1}</span>
-                        <div className="h-14 w-20 shrink-0 overflow-hidden rounded-md border" style={{ backgroundImage: "repeating-conic-gradient(#0000000f 0% 25%, transparent 0% 50%)", backgroundSize: "12px 12px" }}>
-                          {file && <img src={file.dataUrl} alt="" className="h-full w-full object-contain" />}
-                        </div>
+                        <ZoomPicture src={file?.dataUrl}>
+                          <div className="h-14 w-20 shrink-0 overflow-hidden rounded-md border" style={{ backgroundImage: "repeating-conic-gradient(#0000000f 0% 25%, transparent 0% 50%)", backgroundSize: "12px 12px" }}>
+                            {file && <img src={file.dataUrl} alt="" className="h-full w-full object-contain" />}
+                          </div>
+                        </ZoomPicture>
                         <div className="min-w-0 flex-1">
                           <div className="truncate text-sm font-medium">{file?.name}</div>
                           <div className="text-xs text-muted-foreground">{file ? formatSize(file.bytes.length) : ""}</div>

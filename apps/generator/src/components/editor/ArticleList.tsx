@@ -17,6 +17,7 @@ import { parseSnippets } from "@/lib/snippets";
 import { withPictureSize } from "@/lib/image";
 import { readableOn } from "@ohtuleht/templates";
 import { useTheme } from "@/components/theme-provider";
+import { ZoomPicture } from "@/components/editor/ZoomPicture";
 
 // Thumbnail of the article image so people can see what they are adding.
 function Thumb({ src, badge, badgeColor }: { src: string; badge: string; badgeColor?: string }) {
@@ -47,9 +48,11 @@ function MiniThumb({ src }: { src: string }) {
   const [failed, setFailed] = useState<string | null>(null);
   const bad = !src || failed === src;
   return (
-    <div className="flex h-10 w-14 shrink-0 items-center justify-center overflow-hidden rounded bg-muted">
-      {bad ? <ImageOff className="size-4 text-muted-foreground" /> : <img src={src} alt="" className="h-full w-full object-cover" onError={() => setFailed(src)} />}
-    </div>
+    <ZoomPicture src={bad ? undefined : src}>
+      <div className="flex h-10 w-14 shrink-0 items-center justify-center overflow-hidden rounded bg-muted">
+        {bad ? <ImageOff className="size-4 text-muted-foreground" /> : <img src={src} alt="" className="h-full w-full object-cover" onError={() => setFailed(src)} />}
+      </div>
+    </ZoomPicture>
   );
 }
 
