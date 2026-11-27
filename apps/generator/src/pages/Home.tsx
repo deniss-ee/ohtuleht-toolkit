@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronRight, Clapperboard, Crop, Eye, FileSearch, FileText, Gift, Images, BookOpen, Layers, Link2, MonitorSmartphone, Search, Lightbulb, Newspaper, Palette, PanelTop, PenLine, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
+import { Clapperboard, Crop, Eye, FileSearch, FileText, Gift, Images, BookOpen, Layers, Link2, MonitorSmartphone, Search, Lightbulb, Newspaper, Palette, PanelTop, PenLine, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
 import { ContinueCard } from "@/components/editor/ContinueCard";
 import { OpenZipCard } from "@/components/editor/OpenZipCard";
-import { BannerPicture } from "@/components/editor/BannerPicture";
+import { PictureTile } from "@/components/editor/BannerPicture";
 import { Input } from "@/components/ui/input";
 import { home as t, nav, ui, type PageId, type ToolInfo } from "@/content";
 import type { BrandTab } from "@/lib/route";
@@ -57,13 +57,10 @@ export function Home({ saved, onContinue, onDiscard, onGo, onUpload }: { saved: 
   }, []);
   const q = query.trim().toLowerCase();
   const groups = t.groups.map((g) => ({ ...g, items: q ? g.items.filter((i) => `${i.name} ${i.text}`.toLowerCase().includes(q)) : g.items })).filter((g) => g.items.length > 0);
-  // v2 (docs/REDESIGN.md): the banners as tiles with a small drawing of each, big on the left; continue, open a zip and the other tools on the right.
-  const [banners, ...others] = groups;
-  const bannerGroup = banners?.id === "banners" ? banners : undefined;
-  const rest = bannerGroup ? others : groups;
+  // v2 (docs/REDESIGN.md): every group as tiles with a small drawing of what it makes; continue, open a zip and the tips on the right.
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-      <div className="min-w-0 space-y-6">
+      <div className="min-w-0 space-y-8">
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight">{t.title}</h1>
           <p className="text-muted-foreground">{t.intro}</p>
@@ -75,37 +72,34 @@ export function Home({ saved, onContinue, onDiscard, onGo, onUpload }: { saved: 
         </div>
         {q && groups.length === 0 && <p className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">{t.noResults(query.trim())}</p>}
 
-        {bannerGroup && (
-          <section aria-labelledby="home-banners" className="space-y-3">
+        {groups.map((g) => (
+          <section key={g.title} aria-labelledby={`home-${g.id}`} className="space-y-3">
             <div>
-              <h2 id="home-banners" className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                {bannerGroup.title}
+              <h2 id={`home-${g.id}`} className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                {g.title}
               </h2>
-              {bannerGroup.text && <p className="text-sm text-muted-foreground">{bannerGroup.text}</p>}
+              {g.text && <p className="text-sm text-muted-foreground">{g.text}</p>}
             </div>
             <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3">
-              {bannerGroup.items.map((i) => {
+              {g.items.map((i) => {
                 const item = ITEMS[i.id];
                 if (!item) return null;
-                return (
-                  <button key={i.id} type="button" onClick={() => onGo(item.to)} className="ol-lift grid gap-3 rounded-xl bg-card p-2.5 text-left shadow-panel ring-1 ring-foreground/[0.07] focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none">
-                    <BannerPicture id={i.id} />
-                    <span className="grid gap-0.5 px-1.5 pb-1.5">
-                      <span className="font-semibold">{i.name}</span>
-                      <span className="text-sm text-muted-foreground">{i.text}</span>
-                    </span>
-                  </button>
-                );
+                const off = nav.find((n) => n.id === item.to.page)?.ready === false;
+                return <PictureTile key={i.id} id={i.id} title={i.name} text={i.text} disabled={off} soon={ui.soon} onOpen={() => onGo(item.to)} />;
               })}
             </div>
           </section>
-        )}
+        ))}
+      </div>
 
-        <section aria-labelledby="home-tips" className="rounded-xl bg-card p-5 shadow-panel ring-1 ring-foreground/[0.07]">
+      <aside className="order-first min-w-0 space-y-4 lg:order-none lg:sticky lg:top-20">
+        {saved && <ContinueCard saved={saved} onContinue={onContinue} onDiscard={onDiscard} />}
+        <OpenZipCard onUpload={onUpload} />
+        <section aria-labelledby="home-tips" className="hidden rounded-xl bg-card p-5 shadow-panel ring-1 ring-foreground/[0.07] lg:block">
           <h2 id="home-tips" className="mb-3 flex items-center gap-2 font-semibold">
             <Lightbulb className="size-4 text-muted-foreground" aria-hidden /> {t.tipsTitle}
           </h2>
-          <ul className="grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+          <ul className="grid gap-2 text-sm">
             {t.tips.map((tip) => (
               <li key={tip} className="flex gap-2">
                 <FileText className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden />
@@ -114,37 +108,6 @@ export function Home({ saved, onContinue, onDiscard, onGo, onUpload }: { saved: 
             ))}
           </ul>
         </section>
-      </div>
-
-      <aside className="min-w-0 space-y-4 lg:sticky lg:top-20">
-        {saved && <ContinueCard saved={saved} onContinue={onContinue} onDiscard={onDiscard} />}
-        <OpenZipCard onUpload={onUpload} />
-        {rest.map((g) => (
-          <section key={g.title} aria-labelledby={`home-${g.id}`} className="rounded-xl bg-card p-2 shadow-panel ring-1 ring-foreground/[0.07]">
-            <h2 id={`home-${g.id}`} className="px-2.5 pt-2 pb-1 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-              {g.title}
-            </h2>
-            <ul>
-              {g.items.map((i) => {
-                const item = ITEMS[i.id];
-                if (!item) return null;
-                const off = nav.find((n) => n.id === item.to.page)?.ready === false;
-                const Icon = item.icon;
-                return (
-                  <li key={i.id}>
-                    <button type="button" disabled={off} onClick={() => onGo(item.to)} title={i.text} className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left text-sm transition-colors hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none disabled:opacity-50">
-                      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-muted text-muted-foreground">
-                        <Icon className="size-4" aria-hidden />
-                      </span>
-                      <span className="min-w-0 flex-1 truncate font-medium">{i.name}</span>
-                      {off ? <span className="text-xs text-muted-foreground">{ui.soon}</span> : <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        ))}
       </aside>
     </div>
   );

@@ -1,23 +1,11 @@
-import { ChevronRight, Layers, LayoutTemplate, Images, MonitorSmartphone, Newspaper, PanelTop, Smartphone, type LucideIcon } from "lucide-react";
+import { ChevronRight, LayoutTemplate } from "lucide-react";
 import { ContinueCard } from "@/components/editor/ContinueCard";
 import { PageHeader } from "@/components/editor/PageHeader";
 import { OpenZipCard } from "@/components/editor/OpenZipCard";
-import { StartCard } from "@/components/editor/StartCard";
+import { PictureTile } from "@/components/editor/BannerPicture";
 import { bannerTypes, contentMarketing as t } from "@/content";
 import type { SavedInfo } from "@/lib/saved";
 
-// One icon per banner type (picked by id so new types only need an entry here).
-const ICONS: Record<string, LucideIcon> = {
-  "header-bar": PanelTop,
-  "articles-1250x400": Newspaper,
-  "articles-ad-1250x400": Newspaper,
-  "image-slider-1250x400": Images,
-  "articles-mobile": Smartphone,
-  "articles-600x500": Smartphone,
-  "image-slider-600x500": Smartphone,
-  "frame-banner": Layers,
-  "responsive-banner": MonitorSmartphone,
-};
 
 // Start screen of the category: pick a banner type or open an existing zip.
 // Every card is built the same way (title, details, button at the bottom) so rows line up.
@@ -30,7 +18,7 @@ export function ContentMarketingHome({ onCreate, onUpload, saved, onContinue, on
 
       <OpenZipCard onUpload={onUpload} />
 
-      <ol className="flex flex-col gap-3 rounded-xl border border-dashed bg-muted/50 p-4 sm:flex-row sm:items-stretch sm:gap-2">
+      <ol className="flex flex-col gap-3 rounded-xl bg-card p-4 shadow-panel ring-1 ring-foreground/[0.07] sm:flex-row sm:items-stretch sm:gap-2">
         {t.steps.map((s, i) => (
           <li key={s.title} className="flex flex-1 items-start gap-3 sm:items-center">
             {i > 0 && <ChevronRight className="hidden size-5 shrink-0 text-muted-foreground sm:block" aria-hidden />}
@@ -43,9 +31,10 @@ export function ContentMarketingHome({ onCreate, onUpload, saved, onContinue, on
         ))}
       </ol>
 
-      <div className="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {/* v2: the same tiles with a drawing as on the first screen */}
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
         {bannerTypes.map((b) => (
-          <StartCard key={b.id} icon={ICONS[b.id] ?? Newspaper} title={b.name} text={b.description} badges={[b.size, b.device]} action={b.ready ? t.create : t.soon} disabled={!b.ready} onAction={() => onCreate(b.id)} />
+          <PictureTile key={b.id} id={b.id} title={b.name} text={b.description} badges={[b.size, b.device]} disabled={!b.ready} soon={t.soon} onOpen={() => onCreate(b.id)} />
         ))}
       </div>
     </div>

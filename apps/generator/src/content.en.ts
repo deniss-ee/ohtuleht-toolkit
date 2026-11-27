@@ -64,6 +64,9 @@ export const contentMarketing = {
 
 export const editor = {
   quickTitle: "Quick edit",
+  previousArticle: "Previous article",
+  nextArticle: "Next article",
+  closeArticle: "Close (Esc)",
   settingsTabs: "Settings",
   settingsTab: { campaign: "Campaign", header: "Header", more: "Colours & more" },
   quickArticles: "Add, remove or reorder the articles, then download. Everything else stays as it was in the zip.",

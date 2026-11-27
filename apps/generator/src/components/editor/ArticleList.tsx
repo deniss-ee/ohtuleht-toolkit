@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ArrowDown, ArrowUp, Bookmark, ChevronRight, ClipboardPaste, ImageOff, ImagePlus, Loader2, Newspaper, Plus, Trash2, TriangleAlert } from "lucide-react";
+import { ArrowDown, ArrowUp, Bookmark, ChevronDown, ChevronRight, ChevronUp, X, ClipboardPaste, ImageOff, ImagePlus, Loader2, Newspaper, Plus, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import type { ArticleItem } from "@ohtuleht/templates";
 import { forDesktop, MIN_ARTICLES } from "@ohtuleht/templates";
@@ -25,7 +25,7 @@ function Thumb({ src, badge, badgeColor }: { src: string; badge: string; badgeCo
   const { resolvedTheme } = useTheme();
   const bad = !src || failed === src;
   return (
-    <div className="relative aspect-[300/215] w-full self-start overflow-hidden rounded-md bg-muted sm:w-56 sm:shrink-0">
+    <div className="relative aspect-[300/215] w-full self-start overflow-hidden rounded-md bg-muted @xl:w-56 @xl:shrink-0">
       {bad ? (
         <div className="flex h-full flex-col items-center justify-center gap-1 text-xs text-muted-foreground">
           <ImageOff className="size-5" />
@@ -56,8 +56,9 @@ function MiniThumb({ src, aspect }: { src: string; aspect: number }) {
   );
 }
 
-// One article. Closed: a single line (picture, number, title, buttons). Open: the whole form.
-// The form stays in the page while closed (hidden), so "to fix" links can find its fields.
+// One article: a single line in the list (picture, number, title, buttons). Opening it shows the whole form in a side panel
+// that slides over the page from the right (the "side peek" of Notion and Linear), at a width the form is made for; the banner stays
+// in view on the left. The form stays in the page while closed (hidden), so "to fix" links can find its fields.
 function ArticleRow({
   index,
   total,
@@ -72,6 +73,7 @@ function ArticleRow({
   onToggle,
   onPatch,
   onMove,
+  onStep,
   drag,
   grip,
   onRemove,
@@ -89,6 +91,7 @@ function ArticleRow({
   onToggle: () => void;
   onPatch: (patch: Partial<ArticleItem>) => void;
   onMove: (dir: -1 | 1) => void;
+  onStep: (dir: -1 | 1) => void; // open the article before or after this one
   drag: object; // drag and drop props for the row
   grip: ReactNode;
   onRemove: () => void;
@@ -105,12 +108,12 @@ function ArticleRow({
     <li {...drag} className={"rounded-lg border bg-card " + DRAG_CLASSES}>
       <div className="flex items-center gap-1 p-1.5">
         {grip}
-        <button type="button" aria-expanded={open} aria-controls={`${id}-body`} className="flex min-w-0 flex-1 items-center gap-3 rounded-md p-1 text-left hover:bg-muted/60" onClick={onToggle}>
+        <button type="button" aria-expanded={open} aria-controls={`${id}-body`} className={"flex min-w-0 flex-1 items-center gap-3 rounded-md p-1 text-left hover:bg-muted/60" + (open ? " bg-muted" : "")} onClick={onToggle}>
           <MiniThumb src={shownSrc} aspect={mobile ? 267 / 400 : 300 / 215} />
           <span className="w-5 shrink-0 text-xs font-semibold text-muted-foreground">{index + 1}</span>
           <span className="min-w-0 flex-1 truncate text-sm font-medium">{article.title.trim() || t.untitledArticle}</span>
           {incomplete && <TriangleAlert className="size-4 shrink-0 text-yellow-600" aria-label={t.articleIncomplete} />}
-          <ChevronRight className={"size-4 shrink-0 text-muted-foreground" + (open ? " rotate-90" : "")} />
+          <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
         </button>
         <div className="flex shrink-0">
           <Button variant="ghost" size="icon-sm" aria-label={t.moveUp} disabled={index === 0} onClick={() => onMove(-1)}>
@@ -124,15 +127,29 @@ function ArticleRow({
           </Button>
         </div>
       </div>
-      <div id={`${id}-body`} hidden={!open} className="border-t p-3 sm:p-4">
-      <div className="flex flex-col gap-4 sm:flex-row">
+      <div id={`${id}-body`} hidden={!open} role="dialog" aria-label={article.title.trim() || t.untitledArticle} className="fixed top-0 right-0 bottom-0 z-50 flex w-full max-w-[540px] flex-col border-l bg-card shadow-lifted lg:top-14 animate-in fade-in-0 slide-in-from-right-8 duration-200">
+      <div className="flex items-center gap-1 border-b px-3 py-2.5">
+        <span className="grid size-7 shrink-0 place-items-center rounded-md bg-muted text-xs font-semibold text-muted-foreground">{index + 1}</span>
+        <span className="min-w-0 flex-1 truncate px-1 font-semibold">{article.title.trim() || t.untitledArticle}</span>
+        <Button variant="ghost" size="icon-sm" aria-label={t.previousArticle} disabled={index === 0} onClick={() => onStep(-1)}>
+          <ChevronUp className="size-4" />
+        </Button>
+        <Button variant="ghost" size="icon-sm" aria-label={t.nextArticle} disabled={index === total - 1} onClick={() => onStep(1)}>
+          <ChevronDown className="size-4" />
+        </Button>
+        <Button variant="ghost" size="icon-sm" aria-label={t.closeArticle} onClick={onToggle}>
+          <X className="size-4" />
+        </Button>
+      </div>
+      <div className="@container flex-1 overflow-y-auto p-4">
+      <div className="flex flex-col gap-4 @xl:flex-row">
         <Thumb src={shownSrc} badge={shownBadge} badgeColor={article.badgeColor || defaultColor} />
         <div className="grid flex-1 gap-3">
           <div className="space-y-1.5">
             <Label htmlFor={`${id}-title`}>{t.titleField}</Label>
             <Textarea id={`${id}-title`} rows={2} value={article.title} onChange={(e) => onPatch({ title: e.target.value })} />
           </div>
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid gap-3 @3xl:grid-cols-2">
             <div className="space-y-1.5">
               <Label htmlFor={`${id}-url`}>{t.articleUrl}</Label>
               <Input id={`${id}-url`} placeholder="https://www.ohtuleht.ee/…" value={article.url} onChange={(e) => onPatch({ url: e.target.value })} />
@@ -154,7 +171,7 @@ function ArticleRow({
               <p className="text-xs text-muted-foreground">{mobile ? t.imageMobileHint : t.imageDesktopHint}</p>
             </div>
           </div>
-          <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+          <div className="grid gap-3 @md:grid-cols-[1fr_auto]">
             <div className="space-y-1.5">
               <Label htmlFor={`${id}-badge`}>{t.badgeField}</Label>
               <Input id={`${id}-badge`} placeholder={`${t.badgeDefault} (${defaultBadge || "—"})`} value={article.badge ?? ""} onChange={(e) => onPatch({ badge: e.target.value })} />
@@ -170,6 +187,7 @@ function ArticleRow({
             </div>
           </div>
         </div>
+      </div>
       </div>
       </div>
     </li>
@@ -212,6 +230,15 @@ export function ArticleList({
     window.addEventListener("ol-reveal", reveal);
     return () => window.removeEventListener("ol-reveal", reveal);
   }, []);
+
+  useEffect(() => {
+    if (open === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
 
   const patch = (i: number, p: Partial<ArticleItem>) =>
     onChange(
@@ -317,6 +344,7 @@ export function ArticleList({
                 onToggle={() => setOpen(open === i ? null : i)}
                 onPatch={(p) => patch(i, p)}
                 onMove={(d) => move(i, d)}
+                onStep={(d) => setOpen(i + d)}
                 drag={sort.item(i)}
                 grip={sort.grip(i)}
                 onRemove={() => {

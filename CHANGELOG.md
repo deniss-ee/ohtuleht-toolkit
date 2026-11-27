@@ -10,6 +10,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 - Top bar with the sections as a pill switch instead of the side menu.
 - Home: the banners as tiles with a small drawing of each; Continue, open a zip and the tools in a column on the right.
 - Articles banner editor in three columns: articles left, the banner on a desk in the middle (stays in view), settings in tabs on the right (Campaign, Header, Colours & more). Quick edit puts its panel in the right column.
+- An article opens in a **side panel** over the page (like Notion and Linear): its form at a comfortable width, arrows to the previous and next article, close with the cross or Esc. The banner stays in view. On a phone the panel fills the screen.
+- **Every tool and brand page has a small drawing** on its tile; Home, Content marketing and Tools use the same tiles. Page titles are the same plain bold title everywhere.
 
 ### Quick edit for opened banners
 

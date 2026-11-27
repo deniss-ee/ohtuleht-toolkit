@@ -1,18 +1,17 @@
-import { Clapperboard, Crop, FileSearch, Gift, Link2, PenLine, Replace, Wrench, type LucideIcon } from "lucide-react";
+import { Wrench } from "lucide-react";
 import { PageHeader } from "@/components/editor/PageHeader";
-import { StartCard } from "@/components/editor/StartCard";
+import { PictureTile } from "@/components/editor/BannerPicture";
 import { tools as t, type ToolInfo } from "@/content";
 
-const ICONS: Record<ToolInfo["id"], LucideIcon> = { "image-cropper": Crop, "movie-banner": Clapperboard, "article-scraper": FileSearch, "picture-converter": Replace, "email-signature": PenLine, "utm-builder": Link2, "gift-card": Gift };
-
-// Start screen of the Tools section: one card per tool.
+// Start screen of the Tools section: one tile per tool.
 export function ToolsHome({ onOpen }: { onOpen: (id: ToolInfo["id"]) => void }) {
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <PageHeader icon={Wrench} title={t.title} intro={t.intro} />
-      <div className="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {/* v2: the same tiles with a drawing as on the first screen */}
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
         {t.items.map((i) => (
-          <StartCard key={i.id} icon={ICONS[i.id]} title={i.name} text={i.description} badges={[i.tag]} action={i.ready ? t.open : t.soon} disabled={!i.ready} onAction={() => onOpen(i.id)} />
+          <PictureTile key={i.id} id={i.id} title={i.name} text={i.description} badges={[i.tag]} disabled={!i.ready} soon={t.soon} onOpen={() => onOpen(i.id)} />
         ))}
       </div>
     </div>

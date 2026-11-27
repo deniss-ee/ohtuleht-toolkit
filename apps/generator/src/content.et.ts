@@ -45,6 +45,9 @@ export const contentMarketing: typeof En.contentMarketing = {
 
 export const editor: typeof En.editor = {
   quickTitle: "Kiire muutmine",
+  previousArticle: "Eelmine artikkel",
+  nextArticle: "Järgmine artikkel",
+  closeArticle: "Sulge (Esc)",
   settingsTabs: "Seaded",
   settingsTab: { campaign: "Kampaania", header: "Päis", more: "Värvid ja muu" },
   quickArticles: "Lisa, eemalda või tõsta artikleid ümber, siis laadi alla. Kõik muu jääb nii, nagu zip-is oli.",
