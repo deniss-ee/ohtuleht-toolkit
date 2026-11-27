@@ -19,6 +19,7 @@ import { formatSize } from "@/lib/format";
 import type { Optimised } from "@/lib/optimise";
 import { downloadSliderZip, exampleSliderDraft, fileToSliderPicture, renderSliderPreview, sliderProblems, sliderWeightKb, switchSliderFormat, tidy, type SliderDraft } from "@/lib/slider";
 import { ZoomPicture } from "@/components/editor/ZoomPicture";
+import { QuickPanel } from "@/components/editor/QuickBar";
 
 const BUDGET_KB = 100;
 const PHONES = [375, 390, 430];
@@ -128,7 +129,8 @@ function Thumb({ src }: { src?: string }) {
 }
 
 // Full-screen editor for the image slider.
-export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; onChange: (d: SliderDraft) => void; onBack: () => void }) {
+// `quick`: opened from a zip, so only the preview and the pictures show until "All settings" is pressed.
+export function SliderEditor({ draft, onChange, onBack, quick = false, onFull }: { draft: SliderDraft; onChange: (d: SliderDraft) => void; onBack: () => void; quick?: boolean; onFull?: () => void }) {
   const [busy, setBusy] = useState(false);
   const [pinned, setPinned] = useState(false);
   const [working, setWorking] = useState<"bg" | "slides" | "example" | null>(null); // pictures are being prepared
@@ -310,8 +312,8 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
           </div>
 
           <div className="pb-24 pt-4">
-            <div className="grid items-start gap-4 lg:grid-cols-2 lg:grid-rows-[auto_1fr]">
-              <div className="min-w-0 space-y-4 lg:col-start-2 lg:row-start-1">
+            <div className={quick ? "grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]" : "grid items-start gap-4 lg:grid-cols-2 lg:grid-rows-[auto_1fr]"}>
+              <div data-quick-hidden={quick || undefined} className={quick ? "hidden" : "min-w-0 space-y-4 lg:col-start-2 lg:row-start-1"}>
                 <Section title={t.campaignTitle} icon={Images} tone="red">
                   <div className="space-y-1.5">
                     <Label htmlFor="campaign">{t.campaignName}</Label>
@@ -345,7 +347,7 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
                 )}
               </div>
 
-              <div className="min-w-0 lg:col-start-1 lg:row-span-2 lg:row-start-1">
+              <div className={quick ? "min-w-0 lg:col-start-1 lg:row-start-1" : "min-w-0 lg:col-start-1 lg:row-span-2 lg:row-start-1"}>
                 <Section title={t.slidesTitle(c.slides.length)} description={t.slidesHint} icon={Images} tone="red">
                   <div className="space-y-2">
                     <input ref={slideInput} type="file" multiple className="sr-only" aria-label={t.slidesAdd} accept="image/png,image/jpeg,image/webp" onChange={(ev) => { void onSlides(ev.target.files); ev.target.value = ""; }} />
@@ -404,7 +406,7 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
                 </Section>
               </div>
 
-              <div className="min-w-0 space-y-4 lg:col-start-2 lg:row-start-2">
+              <div data-quick-hidden={quick || undefined} className={quick ? "hidden" : "min-w-0 space-y-4 lg:col-start-2 lg:row-start-2"}>
                 <h2 className="pt-2 text-sm font-semibold text-muted-foreground">{e.advanced}</h2>
                 {!mobile && (
                   <Collapsible title={t.layoutTitle} description={t.layoutHint} icon={LayoutDashboard} tone="yellow" className="animate-in fade-in-0 duration-300">
@@ -465,6 +467,17 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
                   </div>
                 </Collapsible>
               </div>
+              {quick && (
+                <QuickPanel
+                  what="pictures"
+                  onFull={() => onFull?.()}
+                  facts={[
+                    { label: e.quickCampaign, value: c.campaign },
+                    { label: e.quickSize, value: mobile ? "600x500" : "1250x400" },
+                    { label: e.quickPictures2, value: String(c.slides.length) },
+                  ]}
+                />
+              )}
             </div>
           </div>
         </div>

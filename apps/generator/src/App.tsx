@@ -64,8 +64,16 @@ export function App() {
   workRef.current = work;
   const [tool, setTool] = useState<ToolInfo["id"] | null>(link.tool); // open tool in the Tools section
   const [notes, setNotes] = useState<string[]>([]); // things to check after opening an old banner
+  const [quick, setQuick] = useState(false); // quick edit: a banner opened from a zip shows only its list until "All settings"
 
-  const start = (w: Work) => {
+  // "To fix" pointed at a field that quick edit hides: show all settings.
+  useEffect(() => {
+    const full = () => setQuick(false);
+    window.addEventListener("ol-show-all", full);
+    return () => window.removeEventListener("ol-show-all", full);
+  }, []);
+  const start = (w: Work, fromZip = false) => {
+    setQuick(fromZip);
     edited.current = false;
     setWork(w);
   };
@@ -96,7 +104,7 @@ export function App() {
       // The editors live in Content marketing: a zip opened from any other page (Home, a drop anywhere) goes there.
       setPage("content");
       setTool(null);
-      start(opened.work);
+      start(opened.work, true);
       if (opened.notes.length) setNotes(opened.notes);
       else toast.success(editor.imported);
     } catch (e) {
@@ -202,13 +210,13 @@ export function App() {
           {page === "home" && <Home saved={saved} onContinue={resume} onDiscard={discard} onGo={go} onUpload={open} />}
           {page === "content" &&
             (work?.kind === "banner" ? (
-              <BannerEditor draft={work.draft} onChange={(draft) => change({ kind: "banner", draft })} onBack={close} />
+              <BannerEditor draft={work.draft} onChange={(draft) => change({ kind: "banner", draft })} onBack={close} quick={quick} onFull={() => setQuick(false)} />
             ) : work?.kind === "responsive" ? (
               <ResponsiveBannerEditor draft={work.draft} onChange={(draft) => change({ kind: "responsive", draft })} onBack={close} />
             ) : work?.kind === "frames" ? (
               <FrameBannerEditor draft={work.draft} onChange={(draft) => change({ kind: "frames", draft })} onBack={close} />
             ) : work?.kind === "slider" ? (
-              <SliderEditor draft={work.draft} onChange={(draft) => change({ kind: "slider", draft })} onBack={close} />
+              <SliderEditor draft={work.draft} onChange={(draft) => change({ kind: "slider", draft })} onBack={close} quick={quick} onFull={() => setQuick(false)} />
             ) : work?.kind === "header" ? (
               <HeaderBarEditor draft={work.draft} onChange={(draft) => change({ kind: "header", draft })} onBack={close} />
             ) : (

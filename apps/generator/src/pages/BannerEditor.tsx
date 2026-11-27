@@ -23,6 +23,7 @@ import type { Optimised } from "@/lib/optimise";
 import { Collapsible, Section, SwitchRow } from "@/components/editor/FormParts";
 import { useSaveShortcut } from "@/components/editor/useSaveShortcut";
 import { downloadBothZip, downloadZip, fileToAd, fileToArticle, fileToHeader, fileToLogo } from "@/lib/zip";
+import { QuickPanel } from "@/components/editor/QuickBar";
 
 const BUDGET_KB = 100;
 
@@ -62,7 +63,8 @@ const SPEEDS = [
 const nearestSpeed = (ms: number) => SPEEDS.reduce((best, s) => (Math.abs(s.ms - ms) < Math.abs(best.ms - ms) ? s : best)).ms;
 
 // Full-screen editor: covers the menu so the preview can use the whole width.
-export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChange: (d: Draft) => void; onBack: () => void }) {
+// `quick`: opened from a zip, so only the preview and the articles show until "All settings" is pressed.
+export function BannerEditor({ draft, onChange, onBack, quick = false, onFull }: { draft: Draft; onChange: (d: Draft) => void; onBack: () => void; quick?: boolean; onFull?: () => void }) {
   const [busy, setBusy] = useState(false);
   const [working, setWorking] = useState<"header" | "ad" | "logo" | "example" | null>(null); // pictures are being prepared
   const [bookmarkOpen, setBookmarkOpen] = useState(false);
@@ -238,8 +240,8 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
 
           <div className="pb-24 pt-4">
             {/* Wide screens: articles on the left, settings on the right, so the page stays short with many articles. Narrow screens: one column in the order campaign, header, articles, advanced. */}
-            <div className="grid items-start gap-4 md:grid-cols-2 lg:grid-rows-[auto_auto_1fr]">
-              <div className="min-w-0 lg:col-start-2 lg:row-start-1">
+            <div className={quick ? "grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]" : "grid items-start gap-4 md:grid-cols-2 lg:grid-rows-[auto_auto_1fr]"}>
+              <div data-quick-hidden={quick || undefined} className={quick ? "hidden" : "min-w-0 lg:col-start-2 lg:row-start-1"}>
               <Section title={t.campaignTitle} icon={Megaphone} tone="red">
                 <div className="space-y-1.5">
                   <Label htmlFor="campaign">{t.campaignName}</Label>
@@ -258,7 +260,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
               </Section>
               </div>
 
-              <div className="min-w-0 lg:col-start-2 lg:row-start-2">
+              <div data-quick-hidden={quick || undefined} className={quick ? "hidden" : "min-w-0 lg:col-start-2 lg:row-start-2"}>
               <Section title={t.headerTitle} description={t.headerHint} icon={PanelTop} tone="ink">
                 <HeaderThumb draft={draft} />
                 <Tabs value={c.header.type} onValueChange={(v) => set({ header: v === "image" ? { type: "image", src: draft.headerFile?.name ?? "", href: c.header.href, avg: draft.headerFile?.avg, textInPicture: c.header.textInPicture } : { type: "color", href: c.header.href, textInPicture: c.header.textInPicture } })}>
@@ -347,13 +349,13 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
               )}
               </div>
 
-              <div className="min-w-0 md:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-span-3 lg:row-start-1">
+              <div className={quick ? "min-w-0 lg:col-start-1 lg:row-start-1" : "min-w-0 md:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-span-3 lg:row-start-1"}>
             <ArticleList articles={c.articles} mobile={c.format === "articles-mobile"} files={draft.articleFiles ?? {}} onPicture={onArticlePicture} defaultBadge={c.badge} defaultColor={c.format === "articles-mobile" ? (c.theme.light.badge ?? c.primary) : resolveTheme(c, "light").badge} onChange={(articles) => set({ articles })} onOpenBookmark={() => setBookmarkOpen(true)} />
               </div>
 
             <BookmarkletDialog open={bookmarkOpen} onOpenChange={setBookmarkOpen} />
 
-              <div className="min-w-0 space-y-4 md:col-span-2 lg:col-span-1 lg:col-start-2 lg:row-start-3">
+              <div data-quick-hidden={quick || undefined} className={quick ? "hidden" : "min-w-0 space-y-4 md:col-span-2 lg:col-span-1 lg:col-start-2 lg:row-start-3"}>
             <h2 className="pt-2 text-sm font-semibold text-muted-foreground">{t.advanced}</h2>
             <Collapsible title={t.colorsTitle} description={t.colorsHint} icon={Palette} tone="yellow">
               <div className="grid gap-6 sm:grid-cols-2">
@@ -383,6 +385,17 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
               </div>
             </Collapsible>
               </div>
+              {quick && (
+                <QuickPanel
+                  what="articles"
+                  onFull={() => onFull?.()}
+                  facts={[
+                    { label: t.quickCampaign, value: c.campaign },
+                    { label: t.quickSize, value: c.format === "articles-mobile" ? t.downloadMobile : t.downloadDesktop },
+                    { label: t.quickArticles2, value: String(c.articles.length) },
+                  ]}
+                />
+              )}
             </div>
           </div>
         </div>

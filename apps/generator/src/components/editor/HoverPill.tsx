@@ -34,6 +34,8 @@ export function HoverPill({ icon, label, short, tone, children }: { icon: ReactN
 export function goTo(id: string) {
   const el = document.getElementById(id);
   if (!el) return;
+  // A field hidden by quick edit: show all settings first (App listens).
+  if (el.closest("[data-quick-hidden]")) window.dispatchEvent(new Event("ol-show-all"));
   // A field inside a closed article: the list opens that article first.
   window.dispatchEvent(new CustomEvent("ol-reveal", { detail: id }));
   setTimeout(() => {
