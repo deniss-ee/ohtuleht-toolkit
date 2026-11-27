@@ -4,6 +4,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+### Fixed (hover picture, drag)
+
+- The big picture of an article shows the crop of the banner being edited (wide on desktop, tall on mobile), not the whole file.
+- No small black arrow next to the big picture.
+- While dragging, the place to drop is the item's own border turned red, so it is no longer cut off at the edge of the list.
+
 ### Image slider, mobile
 
 - A new mobile slider is a **cube with arrows** by default (was: slide, no arrows). Opened zips keep their own settings.
