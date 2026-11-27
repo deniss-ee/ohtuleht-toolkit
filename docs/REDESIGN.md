@@ -1,6 +1,8 @@
 # Redesign plan
 
-Status: **step 2, the look for approval** (2026-11-27). Step 1 is done: the votes are below.
+Status: **step 3, built on the test copy** (2026-11-27): the top bar, Home and the articles banner editor in the new look at `https://deniss-ee.github.io/ohtuleht-toolkit/v2/` (branch `feat/v2-look`). The live site is unchanged. Steps 1 and 2 are done: the votes and the chosen look are below.
+
+**Known for the next round:** article titles in the editor list are cut short (each row carries four buttons); the other four editors, Content marketing, Tools, Brand manual and Guide still have the old layout on the new colours.
 
 ## Why
 
