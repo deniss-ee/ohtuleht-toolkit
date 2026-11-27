@@ -8,6 +8,7 @@ Pick what you need. New to the project? Read the first group in order.
 |---|---|
 | [TRANSFER.md](TRANSFER.md) | Take over: what exists, who owns what, secrets and accounts, first-week plan |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Understand the layout, the banner zip format and how to add a module |
+| [ONE-ARTICLES-BANNER.md](ONE-ARTICLES-BANNER.md) | Proposal: one articles banner for desktop and mobile; interface review of the five editors |
 | [DEPLOY.md](DEPLOY.md) | Publish the site (GitHub Pages today, Cloudflare as the target) |
 | [CLOUDFLARE.md](CLOUDFLARE.md) | Run the API and the database (Worker + D1) |
 | [AUTH-MICROSOFT.md](AUTH-MICROSOFT.md) | Add Microsoft login, send mail from the person's own mailbox, show different content to signed-in people |
