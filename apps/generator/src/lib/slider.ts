@@ -37,8 +37,8 @@ export function newSliderDraft(format: SliderFormat = "image-slider-1250x400"): 
       sharedHref: "",
       // Desktop: values of the Dacia/Renault banners (three 300x250 slides, 10 px apart, 165 px from the left, 100 px from the top).
       desktop: { layout: { x: 165, y: 100, width: 920, height: 250, gap: 10, visible: 3 }, arrows: true, effect: "slide" },
-      // Mobile: no background; one picture at a time fills the whole 600x500 banner (full width, full height); swiped rather than clicked (no arrows).
-      mobile: { arrows: false, effect: "slide" },
+      // Mobile: no background; one picture at a time fills the whole 600x500 banner (full width, full height). A cube with arrows by default: the arrows tell that there is more, and the turn looks good on the site.
+      mobile: { arrows: true, effect: "cube" },
       behavior: { shuffle: false, autoplay: true, delayMs: 2000, speedMs: 500, loop: true },
     },
   };

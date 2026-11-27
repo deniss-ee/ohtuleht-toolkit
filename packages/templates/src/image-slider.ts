@@ -34,7 +34,7 @@ function css(config: ImageSliderConfig): string {
   const shell = mobile ? `width:100%;aspect-ratio:6/5;container-type:inline-size` : `width:${canvas.width}px;height:${canvas.height}px`;
   return (
     "*{box-sizing:border-box;margin:0;padding:0}" +
-    `html,body{${mobile ? "min-width:300px;" : ""}overflow:hidden;background:#000}` +
+    `html,body{${mobile ? "min-width:300px;" : ""}overflow:hidden;background:transparent}` +
     `.banner{position:relative;${shell};overflow:hidden;background-position:center;background-size:cover;cursor:${!mobile && config.backgroundLink.clickable ? "pointer" : "default"}}` +
     `.ol-slider{position:absolute;left:${u(x)};top:${u(y)};width:${u(width)};height:${u(height)};cursor:default}` +
     ".ol-viewport,.ol-track{height:100%}" +

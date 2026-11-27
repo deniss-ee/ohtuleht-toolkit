@@ -4,6 +4,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+### Image slider, mobile
+
+- A new mobile slider is a **cube with arrows** by default (was: slide, no arrows). Opened zips keep their own settings.
+- **No black behind the cube:** the page behind the slider is transparent, so the site background shows while the cube turns. Golden files of the four slider formats changed in that one rule (`background:#000` to `background:transparent`).
+
 ### Ctrl+V adds the copied article
 
 - In the articles banner editor, pressing Ctrl+V anywhere (no field selected) adds the article the bookmark copied: no click in the box and no button. Pastes into fields and text that is not from the bookmark are left alone.
