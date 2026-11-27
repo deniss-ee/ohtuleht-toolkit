@@ -16,7 +16,7 @@ The first round was built on a separate branch (`v2`, tested next to the old ver
 | Phase 1, steps 1.5 and 1.6 (part): the 10 MB podcast bundle removed from `tools/legacy` (tag `legacy-podcast`), `shadcn` is a dev dependency only | Repository 10 MB lighter. Closes #7 |
 | Phase 0, step 3: zip round trip for every banner kind (articles desktop and mobile, header bar, slider desktop and mobile, picture loop, responsive): build the zip, open it through `openZip`, expect the same kind and settings | `apps/generator/test/`, 9 tests |
 
-| Phase 0, step 5: GitHub Actions `Checks` on every pull request and push to `develop`/`main` (types of all workspaces, tests, build, banner script size, first-load script budget 90 KB gzip, docs links). Publishes nothing | `.github/workflows/checks.yml`, `tools/check-bundle.mjs` |
+| Phase 0, step 5: all checks in one local command, `yarn verify` (types of all workspaces, tests, build, banner script size, first-load script budget 90 KB gzip, docs links). A GitHub Actions version was tried and removed: it needs GitHub billing in order, and the project runs on the free plan | `package.json`, `tools/check-bundle.mjs` |
 | Weight meters never block a download; above the guide value the pill and the bar turn yellow | |
 
 **Next:** phase 0 steps 3, 4 and 6 (zip round-trip tests, lint, publish on merge), then phase 1 steps 1.3, 1.4 and the `cn` helper of 1.6.
