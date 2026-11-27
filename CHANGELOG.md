@@ -4,6 +4,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+### One articles banner card; drop a zip anywhere
+
+- Home and Content marketing show **one Articles banner** card instead of a desktop and a mobile one; the Desktop / Mobile switch is at the top of the editor. Old links with `make=articles-mobile` still open the mobile size.
+- **Drop a banner zip anywhere on the site** to open it: a full-page sign appears while a zip is dragged over the window. Any banner made here opens, and so do old ones (an old mobile banner opens as the mobile size of the articles banner, ready for Desktop + mobile).
+- Fixed: a zip opened from the Home page now opens the editor (it was loaded but stayed on Home).
+
 ## [0.3.0] - 2026-11-27
 
 ### Highlights

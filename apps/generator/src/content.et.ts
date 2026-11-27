@@ -10,8 +10,7 @@ export const nav: En.NavItem[] = [
 ];
 
 export const bannerTypes: En.BannerType[] = [
-  { id: "articles-1250x400", name: "Artiklibänner, arvuti", size: "1250x400", device: "Arvuti", description: "Päis ja artiklikaartide slaider.", ready: true },
-  { id: "articles-mobile", name: "Artiklibänner, telefon", size: "Täislaius x 498", device: "Telefon", description: "Päis ja pühitavad artiklikaardid punktidega, telefoni laiune.", ready: true },
+  { id: "articles-1250x400", name: "Artiklibänner", size: "Arvuti + telefon", device: "Kõik ekraanid", description: "Päis ja artiklikaartide slaider. Üks bänner: arvuti ja telefoni vahel saab üleval vahetada, alla laadida üht või mõlemat.", ready: true },
   { id: "header-bar", name: "Päiseriba", size: "100% x 46", device: "Kõik ekraanid", description: "Teemalehe ülaosas olev riba, mida näidatakse lehel iframe'is.", ready: true },
   { id: "image-slider-1250x400", name: "Piltide slaider, arvuti", size: "1250x400", device: "Arvuti", description: "Kliendi taust ja piltide slaider.", ready: true },
   { id: "image-slider-600x500", name: "Piltide slaider, telefon", size: "600x500", device: "Telefon", description: "Kliendi taust ja pühitavad pildid, liugumine või kuup.", ready: true },
@@ -812,6 +811,8 @@ export const movieBanner: typeof En.movieBanner = {
 };
 
 export const ui: typeof En.ui = {
+  dropZipTitle: "Lase zip lahti, et bänner avada",
+  dropZipText: "Iga siin tehtud bänner või vana bänner.",
   dragToMove: "Lohista, et liigutada",
   back: "Tagasi",
   backToTools: "Tagasi tööriistade juurde",
@@ -858,8 +859,7 @@ export const home: typeof En.home = {
       title: "Tee bänner",
       text: "Saad zip-failid reklaamiserveri jaoks.",
       items: [
-        { id: "articles-1250x400", name: "Artiklibänner, arvuti", text: "1250x400, päis ja artiklikaartide slaider." },
-        { id: "articles-mobile", name: "Artiklibänner, telefon", text: "Pühitavad artiklikaardid, telefoni laiused." },
+        { id: "articles-1250x400", name: "Artiklibänner", text: "Päis ja artiklikaardid, arvuti ja telefon ühes bänneris." },
         { id: "header-bar", name: "Päiseriba", text: "Teemalehe ülaosas olev riba." },
         { id: "image-slider-1250x400", name: "Piltide slaider, arvuti", text: "1250x400, taust ja piltide slaider." },
         { id: "image-slider-600x500", name: "Piltide slaider, telefon", text: "600x500, telefoni laiune, pühitavad pildid." },
