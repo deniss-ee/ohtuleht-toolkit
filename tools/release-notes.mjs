@@ -1,7 +1,7 @@
 // Release notes in the GitHub style, made from the commit messages since the last release.
 //   node tools/release-notes.mjs            notes since the newest v* tag, up to develop
 //   node tools/release-notes.mjs v0.2.5     notes since that tag
-// Commits are "type: what changed (#PR)" (squash merges). They are grouped by type; the PR number becomes a link.
+// One line per pull request: only the commits made on develop itself (--first-parent), "type: what changed (#PR)". Grouped by type; the PR number becomes a link.
 // Prints Markdown; `yarn release:notes > notes.md`, read it, then use it for the GitHub release (docs/RELEASES.md).
 import { execSync } from "node:child_process";
 
@@ -21,7 +21,7 @@ const GROUPS = [
   ["docs", "Documentation"],
 ];
 
-const lines = sh(`git log ${since}..${until} --no-merges --pretty=format:%s`).split("\n").filter(Boolean);
+const lines = sh(`git log ${since}..${until} --first-parent --pretty=format:%s`).split("\n").filter(Boolean);
 const groups = new Map();
 for (const line of lines) {
   const m = /^(\w+)(?:\([^)]*\))?!?:\s*(.+)$/.exec(line);
