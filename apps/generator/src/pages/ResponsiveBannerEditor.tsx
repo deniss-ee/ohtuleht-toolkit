@@ -15,11 +15,8 @@ import { editor as e, responsiveEditor as t, ui } from "@/content";
 import { formatSize } from "@/lib/format";
 import { imageSize } from "@/lib/image";
 import { downloadResponsiveZip, exampleResponsiveDraft, fileToPicture, fileToVideo, isVideoName, renderResponsivePreview, responsiveProblems, tidy, VERSION_WIDTH, versionWeightKb, type ResponsiveDraft, type VersionName } from "@/lib/responsive";
-<<<<<<< HEAD
 import { DRAG_CLASSES, reorder, useDragSort } from "@/components/editor/useDragSort";
-=======
 import { ZoomPicture } from "@/components/editor/ZoomPicture";
->>>>>>> 7dd6629 (feat: big picture on hover in the picture lists)
 
 const BUDGET_KB = 250; // a soft guide for what one viewer downloads
 const PREVIEW_WIDTHS = [320, 430, 540, 600, 700];
