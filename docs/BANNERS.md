@@ -109,8 +109,8 @@ Client banners: a background picture with a slider of pictures on top. Made from
 | Background | Required. 1250x400, or 2500x800 for sharp screens; optionally clickable | None: no picture, option or link |
 | Slides | Pictures of 300x250 or 600x500 (same 6:5 shape); at least 2; placed in the order of their file names, then moved by hand. The same pictures serve both sizes | same (600x500 pictures fit the phone banner exactly) |
 | Slider box | Form fields; defaults: from the left 165, from the top 100, 920x250, gap 10, 3 visible (each slide 300x250) | Fixed, not editable: 0, 0, 600x500, one picture at a time, no gap. Each picture is full width and full height, with square corners |
-| Arrows | 32 px, 46 px outside the slider (on top of its edges when there is no room); on by default | Off by default (swipe) |
-| Effects | **Slide** (sideways) or **Arc** | **Slide** or **Cube** |
+| Arrows | 32 px, 46 px outside the slider (on top of its edges when there is no room); on by default | On by default (on top of the edges; swipe also works) |
+| Effects | **Slide** (sideways) or **Arc** | **Slide** or **Cube** (default for a new banner) |
 
 **Common behaviour.** Autoplay 2 s, speed 500 ms, loop, drag and swipe, keys; shuffle off. Everything fits (slides <= visible): plain row, no arrows. A click on the slider area never reaches the background link.
 
@@ -118,7 +118,7 @@ Client banners: a background picture with a slider of pictures on top. Made from
 
 **Arc (desktop).** A carousel: the slides stand on a real ring that turns around its middle, seen from outside. The front slide is straight, the ones next to it are tilted back (45 degrees or less per step), the next ones curve away round the edges and the back of the ring is hidden. A step turns the ring by one slide (arrows, keys, autoplay), and dragging turns it with the finger. The ring has at least 8 cells; with fewer slides each slide is repeated (4 slides: each twice). The slide size comes from the slider box (width, gap, slides shown), so choose 3 slides shown (choosing Arc sets at least 3). Runs in `dist/fx.js` (see below).
 
-**Cube (mobile).** One slide at a time, turning like a cube (90 degrees per step, perspective). Arrows, keys, swipe and autoplay work; a swipe turns one step (the cube does not follow the finger). Runs in `dist/fx.js`, the script for the 3D effects (ring and cube, about 1.7 KB gzip), inlined only into banners that use one. With a single slide it shows the picture and does not turn.
+**Cube (mobile).** One slide at a time, turning like a cube (90 degrees per step, perspective). Arrows, keys, swipe and autoplay work; a swipe turns one step (the cube does not follow the finger). Runs in `dist/fx.js`, the script for the 3D effects (ring and cube, about 1.7 KB gzip), inlined only into banners that use one. With a single slide it shows the picture and does not turn. Behind the turning cube the page is **transparent**, so the site shows through (white on the light site, dark grey on the dark one); it used to be black.
 
 **Pictures.** Optimised in the browser (see below); in the zip as `bg.png`/`bg.jpg` and `1.jpg`, `2.jpg` ...
 
