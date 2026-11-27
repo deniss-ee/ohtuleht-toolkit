@@ -12,6 +12,7 @@
     "typecheck": "yarn workspace @ohtuleht/generator typecheck",
     "guide:docs": "node tools/guide-docs.mjs",
     "docs:check": "node tools/check-links.mjs",
+    "release:notes": "node tools/release-notes.mjs",
     "test": "yarn workspace @ohtuleht/templates test && yarn workspace @ohtuleht/generator test"
   },
   "engines": {

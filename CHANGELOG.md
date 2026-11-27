@@ -17,6 +17,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 - Rest the pointer on a small picture in a list (articles, slider pictures, picture-loop frames, responsive pictures) and a big version opens next to it, so the text in a picture can be read (`components/editor/ZoomPicture.tsx`).
 
+### Release notes
+
+- `yarn release:notes` writes GitHub-style release notes from the merged pull requests since the last version, grouped as New, Faster, Fixed, Under the hood; how to make a release is in `docs/RELEASES.md`.
+
 ### Ctrl+V adds the copied article
 
 - In the articles banner editor, pressing Ctrl+V anywhere (no field selected) adds the article the bookmark copied: no click in the box and no button. Pastes into fields and text that is not from the bookmark are left alone.
