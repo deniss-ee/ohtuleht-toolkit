@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Bookmark, ChevronDown, ChevronRight, ChevronUp, ClipboardPaste, ImageOff, ImagePlus, Loader2, Newspaper, Plus, Trash2, TriangleAlert } from "lucide-react";
+import { ArrowDown, ArrowUp, Bookmark, ChevronRight, ClipboardPaste, ImageOff, ImagePlus, Loader2, Newspaper, Plus, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import type { ArticleItem } from "@ohtuleht/templates";
 import { forDesktop, MIN_ARTICLES } from "@ohtuleht/templates";
@@ -113,13 +113,13 @@ function ArticleRow({
           <ChevronRight className={"size-4 shrink-0 text-muted-foreground" + (open ? " rotate-90" : "")} />
         </button>
         <div className="flex shrink-0">
-          <Button variant="ghost" size="icon" aria-label={t.moveUp} disabled={index === 0} onClick={() => onMove(-1)}>
-            <ChevronUp className="size-4" />
+          <Button variant="ghost" size="icon-sm" aria-label={t.moveUp} disabled={index === 0} onClick={() => onMove(-1)}>
+            <ArrowUp className="size-4" />
           </Button>
-          <Button variant="ghost" size="icon" aria-label={t.moveDown} disabled={index === total - 1} onClick={() => onMove(1)}>
-            <ChevronDown className="size-4" />
+          <Button variant="ghost" size="icon-sm" aria-label={t.moveDown} disabled={index === total - 1} onClick={() => onMove(1)}>
+            <ArrowDown className="size-4" />
           </Button>
-          <Button variant="ghost" size="icon" aria-label={t.remove} onClick={onRemove}>
+          <Button variant="ghost" size="icon-sm" aria-label={t.remove} onClick={onRemove}>
             <Trash2 className="size-4" />
           </Button>
         </div>

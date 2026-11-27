@@ -32,8 +32,8 @@ Everything works, but the five editors grew one by one and differ in small ways 
 | Seen | Where | Proposal |
 |---|---|---|
 | Two different top bars: Articles, Image slider and Header bar have their own; Picture loop and Responsive use `ToolShell` | `BannerEditor`, `SliderEditor`, `HeaderBarEditor` | One `EditorShell` for all five (back, name, "to fix" pill, weight, example, download in the same places) |
-| Header bar uses plain cards, the others the `Section` blocks with a coloured icon | `HeaderBarEditor` | Use `Section` everywhere |
-| Up / down buttons: chevrons in Articles, arrows elsewhere; two button sizes | lists | One row component for every list (grip, number, picture with zoom, name, up, down, remove), started with `useDragSort` and `ZoomPicture` |
+| Header bar uses plain cards, the others the `Section` blocks with a coloured icon | `HeaderBarEditor` | **Done:** `Section` everywhere |
+| Up / down buttons: chevrons in Articles, arrows elsewhere; two button sizes | lists | **Done:** arrows and the small size in every list; grip and big picture on hover in every list. Still to do: One row component for every list (grip, number, picture with zoom, name, up, down, remove), started with `useDragSort` and `ZoomPicture` |
 | "Try an example" appears in different places | top bars | In the shared top bar, same place everywhere |
 
 These are behaviour-preserving refactors (phase 3 of [REFACTOR.md](REFACTOR.md), "one editor frame"); each is one small pull request.
