@@ -1,1 +1,0 @@
-import{t as e}from"./index-BPEXJJ4G.js";var t=e();function n({title:e,intro:n}){return(0,t.jsxs)(`div`,{className:`space-y-1`,children:[(0,t.jsx)(`h1`,{className:`text-3xl font-bold tracking-tight`,children:e}),(0,t.jsx)(`p`,{className:`text-muted-foreground`,children:n})]})}export{n as t};
