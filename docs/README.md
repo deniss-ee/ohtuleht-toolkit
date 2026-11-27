@@ -8,6 +8,7 @@ Pick what you need. New to the project? Read the first group in order.
 |---|---|
 | [TRANSFER.md](TRANSFER.md) | Take over: what exists, who owns what, secrets and accounts, first-week plan |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Understand the layout, the banner zip format and how to add a module |
+| [REDESIGN.md](REDESIGN.md) | The redesign: audit, three directions, steps |
 | [ONE-ARTICLES-BANNER.md](ONE-ARTICLES-BANNER.md) | Proposal: one articles banner for desktop and mobile; interface review of the five editors |
 | [DEPLOY.md](DEPLOY.md) | Publish the site (GitHub Pages today, Cloudflare as the target) |
 | [RELEASES.md](RELEASES.md) | Make a release: version number, changelog, GitHub release notes (`yarn release:notes`) |
