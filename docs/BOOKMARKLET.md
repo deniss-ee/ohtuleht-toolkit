@@ -14,7 +14,7 @@ In the generator: open a banner, then in **Articles** click **How do I get a sni
 
 1. Open an article on ohtuleht.ee.
 2. Click the bookmark. A small message in the corner says "Copied: <title>". If the browser blocks clipboard access, a box opens with the snippet to copy by hand.
-3. Go back to the generator, paste into **Paste article snippets here**, press **Add articles**.
+3. Go back to the generator and press **Ctrl+V** anywhere on the page (no field selected): the article is added at once, and the newest leads the banner. (Or paste into **Paste article snippets here** and press **Add articles**. A paste into any field is left alone, and copied text that is not from the bookmark is ignored.)
 
 You can paste several snippets at once, one per line.
 

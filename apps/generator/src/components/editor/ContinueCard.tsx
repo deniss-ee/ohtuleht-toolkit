@@ -2,7 +2,7 @@ import { History } from "lucide-react";
 import { IconChip } from "@/components/editor/IconChip";
 import { Button } from "@/components/ui/button";
 import { contentMarketing as t, editor, frameEditor, getLang, headerBar, responsiveEditor, sliderEditor } from "@/content";
-import type { SavedInfo } from "@/lib/storage";
+import type { SavedInfo } from "@/lib/saved";
 
 // "Continue where you left off": shown on the start screens when an unfinished banner or header bar is saved in this browser.
 export function ContinueCard({ saved, onContinue, onDiscard }: { saved: SavedInfo; onContinue: () => void; onDiscard: () => void }) {

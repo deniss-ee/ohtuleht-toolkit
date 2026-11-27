@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { lazy, Suspense, useEffect, useRef, useState, useSyncExternalStore, type ComponentType } from "react";
 import { toast } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -7,37 +7,48 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { contentMarketing, editor, getLang, setLang, subscribeLang, type PageId, type ToolInfo } from "@/content";
 import { AppShell } from "@/layout/AppShell";
-import { newDraft } from "@/lib/banner";
-import { importHeaderZip, newHeaderDraft } from "@/lib/header";
-import { importSliderAny } from "@/lib/legacySlider";
-import { importFrameZip, newFrameDraft } from "@/lib/frames";
-import { importResponsiveZip, newResponsiveDraft } from "@/lib/responsive";
-import { newSliderDraft } from "@/lib/slider";
 import { buildSearch, parseRoute, type BrandTab } from "@/lib/route";
-import { clearWork, loadWork, savedInfo, saveWork, type SavedInfo, type Work } from "@/lib/storage";
-import { importZip } from "@/lib/zip";
-import { BannerEditor } from "@/pages/BannerEditor";
-import { BrandManual } from "@/pages/BrandManual";
-import { ContentMarketingHome } from "@/pages/ContentMarketingHome";
-import { FrameBannerEditor } from "@/pages/FrameBannerEditor";
-import { ResponsiveBannerEditor } from "@/pages/ResponsiveBannerEditor";
-import { HeaderBarEditor } from "@/pages/HeaderBarEditor";
+import { clearWork, savedInfo, type SavedInfo } from "@/lib/saved";
+import type { Work } from "@/lib/storage";
 import { Home, type Destination } from "@/pages/Home";
-import { ImageCropper } from "@/pages/ImageCropper";
-import { SliderEditor } from "@/pages/SliderEditor";
-import { MovieBanner } from "@/pages/MovieBanner";
-import { ToolsHome } from "@/pages/ToolsHome";
-import { ArticleScraper } from "@/pages/ArticleScraper";
-import { PictureConverter } from "@/pages/PictureConverter";
-import { TaskTracker } from "@/pages/TaskTracker";
-import { BannerRequest } from "@/pages/BannerRequest";
-import { Guide } from "@/pages/Guide";
-import { UtmBuilder } from "@/pages/UtmBuilder";
-import { SignatureGenerator } from "@/pages/SignatureGenerator";
 
-const newWork = (typeId: string): Work => (typeId === "header-bar" ? { kind: "header", draft: newHeaderDraft() } : typeId === "frame-banner" ? { kind: "frames", draft: newFrameDraft() } : typeId === "responsive-banner" ? { kind: "responsive", draft: newResponsiveDraft() } : typeId === "image-slider-1250x400" || typeId === "image-slider-600x500" ? { kind: "slider", draft: newSliderDraft(typeId) } : { kind: "banner", draft: newDraft(typeId === "articles-mobile" ? "articles-mobile" : "articles-1250x400") });
+// Everything but the Home page is loaded when it is opened, so the first visit downloads little.
+const page = <T extends Record<string, unknown>, K extends keyof T>(load: () => Promise<T>, name: K) => lazy(async () => ({ default: (await load())[name] as ComponentType<any> })) as unknown as T[K];
+const BannerEditor = page(() => import("@/pages/BannerEditor"), "BannerEditor");
+const SliderEditor = page(() => import("@/pages/SliderEditor"), "SliderEditor");
+const FrameBannerEditor = page(() => import("@/pages/FrameBannerEditor"), "FrameBannerEditor");
+const ResponsiveBannerEditor = page(() => import("@/pages/ResponsiveBannerEditor"), "ResponsiveBannerEditor");
+const HeaderBarEditor = page(() => import("@/pages/HeaderBarEditor"), "HeaderBarEditor");
+const ContentMarketingHome = page(() => import("@/pages/ContentMarketingHome"), "ContentMarketingHome");
+const ToolsHome = page(() => import("@/pages/ToolsHome"), "ToolsHome");
+const ImageCropper = page(() => import("@/pages/ImageCropper"), "ImageCropper");
+const MovieBanner = page(() => import("@/pages/MovieBanner"), "MovieBanner");
+const ArticleScraper = page(() => import("@/pages/ArticleScraper"), "ArticleScraper");
+const PictureConverter = page(() => import("@/pages/PictureConverter"), "PictureConverter");
+const SignatureGenerator = page(() => import("@/pages/SignatureGenerator"), "SignatureGenerator");
+const UtmBuilder = page(() => import("@/pages/UtmBuilder"), "UtmBuilder");
+const GiftCard = page(() => import("@/pages/GiftCard"), "GiftCard");
+const BrandManual = page(() => import("@/pages/BrandManual"), "BrandManual");
+const Guide = page(() => import("@/pages/Guide"), "Guide");
+
+// The banner code (drafts, templates, zip, saved work): loaded with the first banner, then kept.
+const workLib = () => import("@/lib/work");
+
+// While the first screen is read, the parts people open most (the start screens and the banner code) are fetched quietly in the background,
+// so a click does not wait for a download. Heavier or rarer pages (gift card, brand manual, guide) still load when opened.
+function prefetchCommon() {
+  const run = () => {
+    void import("@/pages/ContentMarketingHome");
+    void import("@/pages/ToolsHome");
+    void import("@/pages/BannerEditor");
+    void workLib();
+  };
+  if ("requestIdleCallback" in window) window.requestIdleCallback(run, { timeout: 4000 });
+  else setTimeout(run, 2000);
+}
 
 export function App() {
+  useEffect(prefetchCommon, []);
   const lang = useSyncExternalStore(subscribeLang, getLang); // render everything again when the language changes
   const link = useRef(parseRoute(location.search)).current; // where the address says to start
   // The address says where to start; a plain address opens the Home page.
@@ -45,7 +56,7 @@ export function App() {
   const [tab, setTab] = useState<BrandTab>(link.tab);
   const [topic, setTopic] = useState<string | null>(link.topic); // open topic of the guide
   const [step, setStep] = useState<number | null>(link.step); // the step of that topic to scroll to
-  const [work, setWork] = useState<Work>(() => (link.make ? newWork(link.make) : null)); // what is being edited: nothing (start screen), an articles banner or a header bar
+  const [work, setWork] = useState<Work>(null); // what is being edited: nothing (start screen), an articles banner or a header bar
   const [saved, setSaved] = useState<SavedInfo | null>(savedInfo); // unfinished work from an earlier visit
   const edited = useRef(false); // changed since it was opened and not downloaded yet
   const workRef = useRef<Work>(null);
@@ -62,35 +73,28 @@ export function App() {
     setWork(w);
   };
 
-  const create = (typeId: string) => start(newWork(typeId));
+  const create = async (typeId: string) => start((await workLib()).newWork(typeId));
+  // A direct link to a new banner (?make=...).
+  useEffect(() => {
+    if (link.make) void create(link.make);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Keeps the unfinished work in the browser and refreshes the "Continue" card.
+  const keep = async () => {
+    const w = workRef.current;
+    if (w) (await workLib()).saveWork(w);
+    setSaved(savedInfo());
+  };
 
   // A zip may be a header bar, an image slider or an articles banner made with this tool (or an old Swiper banner).
   const open = async (file: File) => {
     const loading = toast.loading(editor.opening);
     try {
-      const header = await importHeaderZip(file);
-      const slider = header ? null : await importSliderAny(file);
-      const frames = header || slider ? null : await importFrameZip(file);
-      const responsive = header || slider || frames ? null : await importResponsiveZip(file);
-      if (header) {
-        start({ kind: "header", draft: header });
-        toast.success(editor.imported);
-      } else if (responsive) {
-        start({ kind: "responsive", draft: responsive });
-        toast.success(editor.imported);
-      } else if (frames) {
-        start({ kind: "frames", draft: frames });
-        toast.success(editor.imported);
-      } else if (slider) {
-        start({ kind: "slider", draft: slider.draft });
-        if (slider.notes.length) setNotes(slider.notes);
-        else toast.success(editor.imported);
-      } else {
-        const opened = await importZip(file);
-        start({ kind: "banner", draft: opened.draft });
-        if (opened.notes.length) setNotes(opened.notes);
-        else toast.success(editor.imported);
-      }
+      const opened = await (await workLib()).openZip(file);
+      start(opened.work);
+      if (opened.notes.length) setNotes(opened.notes);
+      else toast.success(editor.imported);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : contentMarketing.uploadFailed);
     } finally {
@@ -101,7 +105,7 @@ export function App() {
   // Unfinished work is kept in the browser: saved a moment after each change, and when leaving the editor.
   useEffect(() => {
     if (!work) return;
-    const timer = setTimeout(() => saveWork(work), 600);
+    const timer = setTimeout(() => void workLib().then((m) => m.saveWork(work)), 600);
     return () => clearTimeout(timer);
   }, [work]);
 
@@ -133,8 +137,7 @@ export function App() {
   useEffect(() => {
     const onPop = () => {
       const r = parseRoute(location.search);
-      if (workRef.current) saveWork(workRef.current);
-      setSaved(savedInfo());
+      void keep();
       edited.current = false;
       setWork(null);
       setPage(r.page ?? "home");
@@ -149,14 +152,13 @@ export function App() {
   }, []);
 
   const close = () => {
-    if (workRef.current) saveWork(workRef.current);
-    setSaved(savedInfo());
+    void keep();
     edited.current = false;
     setWork(null);
   };
 
-  const resume = () => {
-    const w = loadWork();
+  const resume = async () => {
+    const w = (await workLib()).loadWork();
     if (!w) return;
     setPage("content");
     setTool(null);
@@ -164,14 +166,14 @@ export function App() {
   };
   // A card on the Home page: open that section, tool, tab or a new banner.
   const go = (to: Destination) => {
-    if (workRef.current) saveWork(workRef.current);
-    setSaved(savedInfo());
+    void keep();
     setPage(to.page);
     setTool(to.tool ?? null);
     setTopic(null);
     setStep(null);
     if (to.tab) setTab(to.tab);
-    start(to.make ? newWork(to.make) : null);
+    start(null);
+    if (to.make) void create(to.make);
     window.scrollTo(0, 0);
   };
   const discard = () => {
@@ -192,7 +194,8 @@ export function App() {
             setStep(null);
           }}
         >
-          {page === "home" && <Home saved={saved} onContinue={resume} onDiscard={discard} onGo={go} />}
+          <Suspense fallback={null}>
+          {page === "home" && <Home saved={saved} onContinue={resume} onDiscard={discard} onGo={go} onUpload={open} />}
           {page === "content" &&
             (work?.kind === "banner" ? (
               <BannerEditor draft={work.draft} onChange={(draft) => change({ kind: "banner", draft })} onBack={close} />
@@ -207,11 +210,10 @@ export function App() {
             ) : (
               <ContentMarketingHome onCreate={create} onUpload={open} saved={saved} onContinue={resume} onDiscard={discard} />
             ))}
-          {page === "tools" && (tool === "image-cropper" ? <ImageCropper onBack={() => setTool(null)} /> : tool === "movie-banner" ? <MovieBanner onBack={() => setTool(null)} /> : tool === "article-scraper" ? <ArticleScraper onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "picture-converter" ? <PictureConverter onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "email-signature" ? <SignatureGenerator onBack={() => setTool(null)} /> : tool === "utm-builder" ? <UtmBuilder onBack={() => setTool(null)} /> : <ToolsHome onOpen={setTool} />)}
+          {page === "tools" && (tool === "image-cropper" ? <ImageCropper onBack={() => setTool(null)} /> : tool === "movie-banner" ? <MovieBanner onBack={() => setTool(null)} /> : tool === "article-scraper" ? <ArticleScraper onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "picture-converter" ? <PictureConverter onBack={() => setTool(null)} onBrand={(tab) => go({ page: "brand", tab })} /> : tool === "email-signature" ? <SignatureGenerator onBack={() => setTool(null)} /> : tool === "utm-builder" ? <UtmBuilder onBack={() => setTool(null)} /> : tool === "gift-card" ? <GiftCard onBack={() => setTool(null)} /> : <ToolsHome onOpen={setTool} />)}
           {page === "guide" && <Guide topic={topic} step={step} onTopic={(id, s) => (setTopic(id), setStep(s ?? null))} />}
-          {page === "request" && <BannerRequest onOpenBoard={() => go({ page: "tasks" })} onMake={(id) => go({ page: "content", make: id })} />}
-          {page === "tasks" && <TaskTracker onMake={(id) => go({ page: "content", make: id })} onNewRequest={() => go({ page: "request" })} />}
           {page === "brand" && <BrandManual tab={tab} onTab={setTab} />}
+          </Suspense>
         </AppShell>
         <Dialog open={notes.length > 0} onOpenChange={(o) => !o && setNotes([])}>
           <DialogContent>

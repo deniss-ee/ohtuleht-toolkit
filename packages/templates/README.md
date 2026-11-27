@@ -11,6 +11,7 @@ Turns a banner config into one self-contained `index.html` (CSS, ClickTag helper
 | `image-slider` | Built. Desktop 1250x400 and mobile 600x500; arc and cube effects |
 | `header-bar` | Built. 100% x 46 px page-header bar (`index.html` + `style.css`), iframe code |
 | `movie-banner` | Built. A video on a background picture (two zips) |
+| `giftcard` + `pdf` | Built. The gift card (A4 print and 600x400 e-mail picture) drawn once as shapes; a small PDF writer. See [docs/GIFT-CARD.md](../../docs/GIFT-CARD.md) |
 
 Also here: `arrows.ts` (the one definition of the slider arrows), `colors.ts` (text-colour rules, readable label colours), `validate.ts` (plain-language problems), `messages.ts` (the problems in English and Estonian), `clicktag.ts`, `escape.ts`, `types.ts`.
 

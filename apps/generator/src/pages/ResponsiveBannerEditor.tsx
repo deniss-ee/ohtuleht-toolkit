@@ -15,6 +15,8 @@ import { editor as e, responsiveEditor as t, ui } from "@/content";
 import { formatSize } from "@/lib/format";
 import { imageSize } from "@/lib/image";
 import { downloadResponsiveZip, exampleResponsiveDraft, fileToPicture, fileToVideo, isVideoName, renderResponsivePreview, responsiveProblems, tidy, VERSION_WIDTH, versionWeightKb, type ResponsiveDraft, type VersionName } from "@/lib/responsive";
+import { DRAG_CLASSES, reorder, useDragSort } from "@/components/editor/useDragSort";
+import { ZoomPicture } from "@/components/editor/ZoomPicture";
 
 const BUDGET_KB = 250; // a soft guide for what one viewer downloads
 const PREVIEW_WIDTHS = [320, 430, 540, 600, 700];
@@ -128,6 +130,7 @@ function VersionCard({ name, draft, dims, onChange, onDims, onTask }: { name: Ve
     pictures.splice(i + d, 0, p!);
     set({ pictures });
   };
+  const sort = useDragSort((from, to) => set({ pictures: reorder(v.pictures, from, to) }));
   const sizeNote = (key: string) => {
     const d = dims[key];
     if (!d || !d.w) return null;
@@ -183,9 +186,14 @@ function VersionCard({ name, draft, dims, onChange, onDims, onTask }: { name: Ve
             <div className="space-y-2">
               <ol className="space-y-2" aria-label={t.kindPictures}>
                 {v.pictures.map((k, i) => (
-                  <li key={k + i} className="flex items-center gap-2 rounded-lg border bg-card p-1.5">
+                  <li key={k + i} {...sort.item(i)} className={"flex items-center gap-2 rounded-lg border bg-card p-1.5 " + DRAG_CLASSES}>
+                    {sort.grip(i)}
                     <span className="w-4 text-center text-xs font-semibold text-muted-foreground">{i + 1}</span>
-                    {draft.files[k] && <img src={draft.files[k]!.dataUrl} alt="" className="h-10 w-28 rounded border object-cover" />}
+                    {draft.files[k] && (
+                      <ZoomPicture src={draft.files[k]!.dataUrl}>
+                        <img src={draft.files[k]!.dataUrl} alt="" className="h-10 w-28 rounded border object-cover" />
+                      </ZoomPicture>
+                    )}
                     <div className="min-w-0 flex-1">
                       <div className="text-xs text-muted-foreground">{draft.files[k] ? formatSize(draft.files[k]!.bytes.length) : ""}</div>
                       {sizeNote(k)}
@@ -274,7 +282,7 @@ export function ResponsiveBannerEditor({ draft, onChange, onBack }: { draft: Res
       onBack={onBack}
       extra={
         <>
-          <HoverPill tone="plain" icon={<FileArchive className="size-3.5" />} label={`${worst.toFixed(0)} KB`}>
+          <HoverPill tone={worst > BUDGET_KB ? "warn" : "plain"} icon={<FileArchive className="size-3.5" />} label={`${worst.toFixed(0)} KB`}>
             {() => (
               <div className="space-y-2">
                 <div className="text-sm font-medium">{t.weightTitle}</div>
@@ -285,7 +293,7 @@ export function ResponsiveBannerEditor({ draft, onChange, onBack }: { draft: Res
                       <span className="font-mono">{weights[n].toFixed(0)} / {BUDGET_KB} KB</span>
                     </div>
                     <div className="h-2 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={Math.round(weights[n])} aria-valuemax={BUDGET_KB} aria-label={`${VERSION_WIDTH[n]}`}>
-                      <div className={weights[n] > BUDGET_KB ? "h-full bg-destructive" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weights[n] / BUDGET_KB) * 100)}%` }} />
+                      <div className={weights[n] > BUDGET_KB ? "h-full bg-yellow-400" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weights[n] / BUDGET_KB) * 100)}%` }} />
                     </div>
                   </div>
                 ))}

@@ -12,21 +12,18 @@ HTTPS is required (ad servers and the bookmarks need it). Cache settings for any
 
 ## A. GitHub Pages (how it is published today, by hand)
 
-The site is served from the branch `gh-pages` (Settings, Pages, Source: **Deploy from a branch**, branch `gh-pages`, folder `/ (root)`). A custom Actions workflow was tried and removed because it kept failing. After a change reached `develop`:
+The site is served from the branch `gh-pages` (Settings, Pages, Source: **Deploy from a branch**, branch `gh-pages`, folder `/ (root)`). A custom Actions workflow was tried and removed because it kept failing. One script publishes:
 
 ```bash
-git checkout develop && git pull
-yarn install && yarn build
-git branch -D gh-pages 2>/dev/null                       # a leftover local branch would make the next step fail
-git worktree add --detach ../ol-pages HEAD
-cd ../ol-pages
-git checkout --orphan gh-pages && git rm -rqf .
-cp -r ../ohtuleht-toolkit/apps/generator/dist/. . && touch .nojekyll
-# echo "toolkit.example.com" > CNAME                     # only when a custom domain is set (below); keep the same name every time
-git add -A && git commit -m "Publish build of develop"
-git push -f origin gh-pages
-cd ../ohtuleht-toolkit && git worktree remove --force ../ol-pages && git branch -D gh-pages
+git checkout develop && git pull && yarn install
+bash tools/publish.sh          # version 1: the site root
 ```
+
+```bash
+bash tools/publish.sh v2       # a test copy of the branch you are on, at .../ohtuleht-toolkit/v2/
+```
+
+The script builds the branch you are on, takes a copy of the live `gh-pages`, replaces the site root (keeping `v2/` and a `CNAME` file) or only `v2/`, and pushes. The `/v2/` address is for trying a risky change next to the live site ([REFACTOR.md](REFACTOR.md)); delete the folder from `gh-pages` when it is no longer needed. Git needs push access (your own login, or a token).
 
 Pages refreshes in one or two minutes. Check by opening the site and pressing Ctrl+F5.
 

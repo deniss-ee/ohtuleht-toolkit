@@ -21,6 +21,7 @@ export function ToolShell({
   doneText,
   extra,
   downloadLabel,
+  moreDownloads,
   busy,
   onDownload,
   onBack,
@@ -33,6 +34,7 @@ export function ToolShell({
   doneText: string;
   extra?: ReactNode; // more buttons, left of the theme switch
   downloadLabel: ReactNode;
+  moreDownloads?: { key: string; label: ReactNode; onClick: () => void }[]; // other downloads of the same rank, shown right next to the main one
   busy?: boolean;
   onDownload: () => void;
   onBack: () => void;
@@ -90,9 +92,17 @@ export function ToolShell({
           </HoverPill>
           {extra}
           <Toggles />
-          <Button className="ml-auto gap-2 sm:ml-0" disabled={n > 0 || busy} onClick={onDownload} title="Ctrl+S">
-            {downloadLabel}
-          </Button>
+          {/* All downloads sit together and look the same: they are the same kind of action */}
+          <div className="ml-auto flex items-center gap-2 sm:ml-0">
+            <Button className="gap-2" disabled={n > 0 || busy} onClick={onDownload} title="Ctrl+S">
+              {downloadLabel}
+            </Button>
+            {moreDownloads?.map((d) => (
+              <Button key={d.key} className="gap-2" disabled={n > 0 || busy} onClick={d.onClick}>
+                {d.label}
+              </Button>
+            ))}
+          </div>
         </div>
       </header>
       <div className="flex-1 overflow-y-auto">{children}</div>

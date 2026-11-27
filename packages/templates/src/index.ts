@@ -1,13 +1,15 @@
 export * from "./types.ts";
-export { renderArticles1250x400, AD_HEIGHT } from "./articles-1250x400.ts";
+export { renderArticles1250x400, AD_HEIGHT, forDesktop } from "./articles-1250x400.ts";
 export { renderArticlesMobile } from "./articles-mobile.ts";
+export { renderArticlesBoth, scopeCss, BOTH_BREAKPOINT } from "./articles-both.ts";
 export { renderImageSlider, slideHref, sliderView, isMobile as isMobileSlider, SLIDER_CANVAS, SLIDER_CANVAS_MOBILE, SLIDER_MOBILE_LAYOUT } from "./image-slider.ts";
-export { validate, validateImageSlider, MIN_ARTICLES, MIN_SLIDES } from "./validate.ts";
+export { validate, validateImageSlider, MIN_ARTICLES, MIN_SLIDES, OWN_PICTURE } from "./validate.ts";
 export type { Problem } from "./validate.ts";
 export { CLICKTAG_JS } from "./clicktag.ts";
 export { resolveTheme, readableOn, onColor, brandTextColor, contrast } from "./colors.ts";
 export { renderHeaderBar, validateHeaderBar, headerTextColor, iframeCode } from "./header-bar.ts";
 export type { HeaderBarConfig, HeaderBarFiles } from "./header-bar.ts";
+export { BAR_HEIGHT, LOGO_HEIGHT, LOGO_MIN, logoHeight } from "./header-bar.ts";
 export { renderMovieBanner } from "./movie-banner.ts";
 export { renderFrameBanner, validateFrameBanner, frameTimeline, frameStops, frameAnimationCss, effectiveHolds, FRAME_MIN_HOLD_MS, FRAME_SIZE_MIN, FRAME_SIZE_MAX } from "./frame-banner.ts";
 export type { FrameBannerConfig, FrameFit } from "./frame-banner.ts";
@@ -15,3 +17,7 @@ export { renderResponsiveBanner, validateResponsiveBanner, pictureFits, hasConte
 export type { ResponsiveBannerConfig, RbVersion, RbKind } from "./responsive-banner.ts";
 export type { MovieBannerConfig, VideoPosition } from "./movie-banner.ts";
 export type { Lang } from "./messages.ts";
+export { layoutCard, layoutBack, PRINT_STYLES, EMAIL_STYLES, cardText, fillCopy, parsePathData, logoShapes, recolourLogo, fromGlyphCmds, faceFrom, A4, EMAIL } from "./giftcard.ts";
+export type { Drawing, Shape, Cmd, GlyphCmd, FontFace, FontLike, Fonts, FontStyle, CardCopy, GiftCardSpec, Kind, PrintStyle, EmailStyle } from "./giftcard.ts";
+export { renderPdf, contentOf, toCmyk } from "./pdf.ts";
+export type { CmykTable, PdfColour } from "./pdf.ts";

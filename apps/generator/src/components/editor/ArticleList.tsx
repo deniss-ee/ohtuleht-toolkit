@@ -1,20 +1,23 @@
-import { useEffect, useState } from "react";
-import { Bookmark, ChevronDown, ChevronRight, ChevronUp, ClipboardPaste, ImageOff, Newspaper, Plus, Trash2, TriangleAlert } from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { ArrowDown, ArrowUp, Bookmark, ChevronRight, ClipboardPaste, ImageOff, ImagePlus, Loader2, Newspaper, Plus, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import type { ArticleItem } from "@ohtuleht/templates";
-import { MIN_ARTICLES } from "@ohtuleht/templates";
+import { forDesktop, MIN_ARTICLES } from "@ohtuleht/templates";
 import { Button } from "@/components/ui/button";
 import { ColorPicker } from "@/components/editor/ColorPicker";
 import { IconChip } from "@/components/editor/IconChip";
+import { DRAG_CLASSES, reorder, useDragSort } from "@/components/editor/useDragSort";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { editor as t } from "@/content";
-import { emptyArticle } from "@/lib/banner";
+import { emptyArticle, type HeaderFile } from "@/lib/banner";
 import { parseSnippets } from "@/lib/snippets";
+import { withPictureSize } from "@/lib/image";
 import { readableOn } from "@ohtuleht/templates";
 import { useTheme } from "@/components/theme-provider";
+import { ZoomPicture } from "@/components/editor/ZoomPicture";
 
 // Thumbnail of the article image so people can see what they are adding.
 function Thumb({ src, badge, badgeColor }: { src: string; badge: string; badgeColor?: string }) {
@@ -41,13 +44,15 @@ function Thumb({ src, badge, badgeColor }: { src: string; badge: string; badgeCo
 }
 
 // Small picture for the closed row.
-function MiniThumb({ src }: { src: string }) {
+function MiniThumb({ src, aspect }: { src: string; aspect: number }) {
   const [failed, setFailed] = useState<string | null>(null);
   const bad = !src || failed === src;
   return (
-    <div className="flex h-10 w-14 shrink-0 items-center justify-center overflow-hidden rounded bg-muted">
-      {bad ? <ImageOff className="size-4 text-muted-foreground" /> : <img src={src} alt="" className="h-full w-full object-cover" onError={() => setFailed(src)} />}
-    </div>
+    <ZoomPicture src={bad ? undefined : src} aspect={aspect}>
+      <div className="flex h-10 w-14 shrink-0 items-center justify-center overflow-hidden rounded bg-muted">
+        {bad ? <ImageOff className="size-4 text-muted-foreground" /> : <img src={src} alt="" className="h-full w-full object-cover" onError={() => setFailed(src)} />}
+      </div>
+    </ZoomPicture>
   );
 }
 
@@ -56,6 +61,10 @@ function MiniThumb({ src }: { src: string }) {
 function ArticleRow({
   index,
   total,
+  mobile,
+  files,
+  busy,
+  onPicture,
   article,
   defaultBadge,
   defaultColor,
@@ -63,10 +72,16 @@ function ArticleRow({
   onToggle,
   onPatch,
   onMove,
+  drag,
+  grip,
   onRemove,
 }: {
   index: number;
   total: number;
+  mobile: boolean;
+  files: Record<string, HeaderFile>;
+  busy: boolean;
+  onPicture: (file: File) => void;
   article: ArticleItem;
   defaultBadge: string;
   defaultColor: string;
@@ -74,36 +89,44 @@ function ArticleRow({
   onToggle: () => void;
   onPatch: (patch: Partial<ArticleItem>) => void;
   onMove: (dir: -1 | 1) => void;
+  drag: object; // drag and drop props for the row
+  grip: ReactNode;
   onRemove: () => void;
 }) {
   const id = `a${index}`;
   const shownBadge = article.badge?.trim() || defaultBadge;
-  const incomplete = !article.title.trim() || !article.url.trim() || !article.image.trim();
+  // The picture of the open version: mobile uses its own address when set, else the /webp/48/ form of the desktop one.
+  const fileInput = useRef<HTMLInputElement>(null);
+  const shownImage = mobile ? (article.imageMobile ?? (withPictureSize(article.image, 48) || article.image)) : forDesktop(article.image);
+  const shownSrc = files[shownImage.trim()]?.dataUrl ?? shownImage; // an uploaded picture shows from the browser's copy
+  const ownFile = !!files[shownImage.trim()];
+  const incomplete = !article.title.trim() || !article.url.trim() || !shownImage.trim();
   return (
-    <li className="rounded-lg border bg-card">
+    <li {...drag} className={"rounded-lg border bg-card " + DRAG_CLASSES}>
       <div className="flex items-center gap-1 p-1.5">
+        {grip}
         <button type="button" aria-expanded={open} aria-controls={`${id}-body`} className="flex min-w-0 flex-1 items-center gap-3 rounded-md p-1 text-left hover:bg-muted/60" onClick={onToggle}>
-          <MiniThumb src={article.image} />
+          <MiniThumb src={shownSrc} aspect={mobile ? 267 / 400 : 300 / 215} />
           <span className="w-5 shrink-0 text-xs font-semibold text-muted-foreground">{index + 1}</span>
           <span className="min-w-0 flex-1 truncate text-sm font-medium">{article.title.trim() || t.untitledArticle}</span>
           {incomplete && <TriangleAlert className="size-4 shrink-0 text-yellow-600" aria-label={t.articleIncomplete} />}
           <ChevronRight className={"size-4 shrink-0 text-muted-foreground" + (open ? " rotate-90" : "")} />
         </button>
         <div className="flex shrink-0">
-          <Button variant="ghost" size="icon" aria-label={t.moveUp} disabled={index === 0} onClick={() => onMove(-1)}>
-            <ChevronUp className="size-4" />
+          <Button variant="ghost" size="icon-sm" aria-label={t.moveUp} disabled={index === 0} onClick={() => onMove(-1)}>
+            <ArrowUp className="size-4" />
           </Button>
-          <Button variant="ghost" size="icon" aria-label={t.moveDown} disabled={index === total - 1} onClick={() => onMove(1)}>
-            <ChevronDown className="size-4" />
+          <Button variant="ghost" size="icon-sm" aria-label={t.moveDown} disabled={index === total - 1} onClick={() => onMove(1)}>
+            <ArrowDown className="size-4" />
           </Button>
-          <Button variant="ghost" size="icon" aria-label={t.remove} onClick={onRemove}>
+          <Button variant="ghost" size="icon-sm" aria-label={t.remove} onClick={onRemove}>
             <Trash2 className="size-4" />
           </Button>
         </div>
       </div>
       <div id={`${id}-body`} hidden={!open} className="border-t p-3 sm:p-4">
       <div className="flex flex-col gap-4 sm:flex-row">
-        <Thumb src={article.image} badge={shownBadge} badgeColor={article.badgeColor || defaultColor} />
+        <Thumb src={shownSrc} badge={shownBadge} badgeColor={article.badgeColor || defaultColor} />
         <div className="grid flex-1 gap-3">
           <div className="space-y-1.5">
             <Label htmlFor={`${id}-title`}>{t.titleField}</Label>
@@ -115,8 +138,20 @@ function ArticleRow({
               <Input id={`${id}-url`} placeholder="https://www.ohtuleht.ee/…" value={article.url} onChange={(e) => onPatch({ url: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor={`${id}-img`}>{t.imageUrl}</Label>
-              <Input id={`${id}-img`} placeholder="https://p.ohtuleht.ee/…" value={article.image} onChange={(e) => onPatch({ image: e.target.value })} />
+              <Label htmlFor={`${id}-img`}>{mobile ? t.imageUrlMobile : t.imageUrl}</Label>
+              <Input id={`${id}-img`} placeholder="https://p.ohtuleht.ee/…" value={shownImage} onChange={(e) => onPatch(mobile ? { imageMobile: e.target.value } : { image: e.target.value })} />
+              <div className="flex flex-wrap items-center gap-2">
+                <input ref={fileInput} type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" tabIndex={-1} aria-hidden onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) onPicture(f); }} />
+                <Button type="button" variant="outline" size="sm" className="gap-2" disabled={busy} onClick={() => fileInput.current?.click()}>
+                  {busy ? <Loader2 className="size-4 animate-spin" /> : <ImagePlus className="size-4" />} {busy ? t.preparing : ownFile ? t.pictureChange : t.pictureUpload}
+                </Button>
+                {mobile && article.imageMobile !== undefined && (
+                  <Button type="button" variant="ghost" size="sm" onClick={() => onPatch({ imageMobile: undefined })}>
+                    {t.useDefault}
+                  </Button>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">{mobile ? t.imageMobileHint : t.imageDesktopHint}</p>
             </div>
           </div>
           <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
@@ -143,19 +178,30 @@ function ArticleRow({
 
 export function ArticleList({
   articles,
+  mobile,
+  files,
+  onPicture,
   defaultBadge,
   defaultColor,
   onChange,
   onOpenBookmark,
 }: {
   articles: ArticleItem[];
+  mobile: boolean;
+  files: Record<string, HeaderFile>;
+  onPicture: (index: number, file: File) => Promise<void>;
   defaultBadge: string;
   defaultColor: string;
   onChange: (next: ArticleItem[]) => void;
   onOpenBookmark: () => void;
 }) {
   const [paste, setPaste] = useState("");
+  const [uploading, setUploading] = useState<number | null>(null); // the article whose picture is being prepared
   const [open, setOpen] = useState<number | null>(null); // one article open at a time keeps the list short
+  const sort = useDragSort((from, to) => {
+    onChange(reorder(articles, from, to));
+    setOpen(null);
+  });
 
   // "To fix" links jump to a field inside a closed article: open it first.
   useEffect(() => {
@@ -187,16 +233,38 @@ export function ArticleList({
     if (open === i) setOpen(j);
     else if (open === j) setOpen(i);
   };
+  // Articles copied by the bookmark are added from the text. Returns false when the text holds none.
+  const addFrom = (text: string): boolean => {
+    const { articles: found, skipped } = parseSnippets(text);
+    if (!found.length) return false;
+    // New articles go first, so the newest one leads the banner.
+    onChange([...found, ...articles]);
+    if (open !== null) setOpen(open + found.length);
+    toast.success(t.pasteAdded(found.length, skipped));
+    return true;
+  };
   const addSnippets = () => {
-    const { articles: found, skipped } = parseSnippets(paste);
-    if (!found.length) {
+    if (!addFrom(paste)) {
       toast.error(t.pasteNothing);
       return;
     }
-    onChange([...articles, ...found]);
     setPaste("");
-    toast.success(t.pasteAdded(found.length, skipped));
   };
+
+  // Ctrl+V anywhere on the page, when no field has the focus: what the bookmark copied is added at once, with no click in the box and no button.
+  // Text that is not from the bookmark is left alone (no message), and so is a paste into a field.
+  const latest = useRef(addFrom);
+  latest.current = addFrom;
+  useEffect(() => {
+    const onPaste = (e: ClipboardEvent) => {
+      const el = e.target as HTMLElement | null;
+      if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable)) return;
+      const text = e.clipboardData?.getData("text/plain") ?? "";
+      if (text.trim() && latest.current(text)) e.preventDefault();
+    };
+    window.addEventListener("paste", onPaste);
+    return () => window.removeEventListener("paste", onPaste);
+  }, []);
 
   return (
     <Card>
@@ -238,6 +306,10 @@ export function ArticleList({
                 key={i}
                 index={i}
                 total={articles.length}
+                mobile={mobile}
+                files={files}
+                busy={uploading === i}
+                onPicture={(file) => { setUploading(i); void onPicture(i, file).finally(() => setUploading(null)); }}
                 article={a}
                 defaultBadge={defaultBadge}
                 defaultColor={defaultColor}
@@ -245,6 +317,8 @@ export function ArticleList({
                 onToggle={() => setOpen(open === i ? null : i)}
                 onPatch={(p) => patch(i, p)}
                 onMove={(d) => move(i, d)}
+                drag={sort.item(i)}
+                grip={sort.grip(i)}
                 onRemove={() => {
                   onChange(articles.filter((_, j) => j !== i));
                   setOpen(open === null || open === i ? null : open > i ? open - 1 : open);
@@ -257,8 +331,8 @@ export function ArticleList({
           variant="outline"
           className="gap-2"
           onClick={() => {
-            onChange([...articles, emptyArticle()]);
-            setOpen(articles.length);
+            onChange([emptyArticle(), ...articles]);
+            setOpen(0);
           }}
         >
           <Plus className="size-4" /> {t.addArticle}

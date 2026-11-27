@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+<meta charset="UTF-8">
+<title>Responsive campaign</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script>var olBanner={getQueryStringValue:function(k){return decodeURIComponent(window.location.search.replace(new RegExp("^(?:.*[&?]"+encodeURIComponent(k).replace(/[.+*]/g,"$&")+"(?:=([^&]*))?)?.*$","i"),"$1"))},getClickTag:function(u){this.clickMacro=this.getQueryStringValue('clickMacro');this.clickTag=this.getQueryStringValue('clickTag');return u!==undefined&&u.length>0?this.clickMacro+u:this.clickTag}};var clickTag="";</script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{cursor:pointer}
+.rb{position:relative;display:block;width:100%;min-width:320px;max-width:700px;height:200px;margin:0 auto;overflow:hidden;background:#000}
+.rb-g{display:none;position:absolute;left:0;top:0;width:100%;height:100%}
+.rb[data-v="small"] .rb-g[data-g="small"],.rb[data-v="large"] .rb-g[data-g="large"]{display:block}
+.rb video,.rb img{position:absolute;left:0;top:0;width:100%;height:100%;display:block;object-fit:cover;object-position:center;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.rb img{opacity:0;z-index:0;will-change:opacity;backface-visibility:hidden;transform:translateZ(0)}
+.ol-first{opacity:1;z-index:2}
+
+
+</style>
+</head>
+<body onclick="window.open(olBanner.getClickTag('https://example.com/responsive'),'_blank')">
+<div class="rb" id="rb" role="img" aria-label="Responsive campaign">
+<div class="rb-g" data-g="small"><video muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1" poster="540-poster.webp" data-src="540.mp4"></video></div>
+<div class="rb-g" data-g="large"><video muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1" poster="700-poster.webp" data-src="700.mp4"></video></div>
+</div>
+<script>
+(function(){var rb=document.getElementById('rb'),BP=540,cur='';
+function g(n){return rb.querySelector('[data-g="'+n+'"]')}
+function show(n){if(n===cur)return;var old=cur&&g(cur);if(old){var ov=old.querySelector('video');if(ov)ov.pause()}
+cur=n;rb.setAttribute('data-v',n);var el=g(n),v=el.querySelector('video');
+if(v){if(!v.getAttribute('src'))v.src=v.getAttribute('data-src');var p=v.play();if(p&&p.catch)p.catch(function(){})}
+var im=el.querySelectorAll('img[data-src]');for(var i=0;i<im.length;i++){if(!im[i].getAttribute('src'))im[i].src=im[i].getAttribute('data-src')}}
+function pick(w){var want=Math.round(w)<=BP?'small':'large';if(!g(want))want=want==='small'?'large':'small';if(g(want))show(want)}
+pick(rb.getBoundingClientRect().width);
+if(window.ResizeObserver)new ResizeObserver(function(e){pick(e[0].contentRect.width)}).observe(rb)})();
+</script>
+<script type="application/json" id="ol-banner">{"v":1,"kind":"responsive-banner","format":"responsive-banner","campaign":"Responsive campaign","small":{"kind":"video","video":"540.mp4","poster":"540-poster.webp","pictures":[]},"large":{"kind":"video","video":"700.mp4","poster":"700-poster.webp","pictures":[]},"holdMs":3000,"fadeMs":800,"href":"https://example.com/responsive"}</script>
+</body>
+</html>

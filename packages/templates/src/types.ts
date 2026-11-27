@@ -24,7 +24,8 @@ export interface ResolvedTheme {
 export interface ArticleItem {
   url: string;
   title: string;
-  image: string;
+  image: string; // desktop picture (the mobile banner uses it too, as /webp/48/, unless imageMobile is set)
+  imageMobile?: string; // own picture for the mobile banner, used as it is (no size change)
   badge?: string; // overrides the campaign badge text for this article
   badgeColor?: string; // overrides the badge colour for this article (hex)
 }

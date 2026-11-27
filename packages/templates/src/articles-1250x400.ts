@@ -10,6 +10,9 @@ const VISIBLE_WITH_AD = 3;
 const GAP = 16;
 export const AD_HEIGHT = 338; // 400 minus the 46 px header and the 16 px gap
 
+// The desktop banner never shows the phone crop: an Õhtuleht picture link with the phone size (/webp/48/) becomes the desktop size (/webp/54/).
+export const forDesktop = (url: string) => url.replace(/\/webp\/48\//, "/webp/54/");
+
 export const FONTS_URL = "https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@700&family=Roboto:wght@700&display=swap";
 
 export function themeVars(t: ResolvedTheme): string {
@@ -39,7 +42,7 @@ export function headerHtml(config: ArticlesBannerConfig): string {
   return `<div class="header"${link}>${showName ? `<span class="header-title">${escapeHtml(config.campaign)}</span>` : ""}${config.headerLogo ? `<img class="header-logo" src="${escapeHtml(config.headerLogo)}" alt="">` : ""}</div>`;
 }
 
-function css(config: ArticlesBannerConfig): string {
+export function desktopCss(config: ArticlesBannerConfig): string {
   return (
     `:root{${themeVars(resolveTheme(config, "light"))};color-scheme:light dark}` +
     `@media(prefers-color-scheme:dark){:root{${themeVars(resolveTheme(config, "dark"))}}}` +
@@ -73,13 +76,17 @@ function slide(a: ArticlesBannerConfig["articles"][number], defaultBadge: string
   const open = clickAttr(escapeJsInAttr(a.url));
   return (
     `<div class="ol-slide" role="link" tabindex="0" onclick="${open}">` +
-    `<div class="article"><div class="img" style="background-image:url(&quot;${escapeCssUrlInAttr(a.image)}&quot;)">` +
+    `<div class="article"><div class="img" style="background-image:url(&quot;${escapeCssUrlInAttr(forDesktop(a.image))}&quot;)">` +
     `<p class="badge"${color}>${escapeHtml(badge)}</p></div>` +
     `<p class="title">${escapeHtml(a.title)}</p></div></div>`
   );
 }
 
-export function renderArticles1250x400(config: ArticlesBannerConfig, assets: RuntimeAssets): string {
+// The desktop banner (cards and saved settings alike) never carries the phone picture size.
+export const desktopConfig = (input: ArticlesBannerConfig): ArticlesBannerConfig => ({ ...input, articles: input.articles.map((a) => ({ ...a, image: forDesktop(a.image) })) });
+
+// The visible part of the page (header, slider, optional ad). `config` is already desktopConfig().
+export function desktopBody(config: ArticlesBannerConfig): string {
   const b = config.behavior;
   const delay = b.autoplay ? b.delayMs : 0;
   const header = headerHtml(config);
@@ -90,6 +97,11 @@ export function renderArticles1250x400(config: ArticlesBannerConfig, assets: Run
     `<div class="ol-viewport"><div class="ol-track">${config.articles.map((a) => slide(a, config.badge)).join("")}</div></div>` +
     '<button class="ol-next" aria-label="Next"></button></div>';
   const ad = config.ad ? `<a class="ad" role="link" tabindex="0" aria-label="${escapeHtml(config.campaign)}" onclick="${clickAttr(escapeJsInAttr(config.ad.href))}"><img src="${escapeHtml(config.ad.src)}" alt=""></a>` : "";
+  return `<div class="banner">${header}${config.ad ? `<div class="row">${slider}${ad}</div>` : slider}</div>`;
+}
+
+export function renderArticles1250x400(input: ArticlesBannerConfig, assets: RuntimeAssets): string {
+  const config = desktopConfig(input);
   return (
     '<!doctype html><html lang="et"><head><meta charset="utf-8">' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +
@@ -97,8 +109,8 @@ export function renderArticles1250x400(config: ArticlesBannerConfig, assets: Run
     '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' +
     // Fonts must never block the first paint: load as "print" media, then switch to "all" once loaded.
     `<link rel="stylesheet" href="${FONTS_URL}" media="print" onload="this.media='all'">` +
-    `<style>${assets.sliderCss}${css(config)}</style></head><body>` +
-    `<div class="banner">${header}${config.ad ? `<div class="row">${slider}${ad}</div>` : slider}</div>` +
+    `<style>${assets.sliderCss}${desktopCss(config)}</style></head><body>` +
+    desktopBody(config) +
     `<script type="application/json" id="ol-banner">${jsonForScript(config)}</script>` +
     `<script>${CLICKTAG_JS}</script><script>${assets.runtimeJs}</script></body></html>`
   );

@@ -65,4 +65,4 @@ The same Worker can also serve the built app (Workers static assets) and answer 
 1. Microsoft login: `authorised()` in `apps/api/src/index.ts` must check the token and set `AUTH_MODE=entra` ([AUTH-MICROSOFT.md](AUTH-MICROSOFT.md)).
 2. A company address for the API, and the final owner of the Cloudflare account.
 3. The article-by-number route (issues #40 and #119): `GET /api/article?id=` that reads an ohtuleht.ee article (the site sends no CORS headers, so browsers cannot do it themselves).
-4. The Scoro route ([TASK-TRACKER.md](TASK-TRACKER.md#scoro)).
+4. Banner request and Task tracker were removed on 2026-11-16: another in-house app will do that job. The code is kept in the tag `archive/request-tracker`. The `briefs` and `clients` routes and tables of the Worker are now unused and can be removed.

@@ -15,6 +15,7 @@ export const HEADER_LIMIT = { maxWidth: 2496, maxHeight: 92 };
 export const AD_LIMIT = { maxWidth: 800, maxHeight: 676 }; // 338 px high (AD_HEIGHT) times 2
 export const LOGO_LIMIT = { maxWidth: 400, maxHeight: 60 }; // header logo, 30 px high on the banner
 export const SLIDE_LIMIT = { maxWidth: 600, maxHeight: 500 }; // slides are 300x250 on the banner
+export const ARTICLE_LIMIT = { maxWidth: 800, maxHeight: 800 }; // own article picture: the phone card is 267x400, the desktop one smaller
 export const BG_LIMIT = { maxWidth: 2500, maxHeight: 800 }; // background 1250x400
 
 const JPEG_QUALITY = 75; // measured on a real ad: 80 was not smaller than an already tight original, 75 saves about 10%, 70 about 20%

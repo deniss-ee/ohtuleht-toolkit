@@ -12,6 +12,9 @@ export interface Problem {
 
 const isUrl = (s: string) => /^https?:\/\//.test(s.trim());
 
+// A picture uploaded in the editor is a file inside the zip, named pic-<id>.<ext>; it counts as a valid picture address.
+export const OWN_PICTURE = /^pic-[a-z0-9]+\.(?:jpe?g|png|webp|gif)$/i;
+
 // Returns what is still missing; empty means the banner can be exported.
 export function validate(config: ArticlesBannerConfig, lang: Lang = "en"): Problem[] {
   const m = messages(lang);
@@ -25,7 +28,7 @@ export function validate(config: ArticlesBannerConfig, lang: Lang = "en"): Probl
     const n = i + 1;
     if (!a.title.trim()) problems.push({ message: m.title(n), field: `a${i}-title` });
     if (!isUrl(a.url)) problems.push({ message: m.url(n), field: `a${i}-url` });
-    if (!isUrl(a.image)) problems.push({ message: m.image(n), field: `a${i}-img` });
+    if (!isUrl(a.image) && !OWN_PICTURE.test(a.image.trim())) problems.push({ message: m.image(n), field: `a${i}-img` });
     if (a.badgeColor && !/^#[0-9a-fA-F]{6}$/.test(a.badgeColor)) problems.push({ message: m.color(n), field: `a${i}-color` });
   });
   if (config.header.href.trim() && !isUrl(config.header.href)) problems.push({ message: m.headerHref, field: "header-href" });

@@ -8,6 +8,7 @@ import { goTo, HoverPill } from "@/components/editor/HoverPill";
 import { FormatSwitch } from "@/components/editor/FormatSwitch";
 import { SwapFrame, type Geometry } from "@/components/editor/SwapFrame";
 import { useSaveShortcut } from "@/components/editor/useSaveShortcut";
+import { DRAG_CLASSES, reorder, useDragSort } from "@/components/editor/useDragSort";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +18,7 @@ import { Toggles } from "@/layout/AppShell";
 import { formatSize } from "@/lib/format";
 import type { Optimised } from "@/lib/optimise";
 import { downloadSliderZip, exampleSliderDraft, fileToSliderPicture, renderSliderPreview, sliderProblems, sliderWeightKb, switchSliderFormat, tidy, type SliderDraft } from "@/lib/slider";
+import { ZoomPicture } from "@/components/editor/ZoomPicture";
 
 const BUDGET_KB = 100;
 const PHONES = [375, 390, 430];
@@ -118,7 +120,11 @@ function SliderPreview({ draft, pinned, onPin, onTryExample, working }: { draft:
 
 // Small picture in a list row.
 function Thumb({ src }: { src?: string }) {
-  return <div className="aspect-[6/5] h-12 shrink-0 overflow-hidden rounded bg-muted">{src && <img src={src} alt="" className="h-full w-full object-cover" />}</div>;
+  return (
+    <ZoomPicture src={src}>
+      <div className="aspect-[6/5] h-12 shrink-0 overflow-hidden rounded bg-muted">{src && <img src={src} alt="" className="h-full w-full object-cover" />}</div>
+    </ZoomPicture>
+  );
 }
 
 // Full-screen editor for the image slider.
@@ -186,6 +192,7 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
     slides.splice(i + d, 0, s!);
     set({ slides });
   };
+  const sort = useDragSort((from, to) => set({ slides: reorder(c.slides, from, to) }));
   const setSlideHref = (i: number, href: string) => set({ slides: c.slides.map((s, j) => (j === i ? { ...s, href } : s)) });
 
   const loadExample = () =>
@@ -231,7 +238,7 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
           }}
         />
         <div className="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:flex-nowrap lg:gap-3">
-          <HoverPill tone="plain" icon={<FileArchive className="size-3.5" />} label={`${weightKb.toFixed(1)} KB`}>
+          <HoverPill tone={weightKb > BUDGET_KB ? "warn" : "plain"} icon={<FileArchive className="size-3.5" />} label={`${weightKb.toFixed(1)} KB`}>
             {() => (
               <div className="space-y-2">
                 <div className="flex items-baseline justify-between text-sm font-medium">
@@ -241,7 +248,7 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
                   </span>
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={Math.round(weightKb)} aria-valuemax={BUDGET_KB} aria-label={e.weight}>
-                  <div className={weightKb > BUDGET_KB ? "h-full bg-destructive" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weightKb / BUDGET_KB) * 100)}%` }} />
+                  <div className={weightKb > BUDGET_KB ? "h-full bg-yellow-400" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weightKb / BUDGET_KB) * 100)}%` }} />
                 </div>
                 <p className="text-xs text-muted-foreground">{e.sizeHelp}</p>
               </div>
@@ -367,17 +374,18 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
 
                   <ul className="space-y-2">
                     {c.slides.map((s, i) => (
-                      <li key={s.image + i} className="rounded-lg border p-2">
+                      <li key={s.image + i} {...sort.item(i)} className={"rounded-lg border p-2 " + DRAG_CLASSES}>
                         <div className="flex items-center gap-3">
+                          {sort.grip(i)}
                           <Thumb src={draft.files[s.image]?.dataUrl} />
                           <div className="min-w-0 flex-1 text-sm font-medium">{t.slideN(i + 1)}</div>
-                          <Button variant="ghost" size="icon" aria-label={t.slideEarlier} disabled={i === 0} onClick={() => move(i, -1)}>
+                          <Button variant="ghost" size="icon-sm" aria-label={t.slideEarlier} disabled={i === 0} onClick={() => move(i, -1)}>
                             <ArrowUp className="size-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" aria-label={t.slideLater} disabled={i === c.slides.length - 1} onClick={() => move(i, 1)}>
+                          <Button variant="ghost" size="icon-sm" aria-label={t.slideLater} disabled={i === c.slides.length - 1} onClick={() => move(i, 1)}>
                             <ArrowDown className="size-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" aria-label={t.slideRemove} onClick={() => set({ slides: c.slides.filter((_, j) => j !== i) })}>
+                          <Button variant="ghost" size="icon-sm" aria-label={t.slideRemove} onClick={() => set({ slides: c.slides.filter((_, j) => j !== i) })}>
                             <Trash2 className="size-4" />
                           </Button>
                         </div>

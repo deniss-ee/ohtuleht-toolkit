@@ -1,43 +1,17 @@
-// Small things the app remembers in this browser: the unfinished banner or header bar, the last section, tool settings.
-// Everything is wrapped so a blocked or full storage never breaks the app (the app simply forgets).
+// The unfinished banner kept in this browser: saving and loading it. This half knows every draft shape, so it is loaded
+// together with the editors; the start pages use the light half (saved.ts).
 import type { Draft, HeaderFile } from "@/lib/banner";
 import { newDraft } from "@/lib/banner";
 import { newHeaderDraft, type HeaderDraft } from "@/lib/header";
 import { newFrameDraft, tidy as tidyFrames, type FrameDraft } from "@/lib/frames";
 import { isVideoName, newResponsiveDraft, tidy as tidyResponsive, type ResponsiveDraft } from "@/lib/responsive";
 import { newSliderDraft, tidy, type SliderDraft } from "@/lib/slider";
-
-export function read<T>(key: string): T | null {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : null;
-  } catch {
-    return null;
-  }
-}
-
-export function write(key: string, value: unknown): boolean {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-export function remove(key: string) {
-  try {
-    localStorage.removeItem(key);
-  } catch {
-    // nothing to do
-  }
-}
+import { read, usable, WORK_KEY, write } from "@/lib/saved";
 
 // ---- Unfinished work (one slot) ----
 
 export type Work = { kind: "banner"; draft: Draft } | { kind: "header"; draft: HeaderDraft } | { kind: "slider"; draft: SliderDraft } | { kind: "frames"; draft: FrameDraft } | { kind: "responsive"; draft: ResponsiveDraft } | null;
 
-const WORK_KEY = "ol-work";
 
 // Picture bytes are kept as the data URL only (the bytes are rebuilt from it).
 interface StoredFile {
@@ -46,8 +20,8 @@ interface StoredFile {
   avg?: string;
 }
 type Stored =
-  | { kind: "banner"; config: Draft["config"]; file: StoredFile | null; adFile?: StoredFile | null; logoFile?: StoredFile | null; savedAt: number }
-  | { kind: "header"; config: HeaderDraft["config"]; file: StoredFile | null; embedUrl: string; savedAt: number }
+  | { kind: "banner"; config: Draft["config"]; file: StoredFile | null; adFile?: StoredFile | null; logoFile?: StoredFile | null; articleFiles?: Record<string, StoredFile>; savedAt: number }
+  | { kind: "header"; config: HeaderDraft["config"]; file: StoredFile | null; logo?: StoredFile | null; embedUrl: string; savedAt: number }
   | { kind: "slider"; config: SliderDraft["config"]; files: Record<string, StoredFile>; savedAt: number }
   | { kind: "frames"; config: FrameDraft["config"]; files: Record<string, StoredFile>; savedAt: number }
   | { kind: "responsive"; config: ResponsiveDraft["config"]; files: Record<string, StoredFile>; savedAt: number };
@@ -72,7 +46,7 @@ function isPristine(work: NonNullable<Work>): boolean {
   if (work.kind === "frames") return JSON.stringify(work.draft.config) === JSON.stringify(newFrameDraft().config) && Object.keys(work.draft.files).length === 0;
   if (work.kind === "slider") return JSON.stringify(work.draft.config) === JSON.stringify(newSliderDraft(work.draft.config.format).config) && Object.keys(work.draft.files).length === 0;
   const fresh = work.kind === "banner" ? newDraft(work.draft.config.format) : newHeaderDraft();
-  return JSON.stringify(work.draft.config) === JSON.stringify(fresh.config) && !(work.kind === "banner" ? work.draft.headerFile || work.draft.adFile || work.draft.logoFile : work.draft.picture);
+  return JSON.stringify(work.draft.config) === JSON.stringify(fresh.config) && !(work.kind === "banner" ? work.draft.headerFile || work.draft.adFile || work.draft.logoFile : work.draft.picture || ("logo" in work.draft && work.draft.logo));
 }
 
 export function saveWork(work: Work) {
@@ -104,27 +78,10 @@ export function saveWork(work: Work) {
     return;
   }
   const file = work.kind === "banner" ? work.draft.headerFile : work.draft.picture;
-  const base = work.kind === "banner" ? { kind: "banner" as const, config: work.draft.config, adFile: pack(work.draft.adFile ?? null), logoFile: pack(work.draft.logoFile ?? null) } : { kind: "header" as const, config: work.draft.config, embedUrl: work.draft.embedUrl };
+  const base = work.kind === "banner" ? { kind: "banner" as const, config: work.draft.config, adFile: pack(work.draft.adFile ?? null), logoFile: pack(work.draft.logoFile ?? null), articleFiles: Object.fromEntries(Object.entries(work.draft.articleFiles ?? {}).map(([k, f]) => [k, pack(f)!])) } : { kind: "header" as const, config: work.draft.config, logo: pack(work.draft.logo), embedUrl: work.draft.embedUrl };
   const stored = { ...base, file: pack(file), savedAt: Date.now() } as Stored;
   // A big picture can fill the storage: keep the text work without it rather than losing everything.
-  if (!write(WORK_KEY, stored)) write(WORK_KEY, { ...stored, file: null, ...(stored.kind === "banner" ? { adFile: null, logoFile: null } : {}) });
-}
-
-export const clearWork = () => remove(WORK_KEY);
-
-export interface SavedInfo {
-  kind: "banner" | "header" | "slider" | "frames" | "responsive";
-  name: string; // campaign name or bar text ("" when not written yet)
-  savedAt: number;
-}
-
-// A saved slider from an older version of the tool has another shape: it is dropped instead of breaking the editor.
-const usable = (s: Stored | null): s is Stored => !!s && (s.kind !== "slider" || (typeof s.config?.background === "string" && !!s.config?.desktop && !!s.config?.mobile));
-
-export function savedInfo(): SavedInfo | null {
-  const s = read<Stored>(WORK_KEY);
-  if (!usable(s)) return null;
-  return { kind: s.kind, name: s.kind === "header" ? s.config.label : s.config.campaign, savedAt: s.savedAt };
+  if (!write(WORK_KEY, stored)) write(WORK_KEY, { ...stored, file: null, ...(stored.kind === "banner" ? { adFile: null, logoFile: null, articleFiles: {} } : { logo: null }) });
 }
 
 export function loadWork(): Work {
@@ -154,6 +111,13 @@ export function loadWork(): Work {
     }
     return { kind: "slider", draft: { config: s.config, files } };
   }
-  if (s.kind === "banner") return { kind: "banner", draft: { config: s.config, headerFile: unpack(s.file), adFile: unpack(s.adFile ?? null), logoFile: unpack(s.logoFile ?? null) } };
-  return { kind: "header", draft: { config: s.config, picture: unpack(s.file), embedUrl: s.embedUrl ?? "" } };
+  if (s.kind === "banner") {
+    const articleFiles: Record<string, HeaderFile> = {};
+    for (const [k, f] of Object.entries(s.articleFiles ?? {})) {
+      const u = unpack(f);
+      if (u) articleFiles[k] = u;
+    }
+    return { kind: "banner", draft: { config: s.config, headerFile: unpack(s.file), adFile: unpack(s.adFile ?? null), logoFile: unpack(s.logoFile ?? null), articleFiles } };
+  }
+  return { kind: "header", draft: { config: s.config, picture: unpack(s.file), logo: unpack(s.logo ?? null), embedUrl: s.embedUrl ?? "" } };
 }

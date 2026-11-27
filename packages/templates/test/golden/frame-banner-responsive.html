@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+<meta charset="UTF-8">
+<title>Loop campaign</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script>var olBanner={getQueryStringValue:function(k){return decodeURIComponent(window.location.search.replace(new RegExp("^(?:.*[&?]"+encodeURIComponent(k).replace(/[.+*]/g,"$&")+"(?:=([^&]*))?)?.*$","i"),"$1"))},getClickTag:function(u){this.clickMacro=this.getQueryStringValue('clickMacro');this.clickTag=this.getQueryStringValue('clickTag');return u!==undefined&&u.length>0?this.clickMacro+u:this.clickTag}};var clickTag="";</script>
+<style>
+html,body{margin:0;padding:0;width:100%}
+body{cursor:pointer}
+.ol-frames{position:relative;overflow:hidden;width:100%;aspect-ratio:970/250;background:#101010;}
+.ol-bg,.ol-fr{position:absolute;left:0;top:0;width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
+.ol-bg{z-index:0}
+.ol-fr{object-fit:contain;opacity:0;z-index:0;will-change:opacity;backface-visibility:hidden;transform:translateZ(0)}
+.ol-first{opacity:1;z-index:2}
+@keyframes o0{0%{opacity:1}27.2727%{opacity:1}27.2909%{opacity:0}99.9818%{opacity:0}100%{opacity:1}}@keyframes z0{0%{z-index:2}27.2727%{z-index:1}27.2909%{z-index:0}99.9818%{z-index:3}100%{z-index:3}}@keyframes o1{0%{opacity:0}27.2545%{opacity:0}27.2727%{opacity:1}72.7273%{opacity:1}72.7455%{opacity:0}100%{opacity:0}}@keyframes z1{0%{z-index:0}27.2545%{z-index:3}27.2727%{z-index:2}72.7273%{z-index:1}72.7455%{z-index:0}100%{z-index:0}}@keyframes o2{0%{opacity:1}0.0182%{opacity:0}72.7091%{opacity:0}72.7273%{opacity:1}100%{opacity:1}}@keyframes z2{0%{z-index:1}0.0182%{z-index:0}72.7091%{z-index:3}72.7273%{z-index:2}100%{z-index:2}}.ol-frames .ol-fr:nth-of-type(1){animation:o0 11000ms linear -2ms 2 both,z0 11000ms step-end -2ms 2 both}.ol-frames .ol-fr:nth-of-type(2){animation:o1 11000ms linear -2ms 2 both,z1 11000ms step-end -2ms 2 both}.ol-frames .ol-fr:nth-of-type(3){animation:o2 11000ms linear -2ms 2 both,z2 11000ms step-end -2ms 2 both}.ol-frames:hover .ol-fr{animation-play-state:paused}@media (prefers-reduced-motion:reduce){.ol-fr{animation:none!important}.ol-fr:not(.ol-first){opacity:0!important}.ol-first{opacity:1!important;z-index:2!important}}
+</style>
+</head>
+<body onclick="window.open(olBanner.getClickTag(''),'_blank')">
+<div class="ol-frames" role="img" aria-label="Loop campaign">
+<div class="ol-bg" style="background:url('bg.jpg') center center/cover no-repeat"></div>
+<img class="ol-fr ol-first" src="frame-1.png" alt="" draggable="false" decoding="async">
+<img class="ol-fr" src="frame-2.png" alt="" draggable="false" decoding="async">
+<img class="ol-fr" src="frame-3.png" alt="" draggable="false" decoding="async">
+</div>
+<script type="application/json" id="ol-banner">{"v":1,"kind":"frame-banner","format":"frame-banner","campaign":"Loop campaign","width":970,"height":250,"responsive":true,"fit":"contain","backgroundColor":"#101010","backgroundImage":"bg.jpg","frames":[{"image":"frame-1.png"},{"image":"frame-2.png","holdMs":5000},{"image":"frame-3.png"}],"holdMs":3000,"fadeMs":0,"loop":{"forever":false,"times":2},"pauseOnHover":true,"respectMotion":true,"href":""}</script>
+</body>
+</html>

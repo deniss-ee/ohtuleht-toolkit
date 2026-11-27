@@ -7,7 +7,7 @@ Older stand-alone tools from before the toolkit app. They are **not part of the 
 | `two-article-generator/` | Splits a story into two linked article pages (has its own README) | Idea in [ROADMAP](../../docs/ROADMAP.md) ("Story split builder") |
 | `capcut-template-generator/` | Makes a CapCut video template page | Idea in the roadmap |
 | `video-html-generator/` | Video HTML packager | Mostly replaced by the **Movie banner** tool |
-| `podcast-story-generate/` | Podcast story page generator (10 MB, includes assets, no source of the assets) | Decide: rebuild or delete (issue #7) |
+| `podcast-story-generate/` | Podcast story page generator (10 MB of built files without source) | **Removed** on 2026-11-16; kept in the tag `legacy-podcast` |
 | `category-rubriik-4dimensioon/` | The older theme page header, kept as reference for the Header bar tool | Replaced by the **Header bar** tool |
 
 ## Removed on purpose

@@ -117,7 +117,7 @@ yarn build          # production build
 
 Never use `npm` or `npx`. Never create `package-lock.json`. Always commit `yarn.lock`.
 
-## What CI checks (planned, issues #5 and #6)
+## What CI checks (planned: phase 0 of [REFACTOR.md](REFACTOR.md), issues #5 and #6)
 
 | Check | Meaning |
 |---|---|
@@ -125,7 +125,9 @@ Never use `npm` or `npx`. Never create `package-lock.json`. Always commit `yarn.
 | Type check | No TypeScript errors |
 | Tests | Unit tests pass |
 | Build | `yarn build` succeeds |
-| Size budget | Banner runtime stays under its gzip limit |
+| Size budget | Banner runtime stays under its gzip limit; the app's first-load script stays under its budget |
+| Golden banners | Every generated banner equals its stored copy |
+| Docs | `yarn docs:check`: every link and anchor works |
 
 ## Secrets
 

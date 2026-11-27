@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { Clapperboard, Crop, Eye, FileSearch, FileText, House, Images, BookOpen, Layers, Link2, MonitorSmartphone, ListChecks, Megaphone, Search, Lightbulb, Newspaper, Palette, PanelTop, PenLine, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
+import { Clapperboard, Crop, Eye, FileSearch, FileText, Gift, House, Images, BookOpen, Layers, Link2, MonitorSmartphone, Search, Lightbulb, Newspaper, Palette, PanelTop, PenLine, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
 import { ContinueCard } from "@/components/editor/ContinueCard";
+import { OpenZipCard } from "@/components/editor/OpenZipCard";
 import { StartCard } from "@/components/editor/StartCard";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/editor/PageHeader";
 import { home as t, nav, ui, type PageId, type ToolInfo } from "@/content";
 import type { BrandTab } from "@/lib/route";
-import type { SavedInfo } from "@/lib/storage";
+import type { SavedInfo } from "@/lib/saved";
 
 // Where a card leads. `make` opens a new banner of that type.
 export interface Destination {
@@ -30,10 +31,9 @@ const ITEMS: Record<string, { icon: LucideIcon; to: Destination }> = {
   "article-scraper": { icon: FileSearch, to: { page: "tools", tool: "article-scraper" } },
   "picture-converter": { icon: Replace, to: { page: "tools", tool: "picture-converter" } },
   "utm-builder": { icon: Link2, to: { page: "tools", tool: "utm-builder" } },
+  "gift-card": { icon: Gift, to: { page: "tools", tool: "gift-card" } },
   "email-signature": { icon: PenLine, to: { page: "tools", tool: "email-signature" } },
   guide: { icon: BookOpen, to: { page: "guide" } },
-  "banner-request": { icon: Megaphone, to: { page: "request" } },
-  "task-tracker": { icon: ListChecks, to: { page: "tasks" } },
   colours: { icon: Palette, to: { page: "brand", tab: "colours" } },
   logos: { icon: Shapes, to: { page: "brand", tab: "logos" } },
   fonts: { icon: Type, to: { page: "brand", tab: "fonts" } },
@@ -41,7 +41,7 @@ const ITEMS: Record<string, { icon: LucideIcon; to: Destination }> = {
 };
 
 // The first screen: what is here, and one click to each thing.
-export function Home({ saved, onContinue, onDiscard, onGo }: { saved: SavedInfo | null; onContinue: () => void; onDiscard: () => void; onGo: (to: Destination) => void }) {
+export function Home({ saved, onContinue, onDiscard, onGo, onUpload }: { saved: SavedInfo | null; onContinue: () => void; onDiscard: () => void; onGo: (to: Destination) => void; onUpload: (file: File) => void }) {
   const [query, setQuery] = useState("");
   const box = useRef<HTMLInputElement>(null);
   // The "/" key jumps to the search box (unless a field already has the focus).
@@ -63,6 +63,8 @@ export function Home({ saved, onContinue, onDiscard, onGo }: { saved: SavedInfo 
       <PageHeader icon={House} title={t.title} intro={t.intro} />
 
       {saved && <ContinueCard saved={saved} onContinue={onContinue} onDiscard={onDiscard} />}
+
+      <OpenZipCard onUpload={onUpload} />
 
       <div className="relative">
         <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />

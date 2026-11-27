@@ -7,7 +7,7 @@ Specification for every banner format the generator produces.
 | Item | Rule |
 |---|---|
 | Delivery | Zip with `index.html` at the root, or a hosted URL tag (Phase 3) |
-| Weight | About 100 KB without images (soft limit). The generator shows the live total |
+| Weight | About 100 KB without images. A guide, never a block: the banner can always be downloaded; above the guide value the weight pill and its bar turn yellow |
 | External requests | Fonts (Google Fonts) and article images from `p.ohtuleht.ee` only |
 | ClickTag | Fixed helper in every template; never edited by hand. See [ARCHITECTURE.md](ARCHITECTURE.md#clicktag) |
 | Libraries | None. Swiper is removed |
@@ -109,8 +109,8 @@ Client banners: a background picture with a slider of pictures on top. Made from
 | Background | Required. 1250x400, or 2500x800 for sharp screens; optionally clickable | None: no picture, option or link |
 | Slides | Pictures of 300x250 or 600x500 (same 6:5 shape); at least 2; placed in the order of their file names, then moved by hand. The same pictures serve both sizes | same (600x500 pictures fit the phone banner exactly) |
 | Slider box | Form fields; defaults: from the left 165, from the top 100, 920x250, gap 10, 3 visible (each slide 300x250) | Fixed, not editable: 0, 0, 600x500, one picture at a time, no gap. Each picture is full width and full height, with square corners |
-| Arrows | 32 px, 46 px outside the slider (on top of its edges when there is no room); on by default | Off by default (swipe) |
-| Effects | **Slide** (sideways) or **Arc** | **Slide** or **Cube** |
+| Arrows | 32 px, 46 px outside the slider (on top of its edges when there is no room); on by default | On by default (on top of the edges; swipe also works) |
+| Effects | **Slide** (sideways) or **Arc** | **Slide** or **Cube** (default for a new banner) |
 
 **Common behaviour.** Autoplay 2 s, speed 500 ms, loop, drag and swipe, keys; shuffle off. Everything fits (slides <= visible): plain row, no arrows. A click on the slider area never reaches the background link.
 
@@ -118,7 +118,7 @@ Client banners: a background picture with a slider of pictures on top. Made from
 
 **Arc (desktop).** A carousel: the slides stand on a real ring that turns around its middle, seen from outside. The front slide is straight, the ones next to it are tilted back (45 degrees or less per step), the next ones curve away round the edges and the back of the ring is hidden. A step turns the ring by one slide (arrows, keys, autoplay), and dragging turns it with the finger. The ring has at least 8 cells; with fewer slides each slide is repeated (4 slides: each twice). The slide size comes from the slider box (width, gap, slides shown), so choose 3 slides shown (choosing Arc sets at least 3). Runs in `dist/fx.js` (see below).
 
-**Cube (mobile).** One slide at a time, turning like a cube (90 degrees per step, perspective). Arrows, keys, swipe and autoplay work; a swipe turns one step (the cube does not follow the finger). Runs in `dist/fx.js`, the script for the 3D effects (ring and cube, about 1.7 KB gzip), inlined only into banners that use one. With a single slide it shows the picture and does not turn.
+**Cube (mobile).** One slide at a time, turning like a cube (90 degrees per step, perspective). Arrows, keys, swipe and autoplay work; a swipe turns one step (the cube does not follow the finger). Runs in `dist/fx.js`, the script for the 3D effects (ring and cube, about 1.7 KB gzip), inlined only into banners that use one. With a single slide it shows the picture and does not turn. Behind the turning cube the page is **transparent**, so the site shows through (white on the light site, dark grey on the dark one); it used to be black.
 
 **Pictures.** Optimised in the browser (see below); in the zip as `bg.png`/`bg.jpg` and `1.jpg`, `2.jpg` ...
 
@@ -131,15 +131,38 @@ Design: Figma "Õhtuleht - Brand hub", frame "Mobile Content". Format id `articl
 - **Width is not fixed.** The banner fills the page (8 px margin each side). A narrow phone (iPhone SE, 375 px) shows a sliver of the next card, a wide one shows more.
 - **Everything inside has a fixed size:** header 46 px, 16 px gap, cards 267x400 (about 2:3) with 8 px between, 28 px gap, dots 8 px. Height is 498 px. The banner is centred vertically in the page.
 - Card: picture, black gradient behind the title (216 px), title in Fira Sans Condensed Bold 18/23, white. No hover colour.
-- **Category label** above the title (Figma "Article Label"): chip on the label colour, Inter Bold 12/15, uppercase, 4 px radius, 4 x 6 px padding, 4 px above the title. Same data as the desktop banner: the campaign label (default Sisuturundus), a different text or colour per article. The chip is the main colour with white text (brand rule: white on red 600 and darker, black on lighter), or the label colour set in Colours or on the article.
+- **Category label** above the title (Figma "Article Label"): chip on the label colour, Inter Bold 12/15, uppercase, 4 px radius, 4 x 6 px padding, 8 px above the title. Same data as the desktop banner: the campaign label (default Sisuturundus), a different text or colour per article. The chip is the main colour with white text (brand rule: white on red 600 and darker, black on lighter), or the label colour set in Colours or on the article.
 - Pagination: 6 dots in the design, one per article here; the active one is solid, the others 30 %. Black on light, white on dark. Dots are clickable (16 px touch area).
-- **Pictures:** the banner uses the `/webp/48/` version of each picture (cropped, higher resolution) whatever size was pasted: `/webp/54/` becomes `/webp/48/` when the banner is written. Switching the version at the top also rewrites the picture links in the form: Mobile shows `/webp/48/`, Desktop shows `/webp/54/` (other links are left alone).
+- **Pictures:** the phone crop `/webp/48/` of each article picture, or the article's own phone picture. See [Article pictures](#article-pictures).
 - Swipe, drag, autoplay, loop and shuffle as in the desktop banner. No arrows.
 - Theme: light background white, dark background `#1c1c1c`. Header colour and picture work as on desktop. Title and hover colours do not apply, so the editor hides them.
 - The editor preview has a phone width switch (375, 390, 430).
+- **One zip for both sizes:** the **Download desktop + mobile** button writes one page with both layouts; from 1248 px wide it shows the desktop banner, below that the mobile one. Each keeps its own pictures (a phone downloads only the phone ones), the ad is desktop only, and the zip opens again as the desktop banner. See [ONE-ARTICLES-BANNER.md](ONE-ARTICLES-BANNER.md).
 - **Desktop and mobile are one campaign.** The editor has a Desktop 1250x400 / Mobile switch at the top: one click turns the banner into the other size and keeps everything (campaign, header, articles, colours, behaviour). Download each size separately. The dark background follows the format unless it was changed by hand.
 - The preview frame is 514 px high (8 px above and below the 498 px banner) so the dots are never cut by the frame edge. In the ad system give the slot at least 498 px.
 - Open: best header picture size for mobile (the hint still names the desktop size), 1 px line height rounding (18 x 1.3 = 23.4 is 23 px).
+
+## Article pictures
+
+Õhtuleht picture links carry a size number: `https://p.ohtuleht.ee/webp/54/i/...`. The same picture exists in many sizes; the two that matter here (checked 2026-11-11):
+
+| Number | Size | Used by |
+|---|---|---|
+| `54` | 540x360, horizontal | Desktop banner cards |
+| `48` | 600x900, vertical (cropped by the site) | Phone banner cards (267x400) |
+
+**The rules**
+
+1. Each article has two picture fields: **Desktop** (`image`) and **Mobile** (`imageMobile`, optional). The form shows the field of the version chosen at the top (Desktop 1250x400 / Mobile).
+2. **Desktop never uses 48.** A `/webp/48/` link in the desktop field is shown and written as `/webp/54/`, also when an older zip is opened. Other sizes set by hand (for example 59) are kept.
+3. **Mobile uses 48 automatically:** with no own phone picture, the banner takes the desktop link and swaps its size to `/webp/48/`.
+4. **When the site's crop is wrong,** switch to Mobile and give that article its own picture: paste another address (used exactly as pasted) or press **Upload a picture**. The desktop picture does not change. **Use default** goes back to the automatic one.
+5. **Uploaded pictures** (either version) are optimised in the browser (at most 800x800), saved in the zip as `pic-<id>.<ext>` next to `index.html` and counted by the weight pill. Only the files the downloaded version uses go into its zip.
+6. New articles, pasted or added by hand, go to the **top** of the list.
+
+Limit: a zip holds one version. Opening a mobile zip and switching to Desktop keeps web addresses, but an uploaded desktop-only picture is not in that zip and has to be added again.
+
+Code: `forDesktop` in `articles-1250x400.ts`, `forMobile` in `articles-mobile.ts`, `OWN_PICTURE` in `validate.ts`, `pictureOf` and `articleFilesOf` in `apps/generator/src/lib/banner.ts`, the fields in `components/editor/ArticleList.tsx`. Moving all of it into one module is step 5.1 of [REFACTOR.md](REFACTOR.md).
 
 ## Format 5: Picture loop (built)
 
@@ -151,11 +174,11 @@ Always 200 px high, 320 to 700 px wide; a small (540x200) and a large (700x200) 
 
 ## Picture optimiser
 
-Pictures chosen in the form (header, ad) and the pictures of an old zip are optimised in the browser with **jSquash**, the codecs of the Squoosh app as WebAssembly (`@jsquash/jpeg` MozJPEG, `@jsquash/oxipng`, `@jsquash/resize`). Nothing is uploaded. Code: `apps/generator/src/lib/optimise.ts`.
+Pictures chosen in the form (header, logo, ad, an article's own picture) and the pictures of an old zip are optimised in the browser with **jSquash**, the codecs of the Squoosh app as WebAssembly (`@jsquash/jpeg` MozJPEG, `@jsquash/oxipng`, `@jsquash/resize`). Nothing is uploaded. Code: `apps/generator/src/lib/optimise.ts`.
 
 | Picture | What happens |
 |---|---|
-| JPEG | Scaled down (Lanczos) when bigger than twice the shown size (header 2496x92, ad 800x676), then MozJPEG quality 75 |
+| JPEG | Scaled down (Lanczos) when bigger than twice the shown size (header 2496x92, ad 800x676, article picture 800x800), then MozJPEG quality 75 |
 | PNG | Scaled down the same way, then OxiPNG level 3 (lossless) |
 | SVG, WebP | Left as they are |
 | Result not smaller | The original is kept, so a picture is never made bigger |

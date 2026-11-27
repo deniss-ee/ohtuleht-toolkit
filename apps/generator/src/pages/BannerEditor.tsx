@@ -15,14 +15,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
-import { editor as t, ui } from "@/content";
+import { editor as t } from "@/content";
 import { Toggles } from "@/layout/AppShell";
-import { adFileOf, bytesOf, logoFileOf, exampleDraft, FORMATS, problems, renderExport, switchFormat, type Draft } from "@/lib/banner";
+import { adFileOf, articleFilesOf, bytesOf, logoFileOf, exampleDraft, FORMATS, problems, renderExport, switchFormat, type Draft } from "@/lib/banner";
 import { formatSize } from "@/lib/format";
 import type { Optimised } from "@/lib/optimise";
 import { Collapsible, Section, SwitchRow } from "@/components/editor/FormParts";
 import { useSaveShortcut } from "@/components/editor/useSaveShortcut";
-import { downloadZip, fileToAd, fileToHeader, fileToLogo } from "@/lib/zip";
+import { downloadBothZip, downloadZip, fileToAd, fileToArticle, fileToHeader, fileToLogo } from "@/lib/zip";
 
 const BUDGET_KB = 100;
 
@@ -75,7 +75,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
   const setBehavior = (patch: Partial<Draft["config"]["behavior"]>) => set({ behavior: { ...c.behavior, ...patch } });
 
   const issues = problems(draft);
-  const weightKb = useMemo(() => (bytesOf(renderExport(draft)) + (c.header.type === "image" ? (draft.headerFile?.bytes.length ?? 0) : 0) + (adFileOf(draft)?.bytes.length ?? 0) + (logoFileOf(draft)?.bytes.length ?? 0)) / 1024, [draft, c.header.type]);
+  const weightKb = useMemo(() => (bytesOf(renderExport(draft)) + (c.header.type === "image" ? (draft.headerFile?.bytes.length ?? 0) : 0) + (adFileOf(draft)?.bytes.length ?? 0) + (logoFileOf(draft)?.bytes.length ?? 0) + articleFilesOf(draft).reduce((n, f) => n + f.bytes.length, 0)) / 1024, [draft, c.header.type]);
 
   // Runs a slow job (pictures are optimised in the browser) and shows a spinner on its button meanwhile.
   const work = async (what: "header" | "ad" | "logo" | "example", job: () => Promise<void>) => {
@@ -113,22 +113,31 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
       onChange({ ...draft, adFile, config: { ...c, ad: { ...c.ad!, src: adFile.name, width } } });
     });
 
+  // An own picture for one article, for the version being edited (desktop: image, mobile: imageMobile).
+  const onArticlePicture = async (index: number, file: File) => {
+    const { articleFile, optimised } = await fileToArticle(file);
+    reportOptimised(optimised);
+    const mobile = c.format === "articles-mobile";
+    const articles = c.articles.map((a, i) => (i === index ? { ...a, ...(mobile ? { imageMobile: articleFile.name } : { image: articleFile.name }) } : a));
+    onChange({ ...draft, articleFiles: { ...draft.articleFiles, [articleFile.name]: articleFile }, config: { ...c, articles } });
+  };
+
   const loadExample = () =>
     work("example", async () => {
       onChange(await exampleDraft(c.format));
       toast.success(t.exampleLoaded);
     });
 
-  const download = async () => {
+  const download = async (both = false) => {
     setBusy(true);
     try {
-      await downloadZip(draft);
+      await (both ? downloadBothZip(draft) : downloadZip(draft));
     } finally {
       setBusy(false);
     }
   };
 
-  useSaveShortcut(download, issues.length === 0 && !busy);
+  useSaveShortcut(() => void download(), issues.length === 0 && !busy);
 
   return (
     <div className="fixed inset-0 z-40 flex flex-col bg-background">
@@ -155,7 +164,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
         />
         <div className="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:flex-nowrap lg:gap-3">
         <HoverPill
-          tone="plain"
+          tone={weightKb > BUDGET_KB ? "warn" : "plain"}
           icon={<FileArchive className="size-3.5" />}
           label={`${weightKb.toFixed(1)} KB`}
         >
@@ -166,7 +175,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
                 <span className="font-mono">{weightKb.toFixed(1)} / {BUDGET_KB} KB</span>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={Math.round(weightKb)} aria-valuemax={BUDGET_KB} aria-label={t.weight}>
-                <div className={weightKb > BUDGET_KB ? "h-full bg-destructive" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weightKb / BUDGET_KB) * 100)}%` }} />
+                <div className={weightKb > BUDGET_KB ? "h-full bg-yellow-400" : "h-full bg-primary"} style={{ width: `${Math.min(100, (weightKb / BUDGET_KB) * 100)}%` }} />
               </div>
               <p className="text-xs text-muted-foreground">{t.sizeHelp}</p>
             </div>
@@ -209,9 +218,15 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
           <span className="hidden md:inline">{t.loadExample}</span>
         </Button>
         <Toggles />
-        <Button className="ml-auto gap-2 sm:ml-0" disabled={issues.length > 0 || busy} onClick={download} title="Ctrl+S">
-          <Download className="size-4" /> {busy ? t.downloading : (<>{ui.downloadWord}<span className="hidden sm:inline"> {ui.suffixZip}</span></>)}
-        </Button>
+        {/* Two downloads of the same rank, side by side and alike: this size, or one zip for desktop and mobile together */}
+        <div className="ml-auto flex items-center gap-2 sm:ml-0">
+          <Button className="gap-2" disabled={issues.length > 0 || busy} onClick={() => void download()} title="Ctrl+S">
+            <Download className="size-4" /> {busy ? t.downloading : (<>{c.format === "articles-mobile" ? t.downloadMobile : t.downloadDesktop}</>)}
+          </Button>
+          <Button className="gap-2" disabled={issues.length > 0 || busy} onClick={() => void download(true)} title={t.downloadBothHint}>
+            <Download className="size-4" /> {t.downloadBoth}
+          </Button>
+        </div>
         </div>
       </header>
 
@@ -333,7 +348,7 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
               </div>
 
               <div className="min-w-0 md:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-span-3 lg:row-start-1">
-            <ArticleList articles={c.articles} defaultBadge={c.badge} defaultColor={c.format === "articles-mobile" ? (c.theme.light.badge ?? c.primary) : resolveTheme(c, "light").badge} onChange={(articles) => set({ articles })} onOpenBookmark={() => setBookmarkOpen(true)} />
+            <ArticleList articles={c.articles} mobile={c.format === "articles-mobile"} files={draft.articleFiles ?? {}} onPicture={onArticlePicture} defaultBadge={c.badge} defaultColor={c.format === "articles-mobile" ? (c.theme.light.badge ?? c.primary) : resolveTheme(c, "light").badge} onChange={(articles) => set({ articles })} onOpenBookmark={() => setBookmarkOpen(true)} />
               </div>
 
             <BookmarkletDialog open={bookmarkOpen} onOpenChange={setBookmarkOpen} />
