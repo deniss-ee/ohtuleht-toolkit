@@ -44,11 +44,11 @@ function Thumb({ src, badge, badgeColor }: { src: string; badge: string; badgeCo
 }
 
 // Small picture for the closed row.
-function MiniThumb({ src }: { src: string }) {
+function MiniThumb({ src, aspect }: { src: string; aspect: number }) {
   const [failed, setFailed] = useState<string | null>(null);
   const bad = !src || failed === src;
   return (
-    <ZoomPicture src={bad ? undefined : src}>
+    <ZoomPicture src={bad ? undefined : src} aspect={aspect}>
       <div className="flex h-10 w-14 shrink-0 items-center justify-center overflow-hidden rounded bg-muted">
         {bad ? <ImageOff className="size-4 text-muted-foreground" /> : <img src={src} alt="" className="h-full w-full object-cover" onError={() => setFailed(src)} />}
       </div>
@@ -106,7 +106,7 @@ function ArticleRow({
       <div className="flex items-center gap-1 p-1.5">
         {grip}
         <button type="button" aria-expanded={open} aria-controls={`${id}-body`} className="flex min-w-0 flex-1 items-center gap-3 rounded-md p-1 text-left hover:bg-muted/60" onClick={onToggle}>
-          <MiniThumb src={shownSrc} />
+          <MiniThumb src={shownSrc} aspect={mobile ? 267 / 400 : 300 / 215} />
           <span className="w-5 shrink-0 text-xs font-semibold text-muted-foreground">{index + 1}</span>
           <span className="min-w-0 flex-1 truncate text-sm font-medium">{article.title.trim() || t.untitledArticle}</span>
           {incomplete && <TriangleAlert className="size-4 shrink-0 text-yellow-600" aria-label={t.articleIncomplete} />}

@@ -61,5 +61,5 @@ export function useDragSort(onMove: (from: number, to: number) => void) {
   };
 }
 
-// Classes that show where an item is dropped: the dragged item fades, the target gets a red line.
-export const DRAG_CLASSES = "data-[drag=from]:opacity-40 data-[drag=over]:ring-2 data-[drag=over]:ring-primary";
+// Classes that show where an item is dropped: the dragged item fades, the target's own border turns red (inside the item, so nothing is cut off at the edge of a scrolling list).
+export const DRAG_CLASSES = "data-[drag=from]:opacity-40 data-[drag=over]:border-primary data-[drag=over]:bg-primary/5";
