@@ -24,7 +24,7 @@ git checkout develop && git pull
 yarn release:notes > notes.md        # the grouped list since the last release
 ```
 
-1. Read `notes.md`: put a **Highlights** paragraph at the top, remove lines nobody needs (in-between commits of one feature).
+1. Read `notes.md` and put a **Highlights** paragraph at the top (two to four lines a salesperson would notice).
 2. In `CHANGELOG.md`, rename `## [Unreleased]` to `## [X.Y.Z] - date`, group its entries under Added / Changed / Fixed / Removed, and start a new empty `## [Unreleased]` above it. Commit on a `docs/release-X.Y.Z` branch, pull request into `develop`, merge.
 3. Bring `main` up to date and tag it:
 
