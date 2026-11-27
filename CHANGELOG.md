@@ -9,6 +9,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 - A new mobile slider is a **cube with arrows** by default (was: slide, no arrows). Opened zips keep their own settings.
 - **No black behind the cube:** the page behind the slider is transparent, so the site background shows while the cube turns. Golden files of the four slider formats changed in that one rule (`background:#000` to `background:transparent`).
 
+### Drag and drop to put things in order
+
+- Articles, slider pictures, picture-loop frames and responsive-banner pictures can be dragged by the grip (six dots) to a new place. The up and down buttons stay for the keyboard. One shared helper (`components/editor/useDragSort.tsx`), no library.
+
 ### Ctrl+V adds the copied article
 
 - In the articles banner editor, pressing Ctrl+V anywhere (no field selected) adds the article the bookmark copied: no click in the box and no button. Pastes into fields and text that is not from the bookmark are left alone.

@@ -8,6 +8,7 @@ import { goTo, HoverPill } from "@/components/editor/HoverPill";
 import { FormatSwitch } from "@/components/editor/FormatSwitch";
 import { SwapFrame, type Geometry } from "@/components/editor/SwapFrame";
 import { useSaveShortcut } from "@/components/editor/useSaveShortcut";
+import { DRAG_CLASSES, reorder, useDragSort } from "@/components/editor/useDragSort";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -186,6 +187,7 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
     slides.splice(i + d, 0, s!);
     set({ slides });
   };
+  const sort = useDragSort((from, to) => set({ slides: reorder(c.slides, from, to) }));
   const setSlideHref = (i: number, href: string) => set({ slides: c.slides.map((s, j) => (j === i ? { ...s, href } : s)) });
 
   const loadExample = () =>
@@ -367,8 +369,9 @@ export function SliderEditor({ draft, onChange, onBack }: { draft: SliderDraft; 
 
                   <ul className="space-y-2">
                     {c.slides.map((s, i) => (
-                      <li key={s.image + i} className="rounded-lg border p-2">
+                      <li key={s.image + i} {...sort.item(i)} className={"rounded-lg border p-2 " + DRAG_CLASSES}>
                         <div className="flex items-center gap-3">
+                          {sort.grip(i)}
                           <Thumb src={draft.files[s.image]?.dataUrl} />
                           <div className="min-w-0 flex-1 text-sm font-medium">{t.slideN(i + 1)}</div>
                           <Button variant="ghost" size="icon" aria-label={t.slideEarlier} disabled={i === 0} onClick={() => move(i, -1)}>
