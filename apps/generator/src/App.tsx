@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { contentMarketing, editor, getLang, setLang, subscribeLang, type PageId, type ToolInfo } from "@/content";
 import { AppShell } from "@/layout/AppShell";
+import { DropZip } from "@/components/editor/DropZip";
 import { buildSearch, parseRoute, type BrandTab } from "@/lib/route";
 import { clearWork, savedInfo, type SavedInfo } from "@/lib/saved";
 import type { Work } from "@/lib/storage";
@@ -92,6 +93,9 @@ export function App() {
     const loading = toast.loading(editor.opening);
     try {
       const opened = await (await workLib()).openZip(file);
+      // The editors live in Content marketing: a zip opened from any other page (Home, a drop anywhere) goes there.
+      setPage("content");
+      setTool(null);
       start(opened.work);
       if (opened.notes.length) setNotes(opened.notes);
       else toast.success(editor.imported);
@@ -232,6 +236,7 @@ export function App() {
           </DialogContent>
         </Dialog>
         <Toaster />
+        <DropZip onZip={(f) => void open(f)} />
       </TooltipProvider>
     </ThemeProvider>
   );

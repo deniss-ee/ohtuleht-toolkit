@@ -29,8 +29,7 @@ export interface BannerType {
 
 // Every banner type the category can build. Add new templates here.
 export const bannerTypes: BannerType[] = [
-  { id: "articles-1250x400", name: "Articles banner, desktop", size: "1250x400", device: "Desktop", description: "Header and a slider of article cards.", ready: true },
-  { id: "articles-mobile", name: "Articles banner, mobile", size: "Full width x 498", device: "Mobile", description: "Header and swipeable article cards with dots, as wide as the phone.", ready: true },
+  { id: "articles-1250x400", name: "Articles banner", size: "Desktop + mobile", device: "All screens", description: "Header and a slider of article cards. One banner: switch between desktop and mobile at the top, download one or both.", ready: true },
   { id: "header-bar", name: "Header bar", size: "100% x 46", device: "All screens", description: "The bar at the top of a theme page, shown on the site in an iframe.", ready: true },
   { id: "image-slider-1250x400", name: "Image slider, desktop", size: "1250x400", device: "Desktop", description: "Client background with a slider of images.", ready: true },
   { id: "image-slider-600x500", name: "Image slider, mobile", size: "600x500", device: "Mobile", description: "Client background with swipeable pictures, sliding or a cube.", ready: true },
@@ -847,6 +846,8 @@ export const movieBanner = {
 
 // Small texts used all over the app.
 export const ui = {
+  dropZipTitle: "Drop the zip to open the banner",
+  dropZipText: "Any banner made here, or an old one.",
   dragToMove: "Drag to move",
   back: "Back",
   backToTools: "Back to Tools",
@@ -894,8 +895,7 @@ export const home = {
       title: "Make a banner",
       text: "You get zip files for the ad server.",
       items: [
-        { id: "articles-1250x400", name: "Articles banner, desktop", text: "1250x400, a header and a slider of article cards." },
-        { id: "articles-mobile", name: "Articles banner, mobile", text: "Swipeable article cards, as wide as the phone." },
+        { id: "articles-1250x400", name: "Articles banner", text: "Header and article cards, desktop and mobile in one banner." },
         { id: "header-bar", name: "Header bar", text: "The bar at the top of a theme page." },
         { id: "image-slider-1250x400", name: "Image slider, desktop", text: "1250x400, a background with a slider of pictures." },
         { id: "image-slider-600x500", name: "Image slider, mobile", text: "600x500, as wide as the phone, swipeable pictures." },
