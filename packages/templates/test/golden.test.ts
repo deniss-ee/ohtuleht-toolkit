@@ -1,13 +1,14 @@
 // Every banner format rendered from a fixed config must equal its stored copy in golden/.
 // A deliberate change of a template: run `yarn test -u`, look at the diff of the golden files, and say why in the pull request.
 import { expect, test } from "vitest";
-import { renderArticles1250x400, renderArticlesMobile, renderFrameBanner, renderHeaderBar, renderImageSlider, renderResponsiveBanner, validate, validateFrameBanner, validateHeaderBar, validateImageSlider, validateResponsiveBanner } from "../src/index.ts";
+import { renderArticles1250x400, renderArticlesBoth, renderArticlesMobile, renderFrameBanner, renderHeaderBar, renderImageSlider, renderResponsiveBanner, validate, validateFrameBanner, validateHeaderBar, validateImageSlider, validateResponsiveBanner } from "../src/index.ts";
 import * as f from "./fixtures.ts";
 
 const cases: [string, () => string][] = [
   ["articles-1250x400", () => renderArticles1250x400(f.articlesDesktop, f.assets)],
   ["articles-1250x400-ad", () => renderArticles1250x400(f.articlesDesktopAd, f.assets)],
   ["articles-mobile", () => renderArticlesMobile(f.articlesMobile, f.assets)],
+  ["articles-both", () => renderArticlesBoth(f.articlesDesktopAd, f.articlesMobile, f.assets)],
   ["image-slider-1250x400", () => renderImageSlider(f.sliderDesktop, f.assets)],
   ["image-slider-1250x400-arc", () => renderImageSlider(f.sliderDesktopArc, f.assets)],
   ["image-slider-600x500", () => renderImageSlider(f.sliderMobile, f.assets)],

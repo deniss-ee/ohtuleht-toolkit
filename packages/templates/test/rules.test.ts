@@ -1,6 +1,6 @@
 // The rules that have already broken once, pinned.
 import { describe, expect, test } from "vitest";
-import { BAR_HEIGHT, brandTextColor, contrast, forDesktop, frameTimeline, LOGO_HEIGHT, LOGO_MIN, logoHeight, OWN_PICTURE, pictureFits, readableOn, renderArticles1250x400, renderHeaderBar, renderArticlesMobile, validate } from "../src/index.ts";
+import { BAR_HEIGHT, brandTextColor, contrast, forDesktop, frameTimeline, LOGO_HEIGHT, LOGO_MIN, renderArticlesBoth, scopeCss, logoHeight, OWN_PICTURE, pictureFits, readableOn, renderArticles1250x400, renderHeaderBar, renderArticlesMobile, validate } from "../src/index.ts";
 import { fadeRamp, frameStops } from "../src/frame-banner.ts";
 import * as f from "./fixtures.ts";
 
@@ -123,5 +123,28 @@ describe("header bar logo", () => {
     expect(withLogo(20).css).toContain("height: 20px;");
     expect(logoHeight({ ...f.headerBar, logo: { src: "x", height: 500 } })).toBe(BAR_HEIGHT);
     expect(logoHeight({ ...f.headerBar, logo: { src: "x", height: 1 } })).toBe(LOGO_MIN);
+  });
+});
+
+describe("one articles banner for desktop and mobile", () => {
+  const html = renderArticlesBoth(f.articlesDesktopAd, f.articlesMobile, f.assets);
+
+  test("both layouts are in the page, the desktop one shown from 1248 px", () => {
+    expect(html).toContain('<div class="d"><div class="banner">');
+    expect(html).toContain('<div class="m"><div class="banner">');
+    expect(html).toContain("@media(min-width:1248px){.d{display:block}.m{display:none}}");
+    expect(html.match(/id="ol-banner"/g)).toHaveLength(1);
+  });
+
+  test("each layout keeps its own picture size", () => {
+    const [desktop, mobile] = html.split('<div class="m">');
+    expect(desktop).not.toContain("/webp/48/");
+    expect(mobile).toContain("/webp/48/");
+  });
+
+  test("scoped styles: page rules left out, :root becomes the scope, @media kept", () => {
+    expect(scopeCss(":root{--bg:#fff}html,body{min-width:1248px}*{margin:0}.a,.b>.c{color:red}@media(prefers-color-scheme:dark){:root{--bg:#000}}", ".d")).toBe(
+      ".d{--bg:#fff}.d .a,.d .b>.c{color:red}@media(prefers-color-scheme:dark){.d{--bg:#000}}",
+    );
   });
 });

@@ -15,14 +15,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
-import { editor as t, ui } from "@/content";
+import { editor as t } from "@/content";
 import { Toggles } from "@/layout/AppShell";
 import { adFileOf, articleFilesOf, bytesOf, logoFileOf, exampleDraft, FORMATS, problems, renderExport, switchFormat, type Draft } from "@/lib/banner";
 import { formatSize } from "@/lib/format";
 import type { Optimised } from "@/lib/optimise";
 import { Collapsible, Section, SwitchRow } from "@/components/editor/FormParts";
 import { useSaveShortcut } from "@/components/editor/useSaveShortcut";
-import { downloadZip, fileToAd, fileToArticle, fileToHeader, fileToLogo } from "@/lib/zip";
+import { downloadBothZip, downloadZip, fileToAd, fileToArticle, fileToHeader, fileToLogo } from "@/lib/zip";
 
 const BUDGET_KB = 100;
 
@@ -128,16 +128,16 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
       toast.success(t.exampleLoaded);
     });
 
-  const download = async () => {
+  const download = async (both = false) => {
     setBusy(true);
     try {
-      await downloadZip(draft);
+      await (both ? downloadBothZip(draft) : downloadZip(draft));
     } finally {
       setBusy(false);
     }
   };
 
-  useSaveShortcut(download, issues.length === 0 && !busy);
+  useSaveShortcut(() => void download(), issues.length === 0 && !busy);
 
   return (
     <div className="fixed inset-0 z-40 flex flex-col bg-background">
@@ -218,9 +218,15 @@ export function BannerEditor({ draft, onChange, onBack }: { draft: Draft; onChan
           <span className="hidden md:inline">{t.loadExample}</span>
         </Button>
         <Toggles />
-        <Button className="ml-auto gap-2 sm:ml-0" disabled={issues.length > 0 || busy} onClick={download} title="Ctrl+S">
-          <Download className="size-4" /> {busy ? t.downloading : (<>{ui.downloadWord}<span className="hidden sm:inline"> {ui.suffixZip}</span></>)}
-        </Button>
+        {/* Two downloads of the same rank, side by side and alike: this size, or one zip for desktop and mobile together */}
+        <div className="ml-auto flex items-center gap-2 sm:ml-0">
+          <Button className="gap-2" disabled={issues.length > 0 || busy} onClick={() => void download()} title="Ctrl+S">
+            <Download className="size-4" /> {busy ? t.downloading : (<>{c.format === "articles-mobile" ? t.downloadMobile : t.downloadDesktop}</>)}
+          </Button>
+          <Button className="gap-2" disabled={issues.length > 0 || busy} onClick={() => void download(true)} title={t.downloadBothHint}>
+            <Download className="size-4" /> {t.downloadBoth}
+          </Button>
+        </div>
         </div>
       </header>
 

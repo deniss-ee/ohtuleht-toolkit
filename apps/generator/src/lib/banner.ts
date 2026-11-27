@@ -1,4 +1,4 @@
-import { renderArticles1250x400, renderArticlesMobile, validate } from "@ohtuleht/templates";
+import { renderArticles1250x400, renderArticlesBoth, renderArticlesMobile, validate } from "@ohtuleht/templates";
 import type { ArticleItem, ArticlesBannerConfig, ArticlesFormat, Problem, ThemeColors } from "@ohtuleht/templates";
 import runtimeJs from "../../../../packages/banner-runtime/dist/runtime.js?raw";
 import { getLang } from "@/content";
@@ -125,14 +125,27 @@ export function renderPreview(draft: Draft, theme: "light" | "dark", id: number)
   return html.replace("</body>", readySignal(id) + "</body>");
 }
 
-// Final html for the zip: the header refers to the file inside the zip.
-export function renderExport(draft: Draft): string {
+// The settings as written into the zip: the header, ad and logo refer to the files inside the zip.
+function exportConfig(draft: Draft): ArticlesBannerConfig {
   const c = draft.config;
   const header = c.header.type === "image" && draft.headerFile ? { ...c.header, src: draft.headerFile.name } : c.header;
   const ad = c.ad && draft.adFile ? { ...c.ad, src: draft.adFile.name } : c.ad;
   const headerLogo = c.headerLogo && draft.logoFile ? draft.logoFile.name : undefined;
-  return render({ ...c, header, ad, headerLogo }, { runtimeJs, sliderCss });
+  return { ...c, header, ad, headerLogo };
 }
+
+// Final html for the zip of the open size.
+export function renderExport(draft: Draft): string {
+  return render(exportConfig(draft), { runtimeJs, sliderCss });
+}
+
+// One zip for both sizes (docs/ONE-ARTICLES-BANNER.md): each half as that size would have it.
+export const desktopOf = (draft: Draft) => switchFormat(draft, "articles-1250x400");
+export const mobileOf = (draft: Draft) => switchFormat(draft, "articles-mobile");
+export function renderBothExport(draft: Draft): string {
+  return renderArticlesBoth(exportConfig(desktopOf(draft)), { ...exportConfig(mobileOf(draft)), ad: undefined }, { runtimeJs, sliderCss });
+}
+export const bothZipName = (draft: Draft) => stampedName(`${slug(draft.config.campaign)}_desktop-mobile`, "zip");
 
 const encoder = new TextEncoder();
 export const bytesOf = (text: string) => encoder.encode(text).length;

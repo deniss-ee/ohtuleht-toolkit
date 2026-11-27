@@ -12,7 +12,7 @@ const CARD_H = 400;
 const GAP = 8;
 
 // Mobile fonts: titles Fira Sans Condensed, labels Inter (Figma).
-const FONTS_URL = "https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@700&family=Inter:wght@700&display=swap";
+export const MOBILE_FONTS_URL = "https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@700&family=Inter:wght@700&display=swap";
 
 // ohtuleht.ee picture sizes: /webp/54/ suits the desktop cards, /webp/48/ is the cropped, higher-resolution version for phones.
 // Applied when the banner is written, so the form keeps the address the person pasted.
@@ -27,7 +27,7 @@ function themeVars(t: ResolvedTheme, chip: string): string {
   return `--bg:${t.bg};--dot:${dotColor(t.bg)};--header-bg:${t.headerBg};--header-text:${t.headerText};--chip:${chip};--chip-text:${onColor(chip)}`;
 }
 
-function css(config: ArticlesBannerConfig): string {
+export function mobileCss(config: ArticlesBannerConfig): string {
   const chip = config.theme.light.badge ?? config.primary;
   return (
     // The label is a block with its own text on it (not coloured text like on the desktop banner), so its colour is the same in light and dark mode.
@@ -67,21 +67,28 @@ function slide(a: ArticlesBannerConfig["articles"][number], defaultBadge: string
   );
 }
 
-export function renderArticlesMobile(config: ArticlesBannerConfig, assets: RuntimeAssets): string {
+// The visible part of the page (header, slider, dots).
+export function mobileBody(config: ArticlesBannerConfig): string {
   const b = config.behavior;
   const delay = b.autoplay ? b.delayMs : 0;
   const dots = config.articles.map((_, i) => `<button class="ol-dot" aria-label="Article ${i + 1}"></button>`).join("");
+  return (
+    `<div class="banner">${headerHtml(config)}` +
+    `<div class="ol-slider" data-visible="1" data-gap="${GAP}" data-delay="${delay}" data-speed="${b.speedMs}" data-shuffle="${b.shuffle ? 1 : 0}" data-loop="${b.loop ? 1 : 0}">` +
+    `<div class="ol-viewport"><div class="ol-track">${config.articles.map((a) => slide(a, config.badge)).join("")}</div></div>` +
+    `<div class="ol-dots">${dots}</div></div></div>`
+  );
+}
+
+export function renderArticlesMobile(config: ArticlesBannerConfig, assets: RuntimeAssets): string {
   return (
     '<!doctype html><html lang="et"><head><meta charset="utf-8">' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +
     `<title>${escapeHtml(config.campaign)} mobile</title>` +
     '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' +
-    `<link rel="stylesheet" href="${FONTS_URL}" media="print" onload="this.media='all'">` +
-    `<style>${assets.sliderCss}${css(config)}</style></head><body>` +
-    `<div class="banner">${headerHtml(config)}` +
-    `<div class="ol-slider" data-visible="1" data-gap="${GAP}" data-delay="${delay}" data-speed="${b.speedMs}" data-shuffle="${b.shuffle ? 1 : 0}" data-loop="${b.loop ? 1 : 0}">` +
-    `<div class="ol-viewport"><div class="ol-track">${config.articles.map((a) => slide(a, config.badge)).join("")}</div></div>` +
-    `<div class="ol-dots">${dots}</div></div></div>` +
+    `<link rel="stylesheet" href="${MOBILE_FONTS_URL}" media="print" onload="this.media='all'">` +
+    `<style>${assets.sliderCss}${mobileCss(config)}</style></head><body>` +
+    mobileBody(config) +
     `<script type="application/json" id="ol-banner">${jsonForScript(config)}</script>` +
     `<script>${CLICKTAG_JS}</script><script>${assets.runtimeJs}</script></body></html>`
   );

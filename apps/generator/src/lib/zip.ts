@@ -1,7 +1,7 @@
 import JSZip from "jszip";
 import type { ArticlesBannerConfig } from "@ohtuleht/templates";
 import { ui } from "@/content";
-import { adFileOf, articleFilesOf, logoFileOf, renderExport, zipName, type Draft, type HeaderFile } from "@/lib/banner";
+import { adFileOf, articleFilesOf, bothZipName, desktopOf, logoFileOf, mobileOf, renderBothExport, renderExport, zipName, type Draft, type HeaderFile } from "@/lib/banner";
 import { AD_HEIGHT, forDesktop, OWN_PICTURE } from "@ohtuleht/templates";
 import { averageColor, imageSize, toDataUrl } from "@/lib/image";
 import { AD_LIMIT, ARTICLE_LIMIT, HEADER_LIMIT, LOGO_LIMIT, optimiseImage, type Optimised } from "@/lib/optimise";
@@ -20,6 +20,21 @@ export async function buildZip(draft: Draft): Promise<Blob> {
   for (const f of articleFilesOf(draft)) zip.file(f.name, f.bytes);
   return zip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 9 } });
 }
+
+// One zip for both sizes: the page with both layouts and the files of both (the ad only belongs to the desktop size).
+export async function buildBothZip(draft: Draft): Promise<Blob> {
+  const zip = new JSZip();
+  zip.file("index.html", renderBothExport(draft));
+  if (draft.config.header.type === "image" && draft.headerFile) zip.file(draft.headerFile.name, draft.headerFile.bytes);
+  const ad = adFileOf(desktopOf(draft));
+  if (ad) zip.file(ad.name, ad.bytes);
+  const logo = logoFileOf(draft);
+  if (logo) zip.file(logo.name, logo.bytes);
+  for (const f of [...articleFilesOf(desktopOf(draft)), ...articleFilesOf(mobileOf(draft))]) zip.file(f.name, f.bytes);
+  return zip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 9 } });
+}
+
+export const downloadBothZip = async (draft: Draft) => download(await buildBothZip(draft), bothZipName(draft));
 
 export function download(blob: Blob, name: string) {
   const url = URL.createObjectURL(blob);

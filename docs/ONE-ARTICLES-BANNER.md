@@ -1,6 +1,6 @@
 # One articles banner for desktop and mobile (design note)
 
-Status: **proposed, not built.** Written 2026-11-27 after the question "can the desktop and mobile sisuturundus banners be one file?".
+Status: **built** (2026-11-27): the **Download desktop + mobile** button in the articles banner editor, template `packages/templates/src/articles-both.ts`. The separate desktop and mobile downloads stay until the combined one has run on the site.
 
 ## Answer: yes
 
