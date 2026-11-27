@@ -1,7 +1,7 @@
 // A banner saved as a zip and opened again must give the same banner: nothing may be lost between "Download" and "Open a banner you made before".
 import { describe, expect, test } from "vitest";
-import { exampleDraft, newDraft } from "@/lib/banner";
-import { buildZip, importZip } from "@/lib/zip";
+import { desktopOf, exampleDraft, newDraft } from "@/lib/banner";
+import { buildBothZip, buildZip, importZip } from "@/lib/zip";
 
 const asFile = (blob: Blob, name = "banner.zip") => new File([blob], name, { type: "application/zip" });
 
@@ -16,6 +16,12 @@ describe("articles banner: zip round trip", () => {
       expect(opened.draft.config).toEqual(draft.config);
     });
   }
+
+  test("one zip for both sizes opens as the desktop banner, with the same settings", async () => {
+    const draft = await exampleDraft("articles-mobile");
+    const opened = await importZip(asFile(await buildBothZip(draft)));
+    expect(opened.draft.config).toEqual(desktopOf(draft).config);
+  });
 
   test("an empty banner opens again as an empty banner", async () => {
     const draft = newDraft();

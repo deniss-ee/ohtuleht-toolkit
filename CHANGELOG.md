@@ -10,6 +10,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 - No small black arrow next to the big picture.
 - While dragging, the place to drop is the item's own border turned red, so it is no longer cut off at the edge of the list.
 
+### One articles banner for desktop and mobile
+
+- New button **Download desktop + mobile** in the articles banner editor: one zip whose page is the desktop banner from 1248 px wide and the mobile banner below that. Each layout keeps its own picture sizes, the ad stays desktop only, and the zip opens again in the editor. The two separate downloads stay. The two templates were split into parts to share them; their output is byte-identical (golden files unchanged), and a new golden file covers the combined page.
+
 ### Image slider, mobile
 
 - A new mobile slider is a **cube with arrows** by default (was: slide, no arrows). Opened zips keep their own settings.
