@@ -5,6 +5,7 @@ import { BAR_HEIGHT, headerTextColor, LOGO_HEIGHT, LOGO_MIN } from "@ohtuleht/te
 import { AutoColorField, ColorField } from "@/components/editor/ColorField";
 import { goTo, HoverPill } from "@/components/editor/HoverPill";
 import { Section } from "@/components/editor/FormParts";
+import { DESK_STYLE } from "@/components/editor/SettingsTabs";
 import { SwapFrame } from "@/components/editor/SwapFrame";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -126,7 +127,8 @@ export function HeaderBarEditor({ draft, onChange, onBack }: { draft: HeaderDraf
 
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-[1282px] space-y-4 px-4 pb-24 pt-4">
-          <div className="space-y-3">
+          {/* v2: the bar at its three widths on the same dotted desk as the other editors (full width: a header bar is a wide strip) */}
+          <div className="space-y-3 rounded-xl p-4" style={DESK_STYLE}>
             <div>
               <h2 className="text-sm font-semibold">{t.previewTitle}</h2>
               <p className="text-xs text-muted-foreground">{t.previewNote}</p>

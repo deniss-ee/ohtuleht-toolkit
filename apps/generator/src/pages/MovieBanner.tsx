@@ -14,6 +14,7 @@ import { formatSize } from "@/lib/format";
 import { read, write } from "@/lib/saved";
 import { downloadMovieZips, movieProblems, newMovieDraft, readPicture, renderMoviePreview, VERSIONS, type MovieDraft, type VersionKey } from "@/lib/movie";
 import type { VideoPosition } from "@ohtuleht/templates";
+import { DESK_STYLE } from "@/components/editor/SettingsTabs";
 
 
 const SETTINGS_KEY = "ol-movie";
@@ -109,7 +110,8 @@ export function MovieBanner({ onBack }: { onBack: () => void }) {
       <p className="text-muted-foreground">{t.intro}</p>
 
       <div className="grid items-start gap-4 lg:grid-cols-[1fr_22rem]">
-        <div className="min-w-0 space-y-2">
+        {/* v2: the banner on the same dotted desk as in the editors */}
+        <div className="min-w-0 space-y-2 rounded-xl p-3" style={DESK_STYLE}>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="text-sm font-semibold">{t.previewTitle}</h2>
             <Tabs value={shown} onValueChange={(k) => setShown(k as VersionKey)}>
