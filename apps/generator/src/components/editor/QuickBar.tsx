@@ -3,19 +3,33 @@ import { IconChip } from "@/components/editor/IconChip";
 import { Button } from "@/components/ui/button";
 import { editor as t } from "@/content";
 
-// Quick edit: shown above the list when a banner was opened from a zip. Most of the time only the articles or pictures change,
-// so the editor shows just the preview and the list; "All settings" brings back the whole form (nothing is lost either way).
-export function QuickBar({ what, onFull }: { what: "articles" | "pictures"; onFull: () => void }) {
+export interface QuickFact {
+  label: string;
+  value: string;
+}
+
+// Quick edit: the side panel next to the list when a banner was opened from a zip. Most of the time only the articles or pictures change,
+// so the page shows the preview, the list on the left and this panel on the right (on a phone: above the list). It says what the banner is,
+// what to do, and "All settings" brings back the whole form (nothing is lost either way). Sticky, so it stays in view next to a long list.
+export function QuickPanel({ what, facts, onFull }: { what: "articles" | "pictures"; facts: QuickFact[]; onFull: () => void }) {
   return (
-    <div role="region" aria-label={t.quickTitle} className="flex flex-wrap items-center gap-3 rounded-xl border border-dashed bg-muted/50 p-4">
-      <IconChip icon={Zap} tone="yellow" />
-      <div className="min-w-0 flex-1">
-        <div className="font-medium">{t.quickTitle}</div>
-        <div className="text-sm text-muted-foreground">{what === "articles" ? t.quickArticles : t.quickPictures}</div>
+    <aside aria-label={t.quickTitle} className="order-first space-y-4 rounded-xl border bg-card p-5 shadow-xs lg:order-none lg:sticky lg:top-4 lg:col-start-2 lg:row-start-1">
+      <div className="flex items-center gap-3">
+        <IconChip icon={Zap} tone="yellow" />
+        <div className="font-semibold">{t.quickTitle}</div>
       </div>
-      <Button variant="outline" className="gap-2" onClick={onFull}>
+      <p className="text-sm text-muted-foreground">{what === "articles" ? t.quickArticles : t.quickPictures}</p>
+      <dl className="divide-y rounded-lg border text-sm">
+        {facts.map((f) => (
+          <div key={f.label} className="flex items-baseline justify-between gap-3 px-3 py-2">
+            <dt className="shrink-0 text-muted-foreground">{f.label}</dt>
+            <dd className="min-w-0 truncate text-right font-medium">{f.value || "–"}</dd>
+          </div>
+        ))}
+      </dl>
+      <Button variant="outline" className="w-full gap-2" onClick={onFull}>
         <Settings2 className="size-4" /> {t.quickFull}
       </Button>
-    </div>
+    </aside>
   );
 }

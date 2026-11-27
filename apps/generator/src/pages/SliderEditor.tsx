@@ -19,7 +19,7 @@ import { formatSize } from "@/lib/format";
 import type { Optimised } from "@/lib/optimise";
 import { downloadSliderZip, exampleSliderDraft, fileToSliderPicture, renderSliderPreview, sliderProblems, sliderWeightKb, switchSliderFormat, tidy, type SliderDraft } from "@/lib/slider";
 import { ZoomPicture } from "@/components/editor/ZoomPicture";
-import { QuickBar } from "@/components/editor/QuickBar";
+import { QuickPanel } from "@/components/editor/QuickBar";
 
 const BUDGET_KB = 100;
 const PHONES = [375, 390, 430];
@@ -312,12 +312,7 @@ export function SliderEditor({ draft, onChange, onBack, quick = false, onFull }:
           </div>
 
           <div className="pb-24 pt-4">
-            {quick && (
-              <div className="mx-auto mb-4 max-w-3xl">
-                <QuickBar what="pictures" onFull={() => onFull?.()} />
-              </div>
-            )}
-            <div className={quick ? "mx-auto grid max-w-3xl gap-4" : "grid items-start gap-4 lg:grid-cols-2 lg:grid-rows-[auto_1fr]"}>
+            <div className={quick ? "grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]" : "grid items-start gap-4 lg:grid-cols-2 lg:grid-rows-[auto_1fr]"}>
               <div data-quick-hidden={quick || undefined} className={quick ? "hidden" : "min-w-0 space-y-4 lg:col-start-2 lg:row-start-1"}>
                 <Section title={t.campaignTitle} icon={Images} tone="red">
                   <div className="space-y-1.5">
@@ -352,7 +347,7 @@ export function SliderEditor({ draft, onChange, onBack, quick = false, onFull }:
                 )}
               </div>
 
-              <div className={quick ? "min-w-0" : "min-w-0 lg:col-start-1 lg:row-span-2 lg:row-start-1"}>
+              <div className={quick ? "min-w-0 lg:col-start-1 lg:row-start-1" : "min-w-0 lg:col-start-1 lg:row-span-2 lg:row-start-1"}>
                 <Section title={t.slidesTitle(c.slides.length)} description={t.slidesHint} icon={Images} tone="red">
                   <div className="space-y-2">
                     <input ref={slideInput} type="file" multiple className="sr-only" aria-label={t.slidesAdd} accept="image/png,image/jpeg,image/webp" onChange={(ev) => { void onSlides(ev.target.files); ev.target.value = ""; }} />
@@ -472,6 +467,17 @@ export function SliderEditor({ draft, onChange, onBack, quick = false, onFull }:
                   </div>
                 </Collapsible>
               </div>
+              {quick && (
+                <QuickPanel
+                  what="pictures"
+                  onFull={() => onFull?.()}
+                  facts={[
+                    { label: e.quickCampaign, value: c.campaign },
+                    { label: e.quickSize, value: mobile ? "600x500" : "1250x400" },
+                    { label: e.quickPictures2, value: String(c.slides.length) },
+                  ]}
+                />
+              )}
             </div>
           </div>
         </div>

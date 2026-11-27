@@ -23,7 +23,7 @@ import type { Optimised } from "@/lib/optimise";
 import { Collapsible, Section, SwitchRow } from "@/components/editor/FormParts";
 import { useSaveShortcut } from "@/components/editor/useSaveShortcut";
 import { downloadBothZip, downloadZip, fileToAd, fileToArticle, fileToHeader, fileToLogo } from "@/lib/zip";
-import { QuickBar } from "@/components/editor/QuickBar";
+import { QuickPanel } from "@/components/editor/QuickBar";
 
 const BUDGET_KB = 100;
 
@@ -240,12 +240,7 @@ export function BannerEditor({ draft, onChange, onBack, quick = false, onFull }:
 
           <div className="pb-24 pt-4">
             {/* Wide screens: articles on the left, settings on the right, so the page stays short with many articles. Narrow screens: one column in the order campaign, header, articles, advanced. */}
-            {quick && (
-              <div className="mx-auto mb-4 max-w-3xl">
-                <QuickBar what="articles" onFull={() => onFull?.()} />
-              </div>
-            )}
-            <div className={quick ? "mx-auto grid max-w-3xl gap-4" : "grid items-start gap-4 md:grid-cols-2 lg:grid-rows-[auto_auto_1fr]"}>
+            <div className={quick ? "grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]" : "grid items-start gap-4 md:grid-cols-2 lg:grid-rows-[auto_auto_1fr]"}>
               <div data-quick-hidden={quick || undefined} className={quick ? "hidden" : "min-w-0 lg:col-start-2 lg:row-start-1"}>
               <Section title={t.campaignTitle} icon={Megaphone} tone="red">
                 <div className="space-y-1.5">
@@ -354,7 +349,7 @@ export function BannerEditor({ draft, onChange, onBack, quick = false, onFull }:
               )}
               </div>
 
-              <div className={quick ? "min-w-0" : "min-w-0 md:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-span-3 lg:row-start-1"}>
+              <div className={quick ? "min-w-0 lg:col-start-1 lg:row-start-1" : "min-w-0 md:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-span-3 lg:row-start-1"}>
             <ArticleList articles={c.articles} mobile={c.format === "articles-mobile"} files={draft.articleFiles ?? {}} onPicture={onArticlePicture} defaultBadge={c.badge} defaultColor={c.format === "articles-mobile" ? (c.theme.light.badge ?? c.primary) : resolveTheme(c, "light").badge} onChange={(articles) => set({ articles })} onOpenBookmark={() => setBookmarkOpen(true)} />
               </div>
 
@@ -390,6 +385,17 @@ export function BannerEditor({ draft, onChange, onBack, quick = false, onFull }:
               </div>
             </Collapsible>
               </div>
+              {quick && (
+                <QuickPanel
+                  what="articles"
+                  onFull={() => onFull?.()}
+                  facts={[
+                    { label: t.quickCampaign, value: c.campaign },
+                    { label: t.quickSize, value: c.format === "articles-mobile" ? t.downloadMobile : t.downloadDesktop },
+                    { label: t.quickArticles2, value: String(c.articles.length) },
+                  ]}
+                />
+              )}
             </div>
           </div>
         </div>
