@@ -509,6 +509,8 @@ export const guide: typeof En.guide = {
 };
 
 export const frameEditor: typeof En.frameEditor = {
+  settingsTabs: "Seaded",
+  settingsTab: { time: "Ajastus", size: "Suurus ja värv", link: "Link" },
   untitled: "Nimetu pildisilmus",
   heading: "Pildisilmuse bänner",
   responsiveShort: (w: number, h: number) => `responsiivne ${w}:${h}`,
@@ -580,6 +582,8 @@ export const frameEditor: typeof En.frameEditor = {
 };
 
 export const responsiveEditor: typeof En.responsiveEditor = {
+  settingsTabs: "Versioonid",
+  settingsTab: { small: "Väike versioon", large: "Suur versioon" },
   untitled: "Nimetu responsiivne bänner",
   heading: "Responsiivne bänner",
   allGood: "Kõik on olemas. Võid zip-faili alla laadida.",
@@ -946,6 +950,7 @@ export const sliderEditor = {
   bgLink: "Kuhu taust viib",
   linkHint: "Jäta tühjaks, et kasutada reklaamisüsteemis määratud linki.",
   slidesTitle: (n: number) => `Slaidid (${n})`,
+  settingsTab: { campaign: "Kampaania", more: "Paigutus ja liikumine" },
   slidesHint: "Pildid 300x250 või 600x500. Kui slaide on rohkem, kui mahub, tulevad nooled ja automaatne liugumine.",
   slidesAdd: "Lisa pildid",
   slidesNone: "Slaide veel pole. Lisa pildid, need pannakse failinimede järjekorda.",
