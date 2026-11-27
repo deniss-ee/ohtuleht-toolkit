@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Bookmark, ChevronDown, ChevronRight, ChevronUp, ClipboardPaste, ImageOff, ImagePlus, Loader2, Newspaper, Plus, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import type { ArticleItem } from "@ohtuleht/templates";
@@ -6,6 +6,7 @@ import { forDesktop, MIN_ARTICLES } from "@ohtuleht/templates";
 import { Button } from "@/components/ui/button";
 import { ColorPicker } from "@/components/editor/ColorPicker";
 import { IconChip } from "@/components/editor/IconChip";
+import { DRAG_CLASSES, reorder, useDragSort } from "@/components/editor/useDragSort";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -68,6 +69,8 @@ function ArticleRow({
   onToggle,
   onPatch,
   onMove,
+  drag,
+  grip,
   onRemove,
 }: {
   index: number;
@@ -83,6 +86,8 @@ function ArticleRow({
   onToggle: () => void;
   onPatch: (patch: Partial<ArticleItem>) => void;
   onMove: (dir: -1 | 1) => void;
+  drag: object; // drag and drop props for the row
+  grip: ReactNode;
   onRemove: () => void;
 }) {
   const id = `a${index}`;
@@ -94,8 +99,9 @@ function ArticleRow({
   const ownFile = !!files[shownImage.trim()];
   const incomplete = !article.title.trim() || !article.url.trim() || !shownImage.trim();
   return (
-    <li className="rounded-lg border bg-card">
+    <li {...drag} className={"rounded-lg border bg-card " + DRAG_CLASSES}>
       <div className="flex items-center gap-1 p-1.5">
+        {grip}
         <button type="button" aria-expanded={open} aria-controls={`${id}-body`} className="flex min-w-0 flex-1 items-center gap-3 rounded-md p-1 text-left hover:bg-muted/60" onClick={onToggle}>
           <MiniThumb src={shownSrc} />
           <span className="w-5 shrink-0 text-xs font-semibold text-muted-foreground">{index + 1}</span>
@@ -189,6 +195,10 @@ export function ArticleList({
   const [paste, setPaste] = useState("");
   const [uploading, setUploading] = useState<number | null>(null); // the article whose picture is being prepared
   const [open, setOpen] = useState<number | null>(null); // one article open at a time keeps the list short
+  const sort = useDragSort((from, to) => {
+    onChange(reorder(articles, from, to));
+    setOpen(null);
+  });
 
   // "To fix" links jump to a field inside a closed article: open it first.
   useEffect(() => {
@@ -304,6 +314,8 @@ export function ArticleList({
                 onToggle={() => setOpen(open === i ? null : i)}
                 onPatch={(p) => patch(i, p)}
                 onMove={(d) => move(i, d)}
+                drag={sort.item(i)}
+                grip={sort.grip(i)}
                 onRemove={() => {
                   onChange(articles.filter((_, j) => j !== i));
                   setOpen(open === null || open === i ? null : open > i ? open - 1 : open);

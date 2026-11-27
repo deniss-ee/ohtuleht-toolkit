@@ -808,6 +808,7 @@ export const movieBanner: typeof En.movieBanner = {
 };
 
 export const ui: typeof En.ui = {
+  dragToMove: "Lohista, et liigutada",
   back: "Tagasi",
   backToTools: "Tagasi tööriistade juurde",
   soon: "Tulekul",

@@ -843,6 +843,7 @@ export const movieBanner = {
 
 // Small texts used all over the app.
 export const ui = {
+  dragToMove: "Drag to move",
   back: "Back",
   backToTools: "Back to Tools",
   soon: "Soon",
