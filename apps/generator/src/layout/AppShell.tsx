@@ -1,5 +1,5 @@
 import { useSyncExternalStore, type ReactNode } from "react";
-import { BookOpen, Construction, House, Languages, LayoutTemplate, Moon, Palette, Sun, Wrench } from "lucide-react";
+import { BookOpen, House, Languages, LayoutTemplate, Moon, Palette, Sun, Wrench } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -7,25 +7,26 @@ import { getLang, LANGS, nav, setLang, subscribeLang, ui, type NavItem, type Pag
 
 const icons = { home: House, content: LayoutTemplate, tools: Wrench, brand: Palette, guide: BookOpen } satisfies Record<PageId, unknown>;
 
+// One section in the top bar's pill switch (v2): the open one is a raised white pill, the others quiet text.
 function NavButton({ item, active, onSelect }: { item: NavItem; active: boolean; onSelect: (id: PageId) => void }) {
   const Icon = icons[item.id];
   return (
-    <Button
-      variant={active ? "secondary" : "ghost"}
-      className={`justify-start gap-2 ${active ? "bg-muted font-medium text-foreground hover:bg-muted" : ""}`}
+    <button
+      type="button"
       disabled={!item.ready}
       aria-current={active ? "page" : undefined}
       onClick={() => onSelect(item.id)}
+      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none disabled:opacity-50 ${active ? "bg-card font-medium text-foreground shadow-panel" : "text-muted-foreground hover:text-foreground"}`}
     >
-      <Icon className="size-4" />
-      <span className="flex-1 text-left">{item.label}</span>
+      <Icon className="size-4" aria-hidden />
+      {item.label}
       {!item.ready && <Badge variant="outline">{ui.soon}</Badge>}
       {item.ready && item.wip && (
-        <Badge variant="outline" title={ui.wip} className="border-yellow-500/50 bg-yellow-300/30 text-foreground">
+        <Badge variant="outline" title={ui.wip} className="h-4 border-yellow-500/50 bg-yellow-300/30 px-1 text-[10px] text-foreground">
           {ui.wipShort}
         </Badge>
       )}
-    </Button>
+    </button>
   );
 }
 
@@ -72,28 +73,32 @@ export function Toggles() {
   );
 }
 
-// Page frame: top bar, navigation (side on desktop, row on small screens), content.
+// Page frame (v2): a slim top bar with the logo, the sections as a pill switch and the switches; the page below on the grey ground.
+// On a phone the sections move to their own row and scroll sideways.
 export function AppShell({ page, onNavigate, children }: { page: PageId; onNavigate: (id: PageId) => void; children: ReactNode }) {
   return (
     <div className="flex min-h-svh flex-col">
-      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-background px-4">
-        <span className="font-heading text-lg font-semibold">Õhtuleht Toolkit</span>
-        <Toggles />
-      </header>
-      <div className="flex flex-1 flex-col md:flex-row">
-        <nav aria-label={ui.mainNav} className="flex gap-1 overflow-x-auto border-b p-2 md:sticky md:top-14 md:h-[calc(100svh-3.5rem)] md:w-60 md:shrink-0 md:self-start md:flex-col md:border-r md:border-b-0 md:p-3">
-          {nav.map((item) => (
-            <NavButton key={item.id} item={item} active={item.id === page} onSelect={onNavigate} />
-          ))}
-          <div role="note" className="mt-auto hidden rounded-xl border border-yellow-500/40 bg-yellow-300/20 p-3 text-sm md:block">
-            <p className="flex items-center gap-2 font-medium">
-              <Construction className="size-4 shrink-0 text-yellow-700 dark:text-yellow-300" aria-hidden /> {ui.wip}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">{ui.wipText}</p>
+      <header className="sticky top-0 z-30 border-b border-foreground/[0.06] bg-background/85 backdrop-blur-md">
+        <div className="mx-auto flex w-full max-w-[1280px] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2.5 md:px-6">
+          <span className="flex items-center gap-2 font-semibold" title={ui.wipText}>
+            <span className="grid size-6 place-items-center rounded-md bg-primary text-[10px] font-extrabold text-primary-foreground" aria-hidden>
+              ÕL
+            </span>
+            Toolkit
+          </span>
+          <nav aria-label={ui.mainNav} className="order-last -mx-4 w-[calc(100%+2rem)] overflow-x-auto px-4 md:order-none md:mx-0 md:w-auto md:px-0">
+            <div className="inline-flex gap-0.5 rounded-full bg-muted p-1 ring-1 ring-foreground/[0.06]">
+              {nav.map((item) => (
+                <NavButton key={item.id} item={item} active={item.id === page} onSelect={onNavigate} />
+              ))}
+            </div>
+          </nav>
+          <div className="ml-auto">
+            <Toggles />
           </div>
-        </nav>
-        <main className="min-w-0 flex-1 p-4 md:px-6 md:py-4">{children}</main>
-      </div>
+        </div>
+      </header>
+      <main className="mx-auto w-full min-w-0 max-w-[1280px] flex-1 px-4 py-6 md:px-6">{children}</main>
     </div>
   );
 }

@@ -11,9 +11,10 @@ export interface QuickFact {
 // Quick edit: the side panel next to the list when a banner was opened from a zip. Most of the time only the articles or pictures change,
 // so the page shows the preview, the list on the left and this panel on the right (on a phone: above the list). It says what the banner is,
 // what to do, and "All settings" brings back the whole form (nothing is lost either way). Sticky, so it stays in view next to a long list.
-export function QuickPanel({ what, facts, onFull }: { what: "articles" | "pictures"; facts: QuickFact[]; onFull: () => void }) {
+// `place`: the grid cell classes of the editor it sits in (the slider has two columns, the articles banner three).
+export function QuickPanel({ what, facts, onFull, place = "lg:col-start-2 lg:row-start-1" }: { what: "articles" | "pictures"; facts: QuickFact[]; onFull: () => void; place?: string }) {
   return (
-    <aside aria-label={t.quickTitle} className="order-first space-y-4 rounded-xl border bg-card p-5 shadow-xs lg:order-none lg:sticky lg:top-4 lg:col-start-2 lg:row-start-1">
+    <aside aria-label={t.quickTitle} className={`order-first space-y-4 rounded-xl bg-card p-5 shadow-panel ring-1 ring-foreground/[0.07] lg:order-none lg:sticky lg:top-4 ${place}`}>
       <div className="flex items-center gap-3">
         <IconChip icon={Zap} tone="yellow" />
         <div className="font-semibold">{t.quickTitle}</div>

@@ -36,6 +36,9 @@ export function goTo(id: string) {
   if (!el) return;
   // A field hidden by quick edit: show all settings first (App listens).
   if (el.closest("[data-quick-hidden]")) window.dispatchEvent(new Event("ol-show-all"));
+  // A field in a settings tab that is not open: open it first (the editor listens).
+  const panel = el.closest<HTMLElement>("[data-tab-panel]");
+  if (panel) window.dispatchEvent(new CustomEvent("ol-show-tab", { detail: panel.dataset.tabPanel }));
   // A field inside a closed article: the list opens that article first.
   window.dispatchEvent(new CustomEvent("ol-reveal", { detail: id }));
   setTimeout(() => {
