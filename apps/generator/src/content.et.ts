@@ -44,6 +44,10 @@ export const contentMarketing: typeof En.contentMarketing = {
 };
 
 export const editor: typeof En.editor = {
+  quickTitle: "Kiire muutmine",
+  quickArticles: "Lisa, eemalda või tõsta artikleid ümber, siis laadi alla. Kõik muu jääb nii, nagu zip-is oli.",
+  quickPictures: "Lisa, eemalda või tõsta pilte ümber, siis laadi alla. Kõik muu jääb nii, nagu zip-is oli.",
+  quickFull: "Kõik seaded",
   back: "Tagasi",
   heading: "Artiklibänner",
   untitled: "Uus bänner",

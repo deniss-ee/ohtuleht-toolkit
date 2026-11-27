@@ -4,6 +4,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+### Quick edit for opened banners
+
+- A banner opened from a zip (articles banner or image slider) starts in **Quick edit**: the preview and the list of articles or pictures only, to add, remove or reorder and download. **All settings** shows the whole form; nothing is lost either way. If "things left to do" points at a hidden field, all settings open by themselves. A new banner and "Continue" still open the whole form.
+
 ### One articles banner card; drop a zip anywhere
 
 - Home and Content marketing show **one Articles banner** card instead of a desktop and a mobile one; the Desktop / Mobile switch is at the top of the editor. Old links with `make=articles-mobile` still open the mobile size.
