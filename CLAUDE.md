@@ -60,12 +60,13 @@ yarn test                                         # golden banners and rule test
 yarn workspace @ohtuleht/templates typecheck      # also: api, banner-runtime, brand
 yarn build                                        # writes apps/generator/dist/
 yarn docs:check                                   # every link and anchor in the Markdown files
+yarn verify                                       # everything above in one go: run before every merge
 yarn guide:docs                                   # regenerate docs/GUIDE-SCREENSHOTS.md and GUIDE-VALUES.md
 yarn workspace @ohtuleht/banner-runtime size      # fails above the 3 KB budget
 cd apps/api && yarn wrangler dev --port 8788      # API locally
 ```
 
-Tests exist for the templates (`yarn test`: every banner format against a golden file, plus the picture, colour and fade rules). A deliberate template change: `yarn workspace @ohtuleht/templates test -u`, then explain the golden diff in the PR. There is no lint or CI yet, and only the zip round trips as tests for the app (`apps/generator/test`): typecheck, build, and check the change in the browser (375 px and desktop, console clean).
+Tests exist for the templates (`yarn test`: every banner format against a golden file, plus the picture, colour and fade rules). A deliberate template change: `yarn workspace @ohtuleht/templates test -u`, then explain the golden diff in the PR. There is no lint and no CI (GitHub Actions is not used: the account is on the free plan and GitHub does not start jobs there). Before every merge run **`yarn verify`** (all types, tests, build, size limits, doc links). Only the zip round trips as tests for the app (`apps/generator/test`): typecheck, build, and check the change in the browser (375 px and desktop, console clean).
 
 ## Which model for what
 

@@ -18,6 +18,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 - Every list has the same small up, down and remove buttons (arrows); the header bar editor uses the same section blocks as the other editors.
 
+### Checks run on your own machine
+
+- The GitHub Actions check was removed: GitHub would not start it on this account, so every pull request showed a red mark. The same checks are one command, `yarn verify`, run before every merge.
+
 ### Image slider, mobile
 
 - A new mobile slider is a **cube with arrows** by default (was: slide, no arrows). Opened zips keep their own settings.

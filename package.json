@@ -13,6 +13,7 @@
     "guide:docs": "node tools/guide-docs.mjs",
     "docs:check": "node tools/check-links.mjs",
     "release:notes": "node tools/release-notes.mjs",
+    "verify": "yarn typecheck && yarn workspace @ohtuleht/templates typecheck && yarn workspace @ohtuleht/api typecheck && yarn workspace @ohtuleht/banner-runtime typecheck && yarn workspace @ohtuleht/brand typecheck && yarn test && yarn build && yarn workspace @ohtuleht/banner-runtime size && node tools/check-bundle.mjs && yarn docs:check",
     "test": "yarn workspace @ohtuleht/templates test && yarn workspace @ohtuleht/generator test"
   },
   "engines": {
