@@ -9,6 +9,7 @@ Pick what you need. New to the project? Read the first group in order.
 | [TRANSFER.md](TRANSFER.md) | Take over: what exists, who owns what, secrets and accounts, first-week plan |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Understand the layout, the banner zip format and how to add a module |
 | [DEPLOY.md](DEPLOY.md) | Publish the site (GitHub Pages today, Cloudflare as the target) |
+| [RELEASES.md](RELEASES.md) | Make a release: version number, changelog, GitHub release notes (`yarn release:notes`) |
 | [CLOUDFLARE.md](CLOUDFLARE.md) | Run the API and the database (Worker + D1) |
 | [AUTH-MICROSOFT.md](AUTH-MICROSOFT.md) | Add Microsoft login, send mail from the person's own mailbox, show different content to signed-in people |
 | [ROADMAP.md](ROADMAP.md) | See what is done and what is planned |
