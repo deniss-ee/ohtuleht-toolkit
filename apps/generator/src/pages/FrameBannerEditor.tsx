@@ -14,11 +14,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { editor as e, frameEditor as t, ui } from "@/content";
 import { formatSize } from "@/lib/format";
 import { downloadFrameZip, exampleFrameDraft, fileToFramePicture, frameProblems, frameWeightKb, renderFramePreview, SIZE_PRESETS, tidy, type FrameDraft } from "@/lib/frames";
-<<<<<<< HEAD
 import { DRAG_CLASSES, reorder, useDragSort } from "@/components/editor/useDragSort";
-=======
 import { ZoomPicture } from "@/components/editor/ZoomPicture";
->>>>>>> 7dd6629 (feat: big picture on hover in the picture lists)
 
 const BUDGET_KB = 150;
 const PREVIEW_WIDTHS = [0, 600, 320]; // responsive only: 0 = as designed
