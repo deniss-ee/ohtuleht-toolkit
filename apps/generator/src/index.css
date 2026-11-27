@@ -101,11 +101,16 @@
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
+    /* v2: panels float a little above the ground (docs/REDESIGN.md) */
+    --shadow-panel: var(--panel-shadow);
+    --shadow-lifted: var(--lifted-shadow);
 }
 
-/* Interface colours. Light: white surfaces, Ink Gray text and borders, Primary Red for actions and active states. */
+/* Interface colours (v2, docs/REDESIGN.md). Light: a soft grey ground with white panels on it, Ink Gray text, brand red only for the main action. */
 :root {
-    --background: #ffffff;
+    --panel-shadow: 0 1px 2px rgb(16 16 22 / 0.05), 0 2px 8px rgb(16 16 22 / 0.04);
+    --lifted-shadow: 0 2px 4px rgb(16 16 22 / 0.05), 0 12px 32px rgb(16 16 22 / 0.09);
+    --background: #f2f2f4;
     --foreground: var(--color-ink-950);
     --card: #ffffff;
     --card-foreground: var(--color-ink-950);
@@ -128,7 +133,7 @@
     --chart-3: var(--color-ink-600);
     --chart-4: var(--color-red-300);
     --chart-5: var(--color-ink-900);
-    --radius: 0.625rem;
+    --radius: 0.75rem;
     --sidebar: var(--color-ink-50);
     --sidebar-foreground: var(--color-ink-950);
     --sidebar-primary: var(--color-red-600);
@@ -142,11 +147,13 @@
 /* Dark: near-black surfaces (Ink Gray 950 mixed with black), Ink Gray 950 and 900 for borders and raised parts.
    Buttons stay the brand red 600 in both themes. */
 .dark {
-    --background: color-mix(in oklab, var(--color-ink-950) 40%, black);
+    --panel-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+    --lifted-shadow: 0 2px 6px rgb(0 0 0 / 0.4), 0 16px 40px rgb(0 0 0 / 0.35);
+    --background: #111113;
     --foreground: var(--color-ink-50);
-    --card: color-mix(in oklab, var(--color-ink-950) 55%, black);
+    --card: #1b1b1e;
     --card-foreground: var(--color-ink-50);
-    --popover: color-mix(in oklab, var(--color-ink-950) 65%, black);
+    --popover: #232327;
     --popover-foreground: var(--color-ink-50);
     --primary: var(--color-red-600);
     --primary-foreground: #ffffff;
@@ -217,5 +224,21 @@
 @media (prefers-reduced-motion: reduce) {
   .ol-fade-in {
     animation: none;
+  }
+}
+
+/* v2 small motion: a tile or card that is a way in lifts a little on hover (off when the system asks for less motion). */
+.ol-lift {
+  transition: transform 0.18s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.18s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.ol-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--lifted-shadow);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ol-lift,
+  .ol-lift:hover {
+    transition: none;
+    transform: none;
   }
 }

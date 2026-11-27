@@ -15,6 +15,7 @@ import { giftCard as t, ui } from "@/content";
 import { formatSize } from "@/lib/format";
 import { COPY, PERIODS } from "@/giftcard-content";
 import { EMAIL_STYLES, PRINT_STYLES, codesOf, downloadEmailPictures, downloadPdf, formatUntil, loadFonts, loadLogos, logoAddress, MAX_CARDS, newForm, paint, titleOf, titles, validEmail, withTitle, type CardForm } from "@/lib/giftcard";
+import { DESK_STYLE } from "@/components/editor/SettingsTabs";
 
 const KEY = "ol-giftcard";
 
@@ -198,8 +199,9 @@ export function GiftCard({ onBack }: { onBack: () => void }) {
     >
       <div className="mx-auto w-full max-w-6xl space-y-4 px-4 pb-24 pt-4">
         <p className="text-muted-foreground">{t.intro}</p>
-        <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,26rem)_1fr]">
-          <div className="space-y-4">
+        {/* v2: the card on the desk on the left, the form on the right, as in the editors; on a phone the form comes first */}
+        <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_26rem]">
+          <div className="space-y-4 lg:col-start-2 lg:row-start-1">
             <Section title={t.titleSection} description={t.titleHint} icon={Gift} tone="red">
               <div className="space-y-4">
                 <div className="space-y-1.5">
@@ -263,7 +265,7 @@ export function GiftCard({ onBack }: { onBack: () => void }) {
             </Section>
           </div>
 
-          <div className="space-y-4 lg:sticky lg:top-4">
+          <div className="space-y-4 rounded-xl p-4 lg:sticky lg:top-4 lg:col-start-1 lg:row-start-1" style={DESK_STYLE}>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="flex items-center gap-2 text-sm font-semibold">
                 <Palette className="size-4 text-muted-foreground" /> {t.previewTitle}

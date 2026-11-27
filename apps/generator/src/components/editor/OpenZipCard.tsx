@@ -13,7 +13,7 @@ export function OpenZipCard({ onUpload }: { onUpload: (file: File) => void }) {
     <div
       role="region"
       aria-label={t.uploadTitle}
-      className={`flex flex-wrap items-center gap-3 rounded-xl border border-dashed p-4 transition-colors ${over ? "border-primary bg-primary/5" : "bg-muted/50"}`}
+      className={`@container rounded-xl border-[1.5px] border-dashed p-4 transition-colors ${over ? "border-primary bg-primary/5" : "border-foreground/15"}`}
       onDragOver={(e) => {
         e.preventDefault();
         setOver(true);
@@ -26,14 +26,17 @@ export function OpenZipCard({ onUpload }: { onUpload: (file: File) => void }) {
         if (f) onUpload(f);
       }}
     >
-      <IconChip icon={FileUp} tone="yellow" />
-      <div className="min-w-0 flex-1">
-        <div className="font-medium">{t.uploadTitle}</div>
-        <div className="text-sm text-muted-foreground">{t.uploadText}</div>
+      {/* Narrow place: stacked and centred like a drop area; wide: one row */}
+      <div className="flex flex-col items-center gap-3 text-center @lg:flex-row @lg:text-left">
+        <IconChip icon={FileUp} tone="yellow" />
+        <div className="min-w-0 flex-1">
+          <div className="font-medium">{t.uploadTitle}</div>
+          <div className="text-sm text-muted-foreground">{t.uploadText}</div>
+        </div>
+        <Button variant="outline" onClick={() => input.current?.click()}>
+          {t.uploadButton}
+        </Button>
       </div>
-      <Button variant="outline" onClick={() => input.current?.click()}>
-        {t.uploadButton}
-      </Button>
       <input
         ref={input}
         type="file"

@@ -64,6 +64,11 @@ export const contentMarketing = {
 
 export const editor = {
   quickTitle: "Quick edit",
+  previousArticle: "Previous article",
+  nextArticle: "Next article",
+  closeArticle: "Close (Esc)",
+  settingsTabs: "Settings",
+  settingsTab: { campaign: "Campaign", header: "Header", more: "Colours & more" },
   quickArticles: "Add, remove or reorder the articles, then download. Everything else stays as it was in the zip.",
   quickPictures: "Add, remove or reorder the pictures, then download. Everything else stays as it was in the zip.",
   quickFull: "All settings",
@@ -538,6 +543,8 @@ export const guide = {
 };
 
 export const frameEditor = {
+  settingsTabs: "Settings",
+  settingsTab: { time: "Timing", size: "Size & colour", link: "Link" },
   untitled: "Untitled picture loop",
   heading: "Picture loop banner",
   responsiveShort: (w: number, h: number) => `responsive ${w}:${h}`,
@@ -609,6 +616,8 @@ export const frameEditor = {
 };
 
 export const responsiveEditor = {
+  settingsTabs: "Versions",
+  settingsTab: { small: "Small version", large: "Large version" },
   untitled: "Untitled responsive banner",
   heading: "Responsive banner",
   allGood: "Everything is in place. You can download the zip.",
@@ -977,6 +986,7 @@ export const sliderEditor = {
   bgLink: "Where the background leads",
   linkHint: "Leave empty to use the link set in the ad system.",
   slidesTitle: (n: number) => `Slides (${n})`,
+  settingsTab: { campaign: "Campaign", more: "Layout & motion" },
   slidesHint: "Pictures of 300x250 or 600x500. With more slides than fit, arrows and automatic sliding appear.",
   slidesAdd: "Add pictures",
   slidesNone: "No slides yet. Add the pictures, they are placed in the order of their file names.",

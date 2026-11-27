@@ -4,6 +4,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versions follow 
 
 ## [Unreleased]
 
+### New look (v2, test copy at /v2/)
+
+- A soft grey ground with white panels that float slightly; red only on the main action; small lift on hover (off when the system asks for less motion). See `docs/REDESIGN.md`.
+- Top bar with the sections as a pill switch instead of the side menu.
+- Home: the banners as tiles with a small drawing of each; Continue, open a zip and the tools in a column on the right.
+- Articles banner editor in three columns: articles left, the banner on a desk in the middle (stays in view), settings in tabs on the right (Campaign, Header, Colours & more). Quick edit puts its panel in the right column.
+- An article opens in a **side panel** over the page (like Notion and Linear): its form at a comfortable width, arrows to the previous and next article, close with the cross or Esc. The banner stays in view. On a phone the panel fills the screen.
+- **All four banner editors in the same frame:** the list on the left (articles, slider pictures, loop pictures, the responsive versions), the banner on the desk in the middle, settings in tabs on the right (`components/editor/SettingsTabs.tsx`). The header bar keeps its full-width preview (the bar at three widths) on the same dotted desk.
+- **Tools in the same order:** the preview on the dotted desk on the left, the settings on the right (gift card turned round to match the image cropper and the movie banner).
+- **Every tool and brand page has a small drawing** on its tile; Home, Content marketing and Tools use the same tiles. Page titles are the same plain bold title everywhere.
+
 ### Quick edit for opened banners
 
 - A banner opened from a zip (articles banner or image slider) starts in **Quick edit**: the preview on top, the list of articles or pictures on the left and a small panel on the right (campaign, size, count, **All settings**); on a phone the panel sits above the list. **All settings** shows the whole form; nothing is lost either way. If "things left to do" points at a hidden field, all settings open by themselves. A new banner and "Continue" still open the whole form.

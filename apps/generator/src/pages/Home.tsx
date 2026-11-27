@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Clapperboard, Crop, Eye, FileSearch, FileText, Gift, House, Images, BookOpen, Layers, Link2, MonitorSmartphone, Search, Lightbulb, Newspaper, Palette, PanelTop, PenLine, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
+import { Clapperboard, Crop, Eye, FileSearch, FileText, Gift, Images, BookOpen, Layers, Link2, MonitorSmartphone, Search, Lightbulb, Newspaper, Palette, PanelTop, PenLine, Replace, Shapes, Smartphone, Type, type LucideIcon } from "lucide-react";
 import { ContinueCard } from "@/components/editor/ContinueCard";
 import { OpenZipCard } from "@/components/editor/OpenZipCard";
-import { StartCard } from "@/components/editor/StartCard";
+import { PictureTile } from "@/components/editor/BannerPicture";
 import { Input } from "@/components/ui/input";
-import { PageHeader } from "@/components/editor/PageHeader";
 import { home as t, nav, ui, type PageId, type ToolInfo } from "@/content";
 import type { BrandTab } from "@/lib/route";
 import type { SavedInfo } from "@/lib/saved";
@@ -58,52 +57,58 @@ export function Home({ saved, onContinue, onDiscard, onGo, onUpload }: { saved: 
   }, []);
   const q = query.trim().toLowerCase();
   const groups = t.groups.map((g) => ({ ...g, items: q ? g.items.filter((i) => `${i.name} ${i.text}`.toLowerCase().includes(q)) : g.items })).filter((g) => g.items.length > 0);
+  // v2 (docs/REDESIGN.md): every group as tiles with a small drawing of what it makes; continue, open a zip and the tips on the right.
   return (
-    <div className="mx-auto max-w-5xl space-y-8">
-      <PageHeader icon={House} title={t.title} intro={t.intro} />
+    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="min-w-0 space-y-8">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">{t.title}</h1>
+          <p className="text-muted-foreground">{t.intro}</p>
+        </div>
 
-      {saved && <ContinueCard saved={saved} onContinue={onContinue} onDiscard={onDiscard} />}
+        <div className="relative">
+          <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+          <Input ref={box} type="search" aria-label={t.search} className="h-11 rounded-xl bg-card pl-10 shadow-panel" placeholder={t.searchPlaceholder} value={query} onChange={(e) => setQuery(e.target.value)} />
+        </div>
+        {q && groups.length === 0 && <p className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">{t.noResults(query.trim())}</p>}
 
-      <OpenZipCard onUpload={onUpload} />
-
-      <div className="relative">
-        <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
-        <Input ref={box} type="search" aria-label={t.search} className="h-10 pl-9" placeholder={t.searchPlaceholder} value={query} onChange={(e) => setQuery(e.target.value)} />
+        {groups.map((g) => (
+          <section key={g.title} aria-labelledby={`home-${g.id}`} className="space-y-3">
+            <div>
+              <h2 id={`home-${g.id}`} className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                {g.title}
+              </h2>
+              {g.text && <p className="text-sm text-muted-foreground">{g.text}</p>}
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3">
+              {g.items.map((i) => {
+                const item = ITEMS[i.id];
+                if (!item) return null;
+                const off = nav.find((n) => n.id === item.to.page)?.ready === false;
+                return <PictureTile key={i.id} id={i.id} title={i.name} text={i.text} disabled={off} soon={ui.soon} onOpen={() => onGo(item.to)} />;
+              })}
+            </div>
+          </section>
+        ))}
       </div>
-      {q && groups.length === 0 && <p className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">{t.noResults(query.trim())}</p>}
 
-      {groups.map((g) => (
-        <section key={g.title} aria-labelledby={`home-${g.id}`} className="space-y-3">
-          <div>
-            <h2 id={`home-${g.id}`} className="text-lg font-semibold">
-              {g.title}
-            </h2>
-            {g.text && <p className="text-sm text-muted-foreground">{g.text}</p>}
-          </div>
-          <div className="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {g.items.map((i) => {
-              const item = ITEMS[i.id];
-              if (!item) return null;
-              const off = nav.find((n) => n.id === item.to.page)?.ready === false;
-              return <StartCard key={i.id} icon={item.icon} title={i.name} text={i.text} action={off ? ui.soon : t.open} disabled={off} onAction={() => onGo(item.to)} />;
-            })}
-          </div>
+      <aside className="order-first min-w-0 space-y-4 lg:order-none lg:sticky lg:top-20">
+        {saved && <ContinueCard saved={saved} onContinue={onContinue} onDiscard={onDiscard} />}
+        <OpenZipCard onUpload={onUpload} />
+        <section aria-labelledby="home-tips" className="hidden rounded-xl bg-card p-5 shadow-panel ring-1 ring-foreground/[0.07] lg:block">
+          <h2 id="home-tips" className="mb-3 flex items-center gap-2 font-semibold">
+            <Lightbulb className="size-4 text-muted-foreground" aria-hidden /> {t.tipsTitle}
+          </h2>
+          <ul className="grid gap-2 text-sm">
+            {t.tips.map((tip) => (
+              <li key={tip} className="flex gap-2">
+                <FileText className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden />
+                {tip}
+              </li>
+            ))}
+          </ul>
         </section>
-      ))}
-
-      <section aria-labelledby="home-tips" className="rounded-xl border border-dashed bg-muted/50 p-4">
-        <h2 id="home-tips" className="mb-2 flex items-center gap-2 text-lg font-semibold">
-          <Lightbulb className="size-5 text-primary" aria-hidden /> {t.tipsTitle}
-        </h2>
-        <ul className="grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
-          {t.tips.map((tip) => (
-            <li key={tip} className="flex gap-2">
-              <FileText className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden />
-              {tip}
-            </li>
-          ))}
-        </ul>
-      </section>
+      </aside>
     </div>
   );
 }

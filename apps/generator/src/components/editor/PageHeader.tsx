@@ -1,16 +1,12 @@
 import type { LucideIcon } from "lucide-react";
-import { IconChip } from "@/components/editor/IconChip";
 
-// Title block at the top of every section start screen: icon (same as in the side menu), title, one line of help.
-export function PageHeader({ icon, title, intro }: { icon: LucideIcon; title: string; intro: string }) {
+// Title block at the top of every section start screen (v2, docs/REDESIGN.md): a plain bold title and one line of help, the same as on Home.
+// The section's icon is already in the top bar, so it is not repeated here (`icon` is kept so the pages need no change).
+export function PageHeader({ title, intro }: { icon?: LucideIcon; title: string; intro: string }) {
   return (
-    <div className="flex items-center gap-3">
-      <IconChip icon={icon} tone="red" />
-      <div>
-        <h1 className="text-xl font-semibold sm:text-2xl">{title}</h1>
-        {/* On short screens the help line gives way to the tools. */}
-        <p className="text-sm text-muted-foreground sm:text-base [@media(min-width:640px)_and_(max-height:860px)]:hidden">{intro}</p>
-      </div>
+    <div className="space-y-1">
+      <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
+      <p className="text-muted-foreground">{intro}</p>
     </div>
   );
 }

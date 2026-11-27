@@ -17,6 +17,7 @@ import { imageSize } from "@/lib/image";
 import { downloadResponsiveZip, exampleResponsiveDraft, fileToPicture, fileToVideo, isVideoName, renderResponsivePreview, responsiveProblems, tidy, VERSION_WIDTH, versionWeightKb, type ResponsiveDraft, type VersionName } from "@/lib/responsive";
 import { DRAG_CLASSES, reorder, useDragSort } from "@/components/editor/useDragSort";
 import { ZoomPicture } from "@/components/editor/ZoomPicture";
+import { DESK_CLASS, DESK_STYLE, EDITOR_GRID, SettingsTabs, useSettingsTab } from "@/components/editor/SettingsTabs";
 
 const BUDGET_KB = 250; // a soft guide for what one viewer downloads
 const PREVIEW_WIDTHS = [320, 430, 540, 600, 700];
@@ -225,9 +226,12 @@ function VersionCard({ name, draft, dims, onChange, onDims, onTask }: { name: Ve
 }
 
 // Full-screen editor for the responsive banner.
+const VERSION_TABS = ["small", "large"] as const;
+
 export function ResponsiveBannerEditor({ draft, onChange, onBack }: { draft: ResponsiveDraft; onChange: (d: ResponsiveDraft) => void; onBack: () => void }) {
   const [busy, setBusy] = useState(false);
   const [working, setWorking] = useState(0); // jobs running (pictures and videos are being read)
+  const [tab, setTab] = useSettingsTab(VERSION_TABS); // the version shown on the right
   const [safe, setSafe] = useState(true);
   const [dims, setDims] = useState<Dims>({});
   const c = draft.config;
@@ -319,10 +323,13 @@ export function ResponsiveBannerEditor({ draft, onChange, onBack }: { draft: Res
         </>
       }
     >
-      <div className="mx-auto w-full max-w-6xl px-4 pb-24 pt-4">
-        <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_24rem]">
-          <div className="min-w-0 space-y-5">
+      <div className="mx-auto w-full max-w-[1600px] px-4 pb-24 pt-4">
+        {/* v2 (docs/REDESIGN.md), the same frame as the other editors: name and link left, the banner on a desk in the middle, the two versions (with their picture lists) in tabs left, as the lists of the other editors; name and link right. */}
+        <div className={EDITOR_GRID}>
+          <div className={DESK_CLASS} style={DESK_STYLE}>
             <Preview draft={draft} safe={safe} onSafe={setSafe} onTryExample={loadExample} working={working > 0} />
+          </div>
+          <div className="order-3 min-w-0 space-y-5 lg:order-none lg:col-start-3 lg:row-start-1">
             <p className="flex items-start gap-2 rounded-lg bg-muted/60 p-3 text-sm text-muted-foreground">
               <ScanLine className="mt-0.5 size-4 shrink-0" aria-hidden /> {t.howItWorks}
             </p>
@@ -341,9 +348,12 @@ export function ResponsiveBannerEditor({ draft, onChange, onBack }: { draft: Res
             </Section>
           </div>
 
-          <div className="min-w-0 space-y-5">
+          <div className="order-2 min-w-0 space-y-4 lg:order-none lg:col-start-1 lg:row-start-1">
+            <SettingsTabs ids={VERSION_TABS} labels={t.settingsTab} tab={tab} onTab={setTab} label={t.settingsTabs} />
             {(["small", "large"] as VersionName[]).map((n) => (
-              <VersionCard key={n} name={n} draft={draft} dims={dims} onChange={onChange} onDims={(k, w, h) => setDims((d) => ({ ...d, [k]: { w, h } }))} onTask={task} />
+              <div key={n} data-tab-panel={n} className={tab === n ? "" : "hidden"}>
+              <VersionCard name={n} draft={draft} dims={dims} onChange={onChange} onDims={(k, w, h) => setDims((d) => ({ ...d, [k]: { w, h } }))} onTask={task} />
+              </div>
             ))}
             {multi && (
               <Section title={t.timeTitle} description={t.timeHint} icon={Timer} tone="red">

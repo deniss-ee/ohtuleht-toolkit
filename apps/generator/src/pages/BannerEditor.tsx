@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, CheckCircle2, Download, FileArchive, FlaskConical, ImagePlus, Loader2, Megaphone, Palette, PanelRight, PanelTop, SlidersHorizontal, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import { resolveTheme } from "@ohtuleht/templates";
@@ -63,11 +63,23 @@ const SPEEDS = [
 const nearestSpeed = (ms: number) => SPEEDS.reduce((best, s) => (Math.abs(s.ms - ms) < Math.abs(best.ms - ms) ? s : best)).ms;
 
 // Full-screen editor: covers the menu so the preview can use the whole width.
+const SETTINGS_TABS = ["campaign", "header", "more"] as const;
+
 // `quick`: opened from a zip, so only the preview and the articles show until "All settings" is pressed.
 export function BannerEditor({ draft, onChange, onBack, quick = false, onFull }: { draft: Draft; onChange: (d: Draft) => void; onBack: () => void; quick?: boolean; onFull?: () => void }) {
   const [busy, setBusy] = useState(false);
   const [working, setWorking] = useState<"header" | "ad" | "logo" | "example" | null>(null); // pictures are being prepared
   const [bookmarkOpen, setBookmarkOpen] = useState(false);
+  const [tab, setTab] = useState<(typeof SETTINGS_TABS)[number]>("campaign"); // the settings tab on the right
+  // "To fix" pointed at a field in another tab: open that tab (HoverPill's goTo sends the tab's name).
+  useEffect(() => {
+    const show = (e: Event) => {
+      const id = (e as CustomEvent<string>).detail;
+      if ((SETTINGS_TABS as readonly string[]).includes(id)) setTab(id as (typeof SETTINGS_TABS)[number]);
+    };
+    window.addEventListener("ol-show-tab", show);
+    return () => window.removeEventListener("ol-show-tab", show);
+  }, []);
   const [pinned, setPinned] = useState(false); // "Keep preview in view" is always off to start with; the person turns it on
   const fileInput = useRef<HTMLInputElement>(null);
   const adInput = useRef<HTMLInputElement>(null);
@@ -233,15 +245,21 @@ export function BannerEditor({ draft, onChange, onBack, quick = false, onFull }:
       </header>
 
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto w-full max-w-[1282px] px-4">
-          <div className={pinned ? "sticky top-0 z-20 -mx-4 border-b bg-background px-4 py-3" : "py-3"}>
-            <Preview draft={draft} pinned={pinned} onPin={setPinned} onAddArticles={() => goTo("paste")} onTryExample={loadExample} working={working === "example"} onOpenBookmark={() => setBookmarkOpen(true)} />
-          </div>
+        <div className="mx-auto w-full max-w-[1600px] px-4">
 
           <div className="pb-24 pt-4">
-            {/* Wide screens: articles on the left, settings on the right, so the page stays short with many articles. Narrow screens: one column in the order campaign, header, articles, advanced. */}
-            <div className={quick ? "grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]" : "grid items-start gap-4 md:grid-cols-2 lg:grid-rows-[auto_auto_1fr]"}>
-              <div data-quick-hidden={quick || undefined} className={quick ? "hidden" : "min-w-0 lg:col-start-2 lg:row-start-1"}>
+            {/* v2 (docs/REDESIGN.md). Wide screens: articles on the left, the banner on a desk in the middle (stays in view), settings in tabs on the right. Narrow screens: banner, articles, then the settings. */}
+            <div className="grid items-start gap-4 lg:grid-cols-[400px_minmax(0,1fr)_340px] lg:grid-rows-[auto_1fr]">
+              <div data-quick-hidden={quick || undefined} className={quick ? "hidden" : "order-3 min-w-0 lg:order-none lg:col-start-3 lg:row-start-1"}>
+                <div role="tablist" aria-label={t.settingsTabs} className="inline-flex w-full gap-0.5 rounded-full bg-muted p-1 ring-1 ring-foreground/[0.06]">
+                  {SETTINGS_TABS.map((id) => (
+                    <button key={id} type="button" role="tab" aria-selected={tab === id} onClick={() => setTab(id)} className={`flex-1 rounded-full px-2 py-1.5 text-[13px] whitespace-nowrap transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none ${tab === id ? "bg-card font-medium text-foreground shadow-panel" : "text-muted-foreground hover:text-foreground"}`}>
+                      {t.settingsTab[id]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div data-quick-hidden={quick || undefined} data-tab-panel="campaign" className={quick ? "hidden" : `${tab === "campaign" ? "" : "hidden"} order-4 min-w-0 space-y-4 lg:order-none lg:col-start-3 lg:row-start-2`}>
               <Section title={t.campaignTitle} icon={Megaphone} tone="red">
                 <div className="space-y-1.5">
                   <Label htmlFor="campaign">{t.campaignName}</Label>
@@ -260,7 +278,7 @@ export function BannerEditor({ draft, onChange, onBack, quick = false, onFull }:
               </Section>
               </div>
 
-              <div data-quick-hidden={quick || undefined} className={quick ? "hidden" : "min-w-0 lg:col-start-2 lg:row-start-2"}>
+              <div data-quick-hidden={quick || undefined} data-tab-panel="header" className={quick ? "hidden" : `${tab === "header" ? "" : "hidden"} order-4 min-w-0 space-y-4 lg:order-none lg:col-start-3 lg:row-start-2`}>
               <Section title={t.headerTitle} description={t.headerHint} icon={PanelTop} tone="ink">
                 <HeaderThumb draft={draft} />
                 <Tabs value={c.header.type} onValueChange={(v) => set({ header: v === "image" ? { type: "image", src: draft.headerFile?.name ?? "", href: c.header.href, avg: draft.headerFile?.avg, textInPicture: c.header.textInPicture } : { type: "color", href: c.header.href, textInPicture: c.header.textInPicture } })}>
@@ -349,14 +367,18 @@ export function BannerEditor({ draft, onChange, onBack, quick = false, onFull }:
               )}
               </div>
 
-              <div className={quick ? "min-w-0 lg:col-start-1 lg:row-start-1" : "min-w-0 md:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-span-3 lg:row-start-1"}>
+              <div className="order-2 min-w-0 lg:order-none lg:col-start-1 lg:row-span-2 lg:row-start-1">
             <ArticleList articles={c.articles} mobile={c.format === "articles-mobile"} files={draft.articleFiles ?? {}} onPicture={onArticlePicture} defaultBadge={c.badge} defaultColor={c.format === "articles-mobile" ? (c.theme.light.badge ?? c.primary) : resolveTheme(c, "light").badge} onChange={(articles) => set({ articles })} onOpenBookmark={() => setBookmarkOpen(true)} />
               </div>
 
             <BookmarkletDialog open={bookmarkOpen} onOpenChange={setBookmarkOpen} />
 
-              <div data-quick-hidden={quick || undefined} className={quick ? "hidden" : "min-w-0 space-y-4 md:col-span-2 lg:col-span-1 lg:col-start-2 lg:row-start-3"}>
-            <h2 className="pt-2 text-sm font-semibold text-muted-foreground">{t.advanced}</h2>
+              {/* The desk: the banner in the middle, on a dotted ground; it stays in view while the lists scroll. */}
+              <div className={`order-1 min-w-0 rounded-xl p-3 lg:order-none lg:sticky lg:top-3 lg:col-start-2 lg:row-span-2 lg:row-start-1 ${pinned ? "max-lg:sticky max-lg:top-0 max-lg:z-20 max-lg:bg-background" : ""}`} style={{ backgroundImage: "radial-gradient(var(--border) 1px, transparent 1px)", backgroundSize: "16px 16px" }}>
+            <Preview draft={draft} pinned={pinned} onPin={setPinned} onAddArticles={() => goTo("paste")} onTryExample={loadExample} working={working === "example"} onOpenBookmark={() => setBookmarkOpen(true)} />
+              </div>
+
+              <div data-quick-hidden={quick || undefined} data-tab-panel="more" className={quick ? "hidden" : `${tab === "more" ? "" : "hidden"} order-4 min-w-0 space-y-4 lg:order-none lg:col-start-3 lg:row-start-2`}>
             <Collapsible title={t.colorsTitle} description={t.colorsHint} icon={Palette} tone="yellow">
               <div className="grid gap-6 sm:grid-cols-2">
                 <ColorSet title={t.light} mode="light" config={c} onChange={(light) => set({ theme: { ...c.theme, light } })} />
@@ -387,6 +409,7 @@ export function BannerEditor({ draft, onChange, onBack, quick = false, onFull }:
               </div>
               {quick && (
                 <QuickPanel
+                  place="lg:col-start-3 lg:row-start-1 lg:row-span-2"
                   what="articles"
                   onFull={() => onFull?.()}
                   facts={[

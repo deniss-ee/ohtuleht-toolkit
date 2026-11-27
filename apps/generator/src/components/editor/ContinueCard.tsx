@@ -9,16 +9,22 @@ export function ContinueCard({ saved, onContinue, onDiscard }: { saved: SavedInf
   const name = saved.name.trim() || (saved.kind === "header" ? headerBar.untitled : saved.kind === "slider" ? sliderEditor.untitled : saved.kind === "frames" ? frameEditor.untitled : saved.kind === "responsive" ? responsiveEditor.untitled : editor.untitled);
   const when = new Date(saved.savedAt).toLocaleString(getLang() === "et" ? "et-EE" : "en-GB", { dateStyle: "medium", timeStyle: "short" });
   return (
-    <div role="region" aria-label={t.continueTitle} className="flex flex-wrap items-center gap-3 rounded-xl border border-primary/40 bg-primary/5 p-4">
+    <div role="region" aria-label={t.continueTitle} className="@container rounded-xl bg-card p-4 shadow-panel ring-1 ring-foreground/[0.07]">
+      <div className="flex flex-col gap-3 @lg:flex-row @lg:items-center">
+      <div className="flex min-w-0 flex-1 items-center gap-3">
       <IconChip icon={History} tone="red" />
       <div className="min-w-0 flex-1">
         <div className="font-medium">{t.continueTitle}</div>
         <div className="truncate text-sm text-muted-foreground">{t.continueText(saved.kind === "header" ? t.continueHeader : saved.kind === "slider" ? t.continueSlider : saved.kind === "frames" ? t.continueFrames : saved.kind === "responsive" ? t.continueResponsive : t.continueBanner, name, when)}</div>
       </div>
+      </div>
+      <div className="flex gap-2 *:flex-1 @lg:*:flex-none">
       <Button onClick={onContinue}>{t.continueButton}</Button>
       <Button variant="outline" onClick={onDiscard}>
         {t.continueDiscard}
       </Button>
+      </div>
+      </div>
     </div>
   );
 }

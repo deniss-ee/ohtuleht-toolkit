@@ -129,9 +129,21 @@ function Thumb({ src }: { src?: string }) {
 }
 
 // Full-screen editor for the image slider.
+const SLIDER_TABS = ["campaign", "more"] as const;
+
 // `quick`: opened from a zip, so only the preview and the pictures show until "All settings" is pressed.
 export function SliderEditor({ draft, onChange, onBack, quick = false, onFull }: { draft: SliderDraft; onChange: (d: SliderDraft) => void; onBack: () => void; quick?: boolean; onFull?: () => void }) {
   const [busy, setBusy] = useState(false);
+  const [tab, setTab] = useState<(typeof SLIDER_TABS)[number]>("campaign"); // the settings tab on the right
+  // "To fix" pointed at a field in another tab: open that tab (HoverPill's goTo sends the tab's name).
+  useEffect(() => {
+    const show = (ev: Event) => {
+      const id = (ev as CustomEvent<string>).detail;
+      if ((SLIDER_TABS as readonly string[]).includes(id)) setTab(id as (typeof SLIDER_TABS)[number]);
+    };
+    window.addEventListener("ol-show-tab", show);
+    return () => window.removeEventListener("ol-show-tab", show);
+  }, []);
   const [pinned, setPinned] = useState(false);
   const [working, setWorking] = useState<"bg" | "slides" | "example" | null>(null); // pictures are being prepared
   const bgInput = useRef<HTMLInputElement>(null);
@@ -306,14 +318,21 @@ export function SliderEditor({ draft, onChange, onBack, quick = false, onFull }:
       </header>
 
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto w-full max-w-[1282px] px-4">
-          <div className={pinned ? "sticky top-0 z-20 -mx-4 border-b bg-background px-4 py-3" : "py-3"}>
-            <SliderPreview draft={draft} pinned={pinned} onPin={setPinned} onTryExample={loadExample} working={working === "example"} />
-          </div>
+        <div className="mx-auto w-full max-w-[1600px] px-4">
 
           <div className="pb-24 pt-4">
-            <div className={quick ? "grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]" : "grid items-start gap-4 lg:grid-cols-2 lg:grid-rows-[auto_1fr]"}>
-              <div data-quick-hidden={quick || undefined} className={quick ? "hidden" : "min-w-0 space-y-4 lg:col-start-2 lg:row-start-1"}>
+            {/* v2 (docs/REDESIGN.md), the same frame as the articles banner: pictures left, the banner on a desk in the middle, settings in tabs right. */}
+            <div className="grid items-start gap-4 lg:grid-cols-[400px_minmax(0,1fr)_340px] lg:grid-rows-[auto_1fr]">
+              <div data-quick-hidden={quick || undefined} className={quick ? "hidden" : "order-3 min-w-0 lg:order-none lg:col-start-3 lg:row-start-1"}>
+                <div role="tablist" aria-label={e.settingsTabs} className="inline-flex w-full gap-0.5 rounded-full bg-muted p-1 ring-1 ring-foreground/[0.06]">
+                  {SLIDER_TABS.map((id) => (
+                    <button key={id} type="button" role="tab" aria-selected={tab === id} onClick={() => setTab(id)} className={`flex-1 rounded-full px-2 py-1.5 text-[13px] whitespace-nowrap transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none ${tab === id ? "bg-card font-medium text-foreground shadow-panel" : "text-muted-foreground hover:text-foreground"}`}>
+                      {t.settingsTab[id]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div data-quick-hidden={quick || undefined} data-tab-panel="campaign" className={quick ? "hidden" : `${tab === "campaign" ? "" : "hidden"} order-4 min-w-0 space-y-4 lg:order-none lg:col-start-3 lg:row-start-2`}>
                 <Section title={t.campaignTitle} icon={Images} tone="red">
                   <div className="space-y-1.5">
                     <Label htmlFor="campaign">{t.campaignName}</Label>
@@ -347,7 +366,12 @@ export function SliderEditor({ draft, onChange, onBack, quick = false, onFull }:
                 )}
               </div>
 
-              <div className={quick ? "min-w-0 lg:col-start-1 lg:row-start-1" : "min-w-0 lg:col-start-1 lg:row-span-2 lg:row-start-1"}>
+              {/* The desk: the banner in the middle, on a dotted ground; it stays in view while the lists scroll. */}
+              <div className={`order-1 min-w-0 rounded-xl p-3 lg:order-none lg:sticky lg:top-3 lg:col-start-2 lg:row-span-2 lg:row-start-1 ${pinned ? "max-lg:sticky max-lg:top-0 max-lg:z-20 max-lg:bg-background" : ""}`} style={{ backgroundImage: "radial-gradient(var(--border) 1px, transparent 1px)", backgroundSize: "16px 16px" }}>
+            <SliderPreview draft={draft} pinned={pinned} onPin={setPinned} onTryExample={loadExample} working={working === "example"} />
+              </div>
+
+              <div className="order-2 min-w-0 lg:order-none lg:col-start-1 lg:row-span-2 lg:row-start-1">
                 <Section title={t.slidesTitle(c.slides.length)} description={t.slidesHint} icon={Images} tone="red">
                   <div className="space-y-2">
                     <input ref={slideInput} type="file" multiple className="sr-only" aria-label={t.slidesAdd} accept="image/png,image/jpeg,image/webp" onChange={(ev) => { void onSlides(ev.target.files); ev.target.value = ""; }} />
@@ -406,7 +430,7 @@ export function SliderEditor({ draft, onChange, onBack, quick = false, onFull }:
                 </Section>
               </div>
 
-              <div data-quick-hidden={quick || undefined} className={quick ? "hidden" : "min-w-0 space-y-4 lg:col-start-2 lg:row-start-2"}>
+              <div data-quick-hidden={quick || undefined} data-tab-panel="more" className={quick ? "hidden" : `${tab === "more" ? "" : "hidden"} order-4 min-w-0 space-y-4 lg:order-none lg:col-start-3 lg:row-start-2`}>
                 <h2 className="pt-2 text-sm font-semibold text-muted-foreground">{e.advanced}</h2>
                 {!mobile && (
                   <Collapsible title={t.layoutTitle} description={t.layoutHint} icon={LayoutDashboard} tone="yellow" className="animate-in fade-in-0 duration-300">
@@ -469,6 +493,7 @@ export function SliderEditor({ draft, onChange, onBack, quick = false, onFull }:
               </div>
               {quick && (
                 <QuickPanel
+                  place="lg:col-start-3 lg:row-start-1 lg:row-span-2"
                   what="pictures"
                   onFull={() => onFull?.()}
                   facts={[

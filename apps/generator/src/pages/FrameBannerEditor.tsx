@@ -16,6 +16,7 @@ import { formatSize } from "@/lib/format";
 import { downloadFrameZip, exampleFrameDraft, fileToFramePicture, frameProblems, frameWeightKb, renderFramePreview, SIZE_PRESETS, tidy, type FrameDraft } from "@/lib/frames";
 import { DRAG_CLASSES, reorder, useDragSort } from "@/components/editor/useDragSort";
 import { ZoomPicture } from "@/components/editor/ZoomPicture";
+import { DESK_CLASS, DESK_STYLE, EDITOR_GRID, SettingsTabs, useSettingsTab } from "@/components/editor/SettingsTabs";
 
 const BUDGET_KB = 150;
 const PREVIEW_WIDTHS = [0, 600, 320]; // responsive only: 0 = as designed
@@ -84,9 +85,12 @@ function FramePreview({ draft, onTryExample, working }: { draft: FrameDraft; onT
 }
 
 // Full-screen editor for the picture loop banner.
+const FRAME_TABS = ["time", "size", "link"] as const;
+
 export function FrameBannerEditor({ draft, onChange, onBack }: { draft: FrameDraft; onChange: (d: FrameDraft) => void; onBack: () => void }) {
   const [busy, setBusy] = useState(false);
   const [working, setWorking] = useState<"add" | "bg" | "example" | null>(null);
+  const [tab, setTab] = useSettingsTab(FRAME_TABS); // the settings tab on the right
   const [over, setOver] = useState(false);
   const addInput = useRef<HTMLInputElement>(null);
   const bgInput = useRef<HTMLInputElement>(null);
@@ -207,10 +211,13 @@ export function FrameBannerEditor({ draft, onChange, onBack }: { draft: FrameDra
         </>
       }
     >
-      <div className="mx-auto w-full max-w-6xl px-4 pb-24 pt-4">
-        <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_23rem]">
-          <div className="min-w-0 space-y-5">
+      <div className="mx-auto w-full max-w-[1600px] px-4 pb-24 pt-4">
+        {/* v2 (docs/REDESIGN.md), the same frame as the other editors: the pictures left, the loop on a desk in the middle, settings in tabs right. */}
+        <div className={EDITOR_GRID}>
+          <div className={DESK_CLASS} style={DESK_STYLE}>
             <FramePreview draft={draft} onTryExample={loadExample} working={working === "example"} />
+          </div>
+          <div className="order-2 min-w-0 space-y-5 lg:order-none lg:col-start-1 lg:row-start-1">
 
             <Section title={t.framesTitle} description={t.framesHint} icon={Images} tone="red">
               <div className="space-y-3">
@@ -278,7 +285,9 @@ export function FrameBannerEditor({ draft, onChange, onBack }: { draft: FrameDra
             </Section>
           </div>
 
-          <div className="min-w-0 space-y-5">
+          <div className="order-3 min-w-0 space-y-4 lg:order-none lg:col-start-3 lg:row-start-1">
+            <SettingsTabs ids={FRAME_TABS} labels={t.settingsTab} tab={tab} onTab={setTab} label={t.settingsTabs} />
+            <div data-tab-panel="time" className={tab === "time" ? "space-y-4" : "hidden"}>
             <Section title={t.timeTitle} description={t.timeHint} icon={Timer} tone="red">
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
@@ -298,6 +307,8 @@ export function FrameBannerEditor({ draft, onChange, onBack }: { draft: FrameDra
               </div>
             </Section>
 
+            </div>
+            <div data-tab-panel="size" className={tab === "size" ? "space-y-4" : "hidden"}>
             <Section title={t.sizeTitle} description={t.sizeHint} icon={Ruler} tone="red">
               <div className="space-y-3">
                 <Choice label={t.sizeMode} value={c.responsive ? "responsive" : "fixed"} options={[{ id: "fixed", label: t.fixed, hint: t.fixedHint }, { id: "responsive", label: t.responsive, hint: t.responsiveHint }]} onChange={(v) => set({ responsive: v === "responsive" })} />
@@ -354,12 +365,15 @@ export function FrameBannerEditor({ draft, onChange, onBack }: { draft: FrameDra
               </div>
             </Section>
 
+            </div>
+            <div data-tab-panel="link" className={tab === "link" ? "space-y-4" : "hidden"}>
             <Section title={t.linkTitle} description={t.linkHint} icon={FileArchive} tone="red">
               <div className="space-y-1.5">
                 <Label htmlFor="href">{t.link}</Label>
                 <Input id="href" type="url" placeholder="https://" value={c.href} onChange={(ev) => set({ href: ev.target.value })} />
               </div>
             </Section>
+            </div>
           </div>
         </div>
       </div>
