@@ -1,6 +1,6 @@
 # Redesign plan
 
-Status: **step 1, choosing a direction** (2026-11-27). The owner marks three directions hot, warm or cold on a comparison page; the next round mixes what was liked.
+Status: **step 2, the look for approval** (2026-11-27). Step 1 is done: the votes are below.
 
 ## Why
 
@@ -24,6 +24,32 @@ The toolkit works, but it looks like a default component library and has grown s
 | Editor | Preview on top, list left, settings in tabs right | Banner in the middle "on a desk", tools floating around | Dark panels around the white banner |
 
 Small details asked about separately (they fit any direction): whole card clickable instead of red "Open" buttons; pictures of the banners on Home; settings in tabs; denser layout; always-dark editors; small motion.
+
+## Votes (step 1)
+
+| Choice | Vote |
+|---|---|
+| A. Quiet studio | warm |
+| B. Soft canvas | **hot** |
+| C. Newsroom | cold |
+| Pictures of the banners on Home | **hot** |
+| Settings in tabs | **hot** |
+| Small motion | **hot** |
+| Whole card clickable, no red "Open" buttons | warm |
+| Denser layout | warm |
+| Editors always dark | warm |
+
+## The chosen look (step 2, for approval)
+
+- **Base: B, Soft canvas.** A soft grey ground (`#f2f2f4`; dark `#111113`), white floating panels (radius 18 px, a light two-layer shadow, a hairline edge), fields and switches slightly sunken. No boxes inside boxes.
+- **From A: calm.** Brand red 600 only on the main action of a screen (Download); every other button neutral grey. Thin lines inside panels, quiet labels.
+- **Navigation:** a slim top bar with the sections as a pill switch, instead of the side menu.
+- **Home:** a title and search, then **tiles with a small drawing of each banner**; on the right, Continue, the zip drop area and the tools list.
+- **Editor:** three columns: the list on the left (articles or pictures, Ctrl+V box on top), the banner in the middle on a dotted "desk", **settings in tabs** on the right (Campaign, Header, Colours, Behaviour). Status, weight and downloads in the top bar.
+- **Small motion:** tiles lift 3 px on hover, buttons 1 px, 150 to 180 ms; off when the system asks for less motion.
+- **Warm votes kept as they are today:** normal density; editors follow the theme (dark only in dark mode); tiles are clickable as a whole.
+
+The look with real-size screens in light and dark is on a private comparison page (`Toolkit v2 design system`, shared in the chat on 2026-11-27).
 
 ## Rules that stay, whatever is chosen
 
